@@ -1,0 +1,37 @@
+/* src/styles/Stage.css */
+.stage-container {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f8f8f8;
+}
+
+.input-text, .input-checkbox, .input-textarea, .text-info {
+    margin: 10px 0;
+    padding: 8px;
+    width: 100%;
+}
+
+.input-checkbox {
+    width: auto;
+    padding: 0;
+}
+
+.button, .stage-button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.button:hover, .stage-button:hover {
+    background-color: #0056b3;
+}
+
+.text-info {
+    color: #666;
+    font-size: 16px;
+}

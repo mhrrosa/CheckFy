@@ -1,32 +1,33 @@
 import React from 'react';
+import '../styles/Stage.css';
 
 const Stage = ({ elements, onComplete }) => {
   // Renderiza elementos baseados no tipo
   const renderElement = (type) => {
     switch (type) {
       case 1:
-        return <input type="text" placeholder="Digite algo..." />;
+        return <input type="text" className="input-text" placeholder="Digite algo..." />;
       case 2:
-        return <input type="checkbox" />;
+        return <input type="checkbox" className="input-checkbox" />;
       case 3:
-        return <button>Clique-me</button>;
+        return <button className="button">Clique-me</button>;
       case 4:
-        return <textarea placeholder="Digite uma mensagem..."></textarea>;
+        return <textarea className="input-textarea" placeholder="Digite uma mensagem..."></textarea>;
       case 5:
-        return <p>Texto informativo</p>;
+        return <p className="text-info">Texto informativo</p>;
       default:
-        return <p>Elemento desconhecido</p>;
+        return <p className="text-info">Elemento desconhecido</p>;
     }
   };
 
   return (
-    <div>
+    <div className="stage-container">
       {elements.map((type, index) => (
         <div key={index}>
           {renderElement(type)}
         </div>
       ))}
-      <button onClick={onComplete}>Concluir Etapa</button>
+      <button className="stage-button" onClick={onComplete}>Concluir Etapa</button>
     </div>
   );
 };
