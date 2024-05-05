@@ -13,10 +13,9 @@ function Evaluation() {
   const [etapas, setEtapas] = useState([]);
 
   useEffect(() => {
-    if (location.state && location.state.setup) {
-      const newEtapas = [...etapas, location.state.setup];
+    if (location.state?.setup) {
       setSetup(location.state.setup);
-      setEtapas(newEtapas);
+      setEtapas(prevEtapas => [...prevEtapas, location.state.setup]);
     }
   }, [location.state]);
 
@@ -37,14 +36,15 @@ function Evaluation() {
         setAllResponses(combinedResponses);
         setSetup(response.setup);
         setResponses({});
-        setEtapas(prevEtapas => [...prevEtapas, response.setup]); // Adiciona nova etapa
+        setEtapas(prevEtapas => [...prevEtapas, response.setup]);
       }
     });
   }
 
   function handleNextStep() {
     const currentIndex = etapas.indexOf(setup);
-    if (currentIndex < etapas.length - 1) {
+    const hasNextStep = currentIndex < etapas.length - 1;
+    if (hasNextStep) {
       const nextSetup = etapas[currentIndex + 1];
       setSetup(nextSetup);
     } else {
