@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Api from '../services/Api';
+import { startNewEvaluation, submitEvaluationData, getProcessos, createProcesso, updateProcesso, deleteProcesso } from '../services/Api';
 import '../styles/CreateEvaluation.css'; // Certifique-se de que o caminho está correto
 
 function CreateEvaluation() {
@@ -15,7 +15,7 @@ function CreateEvaluation() {
       adjuntoEmails,
       colaboradorEmails
     };
-    Api.startNewEvaluation(data).then((response) => {
+    startNewEvaluation(data).then((response) => {
       navigate('/evaluation', { state: { setup: response } });
     });
   }

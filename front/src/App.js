@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import CreateEvaluation from './pages/CreateEvaluation';
 import Evaluation from './pages/Evaluation';
 import Results from './pages/Results';
+import Modelo from './pages/Modelo';
 import './styles/App.css';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
             <Route path="/create-evaluation" element={<CreateEvaluation />} />
             <Route path="/evaluation" element={<Evaluation />} />
             <Route path="/results" element={<Results />} />
+            <Route path="/modelo" element={<Modelo />} />
           </Routes>
         </div>
         <Footer />

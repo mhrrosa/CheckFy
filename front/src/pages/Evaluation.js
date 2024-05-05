@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Api from '../services/Api';
+import { startNewEvaluation, submitEvaluationData } from '../services/Api';
 import EvaluationElement from '../components/EvaluationElement';
 import '../styles/Evaluation.css'; // Importando o arquivo CSS
 
@@ -29,15 +29,15 @@ function Evaluation() {
 
   function handleSubmit() {
     const combinedResponses = { ...allResponses, ...responses };
-    Api.submitEvaluationData(responses).then(response => {
-      if (response.finalizada) {
-        navigate('/results', { state: { finalResponses: combinedResponses } });
-      } else {
-        setAllResponses(combinedResponses);
-        setSetup(response.setup);
-        setResponses({});
-        setEtapas(prevEtapas => [...prevEtapas, response.setup]);
-      }
+    submitEvaluationData(responses).then(response => { // Corrigido aqui
+        if (response.finalizada) {
+            navigate('/results', { state: { finalResponses: combinedResponses } });
+        } else {
+            setAllResponses(combinedResponses);
+            setSetup(response.setup);
+            setResponses({});
+            setEtapas(prevEtapas => [...prevEtapas, response.setup]);
+        }
     });
   }
 

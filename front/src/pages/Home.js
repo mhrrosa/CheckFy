@@ -18,6 +18,13 @@ class Home extends React.Component {
                     </div>
                     {/* Adicione mais itens conforme necessário */}
                 </div>
+                <div className="home-container">
+                    <Link to="/modelo" className="model-button">Modelo MPS.BR</Link>
+                    <div className="evaluation-list">
+                        {/* Aqui você pode listar as avaliações existentes */}
+                        {/* Outros conteúdos */}
+                    </div>
+                </div>
             </div>
         );
     }
