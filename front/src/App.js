@@ -1,12 +1,20 @@
 import React from 'react';
-import StageManager from './components/StageManager';
-import './styles/StageManager.css'; // Importe o CSS se você tiver estilos específicos
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './pages/Home';
+import CreateEvaluation from './pages/CreateEvaluation';
+import Evaluation from './pages/Evaluation';
+import Results from './pages/Results';
 
 function App() {
   return (
-    <div className="App">
-      <StageManager />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/create-evaluation" element={<CreateEvaluation />} />
+        <Route path="/evaluation" element={<Evaluation />} />
+        <Route path="/results" element={<Results />} />
+      </Routes>
+    </Router>
   );
 }
 
