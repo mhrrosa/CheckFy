@@ -6,8 +6,14 @@ class Api {
   }
 
   static generateRandomArray() {
+    const titles = ["Gerenciador", "Coordenador", "Teste", "Revisão", "Análise"];
     const length = Math.floor(Math.random() * 5) + 3; // Gera entre 3 e 7 elementos
-    return Array.from({ length }, () => Math.floor(Math.random() * 5) + 1);
+    return Array.from({ length }, () => {
+      return {
+        titulo: titles[Math.floor(Math.random() * titles.length)],
+        identificador: Math.floor(Math.random() * 5) + 1
+      };
+    });
   }
 
   static startNewEvaluation(data) {
@@ -29,7 +35,6 @@ class Api {
     this.post(url, data);
     return new Promise((resolve) => {
       setTimeout(() => {
-        // Decidir aleatoriamente se a avaliação termina
         if (Math.random() > 0.7) { // 30% de chance de finalizar
           console.log('Avaliação finalizada');
           resolve({ finalizada: true });
