@@ -1,34 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { getProcessos } from '../services/Api';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/Modelo.css';
 
 function Modelo() {
-    const [processos, setProcessos] = useState([]);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        getProcessos().then(data => {
-            if (data) { // Certifique-se de que data existe antes de tentar usá-lo
-                setProcessos(data);
-            } else {
-                console.error('Nenhum dado recebido: ', data);
-                setProcessos([]); // Define processos como um array vazio se nenhum dado for recebido
-            }
-        }).catch(error => {
-            console.error("Erro ao buscar processos:", error);
-            setProcessos([]); // Define como array vazio em caso de erro
-        });
-    }, []);
-
-    return (
-        <div className="modelo-container">
-            <h1>Gerenciamento de Processos</h1>
-            {processos.length > 0 ? processos.map(processo => (
-                <div key={processo.id}>
-                    <span>{processo.nome}</span>
-                </div>
-            )) : <p>Nenhum processo encontrado.</p>}
-        </div>
-    );
+  return (
+    <div className="modelo-container">
+      <h1>Gerenciamento</h1>
+      <button onClick={() => navigate('/niveis')}>Gerenciar Níveis</button>
+      <button onClick={() => navigate('/processos')}>Gerenciar Processos</button>
+      <button onClick={() => navigate('/resultados-esperados')}>Gerenciar Resultados Esperados</button>
+    </div>
+  );
 }
 
 export default Modelo;
