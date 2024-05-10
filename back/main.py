@@ -1,17 +1,19 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from Database import Database
 from Nivel import Nivel
 from Processo import Processo
 from ResultadoEsperado import ResultadoEsperado
 
 app = Flask(__name__)
+CORS(app) 
 
 # Conexão com o banco de dados MySQL
 db_config = {
-    "host": "seu_host",
-    "user": "seu_usuario",
-    "password": "sua_senha",
-    "database": "seu_banco_de_dados"
+    "host": "127.0.0.1",
+    "user": "root",
+    "password": "root",
+    "database": "checkfy"
 }
 
 #criando objetos
@@ -20,11 +22,23 @@ nivel = Nivel(db)
 processo = Processo(db)
 resultado_esperado = ResultadoEsperado(db)
 
+# main.py
 @app.route('/add_nivel', methods=['POST'])
 def add_nivel():
     nivel_data = request.json
-    nivel.add_nivel(nivel_data)
-    return jsonify({"message": "Nível adicionado com sucesso"}), 200
+
+    # Verificar se a chave correta está presente no JSON
+    if 'nivel' not in nivel_data:
+        return jsonify({"message": "Campo 'nivel' ausente no JSON"}), 400
+
+    try:
+        # Usar a chave correta 'nivel' para passar para o método
+        nivel.add_nivel(nivel_data['nivel'])
+        return jsonify({"message": "Nível adicionado com sucesso"}), 200
+    except Exception as e:
+        print(f"Erro ao adicionar nível: {e}")  # Mostra o erro específico
+        return jsonify({"message": "Erro ao adicionar nível", "error": str(e)}), 500
+
 
 @app.route('/get_all_niveis', methods=['GET'])
 def get_all_niveis():
