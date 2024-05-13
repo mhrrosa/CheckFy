@@ -11,8 +11,6 @@ body {
     align-items: center;
     justify-content: center;
     height: 100vh;
-    background-color: #f4f4f8;
-    font-family: 'Arial', sans-serif;
 }
 
 .form-section {
@@ -44,9 +42,9 @@ body {
     text-align: center;
 }
 
-.lista-input {
+/* .lista-input {
     
-}
+} */
 
 .input-wrapper {
     display: flex;
