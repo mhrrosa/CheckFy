@@ -1,55 +1,71 @@
+body {
+    margin: 0%;
+    padding: 0%;
+    font-family: 'Roboto', sans-serif;
+    background-color: #eaeaea;
+}
+
 .home-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 100vh;
+    height: 80vh;
     background-color: #f4f4f8;
     font-family: 'Arial', sans-serif;
 }
 
-.home-title {
-    color: #333;
-    font-size: 2.5em;
+.botoes-home {
+    display: flex;
+    justify-content: space-between;
 }
 
-.start-button {
-    padding: 10px 20px;
+.botao-home {
     font-size: 1.2em;
-    background-color: #4CAF50;
+    font-weight: 900;
+    background-color: #001034;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    margin-top: 20px;
+    margin-top: 3em;
+    padding: 1em 1em;
     transition: background-color 0.3s ease;
+    margin-right: 3em;
 }
 
-.start-button:hover {
-    background-color: #45a049;
+.botao-home:last-child {
+    margin-right: 0;
 }
 
-.evaluation-list {
-    margin-top: 30px;
+.botao-home:hover {
+    background-color: #001a56;
+}
+
+.avaliacoes-lista {
+    font-size: 20px;
+    margin-top: 40px;
     width: 80%;
 }
 
-.evaluation-item {
+.avaliacoes-lista p {
+    padding-left: 20px;
+    margin-bottom: 10px;
+}
+
+.avaliacao-item {
     background-color: #fff;
-    border: 1px solid #ddd;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 8px;
     margin-top: 10px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     transition: box-shadow 0.3s ease;
 }
 
-.evaluation-item:hover {
+.avaliacao-item:hover {
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-.evaluation-item p {
+.avaliacao-item p {
     margin: 0;
-    font-size: 1.1em;
-    color: #555;
+    padding-left: 30px;
 }
