@@ -1,4 +1,24 @@
-const baseUrl = 'http://localhost:3000/api';
+const baseUrl = 'http://127.0.0.1:5000';
+
+function post(url, data) {
+  return fetch(`${baseUrl}${url}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`Erro na requisição POST para ${url}: ${response.status}`);
+    }
+    return response.json();
+  })
+  .catch(error => {
+    console.error('Erro ao realizar POST:', error);
+    throw error;
+  });
+}
 
 function get(url) {
   return fetch(`${baseUrl}${url}`)
@@ -12,24 +32,6 @@ function get(url) {
       console.error('Erro ao realizar GET:', error);
       throw error;
     });
-}
-
-function post(url, data) {
-  return fetch(`${baseUrl}${url}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-  }).then(response => {
-    if (!response.ok) {
-      throw new Error(`Erro na requisição POST para ${url}: ${response.status}`);
-    }
-    return response.json();
-  }).catch(error => {
-    console.error('Erro ao realizar POST:', error);
-    throw error;
-  });
 }
 
 function put(url, data) {
@@ -49,7 +51,6 @@ function put(url, data) {
     throw error;
   });
 }
-
 
 function generateRandomArray() {
   const titles = ["Gerenciador", "Coordenador", "Teste", "Revisão", "Análise"];
@@ -100,6 +101,7 @@ function deleteRequest(url) {
     if (!response.ok) {
       throw new Error('Erro na requisição DELETE');
     }
+    return response.json();
   }).catch(error => {
     console.error('Erro ao realizar DELETE:', error);
     throw error;
@@ -107,37 +109,36 @@ function deleteRequest(url) {
 }
 
 // Funções para Níveis
-function getNiveis() {
-  return get('/niveis');
+function createNivel(data) {
+  return post('/add_nivel', data);
 }
 
-function createNivel(data) {
-  return post('/niveis', data);
+function getNiveis() {
+  return get('/get_all_niveis');
 }
 
 function updateNivel(id, data) {
-  return put(`/niveis/${id}`, data);
+  return put(`/update_nivel/${id}`, data);
 }
 
 function deleteNivel(id) {
-  return deleteRequest(`/niveis/${id}`);
+  return deleteRequest(`/delete_nivel/${id}`);
 }
-
 // Funções para Processos
 function getProcessos() {
-  return get('/processos');
+  return get('/get_all_processos');
 }
 
 function createProcesso(data) {
-  return post('/processos', data);
+  return post('/add_processo', data);
 }
 
 function updateProcesso(id, data) {
-  return put(`/processos/${id}`, data);
+  return put(`/update_processo/${id}`, data);
 }
 
 function deleteProcesso(id) {
-  return deleteRequest(`/processos/${id}`);
+  return deleteRequest(`/delete_processo/${id}`);
 }
 
 // Funções para Resultados Esperados

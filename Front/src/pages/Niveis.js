@@ -6,13 +6,18 @@ function Niveis() {
   const [niveis, setNiveis] = useState([]);
   const [novoNivel, setNovoNivel] = useState('');
 
+  // Carregar níveis ao montar o componente
   useEffect(() => {
-    getNiveis().then(data => {
-      setNiveis(data || []);
-    }).catch(error => {
-      console.error('Erro ao buscar níveis:', error);
-      setNiveis([]);
-    });
+    getNiveis()
+      .then(data => {
+        // Transformar dados recebidos no formato esperado
+        const niveisFormatados = data.map(n => ({ id: n[0], nivel: n[1] }));
+        setNiveis(niveisFormatados);
+      })
+      .catch(error => {
+        console.error('Erro ao buscar níveis:', error);
+        setNiveis([]);
+      });
   }, []);
 
   const adicionarNivel = () => {
@@ -26,6 +31,11 @@ function Niveis() {
   };
 
   const removerNivel = (id) => {
+    if (!id) {
+      console.error('Erro: ID do nível não fornecido para a remoção.');
+      return;
+    }
+
     deleteNivel(id)
       .then(() => {
         setNiveis(niveis.filter(n => n.id !== id));
@@ -67,10 +77,14 @@ function Niveis() {
                   <input
                     type="text"
                     value={nivel.nivel}
-                    onChange={(e) => atualizarNivel(nivel.id, e.target.value)}
+                    onChange={(e) => {
+                      const valorAtualizado = e.target.value;
+                      setNiveis(niveis.map(n => (n.id === nivel.id ? { ...n, nivel: valorAtualizado } : n)));
+                    }}
                   />
                 </td>
                 <td>
+                  <button onClick={() => atualizarNivel(nivel.id, nivel.nivel)}>Atualizar</button> {/* Novo botão */}
                   <button onClick={() => removerNivel(nivel.id)}>Remover</button>
                 </td>
               </tr>
