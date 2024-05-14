@@ -3,16 +3,17 @@ import { getProcessos, createProcesso, updateProcesso, deleteProcesso } from '..
 import '../styles/Processos.css';
 
 function Processos() {
-  // Estado para todos os processos e para os campos de entrada
   const [processos, setProcessos] = useState([]);
   const [novoProcessoDescricao, setNovoProcessoDescricao] = useState('');
   const [novoProcessoTipo, setNovoProcessoTipo] = useState('');
 
-  // Obter todos os processos ao montar o componente
   useEffect(() => {
+    carregarProcessos();
+  }, []);
+
+  const carregarProcessos = () => {
     getProcessos()
       .then(data => {
-        // Certifique-se de que os processos recebidos tenham as propriedades `id`, `descricao` e `tipo`
         const processosFormatados = data.map(p => ({ id: p[0], descricao: p[1], tipo: p[2] }));
         setProcessos(processosFormatados);
       })
@@ -20,9 +21,8 @@ function Processos() {
         console.error('Erro ao buscar processos:', error);
         setProcessos([]);
       });
-  }, []);
+  };
 
-  // Adicionar um novo processo
   const adicionarProcesso = () => {
     const processoData = {
       descricao: novoProcessoDescricao,
@@ -30,31 +30,30 @@ function Processos() {
     };
     createProcesso(processoData)
       .then(novo => {
-        setProcessos([...processos, novo]);
+        // Atualize a lista de processos após a confirmação de inserção no banco
+        carregarProcessos();
         setNovoProcessoDescricao('');
         setNovoProcessoTipo('');
       })
       .catch(error => console.error('Erro ao adicionar processo:', error));
   };
 
-  // Remover um processo existente
   const removerProcesso = (id) => {
     deleteProcesso(id)
       .then(() => {
-        setProcessos(processos.filter(p => p.id !== id));
+        setProcessos(prevProcessos => prevProcessos.filter(p => p.id !== id));
       })
       .catch(error => console.error('Erro ao remover processo:', error));
   };
 
-  // Atualizar um processo existente
   const atualizarProcesso = (id, novaDescricao, novoTipo) => {
     const atualizado = {
-      descricao: novaDescricao,
-      tipo: novoTipo
+      nova_descricao: novaDescricao,
+      novo_tipo: novoTipo
     };
     updateProcesso(id, atualizado)
       .then(() => {
-        setProcessos(processos.map(p => (p.id === id ? { ...p, ...atualizado } : p)));
+        setProcessos(prevProcessos => prevProcessos.map(p => (p.id === id ? { ...p, descricao: novaDescricao, tipo: novoTipo } : p)));
       })
       .catch(error => console.error('Erro ao atualizar processo:', error));
   };
@@ -62,14 +61,12 @@ function Processos() {
   return (
     <div className="processos-container">
       <h1>Gerenciamento de Processos</h1>
-      {/* Campo de entrada para a descrição */}
       <input
         type="text"
         placeholder="Descrição do Processo"
         value={novoProcessoDescricao}
         onChange={(e) => setNovoProcessoDescricao(e.target.value)}
       />
-      {/* Campo de entrada para o tipo */}
       <input
         type="text"
         placeholder="Tipo do Processo"
@@ -95,7 +92,7 @@ function Processos() {
                     value={processo.descricao}
                     onChange={(e) => {
                       const novaDescricao = e.target.value;
-                      setProcessos(processos.map(p => (p.id === processo.id ? { ...p, descricao: novaDescricao } : p)));
+                      setProcessos(prevProcessos => prevProcessos.map(p => (p.id === processo.id ? { ...p, descricao: novaDescricao } : p)));
                     }}
                   />
                 </td>
@@ -105,7 +102,7 @@ function Processos() {
                     value={processo.tipo}
                     onChange={(e) => {
                       const novoTipo = e.target.value;
-                      setProcessos(processos.map(p => (p.id === processo.id ? { ...p, tipo: novoTipo } : p)));
+                      setProcessos(prevProcessos => prevProcessos.map(p => (p.id === processo.id ? { ...p, tipo: novoTipo } : p)));
                     }}
                   />
                 </td>

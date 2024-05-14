@@ -52,6 +52,21 @@ function put(url, data) {
   });
 }
 
+function deleteRequest(url) {
+  return fetch(`${baseUrl}${url}`, {
+    method: 'DELETE'
+  }).then(response => {
+    if (!response.ok) {
+      throw new Error('Erro na requisição DELETE');
+    }
+    return response.json();
+  }).catch(error => {
+    console.error('Erro ao realizar DELETE:', error);
+    throw error;
+  });
+}
+
+
 function generateRandomArray() {
   const titles = ["Gerenciador", "Coordenador", "Teste", "Revisão", "Análise"];
   const length = Math.floor(Math.random() * 5) + 3; // Gera entre 3 e 7 elementos
@@ -94,20 +109,6 @@ function submitEvaluationData(data) {
   });
 }
 
-function deleteRequest(url) {
-  return fetch(`${baseUrl}${url}`, {
-    method: 'DELETE'
-  }).then(response => {
-    if (!response.ok) {
-      throw new Error('Erro na requisição DELETE');
-    }
-    return response.json();
-  }).catch(error => {
-    console.error('Erro ao realizar DELETE:', error);
-    throw error;
-  });
-}
-
 // Funções para Níveis
 function createNivel(data) {
   return post('/add_nivel', data);
@@ -124,6 +125,7 @@ function updateNivel(id, data) {
 function deleteNivel(id) {
   return deleteRequest(`/delete_nivel/${id}`);
 }
+
 // Funções para Processos
 function getProcessos() {
   return get('/get_all_processos');
@@ -143,19 +145,19 @@ function deleteProcesso(id) {
 
 // Funções para Resultados Esperados
 function getResultadosEsperados() {
-  return get('/resultados-esperados');
+  return get('/get_all_resultados_esperados');
 }
 
 function createResultadoEsperado(data) {
-  return post('/resultados-esperados', data);
+  return post('/add_resultado_esperado', data);
 }
 
 function updateResultadoEsperado(id, data) {
-  return put(`/resultados-esperados/${id}`, data);
+  return put(`/update_resultado_esperado/${id}`, data);
 }
 
 function deleteResultadoEsperado(id) {
-  return deleteRequest(`/resultados-esperados/${id}`);
+  return deleteRequest(`/delete_resultado_esperado/${id}`);
 }
 
 export {

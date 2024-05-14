@@ -3,8 +3,12 @@ class Processo:
         self.db = db
 
     def add_processo(self, descricao, tipo):
-        self.db.cursor.execute("INSERT INTO processo (Descricao, Tipo) VALUES (%s)", (descricao, tipo))
-        self.db.conn.commit()
+        try:
+            self.db.cursor.execute("INSERT INTO processo (Descricao, Tipo) VALUES (%s, %s)", (descricao, tipo))
+            self.db.conn.commit()
+        except Exception as e:
+            print(f"Erro ao adicionar processo ao banco de dados: {e}")
+            raise e
 
     def get_all_processos(self):
         self.db.cursor.execute("SELECT * FROM processo")

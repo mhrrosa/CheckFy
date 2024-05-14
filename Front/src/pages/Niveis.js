@@ -6,11 +6,13 @@ function Niveis() {
   const [niveis, setNiveis] = useState([]);
   const [novoNivel, setNovoNivel] = useState('');
 
-  // Carregar níveis ao montar o componente
   useEffect(() => {
+    carregarNiveis();
+  }, []);
+
+  const carregarNiveis = () => {
     getNiveis()
       .then(data => {
-        // Transformar dados recebidos no formato esperado
         const niveisFormatados = data.map(n => ({ id: n[0], nivel: n[1] }));
         setNiveis(niveisFormatados);
       })
@@ -18,27 +20,23 @@ function Niveis() {
         console.error('Erro ao buscar níveis:', error);
         setNiveis([]);
       });
-  }, []);
+  };
 
   const adicionarNivel = () => {
     const nivelData = { nivel: novoNivel };
     createNivel(nivelData)
       .then(novo => {
-        setNiveis([...niveis, novo]);
+        // Atualize a lista de níveis após a confirmação de inserção no banco
+        carregarNiveis();
         setNovoNivel('');
       })
       .catch(error => console.error('Erro ao adicionar nível:', error));
   };
 
   const removerNivel = (id) => {
-    if (!id) {
-      console.error('Erro: ID do nível não fornecido para a remoção.');
-      return;
-    }
-
     deleteNivel(id)
       .then(() => {
-        setNiveis(niveis.filter(n => n.id !== id));
+        setNiveis(prevNiveis => prevNiveis.filter(n => n.id !== id));
       })
       .catch(error => console.error('Erro ao remover nível:', error));
   };
@@ -47,7 +45,7 @@ function Niveis() {
     const atualizado = { nivel: novoNome };
     updateNivel(id, atualizado)
       .then(() => {
-        setNiveis(niveis.map(n => (n.id === id ? { ...n, ...atualizado } : n)));
+        setNiveis(prevNiveis => prevNiveis.map(n => (n.id === id ? { ...n, nivel: novoNome } : n)));
       })
       .catch(error => console.error('Erro ao atualizar nível:', error));
   };
@@ -79,12 +77,12 @@ function Niveis() {
                     value={nivel.nivel}
                     onChange={(e) => {
                       const valorAtualizado = e.target.value;
-                      setNiveis(niveis.map(n => (n.id === nivel.id ? { ...n, nivel: valorAtualizado } : n)));
+                      setNiveis(prevNiveis => prevNiveis.map(n => (n.id === nivel.id ? { ...n, nivel: valorAtualizado } : n)));
                     }}
                   />
                 </td>
                 <td>
-                  <button onClick={() => atualizarNivel(nivel.id, nivel.nivel)}>Atualizar</button> {/* Novo botão */}
+                  <button onClick={() => atualizarNivel(nivel.id, nivel.nivel)}>Atualizar</button>
                   <button onClick={() => removerNivel(nivel.id)}>Remover</button>
                 </td>
               </tr>
