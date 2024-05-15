@@ -8,7 +8,7 @@ class Home extends React.Component {
             <div className="home-container">
                 <div className="botoes-home">
                     <Link to="/create-evaluation" className="botao-home">NOVA AVALIAÇÃO</Link>
-                    <Link to="/create-evaluation" className="botao-home">GUIA DO MPS.BR</Link>
+                    <Link to="/modelo" className="botao-home">GUIA DO MPS.BR</Link>
                 </div>
                 <div className="avaliacoes-lista">
                     {/* Aqui você pode listar as avaliações existentes */}
