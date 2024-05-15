@@ -7,7 +7,9 @@ class Nivel:
         self.db.conn.commit()
 
     def get_all_niveis_ordered(self):
-        self.db.cursor.execute("SELECT * FROM nivel_maturidade_mpsbr ORDER BY Nivel")
+        query = "SELECT * FROM nivel_maturidade_mpsbr ORDER BY Nivel"
+        print(f"Executando query: {query}")
+        self.db.cursor.execute(query)
         result = self.db.cursor.fetchall()
         return result
 

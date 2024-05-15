@@ -19,13 +19,29 @@ function ResultadosEsperados() {
   const [processos, setProcessos] = useState([]);
 
   useEffect(() => {
-    // Buscar níveis e processos para as caixas seletoras
-    getNiveis().then(data => setNiveis(data || []));
-    getProcessos().then(data => setProcessos(data || []));
+    carregarDadosIniciais();
+  }, []);
 
-    // Buscar resultados esperados
-    getResultadosEsperados().then(data => {
-      const resultadosFormatados = data.map(r => ({
+  const carregarDadosIniciais = async () => {
+    try {
+      const niveisData = await getNiveis();
+      const niveisFormatados = niveisData.map(n => ({ id: n[0], nivel: n[1] }));
+      setNiveis(niveisFormatados);
+
+      const processosData = await getProcessos();
+      const processosFormatados = processosData.map(p => ({ id: p[0], nome: p[1], tipo: p[2] }));
+      setProcessos(processosFormatados);
+
+      carregarResultadosEsperados();
+    } catch (error) {
+      console.error('Erro ao buscar dados iniciais:', error);
+    }
+  };
+
+  const carregarResultadosEsperados = async () => {
+    try {
+      const resultadosData = await getResultadosEsperados();
+      const resultadosFormatados = resultadosData.map(r => ({
         id: r[0],
         descricao: r[1],
         idNivelInicio: r[2],
@@ -33,52 +49,53 @@ function ResultadosEsperados() {
         idProcesso: r[4]
       }));
       setResultados(resultadosFormatados);
-    }).catch(error => {
+    } catch (error) {
       console.error('Erro ao buscar resultados esperados:', error);
       setResultados([]);
-    });
-  }, []);
+    }
+  };
 
-  const adicionarResultadoEsperado = () => {
+  const adicionarResultadoEsperado = async () => {
     const resultadoData = {
       descricao: novoResultado,
       id_nivel_intervalo_inicio: nivelInicioSelecionado,
       id_nivel_intervalo_fim: nivelFimSelecionado,
       id_processo: processoSelecionado
     };
-    createResultadoEsperado(resultadoData)
-      .then(novo => {
-        // Adiciona o novo resultado esperado na lista
-        setResultados([...resultados, novo]);
-        // Limpa os campos de entrada
-        setNovoResultado('');
-        setNivelInicioSelecionado('');
-        setNivelFimSelecionado('');
-        setProcessoSelecionado('');
-      })
-      .catch(error => console.error('Erro ao adicionar resultado esperado:', error));
+    try {
+      await createResultadoEsperado(resultadoData);
+      carregarResultadosEsperados();
+      setNovoResultado('');
+      setNivelInicioSelecionado('');
+      setNivelFimSelecionado('');
+      setProcessoSelecionado('');
+    } catch (error) {
+      console.error('Erro ao adicionar resultado esperado:', error);
+    }
   };
 
-  const removerResultadoEsperado = (id) => {
-    deleteResultadoEsperado(id)
-      .then(() => {
-        setResultados(resultados.filter(r => r.id !== id));
-      })
-      .catch(error => console.error('Erro ao remover resultado esperado:', error));
+  const removerResultadoEsperado = async (id) => {
+    try {
+      await deleteResultadoEsperado(id);
+      carregarResultadosEsperados();
+    } catch (error) {
+      console.error('Erro ao remover resultado esperado:', error);
+    }
   };
 
-  const atualizarResultadoEsperado = (id, descricao, idNivelInicio, idNivelFim, idProcesso) => {
+  const atualizarResultadoEsperado = async (id, descricao, idNivelInicio, idNivelFim, idProcesso) => {
     const atualizado = {
       nova_descricao: descricao,
       novo_id_nivel_intervalo_inicio: idNivelInicio,
       novo_id_nivel_intervalo_fim: idNivelFim,
       novo_id_processo: idProcesso
     };
-    updateResultadoEsperado(id, atualizado)
-      .then(() => {
-        setResultados(resultados.map(r => (r.id === id ? { ...r, descricao, idNivelInicio, idNivelFim, idProcesso } : r)));
-      })
-      .catch(error => console.error('Erro ao atualizar resultado esperado:', error));
+    try {
+      await updateResultadoEsperado(id, atualizado);
+      carregarResultadosEsperados();
+    } catch (error) {
+      console.error('Erro ao atualizar resultado esperado:', error);
+    }
   };
 
   return (
@@ -190,4 +207,5 @@ function ResultadosEsperados() {
     </div>
   );
 }
-export default ResultadosEsperados;  
+
+export default ResultadosEsperados;

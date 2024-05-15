@@ -76,7 +76,7 @@ def add_processo():
 def get_all_processos():
     try:
         processos = processo.get_all_processos()
-        return jsonify(processos), 200
+        return jsonify(processos), 200  
     except Exception as e:
         print(f"Erro ao buscar processos: {e}")
         return jsonify({"message": "Erro ao buscar processos", "error": str(e)}), 500

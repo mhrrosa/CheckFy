@@ -11,7 +11,9 @@ class Processo:
             raise e
 
     def get_all_processos(self):
-        self.db.cursor.execute("SELECT * FROM processo")
+        query = "SELECT * FROM processo ORDER BY id"
+        print(f"Executando query: {query}")
+        self.db.cursor.execute(query)
         result = self.db.cursor.fetchall()
         return result
 
