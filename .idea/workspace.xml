@@ -5,32 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="28f8c9d0-1005-4fc0-bb33-f54aaebb8478" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Front/src/img/logo_horizontal.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Front/src/img/user.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/CheckFy.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front/src/components/Header.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/components/Header.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front/src/pages/CreateEvaluation.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/pages/CreateEvaluation.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front/src/pages/Home.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/pages/Home.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front/src/pages/Niveis.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/pages/Niveis.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front/src/styles/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/styles/App.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front/src/styles/CreateEvaluation.css" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/styles/CreateEvaluation.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front/src/styles/Evaluation.css" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/styles/Evaluation.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front/src/styles/Footer.css" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/styles/Footer.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front/src/styles/Header.css" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/styles/Header.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front/src/styles/Home.css" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/styles/Home.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Front/src/styles/Niveis.css" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/styles/Niveis.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/back/Database.py" beforeDir="false" afterPath="$PROJECT_DIR$/back/Database.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/back/Nivel.py" beforeDir="false" afterPath="$PROJECT_DIR$/back/Nivel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/back/Processo.py" beforeDir="false" afterPath="$PROJECT_DIR$/back/Processo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/back/ResultadoEsperado.py" beforeDir="false" afterPath="$PROJECT_DIR$/back/ResultadoEsperado.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/back/commit.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/back/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/back/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/banco" beforeDir="false" afterPath="$PROJECT_DIR$/database/banco" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/Avaliacao.py" beforeDir="false" afterPath="$PROJECT_DIR$/back/Avaliacao.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
