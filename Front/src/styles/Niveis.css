@@ -1,0 +1,83 @@
+body {
+    margin: 0%;
+    padding: 0%;
+    font-family: 'Roboto', sans-serif;
+    background-color: #eaeaea;
+}
+
+.niveis-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80vh;
+}
+
+.form-section {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    background: #001034;
+    padding: 30px;
+    border-radius: 20px;
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+}
+
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #00437e;
+}
+
+.level-management-title {
+    color: #ffffff;
+    font-size: 2em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.input-field {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+.button-add {
+    padding: 10px;
+    font-size: 1.1em;
+    font-weight: bolder;
+    color: white;
+    border: 4px solid #00437e;
+    border-radius: 12px;
+    cursor: pointer;
+    background-color: #001034;
+    transition: background-color 0.3s;
+}
+
+.button-add:hover {
+    background-color: #00437e;
+}
+
+.input-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo-form {
+    padding-top: 20px;
+    width: 10em;
+    display: block;
+    margin: auto;
+}
