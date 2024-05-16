@@ -49,12 +49,12 @@ function CreateEvaluation() {
             <input
               className="input-field"
               type="text"
-              // value={companyName}
-              // onChange={(e) => setCompanyName(e.target.value)}
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
               placeholder="Digite o nome da avaliação"
             />
           </div>
-          {/* {adjuntoEmails.map((email, index) => (
+          { {adjuntoEmails.map((email, index) => (
             <div key={index} className="input-wrapper">
                 <div className="input-group">
                 <label className="label">Email:</label>
@@ -72,7 +72,7 @@ function CreateEvaluation() {
             </div>
           ))}
           <button className="add-button" type="button" onClick={() => addEmail(setAdjuntoEmails)}>Adicionar outro email de Avaliador Adjunto</button> */}
-          {/* {colaboradorEmails.map((email, index) => (
+          {{colaboradorEmails.map((email, index) => (
             <div key={index} className="input-wrapper">
               <div className="input-group">
                 <label className="label">Email:</label>
@@ -95,8 +95,8 @@ function CreateEvaluation() {
             <input
               className="input-field"
               type="text"
-              // value={companyName}
-              // onChange={(e) => setCompanyName(e.target.value)}
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
               placeholder="Digite a descriçaõ da avaliação"
             />
           </div>
@@ -105,8 +105,8 @@ function CreateEvaluation() {
             <input
               className="input-field"
               type="text"
-              // value={companyName}
-              // onChange={(e) => setCompanyName(e.target.value)}
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
               placeholder="Digite o nível MPS.BR que a empresa deseja alcançar"
             />
           </div>
