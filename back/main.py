@@ -4,6 +4,7 @@ from Database import Database
 from Nivel import Nivel
 from Processo import Processo
 from ResultadoEsperado import ResultadoEsperado
+from Avaliacao import Avaliacao
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Permitir todas as origens
@@ -21,6 +22,7 @@ db = Database(**db_config)
 nivel = Nivel(db)
 processo = Processo(db)
 resultado_esperado = ResultadoEsperado(db)
+avaliacao = Avaliacao(db)
 
 @app.route('/add_nivel', methods=['POST'])
 def add_nivel():
@@ -146,5 +148,41 @@ def update_resultado_esperado(resultado_id):
         print(f"Erro ao atualizar resultado esperado: {e}")
         return jsonify({"message": "Erro ao atualizar resultado esperado", "error": str(e)}), 500
 
+@app.route('/add_projeto', methods=['POST'])
+def add_projeto():
+    projeto_data = request.json
+    try:
+        avaliacao.adicionar_projeto(**projeto_data)
+        return jsonify({"message": "Projeto adicionado com sucesso"}), 200
+    except Exception as e:
+        print(f"Erro ao adicionar projeto: {e}")
+        return jsonify({"message": "Erro ao adicionar projeto", "error": str(e)}), 500
+
+@app.route('/listar_projetos', methods=['GET'])
+def listar_projetos():
+    try:
+        projetos = avaliacao.listar_projetos()
+        return jsonify(projetos), 200
+    except Exception as e:
+        print(f"Erro ao listar projetos: {e}")
+        return jsonify({"message": "Erro ao listar projetos", "error": str(e)}), 500
+
+@app.route('/deletar_projeto/<int:projeto_id>', methods=['DELETE'])
+def deletar_projeto(projeto_id):
+    try:
+        avaliacao.deletar_projeto(projeto_id)
+        return jsonify({"message": "Projeto deletado com sucesso"}), 200
+    except Exception as e:
+        return jsonify({"message": "Erro ao deletar projeto", "error": str(e)}), 500
+
+@app.route('/atualizar_projeto/<int:projeto_id>', methods=['PUT'])
+def atualizar_projeto(projeto_id):
+    projeto_data = request.json
+    try:
+        avaliacao.atualizar_projeto(projeto_id, **projeto_data)
+        return jsonify({"message": "Projeto atualizado com sucesso"}), 200
+    except Exception as e:
+        print(f"Erro ao atualizar projeto: {e}")
+        return jsonify({"message": "Erro ao atualizar projeto", "error": str(e)}), 500
 if __name__ == '__main__':
     app.run(debug=True)
