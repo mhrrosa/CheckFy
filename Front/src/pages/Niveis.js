@@ -55,41 +55,6 @@ function Niveis() {
 
   return (
     <div className="niveis-container">
-<<<<<<< HEAD
-      <h1>Gerenciamento de Níveis</h1>
-      <input
-        type="text"
-        placeholder="Novo Nível"
-        value={novoNivel}
-        onChange={(e) => setNovoNivel(e.target.value)}
-      />
-      <button onClick={adicionarNivel}>Adicionar Nível</button>
-      {niveis.length > 0 ? (
-        <table>
-          <thead>
-            <tr>
-              <th>Nível</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {niveis.map(nivel => (
-              <tr key={nivel.id}>
-                <td>
-                  <input
-                    type="text"
-                    value={nivel.nivel}
-                    onChange={(e) => {
-                      const valorAtualizado = e.target.value;
-                      setNiveis(prevNiveis => prevNiveis.map(n => (n.id === nivel.id ? { ...n, nivel: valorAtualizado } : n)));
-                    }}
-                  />
-                </td>
-                <td>
-                  <button onClick={() => atualizarNivel(nivel.id, nivel.nivel)}>Atualizar</button>
-                  <button onClick={() => removerNivel(nivel.id)}>Remover</button>
-                </td>
-=======
       <div className="form-section">
         <button className="close-button" onClick={() => navigate('/modelo')}>
           <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -115,7 +80,6 @@ function Niveis() {
               <tr>
                 <th>Nível</th>
                 <th>Ações</th>
->>>>>>> origin/DEV_Front
               </tr>
             </thead>
             <tbody>
