@@ -148,38 +148,38 @@ def update_resultado_esperado(resultado_id):
         print(f"Erro ao atualizar resultado esperado: {e}")
         return jsonify({"message": "Erro ao atualizar resultado esperado", "error": str(e)}), 500
 
-@app.route('/add_projeto', methods=['POST'])
-def add_projeto():
+@app.route('/add_avaliacao', methods=['POST'])
+def add_avaliacao():
     projeto_data = request.json
     try:
-        avaliacao.adicionar_projeto(**projeto_data)
+        avaliacao.adicionar_avaliacao(**projeto_data)
         return jsonify({"message": "Projeto adicionado com sucesso"}), 200
     except Exception as e:
         print(f"Erro ao adicionar projeto: {e}")
         return jsonify({"message": "Erro ao adicionar projeto", "error": str(e)}), 500
 
-@app.route('/listar_projetos', methods=['GET'])
-def listar_projetos():
+@app.route('/listar_avaliacoes', methods=['GET'])
+def listar_avaliacoes():
     try:
-        projetos = avaliacao.listar_projetos()
+        projetos = avaliacao.listar_avaliacoes()
         return jsonify(projetos), 200
     except Exception as e:
         print(f"Erro ao listar projetos: {e}")
         return jsonify({"message": "Erro ao listar projetos", "error": str(e)}), 500
 
-@app.route('/deletar_projeto/<int:projeto_id>', methods=['DELETE'])
-def deletar_projeto(projeto_id):
+@app.route('/deletar_avaliacao/<int:projeto_id>', methods=['DELETE'])
+def deletar_avaliacao(projeto_id):
     try:
-        avaliacao.deletar_projeto(projeto_id)
+        avaliacao.deletar_avaliacao(projeto_id)
         return jsonify({"message": "Projeto deletado com sucesso"}), 200
     except Exception as e:
         return jsonify({"message": "Erro ao deletar projeto", "error": str(e)}), 500
 
-@app.route('/atualizar_projeto/<int:projeto_id>', methods=['PUT'])
-def atualizar_projeto(projeto_id):
+@app.route('/atualizar_avaliacao/<int:projeto_id>', methods=['PUT'])
+def atualizar_avaliacao(projeto_id):
     projeto_data = request.json
     try:
-        avaliacao.atualizar_projeto(projeto_id, **projeto_data)
+        avaliacao.atualizar_avaliacao(projeto_id, **projeto_data)
         return jsonify({"message": "Projeto atualizado com sucesso"}), 200
     except Exception as e:
         print(f"Erro ao atualizar projeto: {e}")
