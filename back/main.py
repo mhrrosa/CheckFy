@@ -5,6 +5,7 @@ from Nivel import Nivel
 from Processo import Processo
 from ResultadoEsperado import ResultadoEsperado
 from Avaliacao import Avaliacao
+from Projeto import Projeto
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Permitir todas as origens
@@ -23,6 +24,7 @@ nivel = Nivel(db)
 processo = Processo(db)
 resultado_esperado = ResultadoEsperado(db)
 avaliacao = Avaliacao(db)
+projeto = Projeto(db)
 
 @app.route('/add_nivel', methods=['POST'])
 def add_nivel():
@@ -180,6 +182,43 @@ def atualizar_avaliacao(projeto_id):
     projeto_data = request.json
     try:
         avaliacao.atualizar_avaliacao(projeto_id, **projeto_data)
+        return jsonify({"message": "Projeto atualizado com sucesso"}), 200
+    except Exception as e:
+        print(f"Erro ao atualizar projeto: {e}")
+        return jsonify({"message": "Erro ao atualizar projeto", "error": str(e)}), 500
+
+@app.route('/add_projeto', methods=['POST'])
+def add_projeto():
+    projeto_data = request.json
+    try:
+        projeto.add_projeto(**projeto_data)
+        return jsonify({"message": "Projeto adicionado com sucesso"}), 200
+    except Exception as e:
+        print(f"Erro ao adicionar projeto: {e}")
+        return jsonify({"message": "Erro ao adicionar projeto", "error": str(e)}), 500
+
+@app.route('/get_projetos_by_id_avaliacao/<int:id_avaliacao>', methods=['GET'])
+def get_projetos_by_id_avaliacao(id_avaliacao):
+    try:
+        projetos = projeto.get_projetos_by_id_avaliacao(id_avaliacao)
+        return jsonify(projetos), 200
+    except Exception as e:
+        print(f"Erro ao buscar projetos por ID de avaliação: {e}")
+        return jsonify({"message": "Erro ao buscar projetos por ID de avaliação", "error": str(e)}), 500
+
+@app.route('/delete_projeto/<int:projeto_id>', methods=['DELETE'])
+def delete_projeto(projeto_id):
+    try:
+        projeto.delete_projeto(projeto_id)
+        return jsonify({"message": "Projeto deletado com sucesso"}), 200
+    except Exception as e:
+        return jsonify({"message": "Erro ao deletar projeto", "error": str(e)}), 500
+
+@app.route('/update_projeto/<int:projeto_id>', methods=['PUT'])
+def update_projeto(projeto_id):
+    projeto_data = request.json
+    try:
+        projeto.update_projeto(projeto_id, projeto_data)
         return jsonify({"message": "Projeto atualizado com sucesso"}), 200
     except Exception as e:
         print(f"Erro ao atualizar projeto: {e}")

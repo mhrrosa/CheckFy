@@ -9,7 +9,7 @@ class Avaliacao:
         self.db.conn.commit()
 
     def listar_avaliacoes(self):
-        query = "SELECT * FROM avaliacao"
+        query = "SELECT * FROM avaliacao "
         print(f"Executando query: {query}")
         self.db.cursor.execute(query)
         result = self.db.cursor.fetchall()
