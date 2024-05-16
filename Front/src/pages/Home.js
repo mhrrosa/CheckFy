@@ -6,24 +6,23 @@ class Home extends React.Component {
     render() {
         return (
             <div className="home-container">
-                <h1 className="home-title">Página Inicial - Checkfy</h1>
-                <Link to="/create-evaluation" className="start-button">Iniciar Nova Avaliação</Link>
-                <div className="evaluation-list">
+                <div className="botoes-home">
+                    <Link to="/create-evaluation" className="botao-home">NOVA AVALIAÇÃO</Link>
+                    <Link to="/modelo" className="botao-home">GUIA DO MPS.BR</Link>
+                </div>
+                <div className="avaliacoes-lista">
                     {/* Aqui você pode listar as avaliações existentes */}
-                    <div className="evaluation-item">
-                        <p>Avaliação 1 - Em andamento</p>
+                    <p>Avaliações criadas:</p>
+                    <div className="avaliacao-item">
+                        <p>Avaliação 1 - Concluída</p>
                     </div>
-                    <div className="evaluation-item">
-                        <p>Avaliação 2 - Concluída</p>
+                    <div className="avaliacao-item">
+                        <p>Avaliação 2 - Em andamento</p>
+                    </div>
+                    <div className="avaliacao-item">
+                        <p>Avaliação 3 - Não iniciado</p>
                     </div>
                     {/* Adicione mais itens conforme necessário */}
-                </div>
-                <div className="home-container">
-                    <Link to="/modelo" className="model-button">Modelo MPS.BR</Link>
-                    <div className="evaluation-list">
-                        {/* Aqui você pode listar as avaliações existentes */}
-                        {/* Outros conteúdos */}
-                    </div>
                 </div>
             </div>
         );
