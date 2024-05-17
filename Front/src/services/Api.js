@@ -66,7 +66,6 @@ function deleteRequest(url) {
   });
 }
 
-
 function generateRandomArray() {
   const titles = ["Gerenciador", "Coordenador", "Teste", "Revisão", "Análise"];
   const length = Math.floor(Math.random() * 5) + 3; // Gera entre 3 e 7 elementos
@@ -79,34 +78,29 @@ function generateRandomArray() {
 }
 
 function startNewEvaluation(data) {
-  const url = `${baseUrl}/start-evaluation`;
+  const url = '/add_avaliacao';  // Certifique-se de que este é o endpoint correto
   console.log('Enviando dados para iniciar nova avaliação:', data);
-  post(url, data);
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const response = generateRandomArray();
+  return post(url, data)
+    .then(response => {
       console.log('Resposta do início da avaliação:', response);
-      resolve(response);
-    }, 1000);
-  });
+      return response;
+    });
 }
 
 function submitEvaluationData(data) {
-  const url = `${baseUrl}/submit-data`;
+  const url = '/submit-data';
   console.log('Dados enviados para avaliação:', data);
-  post(url, data);
-  return new Promise((resolve) => {
-    setTimeout(() => {
+  return post(url, data)
+    .then(response => {
       if (Math.random() > 0.7) { // 30% de chance de finalizar
         console.log('Avaliação finalizada');
-        resolve({ finalizada: true });
+        return { finalizada: true };
       } else {
         const newSetup = generateRandomArray();
         console.log('Nova configuração recebida do back-end:', newSetup);
-        resolve({ setup: newSetup });
+        return { setup: newSetup };
       }
-    }, 1000);
-  });
+    });
 }
 
 // Funções para Níveis

@@ -2,11 +2,23 @@ class Avaliacao:
     def __init__(self, db):
         self.db = db
 
-    def adicionar_avaliacao(self, nome, descricao, id_avaliador_lider, status, modelo, id_atividade, id_empresa, id_nivel_solicitado, id_nivel_atribuido, parece_nivel_final):
-        query = "INSERT INTO avaliacao (Nome, Descricao, ID_Avaliador_Lider, Status, Modelo, ID_Atividade, ID_Empresa, ID_Nivel_Solicitado, ID_Nivel_Atribuido, Parece_Nivel_Final) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        values = (nome, descricao, id_avaliador_lider, status, modelo, id_atividade, id_empresa, id_nivel_solicitado, id_nivel_atribuido, parece_nivel_final)
-        self.db.cursor.execute(query, values)
-        self.db.conn.commit()
+    def adicionar_avaliacao(self, nome, descricao, id_nivel_solicitado, adjunto_emails, colaborador_emails):
+        query = "INSERT INTO avaliacao (Nome, Descricao, Status, ID_Nivel_Solicitado, ID_Avaliador_Lider, ID_Atividade) VALUES (%s, %s, %s, %s, %s, %s)"
+        values = (nome, descricao, "Em andamento", id_nivel_solicitado, 1, 1)
+        self.db.execute_query(query, values)
+        self.db.commit()
+
+        avaliacao_id = self.db.cursor.lastrowid
+
+        for email in adjunto_emails:
+            query = "INSERT INTO avaliador_adjunto (Email, ID_Avaliacao) VALUES (%s, %s)"
+            self.db.execute_query(query, (email, avaliacao_id))
+
+        for email in colaborador_emails:
+            query = "INSERT INTO colaborador_empresarial (Email, ID_Avaliacao) VALUES (%s, %s)"
+            self.db.execute_query(query, (email, avaliacao_id))
+
+        self.db.commit()
 
     def listar_avaliacoes(self):
         query = "SELECT * FROM avaliacao "

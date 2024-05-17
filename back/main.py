@@ -8,7 +8,7 @@ from Avaliacao import Avaliacao
 from Projeto import Projeto
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})  # Permitir todas as origens
+CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
 
 # Conexão com o banco de dados MySQL
 db_config = {
@@ -152,13 +152,21 @@ def update_resultado_esperado(resultado_id):
 
 @app.route('/add_avaliacao', methods=['POST'])
 def add_avaliacao():
-    projeto_data = request.json
+    avaliacao_data = request.json
     try:
-        avaliacao.adicionar_avaliacao(**projeto_data)
-        return jsonify({"message": "Projeto adicionado com sucesso"}), 200
+        nome = avaliacao_data['companyName']
+        descricao = avaliacao_data['descricao']
+        nivel_solicitado = avaliacao_data['nivelSolicitado']
+        adjunto_emails = avaliacao_data['adjuntoEmails']
+        colaborador_emails = avaliacao_data['colaboradorEmails']
+        
+        # Lógica para adicionar a avaliação no banco de dados
+        avaliacao.adicionar_avaliacao(nome, descricao, nivel_solicitado, adjunto_emails, colaborador_emails)
+        
+        return jsonify({"message": "Avaliação adicionada com sucesso"}), 200
     except Exception as e:
-        print(f"Erro ao adicionar projeto: {e}")
-        return jsonify({"message": "Erro ao adicionar projeto", "error": str(e)}), 500
+        print(f"Erro ao adicionar avaliação: {e}")
+        return jsonify({"message": "Erro ao adicionar avaliação", "error": str(e)}), 500
 
 @app.route('/listar_avaliacoes', methods=['GET'])
 def listar_avaliacoes():
@@ -223,5 +231,7 @@ def update_projeto(projeto_id):
     except Exception as e:
         print(f"Erro ao atualizar projeto: {e}")
         return jsonify({"message": "Erro ao atualizar projeto", "error": str(e)}), 500
+
+
 if __name__ == '__main__':
     app.run(debug=True)
