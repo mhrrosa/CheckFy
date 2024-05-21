@@ -3,8 +3,8 @@ class Avaliacao:
         self.db = db
 
     def adicionar_avaliacao(self, nome, descricao, id_nivel_solicitado, adjunto_emails, colaborador_emails):
-        query = "INSERT INTO avaliacao (Nome, Descricao, Status, ID_Nivel_Solicitado, ID_Avaliador_Lider, ID_Atividade) VALUES (%s, %s, %s, %s, %s, %s)"
-        values = (nome, descricao, "Em andamento", id_nivel_solicitado, 1, 1)
+        query = "INSERT INTO avaliacao (Nome, Descricao, Status, ID_Empresa, ID_Nivel_Solicitado, ID_Avaliador_Lider, ID_Atividade) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        values = (nome, descricao, "Em andamento", 1, id_nivel_solicitado, 1, 1)
         self.db.execute_query(query, values)
         self.db.commit()
 
