@@ -36,8 +36,8 @@ function CreateEvaluation() {
       colaboradorEmails
     };
     try {
-      const response = await startNewEvaluation(data);
-      navigate('/evaluation', { state: { setup: response } });
+      await startNewEvaluation(data);
+      navigate('/'); // Redireciona para a Home após criar a avaliação
     } catch (error) {
       console.error('Erro ao iniciar avaliação:', error);
     }

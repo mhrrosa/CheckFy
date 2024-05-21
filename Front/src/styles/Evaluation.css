@@ -53,13 +53,18 @@
   background-color: #0056b3;
 }
 
-  .sidebar button.current-step {
+.sidebar button.current-step {
   background-color: #28a745; /* Cor de fundo para indicar a etapa atual */
-  }
+}
+
+.sidebar button:disabled {
+  background-color: #6c757d; /* Cor de fundo para botões desabilitados */
+  cursor: not-allowed;
+}
 
 .main-content {
   padding: 20px;
-  margin-left: 36%; 
+  margin-right: 220px; /* Ajuste conforme necessário */
   flex: 1;
 }
 

@@ -168,6 +168,7 @@ def add_avaliacao():
         print(f"Erro ao adicionar avaliação: {e}")
         return jsonify({"message": "Erro ao adicionar avaliação", "error": str(e)}), 500
 
+
 @app.route('/listar_avaliacoes', methods=['GET'])
 def listar_avaliacoes():
     try:
@@ -181,19 +182,45 @@ def listar_avaliacoes():
 def deletar_avaliacao(projeto_id):
     try:
         avaliacao.deletar_avaliacao(projeto_id)
-        return jsonify({"message": "Projeto deletado com sucesso"}), 200
+        return jsonify({"message": "Avaliação deletada com sucesso"}), 200
     except Exception as e:
-        return jsonify({"message": "Erro ao deletar projeto", "error": str(e)}), 500
+        return jsonify({"message": "Erro ao deletar avaliacão", "error": str(e)}), 500
 
 @app.route('/atualizar_avaliacao/<int:projeto_id>', methods=['PUT'])
 def atualizar_avaliacao(projeto_id):
     projeto_data = request.json
     try:
         avaliacao.atualizar_avaliacao(projeto_id, **projeto_data)
-        return jsonify({"message": "Projeto atualizado com sucesso"}), 200
+        return jsonify({"message": "Avaliação atualizada com sucesso"}), 200
     except Exception as e:
-        print(f"Erro ao atualizar projeto: {e}")
-        return jsonify({"message": "Erro ao atualizar projeto", "error": str(e)}), 500
+        print(f"Erro ao atualizar avaliação: {e}")
+        return jsonify({"message": "Erro ao atualizar avaliação", "error": str(e)}), 500
+
+@app.route('/atualizar_atividade/<int:projeto_id>', methods=['PUT'])
+def atualizar_atividade(projeto_id):
+    projeto_data = request.json
+    try:
+        nova_id_atividade = projeto_data.get('id_atividade')
+        if nova_id_atividade is None:
+            return jsonify({"message": "Campo 'id_atividade' ausente no JSON"}), 400
+        
+        avaliacao.atualizar_id_atividade(projeto_id, nova_id_atividade)
+        return jsonify({"message": "ID_Atividade atualizada com sucesso"}), 200
+    except Exception as e:
+        print(f"Erro ao atualizar ID_Atividade: {e}")
+        return jsonify({"message": "Erro ao atualizar ID_Atividade", "error": str(e)}), 500
+
+@app.route('/avaliacao/<int:projeto_id>', methods=['GET'])
+def obter_avaliacao(projeto_id):
+    try:
+        avaliacao_data = avaliacao.obter_avaliacao(projeto_id)
+        if avaliacao_data:
+            return jsonify(avaliacao_data), 200
+        else:
+            return jsonify({"message": "Avaliação não encontrada"}), 404
+    except Exception as e:
+        print(f"Erro ao obter avaliação: {e}")
+        return jsonify({"message": "Erro ao obter avaliação", "error": str(e)}), 500
 
 @app.route('/add_projeto', methods=['POST'])
 def add_projeto():
