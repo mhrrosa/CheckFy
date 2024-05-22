@@ -154,9 +154,10 @@ function ResultadosEsperados() {
           <img src={logo} className="logo" alt="Logo Checkfy" />
           <button className="button" onClick={adicionarResultadoEsperado}>ADICIONAR</button>
         </div>
+        <p className="resultados-esperados-cadastrados-title">RESULTADOS ESPERADOS CADASTRADOS:</p>
         {resultados.length > 0 ? (
           <table>
-            <thead>
+            {/* <thead>
               <tr>
                 <th>Descrição</th>
                 <th>Nível Início</th>
@@ -164,22 +165,25 @@ function ResultadosEsperados() {
                 <th>Processo</th>
                 <th>Ações</th>
               </tr>
-            </thead>
+            </thead> */}
             <tbody>
               {resultados.map(resultado => (
                 <tr key={resultado.id}>
-                  <td>
-                    <input
+                  <td className='nome-inserido-td'>
+                    <textarea
+                      className='textarea-preenchido'
                       type="text"
                       value={resultado.descricao}
                       onChange={(e) => {
                         const novaDescricao = e.target.value;
                         setResultados(resultados.map(r => (r.id === resultado.id ? { ...r, descricao: novaDescricao } : r)));
                       }}
-                    />
+                    >
+                    </textarea>
                   </td>
                   <td>
                     <select
+                      className='select-preenchido'
                       value={resultado.idNivelInicio}
                       onChange={(e) => {
                         const idNivelInicioAtualizado = e.target.value;
@@ -193,6 +197,7 @@ function ResultadosEsperados() {
                   </td>
                   <td>
                     <select
+                      className='select-preenchido'
                       value={resultado.idNivelFim}
                       onChange={(e) => {
                         const idNivelFimAtualizado = e.target.value;
@@ -204,8 +209,9 @@ function ResultadosEsperados() {
                       ))}
                     </select>
                   </td>
-                  <td>
+                  <td className='processo-inserido-td'>
                     <select
+                      className='select-preenchido'
                       value={resultado.idProcesso}
                       onChange={(e) => {
                         const idProcessoAtualizado = e.target.value;
@@ -217,13 +223,16 @@ function ResultadosEsperados() {
                       ))}
                     </select>
                   </td>
-                  <td>
-                    <button
+                  <td className='acoes-td'>
+                    <button className='button-acao'
                       onClick={() => atualizarResultadoEsperado(resultado.id, resultado.descricao, resultado.idNivelInicio, resultado.idNivelFim, resultado.idProcesso)}
                     >
-                      Atualizar
+                      ATUALIZAR
                     </button>
-                    <button onClick={() => removerResultadoEsperado(resultado.id)}>Remover</button>
+                    <button className='button-acao' onClick={() => removerResultadoEsperado(resultado.id)}
+                    >
+                      REMOVER
+                    </button>
                   </td>
                 </tr>
               ))}
