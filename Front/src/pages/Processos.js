@@ -97,20 +97,15 @@ function Processos() {
           <img src={logo} className="logo" alt="Logo Checkfy" />
           <button className="button" onClick={adicionarProcesso}>CRIAR</button>
         </div>
+        <p className="processos-cadastrados-title">PROCESSOS CADASTRADOS:</p>
         {processos.length > 0 ? (
           <table>
-            <thead>
-              <tr>
-                <th>Descrição</th>
-                <th>Tipo</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
             <tbody>
               {processos.map(processo => (
                 <tr key={processo.id}>
-                  <td>
+                  <td className='nome-inserido-td'>
                     <input
+                      className='input-preenchido'
                       type="text"
                       value={processo.descricao}
                       onChange={(e) => {
@@ -121,6 +116,7 @@ function Processos() {
                   </td>
                   <td>
                     <input
+                    className='input-preenchido'
                       type="text"
                       value={processo.tipo}
                       onChange={(e) => {
@@ -129,9 +125,11 @@ function Processos() {
                       }}
                     />
                   </td>
-                  <td>
-                    <button onClick={() => atualizarProcesso(processo.id, processo.descricao, processo.tipo)}>Atualizar</button>
-                    <button onClick={() => removerProcesso(processo.id)}>Remover</button>
+                  <td className='acoes-td'>
+                    <button className='button-acao' 
+                      onClick={() => atualizarProcesso(processo.id, processo.descricao, processo.tipo)}>ATUALIZAR</button>
+                    <button className='button-acao'
+                      onClick={() => removerProcesso(processo.id)}>REMOVER</button>
                   </td>
                 </tr>
               ))}

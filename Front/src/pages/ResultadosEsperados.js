@@ -157,15 +157,6 @@ function ResultadosEsperados() {
         <p className="resultados-esperados-cadastrados-title">RESULTADOS ESPERADOS CADASTRADOS:</p>
         {resultados.length > 0 ? (
           <table>
-            {/* <thead>
-              <tr>
-                <th>Descrição</th>
-                <th>Nível Início</th>
-                <th>Nível Fim</th>
-                <th>Processo</th>
-                <th>Ações</th>
-              </tr>
-            </thead> */}
             <tbody>
               {resultados.map(resultado => (
                 <tr key={resultado.id}>

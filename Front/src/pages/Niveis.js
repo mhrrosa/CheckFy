@@ -74,19 +74,15 @@ function Niveis() {
           <button className='button-add' onClick={adicionarNivel}>ADICIONAR</button>
         </div>
         <img src={logo} className="logo-form" alt="Logo Checkfy" />
+        <p className="processos-cadastrados-title">NÍVEIS CADASTRADOS:</p>
         {niveis.length > 0 ? (
           <table>
-            <thead>
-              <tr>
-                <th>Nível</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
             <tbody>
               {niveis.map(nivel => (
                 <tr key={nivel.id}>
-                  <td>
+                  <td className='nivel-inserido-td'>
                     <input
+                      className='input-nivel-preenchido'
                       type="text"
                       value={nivel.nivel}
                       onChange={(e) => {
@@ -95,9 +91,11 @@ function Niveis() {
                       }}
                     />
                   </td>
-                  <td>
-                    <button onClick={() => atualizarNivel(nivel.id, nivel.nivel)}>Atualizar</button> {/* Novo botão */}
-                    <button onClick={() => removerNivel(nivel.id)}>Remover</button>
+                  <td className='acoes-td'>
+                    <button className='button-acao'
+                      onClick={() => atualizarNivel(nivel.id, nivel.nivel)}>ATUALIZAR</button> {/* Novo botão */}
+                    <button className='button-acao'
+                      onClick={() => removerNivel(nivel.id)}>REMOVER</button>
                   </td>
                 </tr>
               ))}
