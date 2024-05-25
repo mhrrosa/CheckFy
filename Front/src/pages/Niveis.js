@@ -55,7 +55,7 @@ function Niveis() {
 
   return (
     <div className="niveis-container">
-      <div className="form-section">
+      <div className="form-section-niveis">
         <button className="close-button" onClick={() => navigate('/modelo')}>
           <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -63,7 +63,7 @@ function Niveis() {
           </svg>
         </button>
         <h1 className='level-management-title'>GERENCIAMENTO DE NÍVEIS</h1>
-        <div className="input-button">
+        <div className="input-wrapper">
           <input
             className="input-field"
             type="text"
@@ -71,9 +71,14 @@ function Niveis() {
             value={novoNivel}
             onChange={(e) => setNovoNivel(e.target.value)}
           />
-          <button className='button-add' onClick={adicionarNivel}>ADICIONAR</button>
+          <input
+            className="input-field"
+            type="text"
+            placeholder="Nome do nível"
+            //value={novoNivel}
+            //onChange={(e) => setNomeNovoNivel(e.target.value)}
+          />
         </div>
-        <img src={logo} className="logo-form" alt="Logo Checkfy" />
         <p className="processos-cadastrados-title">NÍVEIS CADASTRADOS:</p>
         {niveis.length > 0 ? (
           <table>
@@ -91,10 +96,21 @@ function Niveis() {
                       }}
                     />
                   </td>
-                  <td className='acoes-td'>
-                    <button className='button-acao'
+                  <td className='nome-nivel-inserido-td'>
+                    <input
+                    className='input-preenchido-niveis'
+                      type="text"
+                      //value={processo.tipo}
+                      onChange={(e) => {
+                        //const novoTipo = e.target.value;
+                        //setProcessos(prevProcessos => prevProcessos.map(p => (p.id === processo.id ? { ...p, tipo: novoTipo } : p)));
+                      }}
+                    />
+                  </td>
+                  <td className='acoes-td-niveis'>
+                    <button className='button-acao-niveis'
                       onClick={() => atualizarNivel(nivel.id, nivel.nivel)}>ATUALIZAR</button> {/* Novo botão */}
-                    <button className='button-acao'
+                    <button className='button-acao-niveis'
                       onClick={() => removerNivel(nivel.id)}>REMOVER</button>
                   </td>
                 </tr>
@@ -104,6 +120,10 @@ function Niveis() {
         ) : (
           <p>Nenhum nível encontrado.</p>
         )}
+        <div className='logo-and-button'>
+          <img src={logo} className="logo" alt="Logo Checkfy" />
+          <button className="button" onClick={""}>ADICIONAR</button>
+        </div>
       </div>
     </div>
   );

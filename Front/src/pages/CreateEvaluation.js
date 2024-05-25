@@ -146,10 +146,7 @@ function CreateEvaluation() {
             </div>
           ))}
         </div>
-        <div className='logo-and-button'>
-          <img src={logo} className="logo" alt="Logo Checkfy" />
-          <button className="button" onClick={handleStartEvaluation}>CRIAR</button>
-        </div>
+        
       </div>
     </div>
   );
