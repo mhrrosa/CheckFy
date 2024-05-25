@@ -9,8 +9,8 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 50px;
-    margin-bottom: 50px;
+    justify-content: center;
+    height: 100vh;
 }
 
 .form-section {
@@ -42,6 +42,10 @@ body {
     text-align: center;
 }
 
+/* .lista-input {
+    
+} */
+
 .input-wrapper {
     display: flex;
     flex-direction: column;
@@ -66,53 +70,34 @@ body {
     box-sizing: border-box;
 }
 
-.input-group {
-    width: 100%;
+/* .input-group {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-  }
+    width: 100%;
+} */
 
-.input-field-email {
-    flex: 1;
-    padding: 10px;
-    margin: 5px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1em;
-    box-sizing: border-box;
-}
-
-.button-remove-email {
+/* .remove-button, .add-button {
     margin-top: 5px;
     padding: 5px 10px;
-    border: 3px solid #7e0000;
+    background-color: #dc3545;
     color: white;
-    border-radius: 10px;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
-    background-color: #001034;
     transition: background-color 0.3s;
 }
 
-.button-remove-email:hover {
-    background-color: #7e0000;
+.remove-button:hover {
+    background-color: #c82333;
 }
 
-.button-add-email {
-    padding: 3px 10px 0px 10px;
-    font-weight: bolder;
-    color: white;
-    border: 3px solid #00437e;
-    border-radius: 15px;
-    cursor: pointer;
-    background-color: #001034;
-    transition: background-color 0.3s;
-    margin-left: 10px;
+.add-button {
+    background-color: #007bff;
 }
 
-.button-add-email:hover {
-    background-color: #00437e;
-}
+.add-button:hover {
+    background-color: #0069d9;
+} */
 
 .button {
     padding: 10px 20px;

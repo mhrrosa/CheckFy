@@ -9,8 +9,8 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 50px;
-    margin-bottom: 50px;
+    justify-content: center;
+    height: 80vh;
 }
 
 .form-section {
@@ -80,51 +80,4 @@ body {
     width: 10em;
     display: block;
     margin: auto;
-}
-
-.processos-cadastrados-title {
-    color: #ffffff;
-    font-weight: bold;
-    font-size: 1.1em;
-    margin-bottom: 10px;
-    margin-left: 3px;
-    text-align: left;
-}
-
-tr{
-    display: flex;
-    align-items: center;
-}
-
-td {
-    margin: 0px 10px;
-}
-
-td:first-child {
-    margin-left: 0; /* Remove a margem à esquerda do primeiro td */
-}
-
-td:last-child {
-    margin-right: 0; /* Remove a margem à esquerda do primeiro td */
-}
-
-.nivel-inserido-td {
-    width: 3em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.input-nivel-preenchido {
-    max-width: 80%; /* Ajuste este valor conforme necessário */
-    width: 100%;
-    height:40px;
-    padding: 5px;
-    margin: 5px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1em;
-    box-sizing: border-box;
-    word-wrap: break-word;
-    resize: none;
 }
