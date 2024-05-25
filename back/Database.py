@@ -25,16 +25,10 @@ class Database:
         else:
             self.cursor = self.conn.cursor()
 
-    def execute_query(self, query, params, commit=True):
-        try:
-            self.reconnect()
-            self.cursor.execute(query, params)
-            if commit:
-                self.conn.commit()
-        except mysql.connector.Error as err:
-            print(f"Erro ao executar query: {err}")
-            self.conn.rollback()
-            raise
+    def execute_query(self, query, params):
+        self.reconnect()
+        self.cursor.execute(query, params)
+        self.conn.commit()
 
     def fetch_all(self, query):
         self.reconnect()

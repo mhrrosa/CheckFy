@@ -66,65 +66,47 @@ function deleteRequest(url) {
   });
 }
 
-function getById(url) {
-  return fetch(`${baseUrl}${url}`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Erro na requisição GET');
-      }
-      return response.json();
-    })
-    .catch(error => {
-      console.error('Erro ao realizar GET:', error);
-      throw error;
-    });
-}
 
-function remove(url) {
-  return fetch(`${baseUrl}${url}`, {
-    method: 'DELETE'
-  })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Erro na requisição DELETE');
-    }
-    return response.json();
-  })
-  .catch(error => {
-    console.error('Erro ao realizar DELETE:', error);
-    throw error;
+function generateRandomArray() {
+  const titles = ["Gerenciador", "Coordenador", "Teste", "Revisão", "Análise"];
+  const length = Math.floor(Math.random() * 5) + 3; // Gera entre 3 e 7 elementos
+  return Array.from({ length }, () => {
+    return {
+      titulo: titles[Math.floor(Math.random() * titles.length)],
+      identificador: Math.floor(Math.random() * 5) + 1
+    };
   });
 }
 
-// Funções para avaliação
 function startNewEvaluation(data) {
-  const url = '/add_avaliacao';
+  const url = `${baseUrl}/start-evaluation`;
   console.log('Enviando dados para iniciar nova avaliação:', data);
-  return post(url, data)
-    .then(response => {
+  post(url, data);
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const response = generateRandomArray();
       console.log('Resposta do início da avaliação:', response);
-      return response;
-    });
+      resolve(response);
+    }, 1000);
+  });
 }
 
-function getAllAvaliacoes() {
-  return get('/listar_avaliacoes');
-}
-
-function deleteAvaliacao(id) {
-  return remove(`/deletar_avaliacao/${id}`);
-}
-
-function getAvaliacaoById(id) {
-  return get(`/avaliacao/${id}`);
-}
-
-function updateAvaliacao(id, data) {
-  return put(`/atualizar_avaliacao/${id}`, data);
-}
-
-function updateIdAtividade(id, idAtividade) {
-  return put(`/atualizar_atividade/${id}`, { id_atividade: idAtividade });
+function submitEvaluationData(data) {
+  const url = `${baseUrl}/submit-data`;
+  console.log('Dados enviados para avaliação:', data);
+  post(url, data);
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      if (Math.random() > 0.7) { // 30% de chance de finalizar
+        console.log('Avaliação finalizada');
+        resolve({ finalizada: true });
+      } else {
+        const newSetup = generateRandomArray();
+        console.log('Nova configuração recebida do back-end:', newSetup);
+        resolve({ setup: newSetup });
+      }
+    }, 1000);
+  });
 }
 
 // Funções para Níveis
@@ -178,14 +160,9 @@ function deleteResultadoEsperado(id) {
   return deleteRequest(`/delete_resultado_esperado/${id}`);
 }
 
-
 export {
   startNewEvaluation,
-  getAllAvaliacoes,
-  deleteAvaliacao,
-  getAvaliacaoById,
-  updateAvaliacao,
-  updateIdAtividade,
+  submitEvaluationData,
   getNiveis,
   createNivel,
   updateNivel,
