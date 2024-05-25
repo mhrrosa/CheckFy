@@ -1,94 +1,78 @@
+// Evaluation.js
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { startNewEvaluation, submitEvaluationData } from '../services/Api';
-import EvaluationElement from '../components/EvaluationElement';
-import '../styles/Evaluation.css'; // Importando o arquivo CSS
+import Etapa1 from '../components/Etapa1';
+import Etapa2 from '../components/Etapa2';
+import Etapa3 from '../components/Etapa3';
+import { getAvaliacaoById, updateIdAtividade } from '../services/Api';
+import '../styles/Evaluation.css';
+
+const etapaComponents = {
+  1: Etapa1,
+  2: Etapa2,
+  3: Etapa3
+};
 
 function Evaluation() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [setup, setSetup] = useState([]);
-  const [responses, setResponses] = useState({});
-  const [allResponses, setAllResponses] = useState({});
-  const [etapas, setEtapas] = useState([]);
+  const [idAtividade, setIdAtividade] = useState(null);
+  const [avaliacaoId, setAvaliacaoId] = useState(null);
 
   useEffect(() => {
-    if (location.state?.setup) {
-      setSetup(location.state.setup);
-      setEtapas(prevEtapas => [...prevEtapas, location.state.setup]);
+    if (location.state?.id) {
+      fetchAvaliacaoData(location.state.id);
     }
   }, [location.state]);
 
-  function handleInputChange(e, index) {
-    const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-    setResponses({
-      ...responses,
-      [index]: value
-    });
-  }
-
-  function handleSubmit() {
-    const combinedResponses = { ...allResponses, ...responses };
-    submitEvaluationData(responses).then(response => { // Corrigido aqui
-        if (response.finalizada) {
-            navigate('/results', { state: { finalResponses: combinedResponses } });
-        } else {
-            setAllResponses(combinedResponses);
-            setSetup(response.setup);
-            setResponses({});
-            setEtapas(prevEtapas => [...prevEtapas, response.setup]);
-        }
-    });
-  }
-
-  function handleNextStep() {
-    const currentIndex = etapas.indexOf(setup);
-    const hasNextStep = currentIndex < etapas.length - 1;
-    if (hasNextStep) {
-      const nextSetup = etapas[currentIndex + 1];
-      setSetup(nextSetup);
-    } else {
-      handleSubmit();
+  const fetchAvaliacaoData = async (id) => {
+    try {
+      const avaliacao = await getAvaliacaoById(id);
+      setAvaliacaoId(avaliacao.id);
+      setIdAtividade(avaliacao.id_atividade);
+    } catch (error) {
+      console.error('Erro ao buscar avaliação:', error);
     }
-  }
+  };
+
+  const handleNextStep = async () => {
+    try {
+      const newIdAtividade = idAtividade + 1; // Incrementa a atividade atual em 1
+      await updateIdAtividade(avaliacaoId, newIdAtividade);
+      setIdAtividade(newIdAtividade);
+    } catch (error) {
+      console.error('Erro ao atualizar atividade:', error);
+    }
+  };
+
+  const handleStepClick = (etapa) => {
+    setIdAtividade(etapa);
+  };
+
+  const EtapaComponent = etapaComponents[idAtividade];
 
   return (
-    <>
+    <div className="evaluation-container">
+      <div className="main-content">
+        <h1 className="evaluation-title">Avaliação</h1>
+        <div className="form-section">
+          {EtapaComponent ? <EtapaComponent onNext={handleNextStep} /> : <p>Etapa não encontrada</p>}
+        </div>
+      </div>
       <div className="sidebar">
         <h3>Etapas:</h3>
-        {etapas.map((etapa, index) => (
+        {Object.keys(etapaComponents).map((etapa) => (
           <button
-            key={index}
-            onClick={() => setSetup(etapa)}
-            className={etapa === setup ? "current-step" : ""}
+            key={etapa}
+            onClick={() => handleStepClick(parseInt(etapa))}
+            className={parseInt(etapa) === idAtividade ? "current-step" : ""}
+            disabled={parseInt(etapa) > idAtividade} // Desabilitar botões de etapas futuras
           >
-            Etapa {index + 1}
+            Etapa {etapa}
           </button>
         ))}
       </div>
-      <div className="evaluation-container">
-        <div className="main-content">
-          <h1 className="evaluation-title">Avaliação</h1>
-          <div className="form-section">
-            {setup.map((element, index) => (
-              <EvaluationElement
-                key={index}
-                title={element.titulo}
-                type={element.identificador}
-                index={index}
-                value={responses[index] || ''}
-                onChange={handleInputChange}
-              />
-            ))}
-            {etapas.length > 0 && (
-              <button className="button" onClick={handleNextStep}>
-                {etapas.indexOf(setup) < etapas.length - 1 ? "Próxima Etapa" : "Concluir Etapa"}
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-    </>
+    </div>
   );
 }
 
