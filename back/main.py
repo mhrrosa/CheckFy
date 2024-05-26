@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from Database import Database
 from Nivel import Nivel
@@ -6,9 +6,14 @@ from Processo import Processo
 from ResultadoEsperado import ResultadoEsperado
 from Avaliacao import Avaliacao
 from Projeto import Projeto
+import os
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
+
+UPLOAD_FOLDER = 'uploads'
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
 # Conexão com o banco de dados MySQL
 db_config = {
@@ -226,39 +231,109 @@ def obter_avaliacao(projeto_id):
 def add_projeto():
     projeto_data = request.json
     try:
-        projeto.add_projeto(**projeto_data)
-        return jsonify({"message": "Projeto adicionado com sucesso"}), 200
+        print(f"Recebido projeto_data: {projeto_data}")
+        avaliacao_id = projeto_data['avaliacaoId']
+        habilitado = projeto_data['habilitado']
+        numero_projeto = projeto.get_next_numero_projeto(avaliacao_id)
+        print(f"Calculado numero_projeto: {numero_projeto}")
+        projeto_id = projeto.add_projeto(avaliacao_id, habilitado, numero_projeto)
+        print(f"Projeto adicionado com ID: {projeto_id}")
+        return jsonify({"message": "Projeto adicionado com sucesso", "projetoId": projeto_id}), 200
+    except KeyError as e:
+        print(f"Erro: Campo necessário não fornecido - {e}")
+        return jsonify({"message": "Campo necessário não fornecido", "error": str(e)}), 400
     except Exception as e:
         print(f"Erro ao adicionar projeto: {e}")
         return jsonify({"message": "Erro ao adicionar projeto", "error": str(e)}), 500
-
-@app.route('/get_projetos_by_id_avaliacao/<int:id_avaliacao>', methods=['GET'])
-def get_projetos_by_id_avaliacao(id_avaliacao):
-    try:
-        projetos = projeto.get_projetos_by_id_avaliacao(id_avaliacao)
-        return jsonify(projetos), 200
-    except Exception as e:
-        print(f"Erro ao buscar projetos por ID de avaliação: {e}")
-        return jsonify({"message": "Erro ao buscar projetos por ID de avaliação", "error": str(e)}), 500
-
-@app.route('/delete_projeto/<int:projeto_id>', methods=['DELETE'])
-def delete_projeto(projeto_id):
-    try:
-        projeto.delete_projeto(projeto_id)
-        return jsonify({"message": "Projeto deletado com sucesso"}), 200
-    except Exception as e:
-        return jsonify({"message": "Erro ao deletar projeto", "error": str(e)}), 500
-
+    
 @app.route('/update_projeto/<int:projeto_id>', methods=['PUT'])
 def update_projeto(projeto_id):
     projeto_data = request.json
     try:
-        projeto.update_projeto(projeto_id, projeto_data)
+        habilitado = projeto_data['habilitado']
+        projeto.update_projeto(projeto_id, habilitado)
         return jsonify({"message": "Projeto atualizado com sucesso"}), 200
     except Exception as e:
         print(f"Erro ao atualizar projeto: {e}")
         return jsonify({"message": "Erro ao atualizar projeto", "error": str(e)}), 500
 
+@app.route('/get_projetos_by_avaliacao/<int:avaliacao_id>', methods=['GET'])
+def get_projetos_by_avaliacao(avaliacao_id):
+    try:
+        projetos = projeto.get_projetos_by_id_avaliacao(avaliacao_id)
+        return jsonify(projetos), 200
+    except Exception as e:
+        print(f"Erro ao buscar projetos por ID de avaliação: {e}")
+        return jsonify({"message": "Erro ao buscar projetos", "error": str(e)}), 500
+
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return jsonify({"message": "No file part"}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"message": "No selected file"}), 400
+    if file:
+        filename = file.filename
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(filepath)
+        return jsonify({"filepath": filename}), 200 
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(UPLOAD_FOLDER, filename)
+
+
+@app.route('/add_documento', methods=['POST'])
+def add_documento():
+    documento_data = request.json
+    try:
+        print(f"Recebido documento_data: {documento_data}")
+        id_projeto = documento_data['id_projeto']
+        caminho_arquivo = documento_data['caminho_arquivo']
+        nome_arquivo = documento_data['nome_arquivo']
+        documento_id = projeto.add_documento(caminho_arquivo, nome_arquivo, id_projeto)
+        print(f"Documento adicionado com ID: {documento_id}")
+        return jsonify({"message": "Documento adicionado com sucesso", "documentoId": documento_id}), 200
+    except Exception as e:
+        print(f"Erro ao adicionar documento: {e}")
+        return jsonify({"message": "Erro ao adicionar documento", "error": str(e)}), 500
+
+@app.route('/documentos_por_projeto/<int:id_projeto>', methods=['GET'])
+def documentos_por_projeto(id_projeto):
+    try:
+        documentos = projeto.get_documentos_by_projeto(id_projeto)
+        return jsonify(documentos), 200
+    except Exception as e:
+        print(f"Erro ao buscar documentos: {e}")
+        return jsonify({"message": "Erro ao buscar documentos", "error": str(e)}), 500
+
+@app.route('/update_documento/<int:documento_id>', methods=['PUT'])
+def update_documento(documento_id):
+    documento_data = request.json
+    try:
+        nome_arquivo = documento_data['nome_arquivo']
+        caminho_arquivo = documento_data['caminho_arquivo']
+        query = "UPDATE documento SET Nome_Arquivo = %s, Caminho_Arquivo = %s WHERE ID = %s"
+        db.cursor.execute(query, (nome_arquivo, caminho_arquivo, documento_id))
+        db.conn.commit()
+        print(f"Documento atualizado com ID: {documento_id}")
+        return jsonify({"message": "Documento atualizado com sucesso"}), 200
+    except Exception as e:
+        print(f"Erro ao atualizar documento: {e}")
+        return jsonify({"message": "Erro ao atualizar documento", "error": str(e)}), 500
+
+@app.route('/delete_documento/<int:documento_id>', methods=['DELETE'])
+def delete_documento(documento_id):
+    try:
+        query = "DELETE FROM documento WHERE ID = %s"
+        db.cursor.execute(query, (documento_id,))
+        db.conn.commit()
+        print(f"Documento removido com ID: {documento_id}")
+        return jsonify({"message": "Documento removido com sucesso"}), 200
+    except Exception as e:
+        print(f"Erro ao remover documento: {e}")
+        return jsonify({"message": "Erro ao remover documento", "error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

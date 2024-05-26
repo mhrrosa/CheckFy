@@ -178,6 +178,43 @@ function deleteResultadoEsperado(id) {
   return deleteRequest(`/delete_resultado_esperado/${id}`);
 }
 
+// Funções para Projetos e Documentos
+function getProjetosByAvaliacao(avaliacaoId) {
+  return get(`/get_projetos_by_avaliacao/${avaliacaoId}`);
+}
+
+function createProjeto(data) {
+  return post('/add_projeto', data);
+}
+
+function updateProjeto(id, data) {
+  return put(`/update_projeto/${id}`, data);
+}
+
+function addDocumento(data) {
+  console.log('Chamando API para adicionar documento:', data);
+  return post('/add_documento', data)
+    .then(response => {
+      console.log('Resposta da API para adição de documento:', response);
+      return response;
+    })
+    .catch(error => {
+      console.error('Erro ao adicionar documento:', error);
+      throw error;
+    });
+}
+
+function getDocumentosPorProjeto(idProjeto) {
+  return get(`/documentos_por_projeto/${idProjeto}`);
+}
+
+function updateDocumento(id, data) {
+  return put(`/update_documento/${id}`, data);
+}
+
+function deleteDocumento(id) {
+  return deleteRequest(`/delete_documento/${id}`);
+}
 
 export {
   startNewEvaluation,
@@ -197,5 +234,12 @@ export {
   getResultadosEsperados,
   createResultadoEsperado,
   updateResultadoEsperado,
-  deleteResultadoEsperado
+  deleteResultadoEsperado,
+  getProjetosByAvaliacao,
+  createProjeto,
+  updateProjeto,
+  addDocumento,
+  getDocumentosPorProjeto,
+  updateDocumento,
+  deleteDocumento
 };
