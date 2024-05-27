@@ -1,4 +1,3 @@
-// Evaluation.js
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Etapa1 from '../components/Etapa1';
@@ -56,7 +55,7 @@ function Evaluation() {
       <div className="main-content">
         <h1 className="evaluation-title">Avaliação</h1>
         <div className="form-section">
-          {EtapaComponent ? <EtapaComponent onNext={handleNextStep} /> : <p>Etapa não encontrada</p>}
+          {EtapaComponent ? <EtapaComponent onNext={handleNextStep} avaliacaoId={avaliacaoId} /> : <p>Etapa não encontrada</p>}
         </div>
       </div>
       <div className="sidebar">
