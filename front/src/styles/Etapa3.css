@@ -1,0 +1,18 @@
+.etapa3-container {
+    padding: 20px;
+  }
+  
+  .processo-section {
+    margin-bottom: 20px;
+  }
+  
+  .resultado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .resultado span {
+    margin-right: 10px;
+  }
+  

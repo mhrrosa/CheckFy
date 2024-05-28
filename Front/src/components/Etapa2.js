@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { getProjetosByAvaliacao, createProjeto, updateProjeto, addDocumento, updateDocumento } from '../services/Api';
-import '../styles/Processos.css'; // Reutilizando o estilo de Processos.css
+import { getProjetosByAvaliacao, createProjeto, updateProjeto, addDocumento, updateDocumento, getResultadosEsperados, addIndicador, updateIndicador } from '../services/Api';
+import '../styles/Processos.css';
 
 function Etapa2({ onNext, avaliacaoId }) {
   const [projetos, setProjetos] = useState([]);
@@ -9,12 +9,23 @@ function Etapa2({ onNext, avaliacaoId }) {
   const [novoDocumentoCaminho, setNovoDocumentoCaminho] = useState('');
   const [selectedProjetoId, setSelectedProjetoId] = useState(null);
   const [editandoProjeto, setEditandoProjeto] = useState(false);
+  const [selectedResultadoEsperado, setSelectedResultadoEsperado] = useState('');
+  const [resultadosEsperados, setResultadosEsperados] = useState([]);
 
   useEffect(() => {
     if (avaliacaoId) {
-      carregarProjetos();
+      carregarDadosIniciais();
     }
   }, [avaliacaoId]);
+
+  const carregarDadosIniciais = async () => {
+    try {
+      await carregarProjetos();
+      await carregarResultadosEsperados();
+    } catch (error) {
+      console.error('Erro ao carregar dados iniciais:', error);
+    }
+  };
 
   const carregarProjetos = async () => {
     try {
@@ -22,6 +33,15 @@ function Etapa2({ onNext, avaliacaoId }) {
       setProjetos(data);
     } catch (error) {
       console.error('Erro ao carregar projetos:', error);
+    }
+  };
+
+  const carregarResultadosEsperados = async () => {
+    try {
+      const data = await getResultadosEsperados();
+      setResultadosEsperados(data);
+    } catch (error) {
+      console.error('Erro ao carregar resultados esperados:', error);
     }
   };
 
@@ -43,18 +63,33 @@ function Etapa2({ onNext, avaliacaoId }) {
             caminho_arquivo: novoDocumentoCaminho,
             nome_arquivo: novoDocumentoNome
           };
-          await addDocumento(documentoData);
+          const documentoResponse = await addDocumento(documentoData);
+          const documentoId = documentoResponse.documentoId; // Aqui você pega o ID do documento retornado
+          console.log('ID do Documento:', documentoId); // Log para verificar o ID do documento
+          if (selectedResultadoEsperado) {
+            const indicadorData = {
+              id_resultado_esperado: selectedResultadoEsperado,
+              id_documento: documentoId // Use o ID do documento criado
+            };
+            console.log('Indicador Data:', indicadorData); // Log para verificar os dados do indicador
+            await addIndicador(indicadorData);
+          }
         }
       }
       carregarProjetos();
-      setNovoProjetoHabilitado(false);
-      setEditandoProjeto(false);
-      setSelectedProjetoId(null);
-      setNovoDocumentoNome('');
-      setNovoDocumentoCaminho('');
+      resetarFormulario();
     } catch (error) {
       console.error('Erro ao salvar projeto:', error);
     }
+  };
+
+  const resetarFormulario = () => {
+    setNovoProjetoHabilitado(false);
+    setEditandoProjeto(false);
+    setSelectedProjetoId(null);
+    setNovoDocumentoNome('');
+    setNovoDocumentoCaminho('');
+    setSelectedResultadoEsperado('');
   };
 
   const handleFileUpload = async (e, documentoId) => {
@@ -71,20 +106,7 @@ function Etapa2({ onNext, avaliacaoId }) {
       if (response.ok) {
         const novoCaminho = result.filepath;
         if (documentoId) {
-          const documento = projetos
-            .find(proj => proj.ID === selectedProjetoId)
-            ?.Documentos?.find(doc => doc.ID === documentoId);
-          const novoNome = documento ? documento.Nome_Arquivo : null;
-          atualizarDocumento(documentoId, novoNome, novoCaminho);
-          setProjetos(prevProjetos => prevProjetos.map(proj => {
-            if (proj.ID === selectedProjetoId) {
-              return {
-                ...proj,
-                Documentos: proj.Documentos.map(doc => doc.ID === documentoId ? { ...doc, Caminho_Arquivo: novoCaminho } : doc)
-              };
-            }
-            return proj;
-          }));
+          atualizarDocumento(documentoId, null, novoCaminho);
         } else {
           setNovoDocumentoCaminho(novoCaminho);
         }
@@ -108,20 +130,16 @@ function Etapa2({ onNext, avaliacaoId }) {
 
   const atualizarDocumento = async (id, novoNome, novoCaminho) => {
     try {
-      const documento = projetos
-        .find(proj => proj.ID === selectedProjetoId)
-        ?.Documentos?.find(doc => doc.ID === id);
-
       const atualizado = {
-        nome_arquivo: novoNome || documento.Nome_Arquivo,
-        caminho_arquivo: novoCaminho || documento.Caminho_Arquivo
+        nome_arquivo: novoNome,
+        caminho_arquivo: novoCaminho
       };
       await updateDocumento(id, atualizado);
       setProjetos(prevProjetos => prevProjetos.map(proj => {
         if (proj.ID === selectedProjetoId) {
           return {
             ...proj,
-            Documentos: proj.Documentos.map(doc => doc.ID === id ? { ...doc, Nome_Arquivo: atualizado.nome_arquivo, Caminho_Arquivo: atualizado.caminho_arquivo } : doc)
+            Documentos: proj.Documentos.map(doc => doc.ID === id ? { ...doc, Nome_Arquivo: novoNome || doc.Nome_Arquivo, Caminho_Arquivo: novoCaminho || doc.Caminho_Arquivo } : doc)
           };
         }
         return proj;
@@ -133,6 +151,19 @@ function Etapa2({ onNext, avaliacaoId }) {
 
   const handleViewFile = (filepath) => {
     window.open(`http://127.0.0.1:5000/uploads/${filepath}`, '_blank');
+  };
+
+  const atualizarIndicador = async (idIndicador, idResultadoEsperado, idDocumento) => {
+    try {
+      const indicadorData = {
+        id_resultado_esperado: idResultadoEsperado,
+        id_documento: idDocumento
+      };
+      console.log('Atualizando indicador com:', { idIndicador, ...indicadorData }); // Log para verificar os dados do indicador
+      await updateIndicador(idIndicador, indicadorData);
+    } catch (error) {
+      console.error('Erro ao atualizar indicador:', error);
+    }
   };
 
   return (
@@ -165,6 +196,19 @@ function Etapa2({ onNext, avaliacaoId }) {
               type="file"
               onChange={(e) => handleFileUpload(e, null)}
             />
+          </div>
+          <div className='input-wrapper'>
+            <label className="label">Selecionar Resultado Esperado:</label>
+            <select
+              className="select-field"
+              value={selectedResultadoEsperado}
+              onChange={(e) => setSelectedResultadoEsperado(e.target.value)}
+            >
+              <option value="">Selecione um resultado esperado</option>
+              {resultadosEsperados.map((resultado) => (
+                <option key={resultado[0]} value={resultado[0]}>{resultado[1]}</option>
+              ))}
+            </select>
           </div>
         </div>
         <div className='logo-and-button'>
@@ -209,6 +253,27 @@ function Etapa2({ onNext, avaliacaoId }) {
                                 value={documento.Caminho_Arquivo}
                                 readOnly
                               />
+                              <select
+                                className="select-field"
+                                value={documento.ID_Resultado_Esperado || ''}
+                                onChange={(e) => {
+                                  const novoResultadoEsperadoId = e.target.value;
+                                  setProjetos(prevProjetos => prevProjetos.map(proj => {
+                                    if (proj.ID === projeto.ID) {
+                                      return {
+                                        ...proj,
+                                        Documentos: proj.Documentos.map(doc => doc.ID === documento.ID ? { ...doc, ID_Resultado_Esperado: novoResultadoEsperadoId } : doc)
+                                      };
+                                    }
+                                    return proj;
+                                  }));
+                                }}
+                              >
+                                <option value="">Selecione um resultado esperado</option>
+                                {resultadosEsperados.map((resultado) => (
+                                  <option key={resultado[0]} value={resultado[0]}>{resultado[1]}</option>
+                                ))}
+                              </select>
                               <button className='button-acao' onClick={() => handleViewFile(documento.Caminho_Arquivo)}>Mostrar</button>
                               <button className='button-acao' onClick={() => document.getElementById(`fileInput_${documento.ID}`).click()}>Escolher outro arquivo</button>
                               <input
@@ -217,7 +282,8 @@ function Etapa2({ onNext, avaliacaoId }) {
                                 style={{ display: 'none' }}
                                 onChange={(e) => handleFileUpload(e, documento.ID)}
                               />
-                              <button className='button-acao' onClick={() => atualizarDocumento(documento.ID, documento.Nome_Arquivo, documento.Caminho_Arquivo)}>Alterar</button>
+                              <button className='button-acao' onClick={() => atualizarDocumento(documento.ID, documento.Nome_Arquivo, documento.Caminho_Arquivo)}>Alterar Documento</button>
+                              <button className='button-acao' onClick={() => atualizarIndicador(documento.IndicadorID, documento.ID_Resultado_Esperado, documento.ID)}>Atualizar Indicador</button>
                             </div>
                           </li>
                         ))}

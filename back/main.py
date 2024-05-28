@@ -19,7 +19,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 db_config = {
     "host": "127.0.0.1",
     "user": "root",
-    "password": "root",
+    "password": "I#p4Zp&zS!Zv",
     "database": "checkfy"
 }
 
@@ -173,7 +173,6 @@ def add_avaliacao():
         print(f"Erro ao adicionar avaliação: {e}")
         return jsonify({"message": "Erro ao adicionar avaliação", "error": str(e)}), 500
 
-
 @app.route('/listar_avaliacoes', methods=['GET'])
 def listar_avaliacoes():
     try:
@@ -283,7 +282,6 @@ def upload_file():
 def uploaded_file(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
 
-
 @app.route('/add_documento', methods=['POST'])
 def add_documento():
     documento_data = request.json
@@ -334,6 +332,90 @@ def delete_documento(documento_id):
     except Exception as e:
         print(f"Erro ao remover documento: {e}")
         return jsonify({"message": "Erro ao remover documento", "error": str(e)}), 500
+
+@app.route('/add_indicador', methods=['POST'])
+def add_indicador():
+    indicador_data = request.json
+    try:
+        id_resultado_esperado = indicador_data['id_resultado_esperado']
+        id_documento = indicador_data['id_documento']
+        print(f"Adicionando indicador: id_resultado_esperado={id_resultado_esperado}, id_documento={id_documento}")
+        projeto.add_indicador(id_resultado_esperado, id_documento)
+        return jsonify({"message": "Indicador adicionado com sucesso"}), 200
+    except KeyError as e:
+        print(f"Erro: Campo necessário não fornecido - {str(e)}")
+        return jsonify({"message": f"Erro: Campo necessário não fornecido - {str(e)}"}), 400
+    except Exception as e:
+        print(f"Erro ao adicionar indicador: {e}")
+        return jsonify({"message": "Erro ao adicionar indicador", "error": str(e)}), 500
+
+@app.route('/update_indicador/<int:indicador_id>', methods=['PUT'])
+def update_indicador(indicador_id):
+    indicador_data = request.json
+    try:
+        id_resultado_esperado = indicador_data['id_resultado_esperado']
+        id_documento = indicador_data['id_documento']
+        projeto.update_indicador(indicador_id, id_resultado_esperado, id_documento)
+        return jsonify({"message": "Indicador atualizado com sucesso"}), 200
+    except KeyError as e:
+        print(f"Erro: Campo necessário não fornecido - {e}")
+        return jsonify({"message": "Campo necessário não fornecido", "error": str(e)}), 400
+    except Exception as e:
+        print(f"Erro ao atualizar indicador: {e}")
+        return jsonify({"message": "Erro ao atualizar indicador", "error": str(e)}), 500
+
+@app.route('/get_processos_por_avaliacao/<int:avaliacao_id>', methods=['GET'])
+def get_processos_por_avaliacao(avaliacao_id):
+    try:
+        nivel_solicitado_query = "SELECT ID_Nivel_Solicitado FROM avaliacao WHERE ID = %s"
+        db.cursor.execute(nivel_solicitado_query, (avaliacao_id,))
+        nivel_solicitado = db.cursor.fetchone()[0]
+
+        processos_query = """
+            SELECT DISTINCT p.ID, p.Descricao 
+            FROM processo p
+            JOIN resultado_esperado_mpsbr re ON p.ID = re.ID_Processo
+            WHERE %s <= re.ID_Nivel_Intervalo_Inicio AND %s >= re.ID_Nivel_Intervalo_Fim
+        """
+        db.cursor.execute(processos_query, (nivel_solicitado, nivel_solicitado))
+        processos = db.cursor.fetchall()
+
+        print(f"Processos encontrados: {processos}")
+
+        return jsonify({
+            'nivel_solicitado': nivel_solicitado,
+            'processos': [{'ID': p[0], 'Descricao': p[1]} for p in processos]
+        }), 200
+    except Exception as e:
+        print(f"Erro ao buscar processos por avaliação: {e}")
+        return jsonify({"message": "Erro ao buscar processos", "error": str(e)}), 500
+
+@app.route('/get_resultados_esperados_por_processo/<int:processo_id>', methods=['GET'])
+def get_resultados_esperados_por_processo(processo_id):
+    try:
+        query = """
+            SELECT re.ID, re.Descricao, d.Nome_Arquivo, d.Caminho_Arquivo, re.ID_Processo
+            FROM resultado_esperado_mpsbr re
+            LEFT JOIN indicador i ON re.ID = i.ID_Resultado_Esperado
+            LEFT JOIN documento d ON i.ID_Documento = d.ID
+            WHERE re.ID_Processo = %s
+        """
+        db.cursor.execute(query, (processo_id,))
+        resultados = db.cursor.fetchall()
+
+        print(f"Resultados esperados para o processo {processo_id}: {resultados}")
+
+        return jsonify([{
+            'ID': r[0],
+            'Descricao': r[1],
+            'Nome_Arquivo': r[2],
+            'Caminho_Arquivo': r[3],
+            'ID_Processo': r[4]
+        } for r in resultados]), 200
+    except Exception as e:
+        print(f"Erro ao buscar resultados esperados por processo: {e}")
+        return jsonify({"message": "Erro ao buscar resultados esperados", "error": str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)

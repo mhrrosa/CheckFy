@@ -66,20 +66,6 @@ function deleteRequest(url) {
   });
 }
 
-function getById(url) {
-  return fetch(`${baseUrl}${url}`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Erro na requisição GET');
-      }
-      return response.json();
-    })
-    .catch(error => {
-      console.error('Erro ao realizar GET:', error);
-      throw error;
-    });
-}
-
 function remove(url) {
   return fetch(`${baseUrl}${url}`, {
     method: 'DELETE'
@@ -216,6 +202,29 @@ function deleteDocumento(id) {
   return deleteRequest(`/delete_documento/${id}`);
 }
 
+// Funções para Indicadores
+function addIndicador(data) {
+  return post('/add_indicador', data);
+}
+
+function updateIndicador(id, data) {
+  return put(`/update_indicador/${id}`, data);
+}
+
+function getProcessosPorAvaliacao(avaliacaoId) {
+  return get(`/get_processos_por_avaliacao/${avaliacaoId}`).then(response => {
+    console.log('Processos por Avaliação:', response);
+    return response;
+  });
+}
+
+function getResultadosEsperadosPorProcesso(processoId) {
+  return get(`/get_resultados_esperados_por_processo/${processoId}`).then(response => {
+    console.log('Resultados Esperados por Processo:', response);
+    return response;
+  });
+}
+
 export {
   startNewEvaluation,
   getAllAvaliacoes,
@@ -241,5 +250,9 @@ export {
   addDocumento,
   getDocumentosPorProjeto,
   updateDocumento,
-  deleteDocumento
+  deleteDocumento,
+  addIndicador,
+  updateIndicador,
+  getProcessosPorAvaliacao,
+  getResultadosEsperadosPorProcesso
 };
