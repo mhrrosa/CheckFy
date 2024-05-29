@@ -6,6 +6,7 @@ from Processo import Processo
 from ResultadoEsperado import ResultadoEsperado
 from Avaliacao import Avaliacao
 from Projeto import Projeto
+from Documento import Documento
 import os
 
 app = Flask(__name__)
@@ -30,6 +31,7 @@ processo = Processo(db)
 resultado_esperado = ResultadoEsperado(db)
 avaliacao = Avaliacao(db)
 projeto = Projeto(db)
+documento = Documento(db)
 
 @app.route('/add_nivel', methods=['POST'])
 def add_nivel():
@@ -232,10 +234,11 @@ def add_projeto():
     try:
         print(f"Recebido projeto_data: {projeto_data}")
         avaliacao_id = projeto_data['avaliacaoId']
+        nome_projeto = projeto_data['nome']
         habilitado = projeto_data['habilitado']
         numero_projeto = projeto.get_next_numero_projeto(avaliacao_id)
         print(f"Calculado numero_projeto: {numero_projeto}")
-        projeto_id = projeto.add_projeto(avaliacao_id, habilitado, numero_projeto)
+        projeto_id = projeto.add_projeto(avaliacao_id, nome_projeto, habilitado, numero_projeto)
         print(f"Projeto adicionado com ID: {projeto_id}")
         return jsonify({"message": "Projeto adicionado com sucesso", "projetoId": projeto_id}), 200
     except KeyError as e:
@@ -244,13 +247,14 @@ def add_projeto():
     except Exception as e:
         print(f"Erro ao adicionar projeto: {e}")
         return jsonify({"message": "Erro ao adicionar projeto", "error": str(e)}), 500
-    
+
 @app.route('/update_projeto/<int:projeto_id>', methods=['PUT'])
 def update_projeto(projeto_id):
     projeto_data = request.json
     try:
+        nome_projeto = projeto_data['nome']
         habilitado = projeto_data['habilitado']
-        projeto.update_projeto(projeto_id, habilitado)
+        projeto.update_projeto(projeto_id, nome_projeto, habilitado)
         return jsonify({"message": "Projeto atualizado com sucesso"}), 200
     except Exception as e:
         print(f"Erro ao atualizar projeto: {e}")
@@ -260,6 +264,7 @@ def update_projeto(projeto_id):
 def get_projetos_by_avaliacao(avaliacao_id):
     try:
         projetos = projeto.get_projetos_by_id_avaliacao(avaliacao_id)
+        print(f"Projetos encontrados: {projetos}")
         return jsonify(projetos), 200
     except Exception as e:
         print(f"Erro ao buscar projetos por ID de avaliação: {e}")
@@ -290,79 +295,73 @@ def add_documento():
         id_projeto = documento_data['id_projeto']
         caminho_arquivo = documento_data['caminho_arquivo']
         nome_arquivo = documento_data['nome_arquivo']
-        documento_id = projeto.add_documento(caminho_arquivo, nome_arquivo, id_projeto)
+        documento_id = documento.add_documento(caminho_arquivo, nome_arquivo, id_projeto)
         print(f"Documento adicionado com ID: {documento_id}")
         return jsonify({"message": "Documento adicionado com sucesso", "documentoId": documento_id}), 200
     except Exception as e:
         print(f"Erro ao adicionar documento: {e}")
         return jsonify({"message": "Erro ao adicionar documento", "error": str(e)}), 500
 
-@app.route('/documentos_por_projeto/<int:id_projeto>', methods=['GET'])
-def documentos_por_projeto(id_projeto):
-    try:
-        documentos = projeto.get_documentos_by_projeto(id_projeto)
-        return jsonify(documentos), 200
-    except Exception as e:
-        print(f"Erro ao buscar documentos: {e}")
-        return jsonify({"message": "Erro ao buscar documentos", "error": str(e)}), 500
-
 @app.route('/update_documento/<int:documento_id>', methods=['PUT'])
 def update_documento(documento_id):
     documento_data = request.json
     try:
-        nome_arquivo = documento_data['nome_arquivo']
-        caminho_arquivo = documento_data['caminho_arquivo']
-        query = "UPDATE documento SET Nome_Arquivo = %s, Caminho_Arquivo = %s WHERE ID = %s"
-        db.cursor.execute(query, (nome_arquivo, caminho_arquivo, documento_id))
-        db.conn.commit()
-        print(f"Documento atualizado com ID: {documento_id}")
+        nome_arquivo = documento_data.get('nome_arquivo')
+        caminho_arquivo = documento_data.get('caminho_arquivo')
+        documento.update_documento(documento_id, nome_arquivo, caminho_arquivo)
         return jsonify({"message": "Documento atualizado com sucesso"}), 200
     except Exception as e:
         print(f"Erro ao atualizar documento: {e}")
         return jsonify({"message": "Erro ao atualizar documento", "error": str(e)}), 500
 
+@app.route('/documentos_por_projeto/<int:id_projeto>', methods=['GET'])
+def documentos_por_projeto(id_projeto):
+    try:
+        documentos = documento.get_documentos_by_projeto(id_projeto)
+        return jsonify(documentos), 200
+    except Exception as e:
+        print(f"Erro ao buscar documentos: {e}")
+        return jsonify({"message": "Erro ao buscar documentos", "error": str(e)}), 500
+
 @app.route('/delete_documento/<int:documento_id>', methods=['DELETE'])
 def delete_documento(documento_id):
     try:
-        query = "DELETE FROM documento WHERE ID = %s"
-        db.cursor.execute(query, (documento_id,))
-        db.conn.commit()
-        print(f"Documento removido com ID: {documento_id}")
+        documento.delete_documento(documento_id)
         return jsonify({"message": "Documento removido com sucesso"}), 200
     except Exception as e:
         print(f"Erro ao remover documento: {e}")
         return jsonify({"message": "Erro ao remover documento", "error": str(e)}), 500
 
-@app.route('/add_indicador', methods=['POST'])
-def add_indicador():
-    indicador_data = request.json
+@app.route('/add_evidencia', methods=['POST'])
+def add_evidencia():
+    evidencia_data = request.json
     try:
-        id_resultado_esperado = indicador_data['id_resultado_esperado']
-        id_documento = indicador_data['id_documento']
-        print(f"Adicionando indicador: id_resultado_esperado={id_resultado_esperado}, id_documento={id_documento}")
-        projeto.add_indicador(id_resultado_esperado, id_documento)
-        return jsonify({"message": "Indicador adicionado com sucesso"}), 200
+        id_resultado_esperado = evidencia_data['id_resultado_esperado']
+        id_documento = evidencia_data['id_documento']
+        print(f"Adicionando evidencia: id_resultado_esperado={id_resultado_esperado}, id_documento={id_documento}")
+        projeto.add_evidencia(id_resultado_esperado, id_documento)
+        return jsonify({"message": "Evidencia adicionado com sucesso"}), 200
     except KeyError as e:
         print(f"Erro: Campo necessário não fornecido - {str(e)}")
         return jsonify({"message": f"Erro: Campo necessário não fornecido - {str(e)}"}), 400
     except Exception as e:
-        print(f"Erro ao adicionar indicador: {e}")
-        return jsonify({"message": "Erro ao adicionar indicador", "error": str(e)}), 500
+        print(f"Erro ao adicionar evidencia: {e}")
+        return jsonify({"message": "Erro ao adicionar evidencia", "error": str(e)}), 500
 
-@app.route('/update_indicador/<int:indicador_id>', methods=['PUT'])
-def update_indicador(indicador_id):
-    indicador_data = request.json
+@app.route('/update_evidencia/<int:evidencia_id>', methods=['PUT'])
+def update_evidencia(evidencia_id):
+    evidencia_data = request.json
     try:
-        id_resultado_esperado = indicador_data['id_resultado_esperado']
-        id_documento = indicador_data['id_documento']
-        projeto.update_indicador(indicador_id, id_resultado_esperado, id_documento)
-        return jsonify({"message": "Indicador atualizado com sucesso"}), 200
+        id_resultado_esperado = evidencia_data['id_resultado_esperado']
+        id_documento = evidencia_data['id_documento']
+        projeto.update_evidencia(evidencia_id, id_resultado_esperado, id_documento)
+        return jsonify({"message": "Evidencia atualizado com sucesso"}), 200
     except KeyError as e:
         print(f"Erro: Campo necessário não fornecido - {e}")
         return jsonify({"message": "Campo necessário não fornecido", "error": str(e)}), 400
     except Exception as e:
-        print(f"Erro ao atualizar indicador: {e}")
-        return jsonify({"message": "Erro ao atualizar indicador", "error": str(e)}), 500
+        print(f"Erro ao atualizar evidencia: {e}")
+        return jsonify({"message": "Erro ao atualizar evidencia", "error": str(e)}), 500
 
 @app.route('/get_processos_por_avaliacao/<int:avaliacao_id>', methods=['GET'])
 def get_processos_por_avaliacao(avaliacao_id):
@@ -396,7 +395,7 @@ def get_resultados_esperados_por_processo(processo_id):
         query = """
             SELECT re.ID, re.Descricao, d.Nome_Arquivo, d.Caminho_Arquivo, re.ID_Processo
             FROM resultado_esperado_mpsbr re
-            LEFT JOIN indicador i ON re.ID = i.ID_Resultado_Esperado
+            LEFT JOIN evidencia i ON re.ID = i.ID_Resultado_Esperado
             LEFT JOIN documento d ON i.ID_Documento = d.ID
             WHERE re.ID_Processo = %s
         """
@@ -415,7 +414,6 @@ def get_resultados_esperados_por_processo(processo_id):
     except Exception as e:
         print(f"Erro ao buscar resultados esperados por processo: {e}")
         return jsonify({"message": "Erro ao buscar resultados esperados", "error": str(e)}), 500
-
 
 if __name__ == '__main__':
     app.run(debug=True)

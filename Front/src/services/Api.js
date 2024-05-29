@@ -166,7 +166,15 @@ function deleteResultadoEsperado(id) {
 
 // Funções para Projetos e Documentos
 function getProjetosByAvaliacao(avaliacaoId) {
-  return get(`/get_projetos_by_avaliacao/${avaliacaoId}`);
+  return get(`/get_projetos_by_avaliacao/${avaliacaoId}`)
+    .then(response => {
+      console.log('Projetos encontrados:', response);
+      return response;
+    })
+    .catch(error => {
+      console.error('Erro ao buscar projetos:', error);
+      throw error;
+    });
 }
 
 function createProjeto(data) {
@@ -195,6 +203,7 @@ function getDocumentosPorProjeto(idProjeto) {
 }
 
 function updateDocumento(id, data) {
+  console.log('Chamando API para atualizar documento:', id, data);
   return put(`/update_documento/${id}`, data);
 }
 
@@ -202,13 +211,13 @@ function deleteDocumento(id) {
   return deleteRequest(`/delete_documento/${id}`);
 }
 
-// Funções para Indicadores
-function addIndicador(data) {
-  return post('/add_indicador', data);
+// Funções para Evidenciaes
+function addEvidencia(data) {
+  return post('/add_evidencia', data);
 }
 
-function updateIndicador(id, data) {
-  return put(`/update_indicador/${id}`, data);
+function updateEvidencia(id, data) {
+  return put(`/update_evidencia/${id}`, data);
 }
 
 function getProcessosPorAvaliacao(avaliacaoId) {
@@ -251,8 +260,8 @@ export {
   getDocumentosPorProjeto,
   updateDocumento,
   deleteDocumento,
-  addIndicador,
-  updateIndicador,
+  addEvidencia,
+  updateEvidencia,
   getProcessosPorAvaliacao,
   getResultadosEsperadosPorProcesso
 };
