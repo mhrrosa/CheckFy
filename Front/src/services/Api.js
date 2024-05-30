@@ -66,20 +66,6 @@ function deleteRequest(url) {
   });
 }
 
-function getById(url) {
-  return fetch(`${baseUrl}${url}`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Erro na requisição GET');
-      }
-      return response.json();
-    })
-    .catch(error => {
-      console.error('Erro ao realizar GET:', error);
-      throw error;
-    });
-}
-
 function remove(url) {
   return fetch(`${baseUrl}${url}`, {
     method: 'DELETE'
@@ -180,7 +166,15 @@ function deleteResultadoEsperado(id) {
 
 // Funções para Projetos e Documentos
 function getProjetosByAvaliacao(avaliacaoId) {
-  return get(`/get_projetos_by_avaliacao/${avaliacaoId}`);
+  return get(`/get_projetos_by_avaliacao/${avaliacaoId}`)
+    .then(response => {
+      console.log('Projetos encontrados:', response);
+      return response;
+    })
+    .catch(error => {
+      console.error('Erro ao buscar projetos:', error);
+      throw error;
+    });
 }
 
 function createProjeto(data) {
@@ -209,11 +203,35 @@ function getDocumentosPorProjeto(idProjeto) {
 }
 
 function updateDocumento(id, data) {
+  console.log('Chamando API para atualizar documento:', id, data);
   return put(`/update_documento/${id}`, data);
 }
 
 function deleteDocumento(id) {
   return deleteRequest(`/delete_documento/${id}`);
+}
+
+// Funções para Evidenciaes
+function addEvidencia(data) {
+  return post('/add_evidencia', data);
+}
+
+function updateEvidencia(id, data) {
+  return put(`/update_evidencia/${id}`, data);
+}
+
+function getProcessosPorAvaliacao(avaliacaoId) {
+  return get(`/get_processos_por_avaliacao/${avaliacaoId}`).then(response => {
+    console.log('Processos por Avaliação:', response);
+    return response;
+  });
+}
+
+function getResultadosEsperadosPorProcesso(processoId) {
+  return get(`/get_resultados_esperados_por_processo/${processoId}`).then(response => {
+    console.log('Resultados Esperados por Processo:', response);
+    return response;
+  });
 }
 
 export {
@@ -241,5 +259,9 @@ export {
   addDocumento,
   getDocumentosPorProjeto,
   updateDocumento,
-  deleteDocumento
+  deleteDocumento,
+  addEvidencia,
+  updateEvidencia,
+  getProcessosPorAvaliacao,
+  getResultadosEsperadosPorProcesso
 };

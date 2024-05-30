@@ -36,7 +36,7 @@ function Evaluation() {
 
   const handleNextStep = async () => {
     try {
-      const newIdAtividade = idAtividade + 1; // Incrementa a atividade atual em 1
+      const newIdAtividade = idAtividade + 1;
       await updateIdAtividade(avaliacaoId, newIdAtividade);
       setIdAtividade(newIdAtividade);
     } catch (error) {
@@ -65,7 +65,7 @@ function Evaluation() {
             key={etapa}
             onClick={() => handleStepClick(parseInt(etapa))}
             className={parseInt(etapa) === idAtividade ? "current-step" : ""}
-            disabled={parseInt(etapa) > idAtividade} // Desabilitar botões de etapas futuras
+            disabled={parseInt(etapa) > idAtividade}
           >
             Etapa {etapa}
           </button>
