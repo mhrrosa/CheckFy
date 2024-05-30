@@ -7,6 +7,7 @@ import logo from '../img/logo_horizontal.png';
 function Niveis() {
   const [niveis, setNiveis] = useState([]);
   const [novoNivel, setNovoNivel] = useState('');
+  const [nomeNovoNivel, setNomeNovoNivel] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,12 +27,13 @@ function Niveis() {
   };
 
   const adicionarNivel = () => {
-    const nivelData = { nivel: novoNivel };
+    const nivelData = { nivel: novoNivel, nome: nomeNovoNivel};
     createNivel(nivelData)
       .then(novo => {
         // Atualize a lista de níveis após a confirmação de inserção no banco
         carregarNiveis();
         setNovoNivel('');
+        setNomeNovoNivel('');
       })
       .catch(error => console.error('Erro ao adicionar nível:', error));
   };
@@ -75,9 +77,13 @@ function Niveis() {
             className="input-field"
             type="text"
             placeholder="Nome do nível"
-            //value={novoNivel}
-            //onChange={(e) => setNomeNovoNivel(e.target.value)}
+            value={nomeNovoNivel}
+            onChange={(e) => setNomeNovoNivel(e.target.value)}
           />
+        </div>
+        <div className='logo-and-button'>
+          <img src={logo} className="logo" alt="Logo Checkfy" />
+          <button className="button" onClick={adicionarNivel}>ADICIONAR</button>
         </div>
         <p className="processos-cadastrados-title">NÍVEIS CADASTRADOS:</p>
         {niveis.length > 0 ? (
@@ -98,12 +104,12 @@ function Niveis() {
                   </td>
                   <td className='nome-nivel-inserido-td'>
                     <input
-                    className='input-preenchido-niveis'
+                      className='input-preenchido-niveis'
                       type="text"
-                      //value={processo.tipo}
+                      value={nivel.nome}
                       onChange={(e) => {
-                        //const novoTipo = e.target.value;
-                        //setProcessos(prevProcessos => prevProcessos.map(p => (p.id === processo.id ? { ...p, tipo: novoTipo } : p)));
+                        const valorAtualizado = e.target.value;
+                        setNiveis(niveis.map(n => (n.id === nivel.id ? { ...n, nome: valorAtualizado } : n)));
                       }}
                     />
                   </td>
@@ -120,10 +126,6 @@ function Niveis() {
         ) : (
           <p>Nenhum nível encontrado.</p>
         )}
-        <div className='logo-and-button'>
-          <img src={logo} className="logo" alt="Logo Checkfy" />
-          <button className="button" onClick={""}>ADICIONAR</button>
-        </div>
       </div>
     </div>
   );

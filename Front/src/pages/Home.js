@@ -44,7 +44,7 @@ function Home() {
     <div className="home-container">
       <div className="botoes-home">
         <Link to="/create-evaluation" className="botao-home">NOVA AVALIAÇÃO</Link>
-        <Link to="/modelo" className="botao-home">GUIA DO MPS.BR</Link>
+        <Link to="/modelo" className="botao-home">GERENCIAMENTO</Link>
       </div>
       <div className="avaliacoes-lista">
         <p>Avaliações criadas:</p>
