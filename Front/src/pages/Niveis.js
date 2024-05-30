@@ -17,7 +17,7 @@ function Niveis() {
   const carregarNiveis = () => {
     getNiveis()
       .then(data => {
-        const niveisFormatados = data.map(n => ({ id: n[0], nivel: n[1] }));
+        const niveisFormatados = data.map(n => ({ id: n[0], nivel: n[1], nome: n[2] }));
         setNiveis(niveisFormatados);
       })
       .catch(error => {
@@ -46,11 +46,11 @@ function Niveis() {
       .catch(error => console.error('Erro ao remover nível:', error));
   };
 
-  const atualizarNivel = (id, novoNome) => {
-    const atualizado = { nivel: novoNome };
+  const atualizarNivel = (id, nivel , nomeNivel) => {
+    const atualizado = { nivel: nivel, nome: nomeNivel};
     updateNivel(id, atualizado)
       .then(() => {
-        setNiveis(prevNiveis => prevNiveis.map(n => (n.id === id ? { ...n, nivel: novoNome } : n)));
+        setNiveis(prevNiveis => prevNiveis.map(n => (n.id === id ? { ...n, nivel: nivel, nome: nomeNivel } : n)));
       })
       .catch(error => console.error('Erro ao atualizar nível:', error));
   };
@@ -115,7 +115,7 @@ function Niveis() {
                   </td>
                   <td className='acoes-td-niveis'>
                     <button className='button-acao-niveis'
-                      onClick={() => atualizarNivel(nivel.id, nivel.nivel)}>ATUALIZAR</button> {/* Novo botão */}
+                      onClick={() => atualizarNivel(nivel.id, nivel.nivel, nivel.nome)}>ATUALIZAR</button> {/* Novo botão */}
                     <button className='button-acao-niveis'
                       onClick={() => removerNivel(nivel.id)}>REMOVER</button>
                   </td>
