@@ -264,7 +264,6 @@ def update_projeto(projeto_id):
 def get_projetos_by_avaliacao(avaliacao_id):
     try:
         projetos = projeto.get_projetos_by_id_avaliacao(avaliacao_id)
-        print(f"Projetos encontrados: {projetos}")
         return jsonify(projetos), 200
     except Exception as e:
         print(f"Erro ao buscar projetos por ID de avaliação: {e}")
@@ -332,37 +331,6 @@ def delete_documento(documento_id):
         print(f"Erro ao remover documento: {e}")
         return jsonify({"message": "Erro ao remover documento", "error": str(e)}), 500
 
-@app.route('/add_evidencia', methods=['POST'])
-def add_evidencia():
-    evidencia_data = request.json
-    try:
-        id_resultado_esperado = evidencia_data['id_resultado_esperado']
-        id_documento = evidencia_data['id_documento']
-        print(f"Adicionando evidencia: id_resultado_esperado={id_resultado_esperado}, id_documento={id_documento}")
-        projeto.add_evidencia(id_resultado_esperado, id_documento)
-        return jsonify({"message": "Evidencia adicionado com sucesso"}), 200
-    except KeyError as e:
-        print(f"Erro: Campo necessário não fornecido - {str(e)}")
-        return jsonify({"message": f"Erro: Campo necessário não fornecido - {str(e)}"}), 400
-    except Exception as e:
-        print(f"Erro ao adicionar evidencia: {e}")
-        return jsonify({"message": "Erro ao adicionar evidencia", "error": str(e)}), 500
-
-@app.route('/update_evidencia/<int:evidencia_id>', methods=['PUT'])
-def update_evidencia(evidencia_id):
-    evidencia_data = request.json
-    try:
-        id_resultado_esperado = evidencia_data['id_resultado_esperado']
-        id_documento = evidencia_data['id_documento']
-        projeto.update_evidencia(evidencia_id, id_resultado_esperado, id_documento)
-        return jsonify({"message": "Evidencia atualizado com sucesso"}), 200
-    except KeyError as e:
-        print(f"Erro: Campo necessário não fornecido - {e}")
-        return jsonify({"message": "Campo necessário não fornecido", "error": str(e)}), 400
-    except Exception as e:
-        print(f"Erro ao atualizar evidencia: {e}")
-        return jsonify({"message": "Erro ao atualizar evidencia", "error": str(e)}), 500
-
 @app.route('/get_processos_por_avaliacao/<int:avaliacao_id>', methods=['GET'])
 def get_processos_por_avaliacao(avaliacao_id):
     try:
@@ -378,8 +346,6 @@ def get_processos_por_avaliacao(avaliacao_id):
         """
         db.cursor.execute(processos_query, (nivel_solicitado, nivel_solicitado))
         processos = db.cursor.fetchall()
-
-        print(f"Processos encontrados: {processos}")
 
         return jsonify({
             'nivel_solicitado': nivel_solicitado,
@@ -402,8 +368,6 @@ def get_resultados_esperados_por_processo(processo_id):
         db.cursor.execute(query, (processo_id,))
         resultados = db.cursor.fetchall()
 
-        print(f"Resultados esperados para o processo {processo_id}: {resultados}")
-
         return jsonify([{
             'ID': r[0],
             'Descricao': r[1],
@@ -414,6 +378,57 @@ def get_resultados_esperados_por_processo(processo_id):
     except Exception as e:
         print(f"Erro ao buscar resultados esperados por processo: {e}")
         return jsonify({"message": "Erro ao buscar resultados esperados", "error": str(e)}), 500
+
+@app.route('/add_evidencia', methods=['POST'])
+def add_evidencia():
+    evidencia_data = request.json
+    try:
+        id_resultado_esperado = evidencia_data['id_resultado_esperado']
+        id_documento = evidencia_data['id_documento']
+        print(f"Adicionando evidencia: id_resultado_esperado={id_resultado_esperado}, id_documento={id_documento}")
+        query = "INSERT INTO evidencia (ID_Resultado_Esperado, ID_Documento) VALUES (%s, %s)"
+        db.cursor.execute(query, (id_resultado_esperado, id_documento))
+        db.conn.commit()
+        return jsonify({"message": "Evidencia adicionada com sucesso"}), 200
+    except KeyError as e:
+        print(f"Erro: Campo necessário não fornecido - {str(e)}")
+        return jsonify({"message": f"Erro: Campo necessário não fornecido - {str(e)}"}), 400
+    except Exception as e:
+        print(f"Erro ao adicionar evidencia: {e}")
+        db.conn.rollback()
+        return jsonify({"message": "Erro ao adicionar evidencia", "error": str(e)}), 500
+
+@app.route('/get_evidencias_por_resultado/<int:resultado_id>/<int:projeto_id>', methods=['GET'])
+def get_evidencias_por_resultado(resultado_id, projeto_id):
+    try:
+        query = """
+            SELECT d.ID, d.Caminho_Arquivo, d.Nome_Arquivo, d.ID_Projeto
+            FROM documento d
+            JOIN evidencia e ON d.ID = e.ID_Documento
+            WHERE e.ID_Resultado_Esperado = %s AND d.ID_Projeto = %s
+        """
+        db.cursor.execute(query, (resultado_id, projeto_id))
+        documentos = db.cursor.fetchall()
+        print(f"Evidências encontradas para resultado esperado {resultado_id} e projeto {projeto_id}: {documentos}")
+        return jsonify(documentos), 200
+    except Exception as e:
+        print(f"Erro ao buscar evidencias: {e}")
+        return jsonify({"message": "Erro ao buscar evidencias", "error": str(e)}), 500
+
+@app.route('/update_evidencia/<int:evidencia_id>', methods=['PUT'])
+def update_evidencia(evidencia_id):
+    evidencia_data = request.json
+    try:
+        id_resultado_esperado = evidencia_data['id_resultado_esperado']
+        id_documento = evidencia_data['id_documento']
+        projeto.update_evidencia(evidencia_id, id_resultado_esperado, id_documento)
+        return jsonify({"message": "Evidencia atualizado com sucesso"}), 200
+    except KeyError as e:
+        print(f"Erro: Campo necessário não fornecido - {e}")
+        return jsonify({"message": "Campo necessário não fornecido", "error": str(e)}), 400
+    except Exception as e:
+        print(f"Erro ao atualizar evidencia: {e}")
+        return jsonify({"message": "Erro ao atualizar evidencia", "error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -216,6 +216,14 @@ function addEvidencia(data) {
   return post('/add_evidencia', data);
 }
 
+function getEvidenciasPorResultado(resultadoId, projetoId) {
+  return get(`/get_evidencias_por_resultado/${resultadoId}/${projetoId}`)
+    .then(response => {
+      console.log('Evidencias por Resultado:', response);
+      return response;
+    });
+}
+
 function updateEvidencia(id, data) {
   return put(`/update_evidencia/${id}`, data);
 }
@@ -261,6 +269,7 @@ export {
   updateDocumento,
   deleteDocumento,
   addEvidencia,
+  getEvidenciasPorResultado,
   updateEvidencia,
   getProcessosPorAvaliacao,
   getResultadosEsperadosPorProcesso
