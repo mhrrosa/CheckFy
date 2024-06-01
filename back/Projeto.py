@@ -33,9 +33,9 @@ class Projeto:
             projetos_com_documentos.append({
                 'ID': projeto[0],
                 'ID_Avaliacao': projeto[1],
-                'Nome_Projeto': projeto[2],
-                'Projeto_Habilitado': projeto[3],
-                'Numero_Projeto': projeto[4],
+                'Projeto_Habilitado': projeto[2],
+                'Numero_Projeto': projeto[3],
+                'Nome_Projeto': projeto[4],
                 'Documentos': [
                     {
                         'ID': doc[0],

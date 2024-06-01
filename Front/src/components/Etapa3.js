@@ -1,22 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
-import { getProcessosPorAvaliacao, getResultadosEsperadosPorProcesso, getProjetosByAvaliacao, getDocumentosPorProjeto, addDocumento, updateDocumento, deleteDocumento } from '../services/Api';
+import {
+  getProcessosPorAvaliacao,
+  getResultadosEsperadosPorProcesso,
+  getProjetosByAvaliacao,
+  getDocumentosPorProjeto,
+  addDocumento,
+  updateDocumento,
+  deleteDocumento,
+  addEvidencia,
+  getEvidenciasPorResultado
+} from '../services/Api';
 import '../styles/Processos.css';
 
-// Configuração necessária para acessibilidade
 Modal.setAppElement('#root');
 
 function Etapa3({ avaliacaoId }) {
   const [processos, setProcessos] = useState([]);
-  const [resultadosEsperados, setResultadosEsperados] = useState([]);
+  const [resultadosEsperados, setResultadosEsperados] = useState({});
   const [projetos, setProjetos] = useState([]);
   const [documentos, setDocumentos] = useState([]);
+  const [evidencias, setEvidencias] = useState({});
   const [selectedProcessoId, setSelectedProcessoId] = useState(null);
   const [selectedResultadoId, setSelectedResultadoId] = useState(null);
   const [selectedProjetoId, setSelectedProjetoId] = useState(null);
   const [novoDocumentoNome, setNovoDocumentoNome] = useState('');
   const [fileToUpload, setFileToUpload] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Adiciona o estado do modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (avaliacaoId) {
@@ -33,6 +43,7 @@ function Etapa3({ avaliacaoId }) {
     try {
       const data = await getProcessosPorAvaliacao(avaliacaoId);
       setProcessos(data.processos);
+      console.log('Processos carregados:', data.processos);
     } catch (error) {
       console.error('Erro ao carregar processos:', error);
     }
@@ -42,6 +53,7 @@ function Etapa3({ avaliacaoId }) {
     try {
       const data = await getProjetosByAvaliacao(avaliacaoId);
       setProjetos(data);
+      console.log('Projetos carregados:', data);
     } catch (error) {
       console.error('Erro ao carregar projetos:', error);
     }
@@ -49,8 +61,18 @@ function Etapa3({ avaliacaoId }) {
 
   const carregarResultadosEsperados = async (processoId) => {
     try {
-      const data = await getResultadosEsperadosPorProcesso(processoId);
-      setResultadosEsperados(data);
+      const data = await getResultadosEsperadosPorProcesso(processoId, avaliacaoId);
+      setResultadosEsperados(prevResultados => ({
+        ...prevResultados,
+        [processoId]: data
+      }));
+      console.log(`Resultados esperados carregados para o processo ${processoId}:`, data);
+
+      for (const resultado of data) {
+        for (const projeto of projetos) {
+          await carregarEvidencias(resultado.ID, projeto.ID);
+        }
+      }
     } catch (error) {
       console.error('Erro ao carregar resultados esperados:', error);
     }
@@ -66,9 +88,28 @@ function Etapa3({ avaliacaoId }) {
         idProjeto: doc[3]
       }));
       setDocumentos(documentosFormatados);
-      console.log('Documentos carregados:', documentosFormatados);  // Adicionando console.log
+      console.log('Documentos carregados:', documentosFormatados);
     } catch (error) {
       console.error('Erro ao carregar documentos:', error);
+    }
+  };
+
+  const carregarEvidencias = async (resultadoId, projetoId) => {
+    try {
+      const data = await getEvidenciasPorResultado(resultadoId, projetoId);
+      const evidenciasFormatadas = data.map(doc => ({
+        id: doc[0],
+        caminhoArquivo: doc[1],
+        nomeArquivo: doc[2],
+        idProjeto: doc[3]
+      }));
+      setEvidencias(prevEvidencias => ({
+        ...prevEvidencias,
+        [`${resultadoId}-${projetoId}`]: evidenciasFormatadas
+      }));
+      console.log(`Evidencias carregadas para resultado ${resultadoId} e projeto ${projetoId}:`, evidenciasFormatadas);
+    } catch (error) {
+      console.error('Erro ao carregar evidencias:', error);
     }
   };
 
@@ -89,9 +130,12 @@ function Etapa3({ avaliacaoId }) {
       const result = await response.json();
       if (response.ok) {
         const documentoData = { caminho_arquivo: result.filepath, nome_arquivo: novoDocumentoNome, id_projeto: selectedProjetoId };
-        await addDocumento(documentoData);
-        carregarResultadosEsperados(selectedProcessoId);
-        carregarDocumentos(selectedProjetoId);  // Recarregar documentos após adicionar
+        const documentoResponse = await addDocumento(documentoData);
+        const evidenciaData = { id_resultado_esperado: selectedResultadoId, id_documento: documentoResponse.documentoId };
+        await addEvidencia(evidenciaData);
+        await carregarEvidencias(selectedResultadoId, selectedProjetoId);
+        setNovoDocumentoNome('');
+        setFileToUpload(null);
         closeModal();
       } else {
         console.error('Erro ao fazer upload do arquivo:', result.message);
@@ -105,8 +149,7 @@ function Etapa3({ avaliacaoId }) {
     const documentoData = { caminho_arquivo: caminhoArquivo, nome_arquivo: nomeArquivo, id_projeto: selectedProjetoId };
     try {
       await updateDocumento(id, documentoData);
-      carregarResultadosEsperados(selectedProcessoId);
-      carregarDocumentos(selectedProjetoId);  // Recarregar documentos após atualizar
+      await carregarEvidencias(selectedResultadoId, selectedProjetoId);
     } catch (error) {
       console.error('Erro ao atualizar documento:', error);
     }
@@ -115,8 +158,7 @@ function Etapa3({ avaliacaoId }) {
   const handleDeletarDocumento = async (documentoId) => {
     try {
       await deleteDocumento(documentoId);
-      carregarResultadosEsperados(selectedProcessoId);
-      carregarDocumentos(selectedProjetoId);  // Recarregar documentos após deletar
+      await carregarEvidencias(selectedResultadoId, selectedProjetoId);
     } catch (error) {
       console.error('Erro ao deletar documento:', error);
     }
@@ -126,7 +168,8 @@ function Etapa3({ avaliacaoId }) {
     setSelectedProcessoId(processoId);
     setSelectedResultadoId(resultadoId);
     setSelectedProjetoId(projetoId);
-    await carregarDocumentos(projetoId);  // Carregar documentos ao abrir a modal
+    await carregarDocumentos(projetoId);
+    await carregarEvidencias(resultadoId, projetoId);
     setIsModalOpen(true);
   };
 
@@ -135,9 +178,7 @@ function Etapa3({ avaliacaoId }) {
     setSelectedProcessoId(null);
     setSelectedResultadoId(null);
     setSelectedProjetoId(null);
-    setNovoDocumentoNome('');
-    setFileToUpload(null);
-    setDocumentos([]);  // Limpar documentos ao fechar a modal
+    setDocumentos([]);
   };
 
   return (
@@ -148,13 +189,22 @@ function Etapa3({ avaliacaoId }) {
           <div key={processo.ID}>
             <h2>Processo: {processo.Descricao}</h2>
             <button onClick={() => carregarResultadosEsperados(processo.ID)}>Ver Resultados Esperados</button>
-            {resultadosEsperados.filter(re => re.ID_Processo === processo.ID).map(resultado => (
+            {resultadosEsperados[processo.ID] && resultadosEsperados[processo.ID].map(resultado => (
               <div key={resultado.ID}>
                 <h3>Resultado Esperado: {resultado.Descricao}</h3>
                 {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
                   <div key={projeto.ID}>
                     <h4>Projeto: {projeto.Nome_Projeto}</h4>
-                    <button onClick={() => openModal(processo.ID, resultado.ID, projeto.ID)}>Gerenciar Documentos</button>
+                    <button onClick={() => openModal(processo.ID, resultado.ID, projeto.ID)}>Adicionar Documento</button>
+                    <div>
+                      {evidencias[`${resultado.ID}-${projeto.ID}`] && evidencias[`${resultado.ID}-${projeto.ID}`]
+                        .map(evidencia => (
+                          <div key={evidencia.id}>
+                            <p>Documento: {evidencia.nomeArquivo}</p>
+                            <button onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
+                          </div>
+                        ))}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -208,6 +258,9 @@ function Etapa3({ avaliacaoId }) {
                   </td>
                   <td>
                     <button onClick={() => handleDeletarDocumento(doc.id)}>Remover</button>
+                  </td>
+                  <td>
+                    <button onClick={() => addEvidencia({ id_resultado_esperado: selectedResultadoId, id_documento: doc.id })}>Adicionar</button>
                   </td>
                 </tr>
               ))}

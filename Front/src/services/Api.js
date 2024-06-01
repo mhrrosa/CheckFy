@@ -217,6 +217,14 @@ function addEvidencia(data) {
   return post('/add_evidencia', data);
 }
 
+function getEvidenciasPorResultado(resultadoId, projetoId) {
+  return get(`/get_evidencias_por_resultado/${resultadoId}/${projetoId}`)
+    .then(response => {
+      console.log('Evidencias por Resultado:', response);
+      return response;
+    });
+}
+
 function updateEvidencia(id, data) {
   return put(`/update_evidencia/${id}`, data);
 }
@@ -228,8 +236,8 @@ function getProcessosPorAvaliacao(avaliacaoId) {
   });
 }
 
-function getResultadosEsperadosPorProcesso(processoId) {
-  return get(`/get_resultados_esperados_por_processo/${processoId}`).then(response => {
+function getResultadosEsperadosPorProcesso(processoId, avaliacaoId) {
+  return get(`/get_resultados_esperados_por_processo/${processoId}/${avaliacaoId}`).then(response => {
     console.log('Resultados Esperados por Processo:', response);
     return response;
   });
@@ -262,6 +270,7 @@ export {
   updateDocumento,
   deleteDocumento,
   addEvidencia,
+  getEvidenciasPorResultado,
   updateEvidencia,
   getProcessosPorAvaliacao,
   getResultadosEsperadosPorProcesso
