@@ -1,14 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
-import { getProcessosPorAvaliacao, getResultadosEsperadosPorProcesso, getProjetosByAvaliacao, getDocumentosPorProjeto, addDocumento, updateDocumento, deleteDocumento, addEvidencia, getEvidenciasPorResultado } from '../services/Api';
+import {
+  getProcessosPorAvaliacao,
+  getResultadosEsperadosPorProcesso,
+  getProjetosByAvaliacao,
+  getDocumentosPorProjeto,
+  addDocumento,
+  updateDocumento,
+  deleteDocumento,
+  addEvidencia,
+  getEvidenciasPorResultado
+} from '../services/Api';
 import '../styles/Processos.css';
 
-// Configuração necessária para acessibilidade
 Modal.setAppElement('#root');
 
 function Etapa3({ avaliacaoId }) {
   const [processos, setProcessos] = useState([]);
-  const [resultadosEsperados, setResultadosEsperados] = useState([]);
+  const [resultadosEsperados, setResultadosEsperados] = useState({});
   const [projetos, setProjetos] = useState([]);
   const [documentos, setDocumentos] = useState([]);
   const [evidencias, setEvidencias] = useState({});
@@ -52,9 +61,18 @@ function Etapa3({ avaliacaoId }) {
 
   const carregarResultadosEsperados = async (processoId) => {
     try {
-      const data = await getResultadosEsperadosPorProcesso(processoId);
-      setResultadosEsperados(data);
-      console.log('Resultados esperados carregados:', data);
+      const data = await getResultadosEsperadosPorProcesso(processoId, avaliacaoId);
+      setResultadosEsperados(prevResultados => ({
+        ...prevResultados,
+        [processoId]: data
+      }));
+      console.log(`Resultados esperados carregados para o processo ${processoId}:`, data);
+
+      for (const resultado of data) {
+        for (const projeto of projetos) {
+          await carregarEvidencias(resultado.ID, projeto.ID);
+        }
+      }
     } catch (error) {
       console.error('Erro ao carregar resultados esperados:', error);
     }
@@ -89,7 +107,7 @@ function Etapa3({ avaliacaoId }) {
         ...prevEvidencias,
         [`${resultadoId}-${projetoId}`]: evidenciasFormatadas
       }));
-      console.log('Evidencias carregadas:', evidenciasFormatadas);
+      console.log(`Evidencias carregadas para resultado ${resultadoId} e projeto ${projetoId}:`, evidenciasFormatadas);
     } catch (error) {
       console.error('Erro ao carregar evidencias:', error);
     }
@@ -171,7 +189,7 @@ function Etapa3({ avaliacaoId }) {
           <div key={processo.ID}>
             <h2>Processo: {processo.Descricao}</h2>
             <button onClick={() => carregarResultadosEsperados(processo.ID)}>Ver Resultados Esperados</button>
-            {resultadosEsperados.filter(re => re.ID_Processo === processo.ID).map(resultado => (
+            {resultadosEsperados[processo.ID] && resultadosEsperados[processo.ID].map(resultado => (
               <div key={resultado.ID}>
                 <h3>Resultado Esperado: {resultado.Descricao}</h3>
                 {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (

@@ -20,7 +20,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 db_config = {
     "host": "127.0.0.1",
     "user": "root",
-    "password": "root",
+    "password": "I#p4Zp&zS!Zv",
     "database": "checkfy"
 }
 
@@ -355,25 +355,27 @@ def get_processos_por_avaliacao(avaliacao_id):
         print(f"Erro ao buscar processos por avaliação: {e}")
         return jsonify({"message": "Erro ao buscar processos", "error": str(e)}), 500
 
-@app.route('/get_resultados_esperados_por_processo/<int:processo_id>', methods=['GET'])
-def get_resultados_esperados_por_processo(processo_id):
+@app.route('/get_resultados_esperados_por_processo/<int:processo_id>/<int:avaliacao_id>', methods=['GET'])
+def get_resultados_esperados_por_processo(processo_id, avaliacao_id):
     try:
+        # Obtemos o nível solicitado da avaliação
+        nivel_solicitado_query = "SELECT ID_Nivel_Solicitado FROM avaliacao WHERE ID = %s"
+        db.cursor.execute(nivel_solicitado_query, (avaliacao_id,))
+        nivel_solicitado = db.cursor.fetchone()[0]
+
+        # Agora obtemos os resultados esperados que satisfazem a condição do nível solicitado
         query = """
-            SELECT re.ID, re.Descricao, d.Nome_Arquivo, d.Caminho_Arquivo, re.ID_Processo
+            SELECT re.ID, re.Descricao, re.ID_Processo
             FROM resultado_esperado_mpsbr re
-            LEFT JOIN evidencia i ON re.ID = i.ID_Resultado_Esperado
-            LEFT JOIN documento d ON i.ID_Documento = d.ID
-            WHERE re.ID_Processo = %s
+            WHERE re.ID_Processo = %s AND %s <= re.ID_Nivel_Intervalo_Inicio AND %s >= re.ID_Nivel_Intervalo_Fim
         """
-        db.cursor.execute(query, (processo_id,))
+        db.cursor.execute(query, (processo_id, nivel_solicitado, nivel_solicitado))
         resultados = db.cursor.fetchall()
 
         return jsonify([{
             'ID': r[0],
             'Descricao': r[1],
-            'Nome_Arquivo': r[2],
-            'Caminho_Arquivo': r[3],
-            'ID_Processo': r[4]
+            'ID_Processo': r[2]
         } for r in resultados]), 200
     except Exception as e:
         print(f"Erro ao buscar resultados esperados por processo: {e}")

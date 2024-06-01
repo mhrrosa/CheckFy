@@ -235,8 +235,8 @@ function getProcessosPorAvaliacao(avaliacaoId) {
   });
 }
 
-function getResultadosEsperadosPorProcesso(processoId) {
-  return get(`/get_resultados_esperados_por_processo/${processoId}`).then(response => {
+function getResultadosEsperadosPorProcesso(processoId, avaliacaoId) {
+  return get(`/get_resultados_esperados_por_processo/${processoId}/${avaliacaoId}`).then(response => {
     console.log('Resultados Esperados por Processo:', response);
     return response;
   });
