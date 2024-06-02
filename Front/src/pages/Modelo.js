@@ -7,10 +7,12 @@ function Modelo() {
 
   return (
     <div className="modelo-container">
-      <h1>Gerenciamento</h1>
-      <button onClick={() => navigate('/niveis')}>Gerenciar Níveis</button>
-      <button onClick={() => navigate('/processos')}>Gerenciar Processos</button>
-      <button onClick={() => navigate('/resultados-esperados')}>Gerenciar Resultados Esperados</button>
+      <h1>GERENCIAMENTO</h1>
+      <div className='botoes-modelo'>
+        <button className='botao-modelo' onClick={() => navigate('/niveis')}>Gerenciar Níveis</button>
+        <button className='botao-modelo' onClick={() => navigate('/processos')}>Gerenciar Processos</button>
+        <button className='botao-modelo' onClick={() => navigate('/resultados-esperados')}>Gerenciar Resultados Esperados</button>
+      </div>
     </div>
   );
 }
