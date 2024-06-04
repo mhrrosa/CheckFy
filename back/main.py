@@ -166,11 +166,11 @@ def add_avaliacao():
         nivel_solicitado = avaliacao_data['nivelSolicitado']
         adjunto_emails = avaliacao_data['adjuntoEmails']
         colaborador_emails = avaliacao_data['colaboradorEmails']
-        
-        # Lógica para adicionar a avaliação no banco de dados
         avaliacao.adicionar_avaliacao(nome, descricao, nivel_solicitado, adjunto_emails, colaborador_emails)
-        
         return jsonify({"message": "Avaliação adicionada com sucesso"}), 200
+    except KeyError as e:
+        print(f"Erro: Campo necessário não fornecido - {str(e)}")
+        return jsonify({"message": "Campo necessário não fornecido", "error": str(e)}), 400
     except Exception as e:
         print(f"Erro ao adicionar avaliação: {e}")
         return jsonify({"message": "Erro ao adicionar avaliação", "error": str(e)}), 500

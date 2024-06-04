@@ -18,8 +18,14 @@ class Processo:
         return result
 
     def delete_processo(self, processo_id):
-        self.db.cursor.execute("DELETE FROM processo WHERE ID = %s", (processo_id,))
-        self.db.conn.commit()
+        try:
+            print(f"Deletando processo com ID: {processo_id}")
+            self.db.cursor.execute("DELETE FROM processo WHERE ID = %s", (processo_id,))
+            self.db.conn.commit()
+            print(f"Processo com ID {processo_id} deletado com sucesso.")
+        except Exception as e:
+            print(f"Erro ao deletar processo: {e}")
+            raise e
 
     def update_processo(self, processo_id, nova_descricao, novo_tipo):
         self.db.cursor.execute("UPDATE processo SET Descricao = %s, Tipo = %s WHERE ID = %s",

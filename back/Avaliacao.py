@@ -4,19 +4,25 @@ class Avaliacao:
 
     def adicionar_avaliacao(self, nome, descricao, id_nivel_solicitado, adjunto_emails, colaborador_emails):
         try:
-            query = "INSERT INTO avaliacao (Nome, Descricao, Status, ID_Empresa, ID_Nivel_Solicitado, ID_Avaliador_Lider, ID_Atividade) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+            print(f"Adicionando avaliação com Nome: {nome}, Descricao: {descricao}, ID_Nivel_Solicitado: {id_nivel_solicitado}")
+            query = """
+                INSERT INTO avaliacao (Nome, Descricao, Status, ID_Empresa, ID_Nivel_Solicitado, ID_Avaliador_Lider, ID_Atividade) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """
             values = (nome, descricao, "Em andamento", 1, id_nivel_solicitado, 1, 1)
             self.db.execute_query(query, values)
             
             avaliacao_id = self.db.cursor.lastrowid
 
             for email in adjunto_emails:
-                query = "INSERT INTO usuario (Email, ID_Tipo) VALUES (%s, %s)"
-                self.db.execute_query(query, (email, 2), commit=False)
+                print(f"Inserindo email adjunto: {email}")
+                query = "INSERT INTO usuario (Nome, Email, Senha, ID_Tipo) VALUES (%s, %s, %s, %s)"
+                self.db.execute_query(query, ("Adjunto", email, "Senha Teste", 2), commit=False)
 
             for email in colaborador_emails:
-                query = "INSERT INTO usuario (Email, ID_Tipo) VALUES (%s, %s)"
-                self.db.execute_query(query, (email, 3), commit=False)
+                print(f"Inserindo email colaborador: {email}")
+                query = "INSERT INTO usuario (Nome, Email, Senha, ID_Tipo) VALUES (%s, %s, %s, %s)"
+                self.db.execute_query(query, ("Adjunto", email, "Senha Teste", 3), commit=False)
 
             self.db.conn.commit()
         except Exception as e:

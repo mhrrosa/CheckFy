@@ -15,7 +15,7 @@ import '../styles/Processos.css';
 
 Modal.setAppElement('#root');
 
-function Etapa3({ avaliacaoId }) {
+function Etapa3({ avaliacaoId, onNext }) {
   const [processos, setProcessos] = useState([]);
   const [resultadosEsperados, setResultadosEsperados] = useState({});
   const [projetos, setProjetos] = useState([]);
@@ -268,6 +268,9 @@ function Etapa3({ avaliacaoId }) {
           </table>
         </div>
       </Modal>
+      <button onClick={onNext} className="next-step-button">
+        Avançar para Etapa 4
+      </button>
     </div>
   );
 }

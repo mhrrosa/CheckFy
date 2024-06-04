@@ -1,0 +1,139 @@
+import React, { useState, useEffect } from 'react';
+import Modal from 'react-modal';
+import {
+  getProcessosPorAvaliacao,
+  getResultadosEsperadosPorProcesso,
+  getProjetosByAvaliacao,
+  getEvidenciasPorResultado
+} from '../services/Api';
+import '../styles/Processos.css';
+
+Modal.setAppElement('#root');
+
+function Etapa4({ avaliacaoId }) {
+  const [processos, setProcessos] = useState([]);
+  const [resultadosEsperados, setResultadosEsperados] = useState({});
+  const [projetos, setProjetos] = useState([]);
+  const [evidencias, setEvidencias] = useState({});
+  const [selectedProcessoId, setSelectedProcessoId] = useState(null);
+  const [selectedResultadoId, setSelectedResultadoId] = useState(null);
+  const [selectedProjetoId, setSelectedProjetoId] = useState(null);
+
+  const options = [
+    "Totalmente implementado (T)",
+    "Largamente implementado (L)",
+    "Parcialmente implementado (P)",
+    "Não implementado (N)",
+    "Não avaliado (NA)",
+    "Fora do escopo (F)"
+  ];
+
+  useEffect(() => {
+    if (avaliacaoId) {
+      carregarDados();
+    }
+  }, [avaliacaoId]);
+
+  const carregarDados = async () => {
+    await carregarProcessos();
+    await carregarProjetos();
+  };
+
+  const carregarProcessos = async () => {
+    try {
+      const data = await getProcessosPorAvaliacao(avaliacaoId);
+      setProcessos(data.processos);
+      console.log('Processos carregados:', data.processos);
+    } catch (error) {
+      console.error('Erro ao carregar processos:', error);
+    }
+  };
+
+  const carregarProjetos = async () => {
+    try {
+      const data = await getProjetosByAvaliacao(avaliacaoId);
+      setProjetos(data);
+      console.log('Projetos carregados:', data);
+    } catch (error) {
+      console.error('Erro ao carregar projetos:', error);
+    }
+  };
+
+  const carregarResultadosEsperados = async (processoId) => {
+    try {
+      const data = await getResultadosEsperadosPorProcesso(processoId, avaliacaoId);
+      setResultadosEsperados(prevResultados => ({
+        ...prevResultados,
+        [processoId]: data
+      }));
+      console.log(`Resultados esperados carregados para o processo ${processoId}:`, data);
+
+      for (const resultado of data) {
+        for (const projeto of projetos) {
+          await carregarEvidencias(resultado.ID, projeto.ID);
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao carregar resultados esperados:', error);
+    }
+  };
+
+  const carregarEvidencias = async (resultadoId, projetoId) => {
+    try {
+      const data = await getEvidenciasPorResultado(resultadoId, projetoId);
+      const evidenciasFormatadas = data.map(doc => ({
+        id: doc[0],
+        caminhoArquivo: doc[1],
+        nomeArquivo: doc[2],
+        idProjeto: doc[3]
+      }));
+      setEvidencias(prevEvidencias => ({
+        ...prevEvidencias,
+        [`${resultadoId}-${projetoId}`]: evidenciasFormatadas
+      }));
+      console.log(`Evidencias carregadas para resultado ${resultadoId} e projeto ${projetoId}:`, evidenciasFormatadas);
+    } catch (error) {
+      console.error('Erro ao carregar evidencias:', error);
+    }
+  };
+
+  return (
+    <div className="management-process-container">
+      <h1 className='management-process-title'>PROCESSOS, RESULTADOS ESPERADOS E PROJETOS</h1>
+      <div>
+        {processos.map(processo => (
+          <div key={processo.ID}>
+            <h2>Processo: {processo.Descricao}</h2>
+            <button onClick={() => carregarResultadosEsperados(processo.ID)}>Ver Resultados Esperados</button>
+            {resultadosEsperados[processo.ID] && resultadosEsperados[processo.ID].map(resultado => (
+              <div key={resultado.ID}>
+                <h3>Resultado Esperado: {resultado.Descricao}</h3>
+                {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
+                  <div key={projeto.ID}>
+                    <h4>Projeto: {projeto.Nome_Projeto}</h4>
+                    <select>
+                      {options.map((option, index) => (
+                        <option key={index} value={option}>{option}</option>
+                      ))}
+                    </select>
+                    <div>
+                      {evidencias[`${resultado.ID}-${projeto.ID}`] && evidencias[`${resultado.ID}-${projeto.ID}`]
+                        .map(evidencia => (
+                          <div key={evidencia.id}>
+                            <p>Documento: {evidencia.nomeArquivo}</p>
+                            <button onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default Etapa4;

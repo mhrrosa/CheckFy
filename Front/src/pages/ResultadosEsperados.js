@@ -44,13 +44,16 @@ function ResultadosEsperados() {
   const carregarResultadosEsperados = async () => {
     try {
       const resultadosData = await getResultadosEsperados();
-      const resultadosFormatados = resultadosData.map(r => ({
-        id: r[0],
-        descricao: r[1],
-        idNivelInicio: r[2],
-        idNivelFim: r[3],
-        idProcesso: r[4]
-      }));
+      const resultadosFormatados = resultadosData.map(r => {
+        const [id, descricao, idNivelFim, idNivelInicio, idProcesso] = r;
+        return {
+          id,
+          descricao,
+          idNivelInicio,
+          idNivelFim,
+          idProcesso
+        };
+      });
       setResultados(resultadosFormatados);
     } catch (error) {
       console.error('Erro ao buscar resultados esperados:', error);
