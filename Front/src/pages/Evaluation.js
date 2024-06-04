@@ -53,7 +53,7 @@ function Evaluation() {
   return (
     <div className="evaluation-container">
       <div className="main-content">
-        <h1 className="evaluation-title">Avaliação</h1>
+        <h1 className="evaluation-title">AVALIAÇÃO</h1>
         <div className="form-section">
           {EtapaComponent ? <EtapaComponent onNext={handleNextStep} avaliacaoId={avaliacaoId} /> : <p>Etapa não encontrada</p>}
         </div>
