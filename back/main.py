@@ -20,7 +20,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 db_config = {
     "host": "127.0.0.1",
     "user": "root",
-    "password": "I#p4Zp&zS!Zv",
+    "password": "root",
     "database": "checkfy"
 }
 
@@ -431,6 +431,65 @@ def update_evidencia(evidencia_id):
     except Exception as e:
         print(f"Erro ao atualizar evidencia: {e}")
         return jsonify({"message": "Erro ao atualizar evidencia", "error": str(e)}), 500
+
+@app.route('/add_or_update_grau_implementacao', methods=['POST'])
+def add_or_update_grau_implementacao():
+  try:
+      data = request.json
+      nota = data.get('nota')
+      id_resultado_esperado = data.get('resultadoId')
+      id_projeto = data.get('projetoId')
+
+      # Verificar se já existe uma entrada para o resultado e projeto especificados
+      query = """
+          SELECT ID FROM grau_implementacao_processo_projeto 
+          WHERE ID_Resultado_Esperado = %s AND ID_Projeto = %s
+      """
+      db.cursor.execute(query, (id_resultado_esperado, id_projeto))
+      result = db.cursor.fetchone()
+
+      if result:
+          # Atualizar a entrada existente
+          update_query = """
+              UPDATE grau_implementacao_processo_projeto
+              SET Nota = %s
+              WHERE ID_Resultado_Esperado = %s AND ID_Projeto = %s
+          """
+          db.cursor.execute(update_query, (nota, id_resultado_esperado, id_projeto))
+      else:
+          # Inserir nova entrada
+          insert_query = """
+              INSERT INTO grau_implementacao_processo_projeto (Nota, ID_Resultado_Esperado, ID_Projeto)
+              VALUES (%s, %s, %s)
+          """
+          db.cursor.execute(insert_query, (nota, id_resultado_esperado, id_projeto))
+
+      db.conn.commit()
+      return jsonify({"message": "Grau de implementação adicionado/atualizado com sucesso"}), 200
+  except Exception as e:
+      print(f"Erro ao adicionar/atualizar grau de implementação: {e}")
+      db.conn.rollback()
+      return jsonify({"message": "Erro ao adicionar/atualizar grau de implementação", "error": str(e)}), 500
+
+@app.route('/get_graus_implementacao/<int:avaliacao_id>', methods=['GET'])
+def get_graus_implementacao(avaliacao_id):
+    try:
+        query = """
+            SELECT gip.ID, gip.Nota, gip.ID_Resultado_Esperado, gip.ID_Projeto
+            FROM grau_implementacao_processo_projeto gip
+            JOIN projeto p ON gip.ID_Projeto = p.ID
+            WHERE p.ID_Avaliacao = %s
+        """
+        db.cursor.execute(query, (avaliacao_id,))
+        graus = db.cursor.fetchall()
+        graus_implementacao = [
+            {'ID': g[0], 'Nota': g[1], 'ID_Resultado_Esperado': g[2], 'ID_Projeto': g[3]}
+        for g in graus]
+
+        return jsonify(graus_implementacao), 200
+    except Exception as e:
+        print(f"Erro ao buscar graus de implementação: {e}")
+        return jsonify({"message": "Erro ao buscar graus de implementação", "error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

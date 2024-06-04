@@ -4,7 +4,9 @@ import {
   getProcessosPorAvaliacao,
   getResultadosEsperadosPorProcesso,
   getProjetosByAvaliacao,
-  getEvidenciasPorResultado
+  getEvidenciasPorResultado,
+  getGrausImplementacao,
+  addOrUpdateGrauImplementacao
 } from '../services/Api';
 import '../styles/Processos.css';
 
@@ -18,6 +20,7 @@ function Etapa4({ avaliacaoId }) {
   const [selectedProcessoId, setSelectedProcessoId] = useState(null);
   const [selectedResultadoId, setSelectedResultadoId] = useState(null);
   const [selectedProjetoId, setSelectedProjetoId] = useState(null);
+  const [grausImplementacao, setGrausImplementacao] = useState({});
 
   const options = [
     "Totalmente implementado (T)",
@@ -37,6 +40,7 @@ function Etapa4({ avaliacaoId }) {
   const carregarDados = async () => {
     await carregarProcessos();
     await carregarProjetos();
+    await carregarGrausImplementacao();
   };
 
   const carregarProcessos = async () => {
@@ -97,6 +101,34 @@ function Etapa4({ avaliacaoId }) {
     }
   };
 
+  const carregarGrausImplementacao = async () => {
+    try {
+      const data = await getGrausImplementacao(avaliacaoId);
+      const graus = {};
+      data.forEach(grau => {
+        graus[`${grau.ID_Resultado_Esperado}-${grau.ID_Projeto}`] = grau.Nota;
+      });
+      setGrausImplementacao(graus);
+      console.log('Graus de implementação carregados:', graus);
+    } catch (error) {
+      console.error('Erro ao carregar graus de implementação:', error);
+    }
+  };
+
+  const handleSelectChange = async (evento, resultadoId, projetoId) => {
+    const nota = evento.target.value;
+    try {
+      await addOrUpdateGrauImplementacao({ nota, resultadoId, projetoId });
+      setGrausImplementacao(prevGraus => ({
+        ...prevGraus,
+        [`${resultadoId}-${projetoId}`]: nota
+      }));
+      console.log(`Grau de implementação atualizado: ${nota} para Resultado ${resultadoId} e Projeto ${projetoId}`);
+    } catch (error) {
+      console.error('Erro ao atualizar grau de implementação:', error);
+    }
+  };
+
   return (
     <div className="management-process-container">
       <h1 className='management-process-title'>PROCESSOS, RESULTADOS ESPERADOS E PROJETOS</h1>
@@ -111,7 +143,10 @@ function Etapa4({ avaliacaoId }) {
                 {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
                   <div key={projeto.ID}>
                     <h4>Projeto: {projeto.Nome_Projeto}</h4>
-                    <select>
+                    <select
+                      value={grausImplementacao[`${resultado.ID}-${projeto.ID}`] || "Não avaliado (NA)"}
+                      onChange={(e) => handleSelectChange(e, resultado.ID, projeto.ID)}
+                    >
                       {options.map((option, index) => (
                         <option key={index} value={option}>{option}</option>
                       ))}

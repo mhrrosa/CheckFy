@@ -242,6 +242,31 @@ function getResultadosEsperadosPorProcesso(processoId, avaliacaoId) {
   });
 }
 
+// Função para grau de implementação do processo do projeto
+function addOrUpdateGrauImplementacao(data) {
+  return post('/add_or_update_grau_implementacao', data)
+    .then(response => {
+      console.log('Resposta da API para adição/atualização de grau de implementação:', response);
+      return response;
+    })
+    .catch(error => {
+      console.error('Erro ao adicionar/atualizar grau de implementação:', error);
+      throw error;
+    });
+}
+
+function getGrausImplementacao(avaliacaoId) {
+  return get(`/get_graus_implementacao/${avaliacaoId}`)
+    .then(response => {
+      console.log('Graus de implementação encontrados:', response);
+      return response;
+    })
+    .catch(error => {
+      console.error('Erro ao buscar graus de implementação:', error);
+      throw error;
+    });
+}
+
 export {
   startNewEvaluation,
   getAllAvaliacoes,
@@ -272,5 +297,7 @@ export {
   getEvidenciasPorResultado,
   updateEvidencia,
   getProcessosPorAvaliacao,
-  getResultadosEsperadosPorProcesso
+  getResultadosEsperadosPorProcesso,
+  addOrUpdateGrauImplementacao,
+  getGrausImplementacao
 };
