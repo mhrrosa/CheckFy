@@ -7,6 +7,7 @@ import logo from '../img/logo_horizontal.png';
 function Niveis() {
   const [niveis, setNiveis] = useState([]);
   const [novoNivel, setNovoNivel] = useState('');
+  const [nomeNovoNivel, setNomeNovoNivel] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,7 +17,7 @@ function Niveis() {
   const carregarNiveis = () => {
     getNiveis()
       .then(data => {
-        const niveisFormatados = data.map(n => ({ id: n[0], nivel: n[1] }));
+        const niveisFormatados = data.map(n => ({ id: n[0], nivel: n[1], nome: n[2] }));
         setNiveis(niveisFormatados);
       })
       .catch(error => {
@@ -26,12 +27,13 @@ function Niveis() {
   };
 
   const adicionarNivel = () => {
-    const nivelData = { nivel: novoNivel };
+    const nivelData = { nivel: novoNivel, nome: nomeNovoNivel};
     createNivel(nivelData)
       .then(novo => {
         // Atualize a lista de níveis após a confirmação de inserção no banco
         carregarNiveis();
         setNovoNivel('');
+        setNomeNovoNivel('');
       })
       .catch(error => console.error('Erro ao adicionar nível:', error));
   };
@@ -44,18 +46,18 @@ function Niveis() {
       .catch(error => console.error('Erro ao remover nível:', error));
   };
 
-  const atualizarNivel = (id, novoNome) => {
-    const atualizado = { nivel: novoNome };
+  const atualizarNivel = (id, nivel , nomeNivel) => {
+    const atualizado = { nivel: nivel, nome: nomeNivel};
     updateNivel(id, atualizado)
       .then(() => {
-        setNiveis(prevNiveis => prevNiveis.map(n => (n.id === id ? { ...n, nivel: novoNome } : n)));
+        setNiveis(prevNiveis => prevNiveis.map(n => (n.id === id ? { ...n, nivel: nivel, nome: nomeNivel } : n)));
       })
       .catch(error => console.error('Erro ao atualizar nível:', error));
   };
 
   return (
     <div className="niveis-container">
-      <div className="form-section">
+      <div className="form-section-niveis">
         <button className="close-button" onClick={() => navigate('/modelo')}>
           <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -63,7 +65,7 @@ function Niveis() {
           </svg>
         </button>
         <h1 className='level-management-title'>GERENCIAMENTO DE NÍVEIS</h1>
-        <div className="input-button">
+        <div className="input-wrapper">
           <input
             className="input-field"
             type="text"
@@ -71,9 +73,18 @@ function Niveis() {
             value={novoNivel}
             onChange={(e) => setNovoNivel(e.target.value)}
           />
-          <button className='button-add' onClick={adicionarNivel}>ADICIONAR</button>
+          <input
+            className="input-field"
+            type="text"
+            placeholder="Nome do nível"
+            value={nomeNovoNivel}
+            onChange={(e) => setNomeNovoNivel(e.target.value)}
+          />
         </div>
-        <img src={logo} className="logo-form" alt="Logo Checkfy" />
+        <div className='logo-and-button'>
+          <img src={logo} className="logo" alt="Logo Checkfy" />
+          <button className="button" onClick={adicionarNivel}>ADICIONAR</button>
+        </div>
         <p className="processos-cadastrados-title">NÍVEIS CADASTRADOS:</p>
         {niveis.length > 0 ? (
           <table>
@@ -91,10 +102,21 @@ function Niveis() {
                       }}
                     />
                   </td>
-                  <td className='acoes-td'>
-                    <button className='button-acao'
-                      onClick={() => atualizarNivel(nivel.id, nivel.nivel)}>ATUALIZAR</button> {/* Novo botão */}
-                    <button className='button-acao'
+                  <td className='nome-nivel-inserido-td'>
+                    <input
+                      className='input-preenchido-niveis'
+                      type="text"
+                      value={nivel.nome}
+                      onChange={(e) => {
+                        const valorAtualizado = e.target.value;
+                        setNiveis(niveis.map(n => (n.id === nivel.id ? { ...n, nome: valorAtualizado } : n)));
+                      }}
+                    />
+                  </td>
+                  <td className='acoes-td-niveis'>
+                    <button className='button-acao-niveis'
+                      onClick={() => atualizarNivel(nivel.id, nivel.nivel, nivel.nome)}>ATUALIZAR</button> {/* Novo botão */}
+                    <button className='button-acao-niveis'
                       onClick={() => removerNivel(nivel.id)}>REMOVER</button>
                   </td>
                 </tr>
