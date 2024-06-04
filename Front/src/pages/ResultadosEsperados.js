@@ -175,7 +175,7 @@ function ResultadosEsperados() {
                     >
                     </textarea>
                   </td>
-                  <td>
+                  <td className='td-nivel-preenchido'>
                     <select
                       className='select-preenchido'
                       value={resultado.idNivelInicio}
@@ -189,7 +189,7 @@ function ResultadosEsperados() {
                       ))}
                     </select>
                   </td>
-                  <td>
+                  <td className='td-nivel-preenchido'>
                     <select
                       className='select-preenchido'
                       value={resultado.idNivelFim}

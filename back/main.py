@@ -36,10 +36,10 @@ documento = Documento(db)
 @app.route('/add_nivel', methods=['POST'])
 def add_nivel():
     nivel_data = request.json
-    if 'nivel' not in nivel_data:
-        return jsonify({"message": "Campo 'nivel' ausente no JSON"}), 400
+    if 'nivel' not in nivel_data or 'nome_nivel' not in nivel_data:
+        return jsonify({"message": "Campos 'nivel' e/ou 'nome_nivel' ausentes no JSON"}), 400
     try:
-        nivel.add_nivel(nivel_data['nivel'])
+        nivel.add_nivel(nivel_data['nivel'], nivel_data['nome_nivel'])
         return jsonify({"message": "Nível adicionado com sucesso"}), 200
     except Exception as e:
         print(f"Erro ao adicionar nível: {e}")

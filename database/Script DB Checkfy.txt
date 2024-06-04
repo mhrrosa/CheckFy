@@ -230,10 +230,13 @@ DROP TABLE IF EXISTS `nivel_maturidade_mpsbr`;
 CREATE TABLE `nivel_maturidade_mpsbr` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `Nivel` varchar(50) NOT NULL,
+  `NomeNivel` varchar(50) NOT null,
+
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+<<<<<<< HEAD
 --
 -- Dumping data for table `nivel_maturidade_mpsbr`
 --
@@ -245,6 +248,13 @@ INSERT INTO `nivel_maturidade_mpsbr` VALUES (43,'A'),(44,'B'),(45,'C'),(46,'D'),
 UNLOCK TABLES;
 
 --
+=======
+-- Dumping data for table `nivel_maturidade_mpsbr`
+LOCK TABLES `nivel_maturidade_mpsbr` WRITE;
+INSERT INTO `nivel_maturidade_mpsbr` VALUES (43,'A', 'Em Otimização'),(44,'B', 'Gerenciado Quantitavitivamente'),(45,'C', 'Definido'),(46,'D', 'Largamente Definido'),(49,'E', 'Parcialmente Definido'),(51,'G', 'Parcialmente Gerenciado'),(52,'F', 'Gerenciado');
+UNLOCK TABLES;
+
+>>>>>>> develop
 -- Table structure for table `processo`
 --
 

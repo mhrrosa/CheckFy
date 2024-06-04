@@ -114,7 +114,8 @@ function updateIdAtividade(id, idAtividade) {
 }
 
 // Funções para Níveis
-function createNivel(data) {
+function createNivel(nivel, nomeNivel) {
+  const data = { nivel, nome_nivel: nomeNivel };
   return post('/add_nivel', data);
 }
 

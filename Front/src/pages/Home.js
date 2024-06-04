@@ -44,23 +44,23 @@ function Home() {
     <div className="home-container">
       <div className="botoes-home">
         <Link to="/create-evaluation" className="botao-home">NOVA AVALIAÇÃO</Link>
-        <Link to="/modelo" className="botao-home">GUIA DO MPS.BR</Link>
+        <Link to="/modelo" className="botao-home">GERENCIAMENTO</Link>
       </div>
       <div className="avaliacoes-lista">
-        <p>Avaliações criadas:</p>
+        <p className='title-avaliacoes-criadas'>Avaliações cadastradas:</p>
         {avaliacoes.length > 0 ? (
           avaliacoes.map(avaliacao => (
             <div key={avaliacao.id} className="avaliacao-item">
               <p>{avaliacao.nome} - {avaliacao.status}</p>
               <div className="botoes-avaliacao">
-                <button onClick={() => handleContinue(avaliacao.id)}>
-                  Continuar
+                <button className="botao-avaliacao" onClick={() => handleContinue(avaliacao.id)}>
+                  CONTINUAR
                 </button>
-                <button onClick={() => navigate(`/update-evaluation`, { state: { id: avaliacao.id } })}>
-                  Alterar
+                <button className="botao-avaliacao" onClick={() => navigate(`/update-evaluation`, { state: { id: avaliacao.id } })}>
+                  ALTERAR
                 </button>
-                <button onClick={() => handleDelete(avaliacao.id)}>
-                  Excluir
+                <button className="botao-avaliacao" onClick={() => handleDelete(avaliacao.id)}>
+                  EXCLUIR
                 </button>
               </div>
             </div>
