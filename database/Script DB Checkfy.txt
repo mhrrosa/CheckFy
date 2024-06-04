@@ -1,3 +1,20 @@
+-- MySQL dump 10.13  Distrib 8.0.28, for Win64 (x86_64)
+--
+-- Host: localhost    Database: checkfy
+-- ------------------------------------------------------
+-- Server version	8.0.28
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
 --
 -- Table structure for table `atividade`
 --
@@ -175,7 +192,7 @@ DROP TABLE IF EXISTS `grau_implementacao_processo_projeto`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `grau_implementacao_processo_projeto` (
   `ID` int NOT NULL AUTO_INCREMENT,
-  `Nota` varchar(15) DEFAULT NULL,
+  `Nota` varchar(1) DEFAULT NULL,
   `ID_Resultado_Esperado` int NOT NULL,
   `ID_Projeto` int NOT NULL,
   PRIMARY KEY (`ID`),
@@ -203,7 +220,7 @@ DROP TABLE IF EXISTS `grau_implementacao_unidade_organizacional`;
 CREATE TABLE `grau_implementacao_unidade_organizacional` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `ID_Resultado_Esperado` int NOT NULL,
-  `Nota` varchar(1) DEFAULT NULL,
+  `Nota` varchar(50) DEFAULT NULL,
   `ID_Projeto` int NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `grau_implementacao_unidade_organizacional_FK` (`ID_Projeto`),
@@ -229,32 +246,23 @@ DROP TABLE IF EXISTS `nivel_maturidade_mpsbr`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `nivel_maturidade_mpsbr` (
   `ID` int NOT NULL AUTO_INCREMENT,
-  `Nivel` varchar(50) NOT NULL,
-  `NomeNivel` varchar(50) NOT null,
-
+  `Nivel` varchar(10) NOT NULL,
+  `NomeNivel` varchar(50) NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-<<<<<<< HEAD
 --
 -- Dumping data for table `nivel_maturidade_mpsbr`
 --
 
 LOCK TABLES `nivel_maturidade_mpsbr` WRITE;
 /*!40000 ALTER TABLE `nivel_maturidade_mpsbr` DISABLE KEYS */;
-INSERT INTO `nivel_maturidade_mpsbr` VALUES (43,'A'),(44,'B'),(45,'C'),(46,'D'),(49,'E'),(51,'G'),(52,'F');
+INSERT INTO `nivel_maturidade_mpsbr` VALUES (43,'A','Em Otimização'),(44,'B','Gerenciado Quantitavitivamente'),(45,'C','Definido'),(46,'D','Largamente Definido'),(49,'E','Parcialmente Definido'),(51,'F','Gerenciado'),(52,'G','Parcialmente Gerenciado');
 /*!40000 ALTER TABLE `nivel_maturidade_mpsbr` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
-=======
--- Dumping data for table `nivel_maturidade_mpsbr`
-LOCK TABLES `nivel_maturidade_mpsbr` WRITE;
-INSERT INTO `nivel_maturidade_mpsbr` VALUES (43,'A', 'Em Otimização'),(44,'B', 'Gerenciado Quantitavitivamente'),(45,'C', 'Definido'),(46,'D', 'Largamente Definido'),(49,'E', 'Parcialmente Definido'),(51,'G', 'Parcialmente Gerenciado'),(52,'F', 'Gerenciado');
-UNLOCK TABLES;
-
->>>>>>> develop
 -- Table structure for table `processo`
 --
 
@@ -463,3 +471,14 @@ ALTER TABLE `usuarios_projeto`
 --
 -- Dumping routines for database 'checkfy'
 --
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2024-05-31 15:38:45

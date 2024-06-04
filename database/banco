@@ -29,9 +29,7 @@ CREATE TABLE `atividade` (
   `ID_Corresponsavel` int DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `atividade_FK` (`ID_Responsavel`),
-  KEY `atividade_FK_1` (`ID_Corresponsavel`),
-  CONSTRAINT `atividade_FK` FOREIGN KEY (`ID_Responsavel`) REFERENCES `funcao_usuario` (`ID`),
-  CONSTRAINT `atividade_FK_1` FOREIGN KEY (`ID_Corresponsavel`) REFERENCES `funcao_usuario` (`ID`)
+  KEY `atividade_FK_1` (`ID_Corresponsavel`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -68,12 +66,7 @@ CREATE TABLE `avaliacao` (
   KEY `avaliacao_FK_1` (`ID_Avaliador_Lider`),
   KEY `avaliacao_FK_2` (`ID_Nivel_Atribuido`),
   KEY `projeto_empresa_FK` (`ID_Empresa`),
-  KEY `projeto_nivel_FK` (`ID_Nivel_Solicitado`),
-  CONSTRAINT `avaliacao_FK` FOREIGN KEY (`ID_Atividade`) REFERENCES `atividade` (`ID`),
-  CONSTRAINT `avaliacao_FK_1` FOREIGN KEY (`ID_Avaliador_Lider`) REFERENCES `usuario` (`ID`),
-  CONSTRAINT `avaliacao_FK_2` FOREIGN KEY (`ID_Nivel_Atribuido`) REFERENCES `nivel_maturidade_mpsbr` (`ID`),
-  CONSTRAINT `projeto_empresa_FK` FOREIGN KEY (`ID_Empresa`) REFERENCES `empresa` (`ID`),
-  CONSTRAINT `projeto_nivel_FK` FOREIGN KEY (`ID_Nivel_Solicitado`) REFERENCES `nivel_maturidade_mpsbr` (`ID`)
+  KEY `projeto_nivel_FK` (`ID_Nivel_Solicitado`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -100,8 +93,7 @@ CREATE TABLE `documento` (
   `Nome_Arquivo` varchar(100) DEFAULT NULL,
   `ID_Projeto` int NOT NULL,
   PRIMARY KEY (`ID`),
-  KEY `documento_FK` (`ID_Projeto`),
-  CONSTRAINT `documento_FK` FOREIGN KEY (`ID_Projeto`) REFERENCES `projeto` (`ID`)
+  KEY `documento_FK` (`ID_Projeto`)
 ) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -153,9 +145,7 @@ CREATE TABLE `evidencia` (
   `ID_Documento` int NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `indicador_FK` (`ID_Documento`),
-  KEY `indicador_FK_1` (`ID_Resultado_Esperado`),
-  CONSTRAINT `indicador_FK` FOREIGN KEY (`ID_Documento`) REFERENCES `documento` (`ID`),
-  CONSTRAINT `indicador_FK_1` FOREIGN KEY (`ID_Resultado_Esperado`) REFERENCES `resultado_esperado_mpsbr` (`ID`)
+  KEY `indicador_FK_1` (`ID_Resultado_Esperado`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -202,14 +192,12 @@ DROP TABLE IF EXISTS `grau_implementacao_processo_projeto`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `grau_implementacao_processo_projeto` (
   `ID` int NOT NULL AUTO_INCREMENT,
-  `Nota` varchar(15) DEFAULT NULL,
+  `Nota` varchar(1) DEFAULT NULL,
   `ID_Resultado_Esperado` int NOT NULL,
   `ID_Projeto` int NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `grau_implementacao_processo_projeto_FK` (`ID_Projeto`),
-  KEY `grau_implementacao_processo_projeto_FK_1` (`ID_Resultado_Esperado`),
-  CONSTRAINT `grau_implementacao_processo_projeto_FK` FOREIGN KEY (`ID_Projeto`) REFERENCES `projeto` (`ID`),
-  CONSTRAINT `grau_implementacao_processo_projeto_FK_1` FOREIGN KEY (`ID_Resultado_Esperado`) REFERENCES `resultado_esperado_mpsbr` (`ID`)
+  KEY `grau_implementacao_processo_projeto_FK_1` (`ID_Resultado_Esperado`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -232,13 +220,11 @@ DROP TABLE IF EXISTS `grau_implementacao_unidade_organizacional`;
 CREATE TABLE `grau_implementacao_unidade_organizacional` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `ID_Resultado_Esperado` int NOT NULL,
-  `Nota` varchar(1) DEFAULT NULL,
+  `Nota` varchar(50) DEFAULT NULL,
   `ID_Projeto` int NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `grau_implementacao_unidade_organizacional_FK` (`ID_Projeto`),
-  KEY `grau_implementacao_unidade_organizacional_FK_1` (`ID_Resultado_Esperado`),
-  CONSTRAINT `grau_implementacao_unidade_organizacional_FK` FOREIGN KEY (`ID_Projeto`) REFERENCES `projeto` (`ID`),
-  CONSTRAINT `grau_implementacao_unidade_organizacional_FK_1` FOREIGN KEY (`ID_Resultado_Esperado`) REFERENCES `resultado_esperado_mpsbr` (`ID`)
+  KEY `grau_implementacao_unidade_organizacional_FK_1` (`ID_Resultado_Esperado`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -260,7 +246,8 @@ DROP TABLE IF EXISTS `nivel_maturidade_mpsbr`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `nivel_maturidade_mpsbr` (
   `ID` int NOT NULL AUTO_INCREMENT,
-  `Nivel` varchar(50) NOT NULL,
+  `Nivel` varchar(10) NOT NULL,
+  `NomeNivel` varchar(50) NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -271,7 +258,7 @@ CREATE TABLE `nivel_maturidade_mpsbr` (
 
 LOCK TABLES `nivel_maturidade_mpsbr` WRITE;
 /*!40000 ALTER TABLE `nivel_maturidade_mpsbr` DISABLE KEYS */;
-INSERT INTO `nivel_maturidade_mpsbr` VALUES (43,'A'),(44,'B'),(45,'C'),(46,'D'),(49,'E'),(51,'G'),(52,'F');
+INSERT INTO `nivel_maturidade_mpsbr` VALUES (43,'A','Em Otimização'),(44,'B','Gerenciado Quantitavitivamente'),(45,'C','Definido'),(46,'D','Largamente Definido'),(49,'E','Parcialmente Definido'),(51,'F','Gerenciado'),(52,'G','Parcialmente Gerenciado');
 /*!40000 ALTER TABLE `nivel_maturidade_mpsbr` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -314,8 +301,7 @@ CREATE TABLE `projeto` (
   `Numero_Projeto` int NOT NULL,
   `Nome_Projeto` varchar(100) NOT NULL,
   PRIMARY KEY (`ID`),
-  KEY `projeto_avaliacao_FK` (`ID_Avaliacao`),
-  CONSTRAINT `projeto_avaliacao_FK` FOREIGN KEY (`ID_Avaliacao`) REFERENCES `avaliacao` (`ID`)
+  KEY `projeto_avaliacao_FK` (`ID_Avaliacao`)
 ) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -345,10 +331,7 @@ CREATE TABLE `resultado_esperado_mpsbr` (
   PRIMARY KEY (`ID`),
   KEY `resultado_esperado_mpsbr_FK` (`ID_Processo`),
   KEY `resultado_esperado_mpsbr_FK_1` (`ID_Nivel_Intervalo_Inicio`),
-  KEY `resultado_esperado_mpsbr_FK_2` (`ID_Nivel_Intervalo_Fim`),
-  CONSTRAINT `resultado_esperado_mpsbr_FK` FOREIGN KEY (`ID_Processo`) REFERENCES `processo` (`ID`),
-  CONSTRAINT `resultado_esperado_mpsbr_FK_1` FOREIGN KEY (`ID_Nivel_Intervalo_Inicio`) REFERENCES `nivel_maturidade_mpsbr` (`ID`),
-  CONSTRAINT `resultado_esperado_mpsbr_FK_2` FOREIGN KEY (`ID_Nivel_Intervalo_Fim`) REFERENCES `nivel_maturidade_mpsbr` (`ID`)
+  KEY `resultado_esperado_mpsbr_FK_2` (`ID_Nivel_Intervalo_Fim`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -400,8 +383,7 @@ CREATE TABLE `usuario` (
   `Senha` varchar(100) NOT NULL,
   `Email` varchar(100) NOT NULL,
   PRIMARY KEY (`ID`),
-  KEY `usuario_FK` (`ID_Tipo`),
-  CONSTRAINT `usuario_FK` FOREIGN KEY (`ID_Tipo`) REFERENCES `tipo_usuario` (`ID`)
+  KEY `usuario_FK` (`ID_Tipo`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -430,10 +412,7 @@ CREATE TABLE `usuarios_projeto` (
   PRIMARY KEY (`ID`),
   KEY `usuarios_projeto_FK` (`ID_Usuario`),
   KEY `usuarios_projeto_FK_1` (`ID_Funcao`),
-  KEY `usuarios_projeto_FK_2` (`ID_Projeto`),
-  CONSTRAINT `usuarios_projeto_FK` FOREIGN KEY (`ID_Usuario`) REFERENCES `usuario` (`ID`),
-  CONSTRAINT `usuarios_projeto_FK_1` FOREIGN KEY (`ID_Funcao`) REFERENCES `funcao_usuario` (`ID`),
-  CONSTRAINT `usuarios_projeto_FK_2` FOREIGN KEY (`ID_Projeto`) REFERENCES `avaliacao` (`ID`)
+  KEY `usuarios_projeto_FK_2` (`ID_Projeto`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -445,6 +424,49 @@ LOCK TABLES `usuarios_projeto` WRITE;
 /*!40000 ALTER TABLE `usuarios_projeto` DISABLE KEYS */;
 /*!40000 ALTER TABLE `usuarios_projeto` ENABLE KEYS */;
 UNLOCK TABLES;
+
+-- Foreign keys creation
+ALTER TABLE `atividade`
+  ADD CONSTRAINT `atividade_FK` FOREIGN KEY (`ID_Responsavel`) REFERENCES `funcao_usuario` (`ID`),
+  ADD CONSTRAINT `atividade_FK_1` FOREIGN KEY (`ID_Corresponsavel`) REFERENCES `funcao_usuario` (`ID`);
+
+ALTER TABLE `avaliacao`
+  ADD CONSTRAINT `avaliacao_FK` FOREIGN KEY (`ID_Atividade`) REFERENCES `atividade` (`ID`),
+  ADD CONSTRAINT `avaliacao_FK_1` FOREIGN KEY (`ID_Avaliador_Lider`) REFERENCES `usuario` (`ID`),
+  ADD CONSTRAINT `avaliacao_FK_2` FOREIGN KEY (`ID_Nivel_Atribuido`) REFERENCES `nivel_maturidade_mpsbr` (`ID`),
+  ADD CONSTRAINT `projeto_empresa_FK` FOREIGN KEY (`ID_Empresa`) REFERENCES `empresa` (`ID`),
+  ADD CONSTRAINT `projeto_nivel_FK` FOREIGN KEY (`ID_Nivel_Solicitado`) REFERENCES `nivel_maturidade_mpsbr` (`ID`);
+
+ALTER TABLE `documento`
+  ADD CONSTRAINT `documento_FK` FOREIGN KEY (`ID_Projeto`) REFERENCES `projeto` (`ID`);
+
+ALTER TABLE `evidencia`
+  ADD CONSTRAINT `indicador_FK` FOREIGN KEY (`ID_Documento`) REFERENCES `documento` (`ID`),
+  ADD CONSTRAINT `indicador_FK_1` FOREIGN KEY (`ID_Resultado_Esperado`) REFERENCES `resultado_esperado_mpsbr` (`ID`);
+
+ALTER TABLE `grau_implementacao_processo_projeto`
+  ADD CONSTRAINT `grau_implementacao_processo_projeto_FK` FOREIGN KEY (`ID_Projeto`) REFERENCES `projeto` (`ID`),
+  ADD CONSTRAINT `grau_implementacao_processo_projeto_FK_1` FOREIGN KEY (`ID_Resultado_Esperado`) REFERENCES `resultado_esperado_mpsbr` (`ID`);
+
+ALTER TABLE `grau_implementacao_unidade_organizacional`
+  ADD CONSTRAINT `grau_implementacao_unidade_organizacional_FK` FOREIGN KEY (`ID_Projeto`) REFERENCES `projeto` (`ID`),
+  ADD CONSTRAINT `grau_implementacao_unidade_organizacional_FK_1` FOREIGN KEY (`ID_Resultado_Esperado`) REFERENCES `resultado_esperado_mpsbr` (`ID`);
+
+ALTER TABLE `projeto`
+  ADD CONSTRAINT `projeto_avaliacao_FK` FOREIGN KEY (`ID_Avaliacao`) REFERENCES `avaliacao` (`ID`);
+
+ALTER TABLE `resultado_esperado_mpsbr`
+  ADD CONSTRAINT `resultado_esperado_mpsbr_FK` FOREIGN KEY (`ID_Processo`) REFERENCES `processo` (`ID`),
+  ADD CONSTRAINT `resultado_esperado_mpsbr_FK_1` FOREIGN KEY (`ID_Nivel_Intervalo_Inicio`) REFERENCES `nivel_maturidade_mpsbr` (`ID`),
+  ADD CONSTRAINT `resultado_esperado_mpsbr_FK_2` FOREIGN KEY (`ID_Nivel_Intervalo_Fim`) REFERENCES `nivel_maturidade_mpsbr` (`ID`);
+
+ALTER TABLE `usuario`
+  ADD CONSTRAINT `usuario_FK` FOREIGN KEY (`ID_Tipo`) REFERENCES `tipo_usuario` (`ID`);
+
+ALTER TABLE `usuarios_projeto`
+  ADD CONSTRAINT `usuarios_projeto_FK` FOREIGN KEY (`ID_Usuario`) REFERENCES `usuario` (`ID`),
+  ADD CONSTRAINT `usuarios_projeto_FK_1` FOREIGN KEY (`ID_Funcao`) REFERENCES `funcao_usuario` (`ID`),
+  ADD CONSTRAINT `usuarios_projeto_FK_2` FOREIGN KEY (`ID_Projeto`) REFERENCES `avaliacao` (`ID`);
 
 --
 -- Dumping routines for database 'checkfy'
