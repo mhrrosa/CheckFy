@@ -67,13 +67,13 @@ function CreateEvaluation() {
         <h1 className="create-evaluation-title">CRIAR AVALIAÇÃO</h1>
         <div className="lista-input">
           <div className="input-wrapper">
-            <label className="label">Nome:</label>
+            <label className="label">Nome da empresa:</label>
             <input
               className="input-field"
               type="text"
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
-              placeholder="Digite o nome da avaliação"
+              placeholder="Digite o nome da empresa"
             />
           </div>
           <div className="input-wrapper">

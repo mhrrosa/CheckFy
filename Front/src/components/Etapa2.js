@@ -6,8 +6,8 @@ function Etapa2({ onNext, avaliacaoId }) {
   const [projetos, setProjetos] = useState([]);
   const [novoProjetoNome, setNovoProjetoNome] = useState('');
   const [novoProjetoHabilitado, setNovoProjetoHabilitado] = useState(false);
-  const [selectedProjetoId, setSelectedProjetoId] = useState(null);
   const [editandoProjeto, setEditandoProjeto] = useState(false);
+  const [selectedProjetoId, setSelectedProjetoId] = useState(null);
 
   useEffect(() => {
     if (avaliacaoId) {
@@ -46,11 +46,11 @@ function Etapa2({ onNext, avaliacaoId }) {
     setSelectedProjetoId(null);
   };
 
-  const atualizarProjeto = async (projetoId, habilitado) => {
+  const atualizarProjeto = async (projetoId, nome, habilitado) => {
     try {
-      const projetoData = { habilitado };
+      const projetoData = { nome, habilitado };
       await updateProjeto(projetoId, projetoData);
-      setProjetos(prevProjetos => prevProjetos.map(proj => (proj.ID === projetoId ? { ...proj, Projeto_Habilitado: habilitado } : proj)));
+      setProjetos(prevProjetos => prevProjetos.map(proj => (proj.ID === projetoId ? { ...proj, Nome_Projeto: nome, Projeto_Habilitado: habilitado } : proj)));
     } catch (error) {
       console.error('Erro ao atualizar projeto:', error);
     }
@@ -90,17 +90,31 @@ function Etapa2({ onNext, avaliacaoId }) {
             {projetos.map((projeto) => (
               <tr key={projeto.ID}>
                 <td className='nome-inserido-td'>
-                  {projeto.Nome_Projeto} (Projeto {projeto.Numero_Projeto}) -
+                  <input
+                    className='input-nome-projeto'
+                    type="text"
+                    value={projeto.Nome_Projeto}
+                    onChange={(e) => {
+                      const valorAtualizado = e.target.value;
+                      setProjetos(projetos.map(proj => (proj.ID === projeto.ID ? { ...proj, Nome_Projeto: valorAtualizado } : proj)));
+                    }}
+                  />
+                </td>
+                <td className='checkbox-inserido-td'>
                   <label>
                     Habilitado:
                     <input
                       type="checkbox"
                       checked={projeto.Projeto_Habilitado}
                       onChange={(e) => {
-                        atualizarProjeto(projeto.ID, e.target.checked);
+                        const habilitado = e.target.checked;
+                        setProjetos(projetos.map(proj => (proj.ID === projeto.ID ? { ...proj, Projeto_Habilitado: habilitado } : proj)));
                       }}
                     />
                   </label>
+                </td>
+                <td className='acoes-td-projetos'>
+                  <button className='button-acao-projetos' onClick={() => atualizarProjeto(projeto.ID, projeto.Nome_Projeto, projeto.Projeto_Habilitado)}>ATUALIZAR</button>
                 </td>
               </tr>
             ))}

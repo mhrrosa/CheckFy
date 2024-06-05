@@ -412,7 +412,6 @@ def get_evidencias_por_resultado(resultado_id, projeto_id):
         """
         db.cursor.execute(query, (resultado_id, projeto_id))
         documentos = db.cursor.fetchall()
-        print(f"Evidências encontradas para resultado esperado {resultado_id} e projeto {projeto_id}: {documentos}")
         return jsonify(documentos), 200
     except Exception as e:
         print(f"Erro ao buscar evidencias: {e}")
