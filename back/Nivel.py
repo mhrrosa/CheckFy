@@ -3,7 +3,7 @@ class Nivel:
         self.db = db
 
     def add_nivel(self, nivel, nome_nivel):
-        self.db.cursor.execute("INSERT INTO nivel_maturidade_mpsbr (Nivel, NomeNivel) VALUES (%s)", (nivel, nome_nivel))
+        self.db.cursor.execute("INSERT INTO nivel_maturidade_mpsbr (Nivel, Nome_Nivel) VALUES (%s, %s)", (nivel, nome_nivel))
         self.db.conn.commit()
 
     def get_all_niveis_ordered(self):
@@ -18,7 +18,5 @@ class Nivel:
         self.db.conn.commit()
 
     def update_nivel(self, nivel_id, novo_nivel, novo_nome_nivel):
-        novo_nivel_aux = novo_nivel['nivel']
-        novo_nome_nivel_aux = novo_nome_nivel['nome_nivel']
-        self.db.cursor.execute("UPDATE nivel_maturidade_mpsbr SET Nivel = %s, NomeNivel = %s WHERE ID = %s", (novo_nivel_aux, novo_nome_nivel_aux, nivel_id))
+        self.db.cursor.execute("UPDATE nivel_maturidade_mpsbr SET Nivel = %s, Nome_Nivel = %s WHERE ID = %s", (novo_nivel, novo_nome_nivel, nivel_id))
         self.db.conn.commit()

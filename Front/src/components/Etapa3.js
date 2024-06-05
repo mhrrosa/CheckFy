@@ -9,7 +9,8 @@ import {
   updateDocumento,
   deleteDocumento,
   addEvidencia,
-  getEvidenciasPorResultado
+  getEvidenciasPorResultado,
+  deleteEvidencia
 } from '../services/Api';
 import '../styles/Processos.css';
 
@@ -131,12 +132,15 @@ function Etapa3({ avaliacaoId, onNext }) {
       if (response.ok) {
         const documentoData = { caminho_arquivo: result.filepath, nome_arquivo: novoDocumentoNome, id_projeto: selectedProjetoId };
         const documentoResponse = await addDocumento(documentoData);
-        const evidenciaData = { id_resultado_esperado: selectedResultadoId, id_documento: documentoResponse.documentoId };
-        await addEvidencia(evidenciaData);
-        await carregarEvidencias(selectedResultadoId, selectedProjetoId);
+        const novoDocumento = {
+          id: documentoResponse.documentoId,
+          caminhoArquivo: result.filepath,
+          nomeArquivo: novoDocumentoNome,
+          idProjeto: selectedProjetoId
+        };
+        setDocumentos(prevDocumentos => [...prevDocumentos, novoDocumento]);
         setNovoDocumentoNome('');
         setFileToUpload(null);
-        closeModal();
       } else {
         console.error('Erro ao fazer upload do arquivo:', result.message);
       }
@@ -158,9 +162,46 @@ function Etapa3({ avaliacaoId, onNext }) {
   const handleDeletarDocumento = async (documentoId) => {
     try {
       await deleteDocumento(documentoId);
-      await carregarEvidencias(selectedResultadoId, selectedProjetoId);
+      setDocumentos(prevDocumentos => prevDocumentos.filter(doc => doc.id !== documentoId));
+      setEvidencias(prevEvidencias => {
+        const key = `${selectedResultadoId}-${selectedProjetoId}`;
+        const evidenciasAtualizadas = prevEvidencias[key] ? prevEvidencias[key].filter(evidencia => evidencia.id !== documentoId) : [];
+        return { ...prevEvidencias, [key]: evidenciasAtualizadas };
+      });
     } catch (error) {
       console.error('Erro ao deletar documento:', error);
+    }
+  };
+
+  const handleAdicionarEvidencia = async (documentoId) => {
+    try {
+      const evidenciaData = { id_resultado_esperado: selectedResultadoId, id_documento: documentoId };
+      await addEvidencia(evidenciaData);
+      const novaEvidencia = {
+        id: documentoId,
+        caminhoArquivo: documentos.find(doc => doc.id === documentoId).caminhoArquivo,
+        nomeArquivo: documentos.find(doc => doc.id === documentoId).nomeArquivo,
+        idProjeto: selectedProjetoId
+      };
+      setEvidencias(prevEvidencias => ({
+        ...prevEvidencias,
+        [`${selectedResultadoId}-${selectedProjetoId}`]: [...(prevEvidencias[`${selectedResultadoId}-${selectedProjetoId}`] || []), novaEvidencia]
+      }));
+    } catch (error) {
+      console.error('Erro ao adicionar evidência:', error);
+    }
+  };
+
+  const handleExcluirEvidencia = async (resultadoId, documentoId) => {
+    try {
+      await deleteEvidencia({ id_resultado_esperado: resultadoId, id_documento: documentoId });
+      setEvidencias(prevEvidencias => {
+        const key = `${resultadoId}-${selectedProjetoId}`;
+        const evidenciasAtualizadas = prevEvidencias[key] ? prevEvidencias[key].filter(evidencia => evidencia.id !== documentoId) : [];
+        return { ...prevEvidencias, [key]: evidenciasAtualizadas };
+      });
+    } catch (error) {
+      console.error('Erro ao excluir evidência:', error);
     }
   };
 
@@ -195,13 +236,14 @@ function Etapa3({ avaliacaoId, onNext }) {
                 {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
                   <div key={projeto.ID}>
                     <h4>Projeto: {projeto.Nome_Projeto}</h4>
-                    <button onClick={() => openModal(processo.ID, resultado.ID, projeto.ID)}>Adicionar Documento</button>
+                    <button onClick={() => openModal(processo.ID, resultado.ID, projeto.ID)}>Gerenciar Documentos</button>
                     <div>
                       {evidencias[`${resultado.ID}-${projeto.ID}`] && evidencias[`${resultado.ID}-${projeto.ID}`]
                         .map(evidencia => (
                           <div key={evidencia.id}>
                             <p>Documento: {evidencia.nomeArquivo}</p>
                             <button onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
+                            <button onClick={() => handleExcluirEvidencia(resultado.ID, evidencia.id)}>Excluir</button>
                           </div>
                         ))}
                     </div>
@@ -260,7 +302,7 @@ function Etapa3({ avaliacaoId, onNext }) {
                     <button onClick={() => handleDeletarDocumento(doc.id)}>Remover</button>
                   </td>
                   <td>
-                    <button onClick={() => addEvidencia({ id_resultado_esperado: selectedResultadoId, id_documento: doc.id })}>Adicionar</button>
+                    <button onClick={() => handleAdicionarEvidencia(doc.id)}>Adicionar</button>
                   </td>
                 </tr>
               ))}

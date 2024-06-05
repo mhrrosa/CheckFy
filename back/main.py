@@ -36,6 +36,7 @@ documento = Documento(db)
 @app.route('/add_nivel', methods=['POST'])
 def add_nivel():
     nivel_data = request.json
+    print(f"Recebido nivel_data: {nivel_data}")  # Adicionado para debugging
     if 'nivel' not in nivel_data or 'nome_nivel' not in nivel_data:
         return jsonify({"message": "Campos 'nivel' e/ou 'nome_nivel' ausentes no JSON"}), 400
     try:
@@ -66,7 +67,7 @@ def delete_nivel(nivel_id):
 def update_nivel(nivel_id):
     nivel_data = request.json
     try:
-        nivel.update_nivel(nivel_id, nivel_data)
+        nivel.update_nivel(nivel_id, nivel_data['nivel'], nivel_data['nome_nivel'])
         return jsonify({"message": "Nível atualizado com sucesso"}), 200
     except Exception as e:
         print(f"Erro ao atualizar nível: {e}")
@@ -431,6 +432,17 @@ def update_evidencia(evidencia_id):
     except Exception as e:
         print(f"Erro ao atualizar evidencia: {e}")
         return jsonify({"message": "Erro ao atualizar evidencia", "error": str(e)}), 500
+    
+@app.route('/delete_evidencia/<int:id_resultado_esperado>/<int:id_documento>', methods=['DELETE'])
+def delete_evidencia(id_resultado_esperado, id_documento):
+    try:
+        query = "DELETE FROM evidencia WHERE ID_Resultado_Esperado = %s AND ID_Documento = %s"
+        db.cursor.execute(query, (id_resultado_esperado, id_documento))
+        db.conn.commit()
+        return jsonify({"message": "Evidência deletada com sucesso"}), 200
+    except Exception as e:
+        print(f"Erro ao deletar evidência: {e}")
+        return jsonify({"message": "Erro ao deletar evidência", "error": str(e)}), 500
 
 @app.route('/add_or_update_grau_implementacao', methods=['POST'])
 def add_or_update_grau_implementacao():

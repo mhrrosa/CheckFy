@@ -10,13 +10,13 @@ function Header() {
       <img src={logo} className="logo" alt="Logo Checkfy" />
       <div className="container">
         <div className='links-header'>
-          <Link to="/"><a href="../pages/Home.js" className="link-header">Home</a></Link>
-          <Link to="/"><a href="../pages/Sobre.js" className="link-header">Sobre</a></Link>
-          <Link to="/"><a href="../pages/Documentos.js" className="link-header">Documentos</a></Link>
+          <Link to="/" className="link-header">Home</Link>
+          <Link to="/sobre" className="link-header">Sobre</Link>
+          <Link to="/documentos" className="link-header">Documentos</Link>
         </div>
-        <a href="../pages/Perfil.js">
-          <img  src={icon_user} className="icon-user" alt="Usuário" />
-        </a>
+        <Link to="/perfil">
+          <img src={icon_user} className="icon-user" alt="Usuário" />
+        </Link>
       </div>
     </header>
   );

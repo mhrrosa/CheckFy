@@ -114,8 +114,7 @@ function updateIdAtividade(id, idAtividade) {
 }
 
 // Funções para Níveis
-function createNivel(nivel, nomeNivel) {
-  const data = { nivel, nome_nivel: nomeNivel };
+function createNivel(data) {
   return post('/add_nivel', data);
 }
 
@@ -229,6 +228,11 @@ function updateEvidencia(id, data) {
   return put(`/update_evidencia/${id}`, data);
 }
 
+function deleteEvidencia(data) {
+  const { id_resultado_esperado, id_documento } = data;
+  return deleteRequest(`/delete_evidencia/${id_resultado_esperado}/${id_documento}`);
+}
+
 function getProcessosPorAvaliacao(avaliacaoId) {
   return get(`/get_processos_por_avaliacao/${avaliacaoId}`).then(response => {
     console.log('Processos por Avaliação:', response);
@@ -297,6 +301,7 @@ export {
   addEvidencia,
   getEvidenciasPorResultado,
   updateEvidencia,
+  deleteEvidencia,
   getProcessosPorAvaliacao,
   getResultadosEsperadosPorProcesso,
   addOrUpdateGrauImplementacao,

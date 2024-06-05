@@ -27,10 +27,9 @@ function Niveis() {
   };
 
   const adicionarNivel = () => {
-    const nivelData = { nivel: novoNivel, nome: nomeNovoNivel};
+    const nivelData = { nivel: novoNivel, nome_nivel: nomeNovoNivel };
     createNivel(nivelData)
-      .then(novo => {
-        // Atualize a lista de níveis após a confirmação de inserção no banco
+      .then(() => {
         carregarNiveis();
         setNovoNivel('');
         setNomeNovoNivel('');
@@ -46,8 +45,8 @@ function Niveis() {
       .catch(error => console.error('Erro ao remover nível:', error));
   };
 
-  const atualizarNivel = (id, nivel , nomeNivel) => {
-    const atualizado = { nivel: nivel, nome: nomeNivel};
+  const atualizarNivel = (id, nivel, nomeNivel) => {
+    const atualizado = { nivel: nivel, nome_nivel: nomeNivel };
     updateNivel(id, atualizado)
       .then(() => {
         setNiveis(prevNiveis => prevNiveis.map(n => (n.id === id ? { ...n, nivel: nivel, nome: nomeNivel } : n)));

@@ -27,9 +27,15 @@ class Documento:
             raise
 
     def delete_documento(self, documento_id):
-        query = "DELETE FROM documento WHERE ID = %s"
         try:
-            self.db.cursor.execute(query, (documento_id,))
+            # Deletar as referências na tabela evidencia primeiro
+            delete_evidencia_query = "DELETE FROM evidencia WHERE ID_Documento = %s"
+            self.db.cursor.execute(delete_evidencia_query, (documento_id,))
+            self.db.conn.commit()
+
+            # Deletar o documento na tabela documento
+            delete_documento_query = "DELETE FROM documento WHERE ID = %s"
+            self.db.cursor.execute(delete_documento_query, (documento_id,))
             self.db.conn.commit()
         except Exception as e:
             print(f"Erro ao deletar documento: {e}")
