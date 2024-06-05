@@ -324,7 +324,7 @@ DROP TABLE IF EXISTS `resultado_esperado_mpsbr`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `resultado_esperado_mpsbr` (
   `ID` int NOT NULL AUTO_INCREMENT,
-  `Descricao` varchar(100) NOT NULL,
+  `Descricao` varchar(500) NOT NULL,
   `ID_Nivel_Intervalo_Fim` int NOT NULL,
   `ID_Nivel_Intervalo_Inicio` int NOT NULL,
   `ID_Processo` int NOT NULL,

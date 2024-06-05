@@ -58,7 +58,7 @@ function Etapa2({ onNext, avaliacaoId }) {
 
   return (
     <div className='management-project-container'>
-      <h1 className='management-project-title'>GERENCIAMENTO DE PROJETOS</h1>
+      <h1 className='management-project-title'>Selecionar Projetos para Avaliação</h1>
       <div className='lista-input'>
         <div className='input-wrapper-project'>
           <label className="label">Nome do Projeto:</label>

@@ -224,7 +224,7 @@ function Etapa3({ avaliacaoId, onNext }) {
 
   return (
     <div className="management-process-container">
-      <h1 className='management-process-title'>PROCESSOS, RESULTADOS ESPERADOS E PROJETOS</h1>
+      <h1 className='management-process-title'>Adicionar Evidências</h1>
       <div>
         {processos.map(processo => (
           <div key={processo.ID}>
