@@ -241,7 +241,7 @@ function Etapa3({ avaliacaoId, onNext }) {
                       {evidencias[`${resultado.ID}-${projeto.ID}`] && evidencias[`${resultado.ID}-${projeto.ID}`]
                         .map(evidencia => (
                           <div key={evidencia.id}>
-                            <p>Documento: {evidencia.nomeArquivo}</p>
+                            <p>Evidencia: {evidencia.nomeArquivo}</p>
                             <button onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
                             <button onClick={() => handleExcluirEvidencia(resultado.ID, evidencia.id)}>Excluir</button>
                           </div>
