@@ -114,6 +114,25 @@ function Etapa3({ avaliacaoId, onNext }) {
     }
   };
 
+  const recarregarEvidencias = async () => {
+    const newEvidencias = {};
+    for (const processoId of Object.keys(resultadosEsperados)) {
+      for (const resultado of resultadosEsperados[processoId]) {
+        for (const projeto of projetos) {
+          const data = await getEvidenciasPorResultado(resultado.ID, projeto.ID);
+          const evidenciasFormatadas = data.map(doc => ({
+            id: doc[0],
+            caminhoArquivo: doc[1],
+            nomeArquivo: doc[2],
+            idProjeto: doc[3]
+          }));
+          newEvidencias[`${resultado.ID}-${projeto.ID}`] = evidenciasFormatadas;
+        }
+      }
+    }
+    setEvidencias(newEvidencias);
+  };
+
   const handleDocumentoUpload = async () => {
     if (!fileToUpload) {
       console.error('Nenhum arquivo selecionado');
@@ -163,11 +182,7 @@ function Etapa3({ avaliacaoId, onNext }) {
     try {
       await deleteDocumento(documentoId);
       setDocumentos(prevDocumentos => prevDocumentos.filter(doc => doc.id !== documentoId));
-      setEvidencias(prevEvidencias => {
-        const key = `${selectedResultadoId}-${selectedProjetoId}`;
-        const evidenciasAtualizadas = prevEvidencias[key] ? prevEvidencias[key].filter(evidencia => evidencia.id !== documentoId) : [];
-        return { ...prevEvidencias, [key]: evidenciasAtualizadas };
-      });
+      recarregarEvidencias(); // Recarregar todas as evidências após a exclusão
     } catch (error) {
       console.error('Erro ao deletar documento:', error);
     }
@@ -194,12 +209,9 @@ function Etapa3({ avaliacaoId, onNext }) {
 
   const handleExcluirEvidencia = async (resultadoId, documentoId) => {
     try {
+      console.log('Excluindo evidência:', { resultadoId, documentoId });
       await deleteEvidencia({ id_resultado_esperado: resultadoId, id_documento: documentoId });
-      setEvidencias(prevEvidencias => {
-        const key = `${resultadoId}-${selectedProjetoId}`;
-        const evidenciasAtualizadas = prevEvidencias[key] ? prevEvidencias[key].filter(evidencia => evidencia.id !== documentoId) : [];
-        return { ...prevEvidencias, [key]: evidenciasAtualizadas };
-      });
+      recarregarEvidencias(); // Recarregar todas as evidências após a exclusão
     } catch (error) {
       console.error('Erro ao excluir evidência:', error);
     }
