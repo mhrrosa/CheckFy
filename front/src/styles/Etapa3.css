@@ -78,6 +78,10 @@
   background-color: #0066cc;
 }
 
+.arquivo-adicionado {
+  color: #ffff;
+}
+
 .acoes-botao {
   padding: 10px 10px;
   font-size: 1em;

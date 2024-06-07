@@ -290,10 +290,11 @@ function Etapa3({ avaliacaoId, onNext }) {
               onChange={(e) => setFileToUpload(e.target.files[0])}
             />
             <label for="file">Escolha um arquivo</label>
+            {fileToUpload && <p className='arquivo-adicionado'>Arquivo adicionado</p>}
           </div>
           <div className='logo-and-button'>
-            <button className="button" onClick={handleDocumentoUpload}>Inserir Novo Documento</button>
-            <button className="button" onClick={closeModal}>Cancelar</button>
+            <button className="button" onClick={handleDocumentoUpload}>INSERIR</button>
+            <button className="button" onClick={closeModal}>CANCELAR</button>
           </div>
           <h3 className='title-document'>Documentos Existentes:</h3>
           <table>
