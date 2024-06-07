@@ -1,0 +1,52 @@
+.management-etapa4-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.management-etapa4-title {
+    color: #ffffff;
+    font-size: 1.6em;
+    margin-bottom: 20px;
+    text-align: center;
+    word-wrap: break-word;
+    overflow: auto;
+}
+
+.title-process {
+    color: #ffff;
+}
+  
+.title-result {
+    color: #ffff;
+}
+  
+.title-project {
+    color: #ffff;
+}
+
+.acoes-botao {
+    padding: 10px 10px;
+    font-size: 1em;
+    font-weight: bolder;
+    color: white;
+    border: 4px solid #00437e;
+    border-radius: 18px;
+    cursor: pointer;
+    background-color: #001034;
+    transition: background-color 0.3s;
+}
+  
+.acoes-botao:hover {
+    background-color: #00437e;
+}
+
+.select-grau {
+    width: 50%;
+    padding: 5px 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.9em;
+    box-sizing: border-box;
+    max-width: 100%;
+    word-wrap: break-word;
+}

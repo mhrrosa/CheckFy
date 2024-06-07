@@ -26,6 +26,10 @@
   flex-direction: column;
 }
 
+.management-project-title {
+  font-size: 20px;
+}
+
 .title-process {
   color: #ffff;
 }

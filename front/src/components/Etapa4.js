@@ -8,7 +8,7 @@ import {
   getGrausImplementacao,
   addOrUpdateGrauImplementacao
 } from '../services/Api';
-import '../styles/Processos.css';
+import '../styles/Etapa4.css';
 
 Modal.setAppElement('#root');
 
@@ -130,20 +130,21 @@ function Etapa4({ avaliacaoId }) {
   };
 
   return (
-    <div className="management-process-container">
-      <h1 className='management-process-title'>Caracterizar o grau de cada resultado esperado do processo</h1>
+    <div className="management-etapa4-container">
+      <h1 className='management-etapa4-title'>CARACTERIZAÇÃO DE GRAU DE CADA RESULTADO ESPERADO DO PROCESSO</h1>
       <div>
         {processos.map(processo => (
           <div key={processo.ID}>
-            <h2>Processo: {processo.Descricao}</h2>
-            <button onClick={() => carregarResultadosEsperados(processo.ID)}>Ver Resultados Esperados</button>
+            <h2 className='title-process'>Processo: {processo.Descricao}</h2>
+            <button className='acoes-botao' onClick={() => carregarResultadosEsperados(processo.ID)}>Ver Resultados Esperados</button>
             {resultadosEsperados[processo.ID] && resultadosEsperados[processo.ID].map(resultado => (
               <div key={resultado.ID}>
-                <h3>Resultado Esperado: {resultado.Descricao}</h3>
+                <h3 className='title-result'>Resultado Esperado: {resultado.Descricao}</h3>
                 {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
                   <div key={projeto.ID}>
-                    <h4>Projeto: {projeto.Nome_Projeto}</h4>
+                    <h4 className='title-project'>Projeto: {projeto.Nome_Projeto}</h4>
                     <select
+                      className='select-grau'
                       value={grausImplementacao[`${resultado.ID}-${projeto.ID}`] || "Não avaliado (NA)"}
                       onChange={(e) => handleSelectChange(e, resultado.ID, projeto.ID)}
                     >
