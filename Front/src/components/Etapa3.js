@@ -12,7 +12,7 @@ import {
   getEvidenciasPorResultado,
   deleteEvidencia
 } from '../services/Api';
-import '../styles/Processos.css';
+import '../styles/Etapa3.css';
 
 Modal.setAppElement('#root');
 
@@ -235,27 +235,27 @@ function Etapa3({ avaliacaoId, onNext }) {
   };
 
   return (
-    <div className="management-process-container">
+    <div className="management-etapa-container">
       <h1 className='management-process-title'>Adicionar Evidências</h1>
       <div>
         {processos.map(processo => (
           <div key={processo.ID}>
-            <h2>Processo: {processo.Descricao}</h2>
-            <button onClick={() => carregarResultadosEsperados(processo.ID)}>Ver Resultados Esperados</button>
+            <h2 className='title-process'>Processo: {processo.Descricao}</h2>
+            <button className='acoes-botao' onClick={() => carregarResultadosEsperados(processo.ID)}>Ver Resultados Esperados</button>
             {resultadosEsperados[processo.ID] && resultadosEsperados[processo.ID].map(resultado => (
               <div key={resultado.ID}>
-                <h3>Resultado Esperado: {resultado.Descricao}</h3>
+                <h3 className='title-result'>Resultado Esperado: {resultado.Descricao}</h3>
                 {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
                   <div key={projeto.ID}>
-                    <h4>Projeto: {projeto.Nome_Projeto}</h4>
-                    <button onClick={() => openModal(processo.ID, resultado.ID, projeto.ID)}>Gerenciar Documentos</button>
+                    <h4 className='title-project'>Projeto: {projeto.Nome_Projeto}</h4>
+                    <button className='acoes-botao' onClick={() => openModal(processo.ID, resultado.ID, projeto.ID)}>Gerenciar Documentos</button>
                     <div>
                       {evidencias[`${resultado.ID}-${projeto.ID}`] && evidencias[`${resultado.ID}-${projeto.ID}`]
                         .map(evidencia => (
                           <div key={evidencia.id}>
                             <p>Evidencia: {evidencia.nomeArquivo}</p>
-                            <button onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
-                            <button onClick={() => handleExcluirEvidencia(resultado.ID, evidencia.id)}>Excluir</button>
+                            <button className='acoes-botao' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
+                            <button className='acoes-botao' onClick={() => handleExcluirEvidencia(resultado.ID, evidencia.id)}>Excluir</button>
                           </div>
                         ))}
                     </div>
@@ -267,8 +267,10 @@ function Etapa3({ avaliacaoId, onNext }) {
         ))}
       </div>
       <Modal isOpen={isModalOpen} onRequestClose={closeModal} contentLabel="Gerenciar Documentos" className="modal" overlayClassName="modal-overlay">
-        <div className="form-section">
-          <h2>Gerenciar Documentos</h2>
+        <div className="form-section-document">
+          <div className='title-document'>
+            <h2>GERENCIAR DOCUMENTOS</h2>
+          </div>
           <div className='input-wrapper'>
             <label className="label">Nome do Novo Documento:</label>
             <input
@@ -279,42 +281,44 @@ function Etapa3({ avaliacaoId, onNext }) {
               onChange={(e) => setNovoDocumentoNome(e.target.value)}
             />
           </div>
-          <div className='input-wrapper'>
+          <div className='input-wrapper-file-document'>
             <label className="label">Upload de Novo Arquivo:</label>
             <input
-              className="input-field"
+              className="input-field-file-document"
               type="file"
+              id="file"
               onChange={(e) => setFileToUpload(e.target.files[0])}
             />
+            <label for="file">Escolha um arquivo</label>
           </div>
           <div className='logo-and-button'>
             <button className="button" onClick={handleDocumentoUpload}>Inserir Novo Documento</button>
             <button className="button" onClick={closeModal}>Cancelar</button>
           </div>
-          <h3>Documentos Existentes:</h3>
+          <h3 className='title-document'>Documentos Existentes:</h3>
           <table>
             <tbody>
               {documentos.map(doc => (
-                <tr key={doc.id}>
+                <tr className='input-botoes-documento-preenchido' key={doc.id}>
                   <td>
                     <input
-                      className='input-field'
+                      className='input-field-documento-preenchido'
                       type="text"
                       value={doc.nomeArquivo}
                       onChange={(e) => setDocumentos(documentos.map(d => d.id === doc.id ? { ...d, nomeArquivo: e.target.value } : d))}
                     />
                   </td>
                   <td>
-                    <button onClick={() => window.open(`http://127.0.0.1:5000/uploads/${doc.caminhoArquivo}`, '_blank')}>Mostrar</button>
+                    <button className='acoes-botao-document' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${doc.caminhoArquivo}`, '_blank')}>MOSTRAR</button>
                   </td>
                   <td>
-                    <button onClick={() => handleAtualizarDocumento(doc.id, doc.nomeArquivo, doc.caminhoArquivo)}>Atualizar</button>
+                    <button className='acoes-botao-document' onClick={() => handleAtualizarDocumento(doc.id, doc.nomeArquivo, doc.caminhoArquivo)}>ATUALIZAR</button>
                   </td>
                   <td>
-                    <button onClick={() => handleDeletarDocumento(doc.id)}>Remover</button>
+                    <button className='acoes-botao-document' onClick={() => handleDeletarDocumento(doc.id)}>REMOVER</button>
                   </td>
                   <td>
-                    <button onClick={() => handleAdicionarEvidencia(doc.id)}>Adicionar</button>
+                    <button className='acoes-botao-document' onClick={() => handleAdicionarEvidencia(doc.id)}>ADICIONAR</button>
                   </td>
                 </tr>
               ))}
@@ -322,9 +326,7 @@ function Etapa3({ avaliacaoId, onNext }) {
           </table>
         </div>
       </Modal>
-      <button onClick={onNext} className="next-step-button">
-        Avançar para Etapa 4
-      </button>
+      <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
     </div>
   );
 }
