@@ -79,7 +79,7 @@
   flex-direction: column;
   position: relative;
   flex-wrap: wrap;
-  width: 31.25em; /* Adicione esta linha */
+  width: 35em; /* Adicione esta linha */
 }
 
 .textarea-field {
