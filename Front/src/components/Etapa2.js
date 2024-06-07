@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getProjetosByAvaliacao, createProjeto, updateProjeto } from '../services/Api';
 import '../styles/Etapa2.css';
+import logo from '../img/logo_horizontal.png';
 
 function Etapa2({ onNext, avaliacaoId }) {
   const [projetos, setProjetos] = useState([]);
@@ -58,7 +59,9 @@ function Etapa2({ onNext, avaliacaoId }) {
 
   return (
     <div className='management-project-container'>
-      <h1 className='management-project-title'>Selecionar Projetos para Avaliação</h1>
+      <div className='title-container'>
+        <h1 className='management-project-title'>SELEÇÃO DE PROJETOS PARA AVALIAÇÃO</h1>
+      </div>
       <div className='lista-input'>
         <div className='input-wrapper-project'>
           <label className="label">Nome do Projeto:</label>
@@ -79,8 +82,9 @@ function Etapa2({ onNext, avaliacaoId }) {
         </div>
       </div>
       <div className='logo-and-button'>
+        <img src={logo} className="logo" alt="Logo Checkfy" />
         <button className="button-add-project" onClick={salvarProjeto}>
-          {editandoProjeto ? 'Atualizar Projeto' : 'Adicionar Projeto'}
+          {editandoProjeto ? 'ATUALIZAR' : 'ADICIONAR'}
         </button>
       </div>
       <p className="processos-cadastrados-title">PROJETOS CADASTRADOS:</p>
@@ -88,10 +92,10 @@ function Etapa2({ onNext, avaliacaoId }) {
         <table>
           <tbody>
             {projetos.map((projeto) => (
-              <tr key={projeto.ID}>
-                <td className='nome-inserido-td'>
+              <tr className='tr-projeto' key={projeto.ID}>
+                <td className='projeto-inserido-td'>
                   <input
-                    className='input-nome-projeto'
+                    className='input-preenchido-projeto'
                     type="text"
                     value={projeto.Nome_Projeto}
                     onChange={(e) => {
@@ -100,10 +104,11 @@ function Etapa2({ onNext, avaliacaoId }) {
                     }}
                   />
                 </td>
-                <td className='checkbox-inserido-td'>
+                <td className='projeto-checkbox-inserido-td'>
                   <label>
                     Habilitado:
                     <input
+                      className='checkbox-projeto-status'
                       type="checkbox"
                       checked={projeto.Projeto_Habilitado}
                       onChange={(e) => {
@@ -114,7 +119,7 @@ function Etapa2({ onNext, avaliacaoId }) {
                   </label>
                 </td>
                 <td className='acoes-td-projetos'>
-                  <button className='button-acao-projetos' onClick={() => atualizarProjeto(projeto.ID, projeto.Nome_Projeto, projeto.Projeto_Habilitado)}>ATUALIZAR</button>
+                  <button className='button-acao-projeto' onClick={() => atualizarProjeto(projeto.ID, projeto.Nome_Projeto, projeto.Projeto_Habilitado)}>ATUALIZAR</button>
                 </td>
               </tr>
             ))}
