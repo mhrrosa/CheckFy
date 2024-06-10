@@ -37,7 +37,7 @@ function CreateEvaluation() {
     };
     try {
       const response = await startNewEvaluation(data);
-      navigate('/evaluation', { state: { setup: response } });
+      navigate('/', { state: { setup: response } });
     } catch (error) {
       console.error('Erro ao iniciar avaliação:', error);
     }
