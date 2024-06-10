@@ -42,6 +42,10 @@
   color: #ffff;
 }
 
+.title-evidencia {
+  color: #ffff;
+}
+
 .form-section-document {
   display: flex;
   flex-direction: column;
