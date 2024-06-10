@@ -276,7 +276,7 @@ function Etapa3({ avaliacaoId, onNext }) {
             <input
               className="input-field"
               type="text"
-              placeholder="Digite o nome do novo documento"
+              placeholder="Digite uma descrição para o novo documento"
               value={novoDocumentoNome || ''}
               onChange={(e) => setNovoDocumentoNome(e.target.value)}
             />
@@ -319,7 +319,7 @@ function Etapa3({ avaliacaoId, onNext }) {
                     <button className='acoes-botao-document' onClick={() => handleDeletarDocumento(doc.id)}>REMOVER</button>
                   </td>
                   <td>
-                    <button className='acoes-botao-document' onClick={() => handleAdicionarEvidencia(doc.id)}>ADICIONAR</button>
+                    <button className='acoes-botao-document' onClick={() => handleAdicionarEvidencia(doc.id)}>ADICIONAR EVIDÊNCIA</button>
                   </td>
                 </tr>
               ))}
