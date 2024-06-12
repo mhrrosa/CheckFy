@@ -12,7 +12,7 @@ import '../styles/Etapa4.css';
 
 Modal.setAppElement('#root');
 
-function Etapa4({ avaliacaoId }) {
+function Etapa4({ onNext, avaliacaoId }) {
   const [processos, setProcessos] = useState([]);
   const [resultadosEsperados, setResultadosEsperados] = useState({});
   const [projetos, setProjetos] = useState([]);
@@ -123,7 +123,7 @@ function Etapa4({ avaliacaoId }) {
         ...prevGraus,
         [`${resultadoId}-${projetoId}`]: nota
       }));
-      console.log(`Grau de implementação atualizado: ${nota} para Resultado ${resultadoId} e Projeto ${projetoId}`);
+      console.log(`Grau de implementação atualizado ${nota} para Resultado ${resultadoId} e Projeto ${projetoId}`);
     } catch (error) {
       console.error('Erro ao atualizar grau de implementação:', error);
     }
@@ -168,6 +168,7 @@ function Etapa4({ avaliacaoId }) {
           </div>
         ))}
       </div>
+      <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
     </div>
   );
 }
