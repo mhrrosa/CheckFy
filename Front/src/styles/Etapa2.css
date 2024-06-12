@@ -172,6 +172,10 @@ body {
     background-color: #00437e;
 }
 
+.conteudo-etapa {
+    color: #ffffff;
+}
+
 .button-next {
     margin-top: 10px;
     align-self: first baseline;
