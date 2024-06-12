@@ -294,7 +294,7 @@ function Etapa3({ avaliacaoId, onNext }) {
           </div>
           <div className='logo-and-button'>
             <button className="button" onClick={handleDocumentoUpload}>INSERIR</button>
-            <button className="button" onClick={closeModal}>CANCELAR</button>
+            <button className="button" onClick={closeModal}>FECHAR</button>
           </div>
           <h3 className='title-document'>Documentos Existentes:</h3>
           <table>
