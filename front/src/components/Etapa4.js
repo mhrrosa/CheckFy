@@ -123,7 +123,7 @@ function Etapa4({ avaliacaoId }) {
         ...prevGraus,
         [`${resultadoId}-${projetoId}`]: nota
       }));
-      console.log(`Grau de implementação atualizado: ${nota} para Resultado ${resultadoId} e Projeto ${projetoId}`);
+      console.log(`Grau de implementação atualizado ${nota} para Resultado ${resultadoId} e Projeto ${projetoId}`);
     } catch (error) {
       console.error('Erro ao atualizar grau de implementação:', error);
     }
