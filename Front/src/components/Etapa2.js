@@ -126,7 +126,7 @@ function Etapa2({ onNext, avaliacaoId }) {
           </tbody>
         </table>
       ) : (
-        <p>Nenhum projeto encontrado.</p>
+        <p className='nenhum-encontrado'>Nenhum projeto encontrado.</p>
       )}
       <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
     </div>
