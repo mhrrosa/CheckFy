@@ -11,7 +11,6 @@ import Modelo from './pages/Modelo';
 import Niveis from './pages/Niveis';
 import Processos from './pages/Processos';
 import ResultadosEsperados from './pages/ResultadosEsperados';
-import './styles/App.css';
 
 function App() {
   return (
@@ -23,7 +22,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/create-evaluation" element={<CreateEvaluation />} />
             <Route path="/evaluation" element={<Evaluation />} />
-            <Route path="/update-evaluation" element={<UpdateEvaluation />} />  // Adicione esta linha
+            <Route path="/update-evaluation" element={<UpdateEvaluation />} />
             <Route path="/results" element={<Results />} />
             <Route path="/modelo" element={<Modelo />} />
             <Route path="/niveis" element={<Niveis />} /> 

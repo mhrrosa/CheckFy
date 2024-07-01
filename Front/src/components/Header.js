@@ -8,7 +8,7 @@ function Header() {
   return (
     <header className="app-header">
       <img src={logo} className="logo" alt="Logo Checkfy" />
-      <div className="container">
+      <div className="container-header">
         <div className='links-header'>
           <Link to="/" className="link-header">Home</Link>
           <Link to="/sobre" className="link-header">Sobre</Link>

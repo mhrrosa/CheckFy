@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getAllAvaliacoes, deleteAvaliacao, getAvaliacaoById } from '../services/Api';
+import '../styles/Body.css';
+import '../styles/Container.css';
 import '../styles/Home.css';
 
 function Home() {
@@ -41,7 +43,7 @@ function Home() {
   };
 
   return (
-    <div className="home-container">
+    <div className="container">
       <div className="botoes-home">
         <Link to="/create-evaluation" className="botao-home">NOVA AVALIAÇÃO</Link>
         <Link to="/modelo" className="botao-home">GERENCIAMENTO</Link>

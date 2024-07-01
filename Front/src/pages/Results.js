@@ -1,13 +1,15 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import '../styles/Results.css'; // Ajuste o caminho conforme necessário
+import '../styles/Body.css';
+import '../styles/Container.css';
+import '../styles/Results.css';
 
 function Results() {
   const location = useLocation();
   const { finalResponses } = location.state || {};
 
   return (
-    <div className="results-container">
+    <div className="container">
       <h1 className="results-title">Resultados da Avaliação</h1>
       <div className="results-section">
         {finalResponses ?

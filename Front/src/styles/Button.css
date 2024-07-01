@@ -1,0 +1,9 @@
+.close-button-form {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #00437e;
+}

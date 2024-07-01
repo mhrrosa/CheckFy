@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getAvaliacaoById, updateAvaliacao } from '../services/Api';
+import '../styles/Body.css';
+import '../styles/Container.css';
 import '../styles/UpdateEvaluation.css';
 
 function UpdateEvaluation() {
@@ -42,7 +44,7 @@ function UpdateEvaluation() {
   };
 
   return (
-    <div className="update-evaluation-container">
+    <div className="container">
       <h1>Atualizar Avaliação</h1>
       <input
         type="text"

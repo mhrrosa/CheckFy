@@ -5,6 +5,7 @@ import Etapa2 from '../components/Etapa2';
 import Etapa3 from '../components/Etapa3';
 import Etapa4 from '../components/Etapa4';
 import { getAvaliacaoById, updateIdAtividade } from '../services/Api';
+import '../styles/Body.css';
 import '../styles/Evaluation.css';
 
 const etapaComponents = {
