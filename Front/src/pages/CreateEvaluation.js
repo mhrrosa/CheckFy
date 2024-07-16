@@ -62,7 +62,7 @@ function CreateEvaluation() {
   return (
     <div className="container">
       <form className="form-create-evaluation">
-        <button className="close-button-form" onClick={() => navigate('/')}>
+        <button className="button-close-form" onClick={() => navigate('/')}>
           <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -152,7 +152,7 @@ function CreateEvaluation() {
         </div>
         <div className='logo-and-button'>
           <img src={logo} className="logo" alt="Logo Checkfy" />
-          <button className="button" onClick={handleStartEvaluation}>ADICIONAR</button>
+          <button className="form-end-button" onClick={handleStartEvaluation}>ADICIONAR</button>
         </div>
       </form>
     </div>

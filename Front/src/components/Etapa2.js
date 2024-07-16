@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { getProjetosByAvaliacao, createProjeto, updateProjeto } from '../services/Api';
-import '../styles/Etapa2.css';
+import '../styles/Body.css';
+import '../styles/Container.css';
+import '../styles/Form.css';
+import '../styles/Button.css';
+import '../styles/Etapa2.css'
 import logo from '../img/logo_horizontal.png';
 
 function Etapa2({ onNext, avaliacaoId }) {
@@ -58,9 +62,9 @@ function Etapa2({ onNext, avaliacaoId }) {
   };
 
   return (
-    <div className='management-project-container'>
+    <div className='container-etapa'>
       <div className='title-container'>
-        <h1 className='management-project-title'>SELEÇÃO DE PROJETOS PARA AVALIAÇÃO</h1>
+        <h1 className='title-form'>SELEÇÃO DE PROJETOS PARA AVALIAÇÃO</h1>
       </div>
       <div className='lista-input'>
         <div className='input-wrapper-project'>

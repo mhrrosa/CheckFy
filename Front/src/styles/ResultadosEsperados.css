@@ -1,13 +1,3 @@
-.close-button {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    border: none;
-    background: none;
-    cursor: pointer;
-    color: #00437e;
-}
-
 .resultados-esperados-title {
     color: #ffffff;
     font-size: 2em;
@@ -69,22 +59,6 @@
     color: black;
     font-size: 1em;
     font-family: 'Roboto', sans-serif;
-}
-
-.button {
-    padding: 10px 20px;
-    font-size: 1.1em;
-    font-weight: bolder;
-    color: white;
-    border: 4px solid #00437e;
-    border-radius: 12px;
-    cursor: pointer;
-    background-color: #001034;
-    transition: background-color 0.3s;
-}
-
-.button:hover {
-    background-color: #00437e;
 }
 
 .logo-and-button {
@@ -164,20 +138,4 @@ td:last-child {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
-}
-
-.button-acao {
-    padding: 10px 5px;
-    font-size: 1em;
-    font-weight: bolder;
-    color: white;
-    border: 4px solid #00437e;
-    border-radius: 18px;
-    cursor: pointer;
-    background-color: #001034;
-    transition: background-color 0.3s;
-}
-
-.button-acao:hover {
-    background-color: #00437e;
 }

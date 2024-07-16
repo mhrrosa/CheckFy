@@ -68,7 +68,7 @@ function Processos() {
   return (
     <div className="container">
       <div className="form-section-process">
-        <button className="close-button-form" onClick={() => navigate('/modelo')}>
+        <button className="button-close-form" onClick={() => navigate('/modelo')}>
           <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -99,7 +99,7 @@ function Processos() {
         </div>
         <div className='logo-and-button'>
           <img src={logo} className="logo" alt="Logo Checkfy" />
-          <button className="button" onClick={adicionarProcesso}>CRIAR</button>
+          <button className="form-end-button" onClick={adicionarProcesso}>ADICIONAR</button>
         </div>
         <p className="processos-cadastrados-title">PROCESSOS CADASTRADOS:</p>
         {processos.length > 0 ? (

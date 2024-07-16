@@ -1,39 +1,3 @@
-.home-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 80vh;
-    background-color: #f4f4f8;
-    font-family: 'Arial', sans-serif;
-}
-
-.botoes-home {
-    display: flex;
-    justify-content: space-between;
-}
-
-.botao-home {
-    font-size: 1.2em;
-    font-weight: 900;
-    background-color: #001034;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 3em;
-    padding: 1em 1em;
-    transition: background-color 0.3s ease;
-    margin-right: 3em;
-}
-
-.botao-home:last-child {
-    margin-right: 0;
-}
-
-.botao-home:hover {
-    background-color: #001a56;
-}
-
 .avaliacoes-lista {
     font-size: 20px;
     margin-top: 40px;
@@ -68,25 +32,4 @@
 .avaliacao-item p {
     margin: 0;
     padding-left: 30px;
-}
-
-.botoes-avaliacao {
-    display: flex;
-    gap: 10px;
-}
-
-.botao-avaliacao {
-    /* //background-color: #001034; */
-    font-weight: bolder;
-    color: #001034;
-    border: 2px solid #001034;
-    border-radius: 8px;
-    cursor: pointer;
-    padding: 10px;
-    transition: 0.3s
-}
-
-.botao-avaliacao:hover {
-    background-color: #001034;
-    color: white;
 }

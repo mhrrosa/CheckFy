@@ -8,6 +8,9 @@ import {
   getGrausImplementacao,
   addOrUpdateGrauImplementacao
 } from '../services/Api';
+import '../styles/Body.css';
+import '../styles/Form.css';
+import '../styles/Button.css';
 import '../styles/Etapa4.css';
 
 Modal.setAppElement('#root');
@@ -130,13 +133,13 @@ function Etapa4({ onNext, avaliacaoId }) {
   };
 
   return (
-    <div className="management-etapa4-container">
-      <h1 className='management-etapa4-title'>CARACTERIZAÇÃO DE GRAU DE CADA RESULTADO ESPERADO DO PROCESSO</h1>
+    <div className="container-etapa">
+      <h1 className='title-form'>CARACTERIZAÇÃO DE GRAU DE CADA RESULTADO ESPERADO DO PROCESSO</h1>
       <div>
         {processos.map(processo => (
           <div key={processo.ID}>
             <h2 className='title-process'>Processo: {processo.Descricao}</h2>
-            <button className='acoes-botao' onClick={() => carregarResultadosEsperados(processo.ID)}>Ver Resultados Esperados</button>
+            <button className='button-acao' onClick={() => carregarResultadosEsperados(processo.ID)}>Ver Resultados Esperados</button>
             {resultadosEsperados[processo.ID] && resultadosEsperados[processo.ID].map(resultado => (
               <div key={resultado.ID}>
                 <h3 className='title-result'>Resultado Esperado: {resultado.Descricao}</h3>
@@ -157,7 +160,7 @@ function Etapa4({ onNext, avaliacaoId }) {
                         .map(evidencia => (
                           <div key={evidencia.id}>
                             <p className='title-evidencia'>Evidencia: {evidencia.nomeArquivo}</p>
-                            <button className='acoes-botao' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
+                            <button className='button-acao' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
                           </div>
                         ))}
                     </div>

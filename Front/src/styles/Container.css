@@ -5,3 +5,8 @@
     margin-top: 50px;
     margin-bottom: 50px;
 }
+
+.container-etapa {
+    display: flex;
+    flex-direction: column;
+}

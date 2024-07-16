@@ -55,13 +55,13 @@ function Home() {
             <div key={avaliacao.id} className="avaliacao-item">
               <p>{avaliacao.nome} - {avaliacao.status}</p>
               <div className="botoes-avaliacao">
-                <button className="botao-avaliacao" onClick={() => handleContinue(avaliacao.id)}>
+                <button className="botao-home-avaliacao" onClick={() => handleContinue(avaliacao.id)}>
                   CONTINUAR
                 </button>
-                <button className="botao-avaliacao" onClick={() => navigate(`/update-evaluation`, { state: { id: avaliacao.id } })}>
+                <button className="botao-home-avaliacao" onClick={() => navigate(`/update-evaluation`, { state: { id: avaliacao.id } })}>
                   ALTERAR
                 </button>
-                <button className="botao-avaliacao" onClick={() => handleDelete(avaliacao.id)}>
+                <button className="botao-home-avaliacao" onClick={() => handleDelete(avaliacao.id)}>
                   EXCLUIR
                 </button>
               </div>

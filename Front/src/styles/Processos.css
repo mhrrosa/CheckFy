@@ -22,22 +22,6 @@
     box-sizing: border-box;
 }
 
-.button {
-    padding: 10px 20px;
-    font-size: 1.1em;
-    font-weight: bolder;
-    color: white;
-    border: 4px solid #00437e;
-    border-radius: 12px;
-    cursor: pointer;
-    background-color: #001034;
-    transition: background-color 0.3s;
-}
-
-.button:hover {
-    background-color: #00437e;
-}
-
 .logo-and-button {
     margin-top: 10px;
     display: flex;

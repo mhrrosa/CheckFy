@@ -146,19 +146,3 @@ table {
   resize: none;
 }
 
-.button-next {
-  margin-top: 10px;
-  align-self: first baseline;
-  padding: 9px 10px 6px 10px;
-  font-weight: bolder;
-  color: white;
-  border: 3.5px solid #00437e;
-  border-radius: 15px;
-  cursor: pointer;
-  background-color: #001034;
-  transition: background-color 0.3s;
-}
-
-.button-next:hover {
-  background-color: #00437e;
-}
