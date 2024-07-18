@@ -11,6 +11,7 @@ import Modelo from './pages/Modelo';
 import Niveis from './pages/Niveis';
 import Processos from './pages/Processos';
 import ResultadosEsperados from './pages/ResultadosEsperados';
+import './App.css';
 
 function App() {
   return (

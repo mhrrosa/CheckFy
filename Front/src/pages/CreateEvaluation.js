@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { startNewEvaluation, getNiveis } from '../services/Api';
-import '../styles/Body.css';
-import '../styles/Container.css';
-import '../styles/Form.css';
-import '../styles/Button.css';
-import '../styles/CreateEvaluation.css';
+import '../components/styles/Body.css';
+import '../components/styles/Container.css';
+import '../components/styles/Form.css';
+import '../components/styles/Button.css';
+import '../pages/styles/CreateEvaluation.css';
 import logo from '../img/logo_horizontal.png';
 
 function CreateEvaluation() {

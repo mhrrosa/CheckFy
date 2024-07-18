@@ -5,10 +5,10 @@ import Etapa2 from '../components/Etapa2';
 import Etapa3 from '../components/Etapa3';
 import Etapa4 from '../components/Etapa4';
 import { getAvaliacaoById, updateIdAtividade } from '../services/Api';
-import '../styles/Body.css';
-import '../styles/Container.css';
-import '../styles/Button.css';
-import '../styles/Evaluation.css';
+import '../components/styles/Body.css';
+import '../components/styles/Container.css';
+import '../components/styles/Button.css';
+import '../pages/styles/Evaluation.css';
 
 const etapaComponents = {
   1: Etapa1,

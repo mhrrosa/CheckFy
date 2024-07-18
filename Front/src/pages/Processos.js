@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getProcessos, createProcesso, updateProcesso, deleteProcesso } from '../services/Api';
-import '../styles/Processos.css';
-import '../styles/Body.css';
-import '../styles/Container.css';
-import '../styles/Form.css';
-import '../styles/Button.css';
+import '../components/styles/Body.css';
+import '../components/styles/Container.css';
+import '../components/styles/Form.css';
+import '../components/styles/Button.css';
+import '../pages/styles/Processos.css';
 import logo from '../img/logo_horizontal.png';
 
 function Processos() {

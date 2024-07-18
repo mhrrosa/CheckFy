@@ -1,8 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Body.css';
-import '../styles/Container.css';
-import '../styles/Modelo.css';
+import '../components/styles/Body.css';
+import '../components/styles/Container.css';
+import '../components/styles/Button.css';
+import '../pages/styles/Modelo.css';
 
 function Modelo() {
   const navigate = useNavigate();

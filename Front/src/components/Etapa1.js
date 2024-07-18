@@ -1,9 +1,9 @@
 import React from 'react';
-import '../styles/Body.css';
-import '../styles/Container.css';
-import '../styles/Form.css';
-import '../styles/Button.css';
-import '../styles/Etapa1.css'
+import '../components/styles/Body.css';
+import '../components/styles/Container.css';
+import '../components/styles/Form.css';
+import '../components/styles/Button.css';
+import '../components/styles/Etapa1.css'
 
 function Etapa1({ onNext }) {
   return (

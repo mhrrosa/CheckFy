@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getAllAvaliacoes, deleteAvaliacao, getAvaliacaoById } from '../services/Api';
-import '../styles/Body.css';
-import '../styles/Container.css';
-import '../styles/Home.css';
+import '../components/styles/Body.css';
+import '../components/styles/Container.css';
+import '../pages/styles/Home.css';
 
 function Home() {
   const [avaliacoes, setAvaliacoes] = useState([]);

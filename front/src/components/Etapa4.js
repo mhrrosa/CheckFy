@@ -8,10 +8,10 @@ import {
   getGrausImplementacao,
   addOrUpdateGrauImplementacao
 } from '../services/Api';
-import '../styles/Body.css';
-import '../styles/Form.css';
-import '../styles/Button.css';
-import '../styles/Etapa4.css';
+import '../components/styles/Body.css';
+import '../components/styles/Form.css';
+import '../components/styles/Button.css';
+import '../components/styles/Etapa4.css';
 
 Modal.setAppElement('#root');
 

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getAvaliacaoById, updateAvaliacao } from '../services/Api';
-import '../styles/Body.css';
-import '../styles/Container.css';
-import '../styles/UpdateEvaluation.css';
+import '../components/styles/Body.css';
+import '../components/styles/Container.css';
+import '../pages/styles/UpdateEvaluation.css';
 
 function UpdateEvaluation() {
   const location = useLocation();

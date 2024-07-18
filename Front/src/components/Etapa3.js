@@ -12,10 +12,10 @@ import {
   getEvidenciasPorResultado,
   deleteEvidencia
 } from '../services/Api';
-import '../styles/Body.css';
-import '../styles/Form.css';
-import '../styles/Button.css';
-import '../styles/Etapa3.css';
+import '../components/styles/Body.css';
+import '../components/styles/Form.css';
+import '../components/styles/Button.css';
+import '../components/styles/Etapa3.css';
 
 Modal.setAppElement('#root');
 
@@ -244,21 +244,21 @@ function Etapa3({ avaliacaoId, onNext }) {
         {processos.map(processo => (
           <div key={processo.ID}>
             <h2 className='title-process'>Processo: {processo.Descricao}</h2>
-            <button className='button_acao' onClick={() => carregarResultadosEsperados(processo.ID)}>Ver Resultados Esperados</button>
+            <button className='button-acao' onClick={() => carregarResultadosEsperados(processo.ID)}>Ver Resultados Esperados</button>
             {resultadosEsperados[processo.ID] && resultadosEsperados[processo.ID].map(resultado => (
               <div key={resultado.ID}>
                 <h3 className='title-result'>Resultado Esperado: {resultado.Descricao}</h3>
                 {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
                   <div key={projeto.ID}>
                     <h4 className='title-project'>Projeto: {projeto.Nome_Projeto}</h4>
-                    <button className='button_acao' onClick={() => openModal(processo.ID, resultado.ID, projeto.ID)}>Gerenciar Documentos</button>
+                    <button className='button-acao' onClick={() => openModal(processo.ID, resultado.ID, projeto.ID)}>Gerenciar Documentos</button>
                     <div>
                       {evidencias[`${resultado.ID}-${projeto.ID}`] && evidencias[`${resultado.ID}-${projeto.ID}`]
                         .map(evidencia => (
                           <div key={evidencia.id}>
                             <p className='title-evidencia'>Evidencia: {evidencia.nomeArquivo}</p>
-                            <button className='button_acao' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
-                            <button className='button_acao' onClick={() => handleExcluirEvidencia(resultado.ID, evidencia.id)}>Excluir</button>
+                            <button className='button-acao' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
+                            <button className='button-acao' onClick={() => handleExcluirEvidencia(resultado.ID, evidencia.id)}>Excluir</button>
                           </div>
                         ))}
                     </div>

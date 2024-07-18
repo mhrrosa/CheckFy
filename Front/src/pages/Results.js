@@ -1,8 +1,8 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import '../styles/Body.css';
-import '../styles/Container.css';
-import '../styles/Results.css';
+import '../components/styles/Body.css';
+import '../components/styles/Container.css';
+import '../pages/styles/Results.css';
 
 function Results() {
   const location = useLocation();
