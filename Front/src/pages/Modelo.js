@@ -1,17 +1,18 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/Modelo.css';
 
 function Modelo() {
   const navigate = useNavigate();
+  const { ano } = useParams();
 
   return (
     <div className="modelo-container">
-      <h1>GERENCIAMENTO</h1>
+      <h1>GERENCIAMENTO - Modelo MPS-BR {ano}</h1>
       <div className='botoes-modelo'>
-        <button className='botao-modelo' onClick={() => navigate('/niveis')}>Gerenciar Níveis</button>
-        <button className='botao-modelo' onClick={() => navigate('/processos')}>Gerenciar Processos</button>
-        <button className='botao-modelo' onClick={() => navigate('/resultados-esperados')}>Gerenciar Resultados Esperados</button>
+        <button className='botao-modelo' onClick={() => navigate(`/niveis/${ano}`)}>Gerenciar Níveis</button>
+        <button className='botao-modelo' onClick={() => navigate(`/processos/${ano}`)}>Gerenciar Processos</button>
+        <button className='botao-modelo' onClick={() => navigate(`/resultados-esperados/${ano}`)}>Gerenciar Resultados Esperados</button>
       </div>
     </div>
   );
