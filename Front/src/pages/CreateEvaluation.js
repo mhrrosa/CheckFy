@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { startNewEvaluation, getNiveis } from '../services/Api';
-import '../styles/CreateEvaluation.css';
+import '../components/styles/Body.css';
+import '../components/styles/Container.css';
+import '../components/styles/Form.css';
+import '../components/styles/Button.css';
+import '../pages/styles/CreateEvaluation.css';
 import logo from '../img/logo_horizontal.png';
 
 function CreateEvaluation() {
@@ -56,15 +60,15 @@ function CreateEvaluation() {
   };
 
   return (
-    <div className="create-evaluation-container">
-      <div className="form-section">
-        <button className="close-button" onClick={() => navigate('/')}>
+    <div className="container">
+      <form className="form-create-evaluation">
+        <button className="button-close-form" onClick={() => navigate('/')}>
           <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
-        <h1 className="create-evaluation-title">CRIAR AVALIAÇÃO</h1>
+        <h1 className="title-form">CRIAR AVALIAÇÃO</h1>
         <div className="lista-input">
           <div className="input-wrapper">
             <label className="label">Nome da empresa:</label>
@@ -148,9 +152,9 @@ function CreateEvaluation() {
         </div>
         <div className='logo-and-button'>
           <img src={logo} className="logo" alt="Logo Checkfy" />
-          <button className="button" onClick={handleStartEvaluation}>ADICIONAR</button>
+          <button className="form-end-button" onClick={handleStartEvaluation}>ADICIONAR</button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

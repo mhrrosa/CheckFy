@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getAllAvaliacoes, deleteAvaliacao, getAvaliacaoById } from '../services/Api';
-import '../styles/Home.css';
+import '../components/styles/Body.css';
+import '../components/styles/Container.css';
+import '../pages/styles/Home.css';
 
 function Home() {
   const [avaliacoes, setAvaliacoes] = useState([]);
@@ -41,8 +43,8 @@ function Home() {
   };
 
   return (
-    <div className="home-container">
-      <div className="botoes-home">
+    <div className="container">
+      <div className="botoes-home-gerenciamento">
         <Link to="/create-evaluation" className="botao-home">NOVA AVALIAÇÃO</Link>
         <Link to="/gerenciamento-anos" className="botao-home">GERENCIAMENTO</Link> {/* Ajuste esta linha */}
       </div>
@@ -53,13 +55,13 @@ function Home() {
             <div key={avaliacao.id} className="avaliacao-item">
               <p>{avaliacao.nome} - {avaliacao.status}</p>
               <div className="botoes-avaliacao">
-                <button className="botao-avaliacao" onClick={() => handleContinue(avaliacao.id)}>
+                <button className="button-home-avaliacao" onClick={() => handleContinue(avaliacao.id)}>
                   CONTINUAR
                 </button>
-                <button className="botao-avaliacao" onClick={() => navigate(`/update-evaluation`, { state: { id: avaliacao.id } })}>
+                <button className="button-home-avaliacao" onClick={() => navigate(`/update-evaluation`, { state: { id: avaliacao.id } })}>
                   ALTERAR
                 </button>
-                <button className="botao-avaliacao" onClick={() => handleDelete(avaliacao.id)}>
+                <button className="button-home-avaliacao" onClick={() => handleDelete(avaliacao.id)}>
                   EXCLUIR
                 </button>
               </div>

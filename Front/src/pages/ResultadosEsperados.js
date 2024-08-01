@@ -8,7 +8,11 @@ import {
   getNiveis,
   getProcessos
 } from '../services/Api';
-import '../styles/ResultadosEsperados.css';
+import '../components/styles/Body.css';
+import '../components/styles/Container.css';
+import '../components/styles/Form.css';
+import '../components/styles/Button.css';
+import '../pages/styles/ResultadosEsperados.css';
 import logo from '../img/logo_horizontal.png';
 
 function ResultadosEsperados() {
@@ -105,15 +109,15 @@ function ResultadosEsperados() {
   };
 
   return (
-    <div className="resultados-esperados-container">
-      <div className='form-section resultados-esperados-form'>
-        <button className="close-button" onClick={() => navigate('/modelo')}>
+    <div className="container">
+      <div className='form-resultados-esperados'>
+        <button className="button-close-form" onClick={() => navigate('/modelo')}>
           <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
-        <h1 className='resultados-esperados-title'>GERENCIAMENTO DE RESULTADOS ESPERADOS</h1>
+        <h1 className='title-form'>GERENCIAMENTO DE RESULTADOS ESPERADOS</h1>
         <div className='lista-select-input'>
           <div className='input-select-group'>
             <div className='select-wrapper'>
@@ -155,7 +159,7 @@ function ResultadosEsperados() {
         </div>
         <div className='logo-and-button'>
           <img src={logo} className="logo" alt="Logo Checkfy" />
-          <button className="button" onClick={adicionarResultadoEsperado}>ADICIONAR</button>
+          <button className="button-end-form" onClick={adicionarResultadoEsperado}>ADICIONAR</button>
         </div>
         <p className="resultados-esperados-cadastrados-title">RESULTADOS ESPERADOS CADASTRADOS:</p>
         {resultados.length > 0 ? (

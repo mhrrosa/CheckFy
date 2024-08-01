@@ -1,0 +1,35 @@
+.avaliacoes-lista {
+    font-size: 20px;
+    margin-top: 40px;
+    width: 80%;
+}
+
+.title-avaliacoes-criadas {
+    font-size: 25px;
+}
+
+.avaliacoes-lista p {
+    padding-left: 20px;
+    margin-bottom: 10px;
+}
+
+.avaliacao-item {
+    background-color: #fff;
+    padding: 20px 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.avaliacao-item:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.avaliacao-item p {
+    margin: 0;
+    padding-left: 30px;
+}

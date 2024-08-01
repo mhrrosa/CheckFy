@@ -6,7 +6,10 @@ import Etapa3 from '../components/Etapa3';
 import Etapa4 from '../components/Etapa4';
 import Etapa5 from '../components/Etapa5'; // Adicione esta linha
 import { getAvaliacaoById, updateIdAtividade } from '../services/Api';
-import '../styles/Evaluation.css';
+import '../components/styles/Body.css';
+import '../components/styles/Container.css';
+import '../components/styles/Button.css';
+import '../pages/styles/Evaluation.css';
 
 const etapaComponents = {
   1: Etapa1,
@@ -55,7 +58,7 @@ function Evaluation() {
   const EtapaComponent = etapaComponents[idAtividade];
 
   return (
-    <div className="evaluation-container">
+    <div className="container">
       <div className="main-content-evaluation">
         <h1 className="evaluation-title">AVALIAÇÃO</h1>
         <div className="form-section-evaluation">

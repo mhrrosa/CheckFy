@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { getNiveis, createNivel, updateNivel, deleteNivel } from '../services/Api';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Niveis.css';
+import '../components/styles/Body.css';
+import '../components/styles/Container.css';
+import '../components/styles/Form.css';
+import '../components/styles/Button.css';
+import '../pages/styles/Niveis.css';
 import logo from '../img/logo_horizontal.png';
 
 function Niveis() {
@@ -55,15 +59,15 @@ function Niveis() {
   };
 
   return (
-    <div className="niveis-container">
-      <div className="form-section-niveis">
-        <button className="close-button" onClick={() => navigate('/modelo')}>
+    <div className="container">
+      <div className="form-niveis">
+        <button className="button-close-form" onClick={() => navigate('/modelo')}>
           <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
-        <h1 className='level-management-title'>GERENCIAMENTO DE NÍVEIS</h1>
+        <h1 className='title-form'>GERENCIAMENTO DE NÍVEIS</h1>
         <div className="input-wrapper">
           <input
             className="input-field"
@@ -82,7 +86,7 @@ function Niveis() {
         </div>
         <div className='logo-and-button'>
           <img src={logo} className="logo" alt="Logo Checkfy" />
-          <button className="button" onClick={adicionarNivel}>ADICIONAR</button>
+          <button className="button-end-form" onClick={adicionarNivel}>ADICIONAR</button>
         </div>
         <p className="processos-cadastrados-title">NÍVEIS CADASTRADOS:</p>
         {niveis.length > 0 ? (
@@ -112,10 +116,10 @@ function Niveis() {
                       }}
                     />
                   </td>
-                  <td className='acoes-td-niveis'>
-                    <button className='button-acao-niveis'
+                  <td className='botoes-acoes'>
+                    <button className='button-acao'
                       onClick={() => atualizarNivel(nivel.id, nivel.nivel, nivel.nome)}>ATUALIZAR</button> {/* Novo botão */}
-                    <button className='button-acao-niveis'
+                    <button className='button-acao'
                       onClick={() => removerNivel(nivel.id)}>REMOVER</button>
                   </td>
                 </tr>

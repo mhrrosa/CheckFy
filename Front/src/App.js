@@ -7,12 +7,12 @@ import CreateEvaluation from './pages/CreateEvaluation';
 import Evaluation from './pages/Evaluation';
 import UpdateEvaluation from './pages/UpdateEvaluation';
 import Results from './pages/Results';
-import Modelo from './pages/Modelo';
+import Modelo from './pages/Gerenciamento';
 import Niveis from './pages/Niveis';
 import Processos from './pages/Processos';
 import ResultadosEsperados from './pages/ResultadosEsperados';
+import './App.css';
 import GerenciamentoAnos from './pages/GerenciamentoAnos';
-import './styles/App.css';
 
 function App() {
   return (
