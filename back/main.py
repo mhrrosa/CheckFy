@@ -20,7 +20,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 db_config = {
     "host": "127.0.0.1",
     "user": "root",
-    "password": "root",
+    "password": "I#p4Zp&zS!Zv",
     "database": "checkfy"
 }
 

@@ -5,13 +5,14 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import CreateEvaluation from './pages/CreateEvaluation';
 import Evaluation from './pages/Evaluation';
-import UpdateEvaluation from './pages/UpdateEvaluation';  // Adicione esta linha
+import UpdateEvaluation from './pages/UpdateEvaluation';
 import Results from './pages/Results';
 import Modelo from './pages/Gerenciamento';
 import Niveis from './pages/Niveis';
 import Processos from './pages/Processos';
 import ResultadosEsperados from './pages/ResultadosEsperados';
 import './App.css';
+import GerenciamentoAnos from './pages/GerenciamentoAnos';
 
 function App() {
   return (
@@ -25,10 +26,11 @@ function App() {
             <Route path="/evaluation" element={<Evaluation />} />
             <Route path="/update-evaluation" element={<UpdateEvaluation />} />
             <Route path="/results" element={<Results />} />
-            <Route path="/modelo" element={<Modelo />} />
-            <Route path="/niveis" element={<Niveis />} /> 
-            <Route path="/processos" element={<Processos />} />
-            <Route path="/resultados-esperados" element={<ResultadosEsperados />} />
+            <Route path="/modelo/:ano" element={<Modelo />} />
+            <Route path="/gerenciamento-anos" element={<GerenciamentoAnos />} />
+            <Route path="/niveis/:ano" element={<Niveis />} />
+            <Route path="/processos/:ano" element={<Processos />} />
+            <Route path="/resultados-esperados/:ano" element={<ResultadosEsperados />} />
           </Routes>
         </div>
         <Footer />
