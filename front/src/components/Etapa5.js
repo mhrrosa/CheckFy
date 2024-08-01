@@ -6,7 +6,7 @@ import {
   getResultadosEsperadosPorProcesso,
   getGrausImplementacao
 } from '../services/Api';
-import '../styles/Etapa5.css';
+import '../components/styles/Etapa5.css';
 
 function Etapa5({ avaliacaoId, onNext }) {
   const [processos, setProcessos] = useState([]);

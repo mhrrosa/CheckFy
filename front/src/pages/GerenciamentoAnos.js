@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/GerenciamentoAnos.css';
+import '../pages/styles/GerenciamentoAnos.css';
 
 const anos = [2021, 2022, 2023]; // Adicione aqui todos os anos disponíveis
 
