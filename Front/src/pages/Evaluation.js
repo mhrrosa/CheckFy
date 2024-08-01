@@ -4,6 +4,7 @@ import Etapa1 from '../components/Etapa1';
 import Etapa2 from '../components/Etapa2';
 import Etapa3 from '../components/Etapa3';
 import Etapa4 from '../components/Etapa4';
+import Etapa5 from '../components/Etapa5'; // Adicione esta linha
 import { getAvaliacaoById, updateIdAtividade } from '../services/Api';
 import '../styles/Evaluation.css';
 
@@ -11,7 +12,8 @@ const etapaComponents = {
   1: Etapa1,
   2: Etapa2,
   3: Etapa3,
-  4: Etapa4
+  4: Etapa4,
+  5: Etapa5 // Adicione esta linha
 };
 
 function Evaluation() {

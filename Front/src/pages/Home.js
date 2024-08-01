@@ -44,7 +44,7 @@ function Home() {
     <div className="home-container">
       <div className="botoes-home">
         <Link to="/create-evaluation" className="botao-home">NOVA AVALIAÇÃO</Link>
-        <Link to="/modelo" className="botao-home">GERENCIAMENTO</Link>
+        <Link to="/gerenciamento-anos" className="botao-home">GERENCIAMENTO</Link> {/* Ajuste esta linha */}
       </div>
       <div className="avaliacoes-lista">
         <p className='title-avaliacoes-criadas'>Avaliações cadastradas:</p>
