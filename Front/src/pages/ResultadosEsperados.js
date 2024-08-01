@@ -159,7 +159,7 @@ function ResultadosEsperados() {
         </div>
         <div className='logo-and-button'>
           <img src={logo} className="logo" alt="Logo Checkfy" />
-          <button className="form-end-button" onClick={adicionarResultadoEsperado}>ADICIONAR</button>
+          <button className="button-end-form" onClick={adicionarResultadoEsperado}>ADICIONAR</button>
         </div>
         <p className="resultados-esperados-cadastrados-title">RESULTADOS ESPERADOS CADASTRADOS:</p>
         {resultados.length > 0 ? (

@@ -86,7 +86,7 @@ function Niveis() {
         </div>
         <div className='logo-and-button'>
           <img src={logo} className="logo" alt="Logo Checkfy" />
-          <button className="form-end-button" onClick={adicionarNivel}>ADICIONAR</button>
+          <button className="button-end-form" onClick={adicionarNivel}>ADICIONAR</button>
         </div>
         <p className="processos-cadastrados-title">NÍVEIS CADASTRADOS:</p>
         {niveis.length > 0 ? (
@@ -116,10 +116,10 @@ function Niveis() {
                       }}
                     />
                   </td>
-                  <td className='acoes-td-niveis'>
-                    <button className='button-acao-niveis'
+                  <td className='botoes-acoes'>
+                    <button className='button-acao'
                       onClick={() => atualizarNivel(nivel.id, nivel.nivel, nivel.nome)}>ATUALIZAR</button> {/* Novo botão */}
-                    <button className='button-acao-niveis'
+                    <button className='button-acao'
                       onClick={() => removerNivel(nivel.id)}>REMOVER</button>
                   </td>
                 </tr>

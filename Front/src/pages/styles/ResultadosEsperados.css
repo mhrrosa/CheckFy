@@ -43,7 +43,6 @@
 .input-field::placeholder, .select-field::placeholder, textarea::placeholder {
     color: black;
     font-size: 1em;
-    font-family: 'Roboto', sans-serif;
 }
 
 .input-field:-ms-input-placeholder, .select-field:-ms-input-placeholder, textarea:-ms-input-placeholder {

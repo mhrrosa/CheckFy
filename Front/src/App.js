@@ -7,7 +7,7 @@ import CreateEvaluation from './pages/CreateEvaluation';
 import Evaluation from './pages/Evaluation';
 import UpdateEvaluation from './pages/UpdateEvaluation';  // Adicione esta linha
 import Results from './pages/Results';
-import Modelo from './pages/Modelo';
+import Modelo from './pages/Gerenciamento';
 import Niveis from './pages/Niveis';
 import Processos from './pages/Processos';
 import ResultadosEsperados from './pages/ResultadosEsperados';

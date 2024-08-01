@@ -99,7 +99,7 @@ function Processos() {
         </div>
         <div className='logo-and-button'>
           <img src={logo} className="logo" alt="Logo Checkfy" />
-          <button className="form-end-button" onClick={adicionarProcesso}>ADICIONAR</button>
+          <button className="button-end-form" onClick={adicionarProcesso}>ADICIONAR</button>
         </div>
         <p className="processos-cadastrados-title">PROCESSOS CADASTRADOS:</p>
         {processos.length > 0 ? (

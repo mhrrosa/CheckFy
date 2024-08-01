@@ -44,9 +44,9 @@ function Home() {
 
   return (
     <div className="container">
-      <div className="botoes-home">
-        <Link to="/create-evaluation" className="botao-home">NOVA AVALIAÇÃO</Link>
-        <Link to="/modelo" className="botao-home">GERENCIAMENTO</Link>
+      <div className="botoes-home-gerenciamento">
+        <Link to="/create-evaluation" className="button-home-gerenciamento">NOVA AVALIAÇÃO</Link>
+        <Link to="/modelo" className="button-home-gerenciamento">GERENCIAMENTO</Link>
       </div>
       <div className="avaliacoes-lista">
         <p className='title-avaliacoes-criadas'>Avaliações cadastradas:</p>
@@ -55,13 +55,13 @@ function Home() {
             <div key={avaliacao.id} className="avaliacao-item">
               <p>{avaliacao.nome} - {avaliacao.status}</p>
               <div className="botoes-avaliacao">
-                <button className="botao-home-avaliacao" onClick={() => handleContinue(avaliacao.id)}>
+                <button className="button-home-avaliacao" onClick={() => handleContinue(avaliacao.id)}>
                   CONTINUAR
                 </button>
-                <button className="botao-home-avaliacao" onClick={() => navigate(`/update-evaluation`, { state: { id: avaliacao.id } })}>
+                <button className="button-home-avaliacao" onClick={() => navigate(`/update-evaluation`, { state: { id: avaliacao.id } })}>
                   ALTERAR
                 </button>
-                <button className="botao-home-avaliacao" onClick={() => handleDelete(avaliacao.id)}>
+                <button className="button-home-avaliacao" onClick={() => handleDelete(avaliacao.id)}>
                   EXCLUIR
                 </button>
               </div>
