@@ -45,8 +45,8 @@ function Home() {
   return (
     <div className="container">
       <div className="botoes-home-gerenciamento">
-        <Link to="/create-evaluation" className="botao-home">NOVA AVALIAÇÃO</Link>
-        <Link to="/gerenciamento-anos" className="botao-home">GERENCIAMENTO</Link> {/* Ajuste esta linha */}
+        <Link to="/create-evaluation" className="button-home-gerenciamento">NOVA AVALIAÇÃO</Link>
+        <Link to="/gerenciamento-anos" className="button-home-gerenciamento">GERENCIAMENTO</Link> {/* Ajuste esta linha */}
       </div>
       <div className="avaliacoes-lista">
         <p className='title-avaliacoes-criadas'>Avaliações cadastradas:</p>
