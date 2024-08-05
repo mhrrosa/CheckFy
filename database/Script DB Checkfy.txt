@@ -1,20 +1,3 @@
--- MySQL dump 10.13  Distrib 8.0.28, for Win64 (x86_64)
---
--- Host: localhost    Database: checkfy
--- ------------------------------------------------------
--- Server version	8.0.28
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
 --
 -- Table structure for table `atividade`
 --
@@ -30,7 +13,7 @@ CREATE TABLE `atividade` (
   PRIMARY KEY (`ID`),
   KEY `atividade_FK` (`ID_Responsavel`),
   KEY `atividade_FK_1` (`ID_Corresponsavel`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,7 +22,7 @@ CREATE TABLE `atividade` (
 
 LOCK TABLES `atividade` WRITE;
 /*!40000 ALTER TABLE `atividade` DISABLE KEYS */;
-INSERT INTO `atividade` VALUES (1,'Teste atividade',1,1),(2,'Atividade 2',1,1),(3,'Atividade 3',1,1),(4,'Atividade 4',1,1);
+INSERT INTO `atividade` VALUES (1,'Teste atividade',1,1),(2,'Atividade 2',1,1),(3,'Atividade 3',1,1),(4,'Atividade 4',1,1),(5,'Atividade 5',1,1);
 /*!40000 ALTER TABLE `atividade` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -61,13 +44,15 @@ CREATE TABLE `avaliacao` (
   `ID_Nivel_Solicitado` int NOT NULL,
   `ID_Nivel_Atribuido` int DEFAULT NULL,
   `Parecer_Nivel_Final` tinyint(1) DEFAULT NULL,
+  `ID_Versao_Modelo` int NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `avaliacao_FK` (`ID_Atividade`),
   KEY `avaliacao_FK_1` (`ID_Avaliador_Lider`),
   KEY `avaliacao_FK_2` (`ID_Nivel_Atribuido`),
   KEY `projeto_empresa_FK` (`ID_Empresa`),
-  KEY `projeto_nivel_FK` (`ID_Nivel_Solicitado`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `projeto_nivel_FK` (`ID_Nivel_Solicitado`),
+  KEY `avaliacao_FK_3` (`ID_Versao_Modelo`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -76,7 +61,7 @@ CREATE TABLE `avaliacao` (
 
 LOCK TABLES `avaliacao` WRITE;
 /*!40000 ALTER TABLE `avaliacao` DISABLE KEYS */;
-INSERT INTO `avaliacao` VALUES (9,'Avaliação de teste 1','Primeiro Teste de Inserção',1,'Em andamento',2,1,51,NULL,NULL);
+INSERT INTO `avaliacao` VALUES (9,'Avaliação de teste 1','Primeiro Teste de Inserção',1,'Em andamento',3,1,51,NULL,NULL,1),(16,'asdf','asdf',1,'Em andamento',4,1,44,NULL,NULL,1);
 /*!40000 ALTER TABLE `avaliacao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -94,7 +79,7 @@ CREATE TABLE `documento` (
   `ID_Projeto` int NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `documento_FK` (`ID_Projeto`)
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -103,7 +88,7 @@ CREATE TABLE `documento` (
 
 LOCK TABLES `documento` WRITE;
 /*!40000 ALTER TABLE `documento` DISABLE KEYS */;
-INSERT INTO `documento` VALUES (30,'EAP2.png','Documento 1',64),(32,'EAP2.png','Documento 2',64),(33,'EAP2.png','Documento 3',64),(34,'EAP.png','Documento 4',64);
+INSERT INTO `documento` VALUES (30,'EAP2.png','Documento 1',64),(32,'EAP2.png','Documento 2',64),(33,'EAP2.png','Documento 3',64),(34,'EAP.png','Documento 4',64),(42,'relatorio projeto comunitario.pdf','Teste',67);
 /*!40000 ALTER TABLE `documento` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -146,7 +131,7 @@ CREATE TABLE `evidencia` (
   PRIMARY KEY (`ID`),
   KEY `indicador_FK` (`ID_Documento`),
   KEY `indicador_FK_1` (`ID_Resultado_Esperado`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -191,13 +176,13 @@ DROP TABLE IF EXISTS `grau_implementacao_processo_projeto`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `grau_implementacao_processo_projeto` (
   `ID` int NOT NULL AUTO_INCREMENT,
-  `Nota` varchar(50) DEFAULT NULL,
+  `Nota` varchar(70) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `ID_Resultado_Esperado` int NOT NULL,
   `ID_Projeto` int NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `grau_implementacao_processo_projeto_FK` (`ID_Projeto`),
   KEY `grau_implementacao_processo_projeto_FK_1` (`ID_Resultado_Esperado`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -206,6 +191,7 @@ CREATE TABLE `grau_implementacao_processo_projeto` (
 
 LOCK TABLES `grau_implementacao_processo_projeto` WRITE;
 /*!40000 ALTER TABLE `grau_implementacao_processo_projeto` DISABLE KEYS */;
+INSERT INTO `grau_implementacao_processo_projeto` VALUES (1,'Não avaliado (NA)',11,67),(2,'Totalmente implementado (T)',11,64);
 /*!40000 ALTER TABLE `grau_implementacao_processo_projeto` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -247,8 +233,10 @@ CREATE TABLE `nivel_maturidade_mpsbr` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `Nivel` varchar(10) NOT NULL,
   `Nome_Nivel` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `ID_Versao_Modelo` int NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `nivel_maturidade_mpsbr_FK` (`ID_Versao_Modelo`)
+) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -257,7 +245,7 @@ CREATE TABLE `nivel_maturidade_mpsbr` (
 
 LOCK TABLES `nivel_maturidade_mpsbr` WRITE;
 /*!40000 ALTER TABLE `nivel_maturidade_mpsbr` DISABLE KEYS */;
-INSERT INTO `nivel_maturidade_mpsbr` VALUES (43,'A','Em Otimização'),(44,'B','Gerenciado Quantitavitivamente'),(45,'C','Definido'),(46,'D','Largamente Definido'),(49,'E','Parcialmente Definido'),(51,'F','Gerenciado'),(52,'G','Parcialmente Gerenciado');
+INSERT INTO `nivel_maturidade_mpsbr` VALUES (43,'A','Em Otimização',1),(44,'B','Gerenciado Quantitavitivamente',1),(45,'C','Definido',1),(46,'D','Largamente Definido',1),(49,'E','Parcialmente Definido',1),(51,'F','Gerenciado',1),(52,'G','Parcialmente Gerenciado',1);
 /*!40000 ALTER TABLE `nivel_maturidade_mpsbr` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -272,8 +260,10 @@ CREATE TABLE `processo` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `Descricao` varchar(100) NOT NULL,
   `Tipo` varchar(50) NOT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `ID_Versao_Modelo` int NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `processo_FK` (`ID_Versao_Modelo`)
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -282,7 +272,7 @@ CREATE TABLE `processo` (
 
 LOCK TABLES `processo` WRITE;
 /*!40000 ALTER TABLE `processo` DISABLE KEYS */;
-INSERT INTO `processo` VALUES (26,'Gerência de projetos','Processos de projeto'),(27,'Engenharia de requisitos','Processos de projeto');
+INSERT INTO `processo` VALUES (26,'Gerência de projetos','Processos de projeto',1),(27,'Engenharia de requisitos','Processos de projeto',1);
 /*!40000 ALTER TABLE `processo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -301,7 +291,7 @@ CREATE TABLE `projeto` (
   `Nome_Projeto` varchar(100) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `projeto_avaliacao_FK` (`ID_Avaliacao`)
-) ENGINE=InnoDB AUTO_INCREMENT=67 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -310,7 +300,7 @@ CREATE TABLE `projeto` (
 
 LOCK TABLES `projeto` WRITE;
 /*!40000 ALTER TABLE `projeto` DISABLE KEYS */;
-INSERT INTO `projeto` VALUES (64,9,1,1,'Projeto 1'),(65,9,1,2,'Projeto 2'),(66,9,1,3,'Projeto 3');
+INSERT INTO `projeto` VALUES (64,9,1,1,'Projeto 1'),(65,9,1,2,'Projeto 2'),(66,9,1,3,'Projeto 3'),(67,16,1,1,'Projeto teste');
 /*!40000 ALTER TABLE `projeto` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -355,7 +345,7 @@ CREATE TABLE `tipo_usuario` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `Descricao` varchar(50) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -364,7 +354,7 @@ CREATE TABLE `tipo_usuario` (
 
 LOCK TABLES `tipo_usuario` WRITE;
 /*!40000 ALTER TABLE `tipo_usuario` DISABLE KEYS */;
-INSERT INTO `tipo_usuario` VALUES (1,'teste');
+INSERT INTO `tipo_usuario` VALUES (1,'Administrador'),(2,'Avaliador'),(3,'Colaborador');
 /*!40000 ALTER TABLE `tipo_usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -383,7 +373,7 @@ CREATE TABLE `usuario` (
   `Email` varchar(100) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `usuario_FK` (`ID_Tipo`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -392,7 +382,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'Avaliador teste',1,'teste','teste');
+INSERT INTO `usuario` VALUES (1,'Avaliador teste',1,'teste','teste'),(3,'Adjunto',2,'Senha Teste','asdfg'),(4,'Adjunto',3,'Senha Teste','hfgd'),(5,'Adjunto',2,'Senha Teste','asfd'),(6,'Adjunto',3,'Senha Teste','asdf'),(7,'Adjunto',3,'Senha Teste','asdf');
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -413,7 +403,7 @@ CREATE TABLE `usuarios_projeto` (
   KEY `usuarios_projeto_FK_1` (`ID_Funcao`),
   KEY `usuarios_projeto_FK_2` (`ID_Projeto`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `usuarios_projeto`
@@ -425,50 +415,70 @@ LOCK TABLES `usuarios_projeto` WRITE;
 UNLOCK TABLES;
 
 --
--- Foreign Keys
+-- Table structure for table `versao_modelo`
 --
 
-ALTER TABLE `atividade`
-  ADD CONSTRAINT `atividade_FK` FOREIGN KEY (`ID_Responsavel`) REFERENCES `funcao_usuario` (`ID`),
-  ADD CONSTRAINT `atividade_FK_1` FOREIGN KEY (`ID_Corresponsavel`) REFERENCES `funcao_usuario` (`ID`);
+DROP TABLE IF EXISTS `versao_modelo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `versao_modelo` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `Nome` varchar(100) NOT NULL,
+  `Status` varchar(10) NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-ALTER TABLE `avaliacao`
-  ADD CONSTRAINT `avaliacao_FK` FOREIGN KEY (`ID_Atividade`) REFERENCES `atividade` (`ID`),
-  ADD CONSTRAINT `avaliacao_FK_1` FOREIGN KEY (`ID_Avaliador_Lider`) REFERENCES `usuario` (`ID`),
-  ADD CONSTRAINT `avaliacao_FK_2` FOREIGN KEY (`ID_Nivel_Atribuido`) REFERENCES `nivel_maturidade_mpsbr` (`ID`),
-  ADD CONSTRAINT `projeto_empresa_FK` FOREIGN KEY (`ID_Empresa`) REFERENCES `empresa` (`ID`),
-  ADD CONSTRAINT `projeto_nivel_FK` FOREIGN KEY (`ID_Nivel_Solicitado`) REFERENCES `nivel_maturidade_mpsbr` (`ID`);
+--
+-- Dumping data for table `versao_modelo`
+--
 
-ALTER TABLE `documento`
-  ADD CONSTRAINT `documento_FK` FOREIGN KEY (`ID_Projeto`) REFERENCES `projeto` (`ID`);
+LOCK TABLES `versao_modelo` WRITE;
+/*!40000 ALTER TABLE `versao_modelo` DISABLE KEYS */;
+INSERT INTO `versao_modelo` VALUES (1,'2022','Ativado');
+/*!40000 ALTER TABLE `versao_modelo` ENABLE KEYS */;
+UNLOCK TABLES;
 
-ALTER TABLE `evidencia`
-  ADD CONSTRAINT `indicador_FK` FOREIGN KEY (`ID_Documento`) REFERENCES `documento` (`ID`),
-  ADD CONSTRAINT `indicador_FK_1` FOREIGN KEY (`ID_Resultado_Esperado`) REFERENCES `resultado_esperado_mpsbr` (`ID`);
+--
+-- Adding foreign key constraints
+--
 
-ALTER TABLE `grau_implementacao_processo_projeto`
-  ADD CONSTRAINT `grau_implementacao_processo_projeto_FK` FOREIGN KEY (`ID_Projeto`) REFERENCES `projeto` (`ID`),
-  ADD CONSTRAINT `grau_implementacao_processo_projeto_FK_1` FOREIGN KEY (`ID_Resultado_Esperado`) REFERENCES `resultado_esperado_mpsbr` (`ID`);
+ALTER TABLE `atividade` ADD CONSTRAINT `atividade_FK` FOREIGN KEY (`ID_Responsavel`) REFERENCES `funcao_usuario` (`ID`);
+ALTER TABLE `atividade` ADD CONSTRAINT `atividade_FK_1` FOREIGN KEY (`ID_Corresponsavel`) REFERENCES `funcao_usuario` (`ID`);
 
-ALTER TABLE `grau_implementacao_unidade_organizacional`
-  ADD CONSTRAINT `grau_implementacao_unidade_organizacional_FK` FOREIGN KEY (`ID_Projeto`) REFERENCES `projeto` (`ID`),
-  ADD CONSTRAINT `grau_implementacao_unidade_organizacional_FK_1` FOREIGN KEY (`ID_Resultado_Esperado`) REFERENCES `resultado_esperado_mpsbr` (`ID`);
+ALTER TABLE `avaliacao` ADD CONSTRAINT `avaliacao_FK` FOREIGN KEY (`ID_Atividade`) REFERENCES `atividade` (`ID`);
+ALTER TABLE `avaliacao` ADD CONSTRAINT `avaliacao_FK_1` FOREIGN KEY (`ID_Avaliador_Lider`) REFERENCES `usuario` (`ID`);
+ALTER TABLE `avaliacao` ADD CONSTRAINT `avaliacao_FK_2` FOREIGN KEY (`ID_Nivel_Atribuido`) REFERENCES `nivel_maturidade_mpsbr` (`ID`);
+ALTER TABLE `avaliacao` ADD CONSTRAINT `avaliacao_FK_3` FOREIGN KEY (`ID_Versao_Modelo`) REFERENCES `versao_modelo` (`ID`);
+ALTER TABLE `avaliacao` ADD CONSTRAINT `projeto_empresa_FK` FOREIGN KEY (`ID_Empresa`) REFERENCES `empresa` (`ID`);
+ALTER TABLE `avaliacao` ADD CONSTRAINT `projeto_nivel_FK` FOREIGN KEY (`ID_Nivel_Solicitado`) REFERENCES `nivel_maturidade_mpsbr` (`ID`);
 
-ALTER TABLE `projeto`
-  ADD CONSTRAINT `projeto_avaliacao_FK` FOREIGN KEY (`ID_Avaliacao`) REFERENCES `avaliacao` (`ID`);
+ALTER TABLE `documento` ADD CONSTRAINT `documento_FK` FOREIGN KEY (`ID_Projeto`) REFERENCES `projeto` (`ID`);
 
-ALTER TABLE `resultado_esperado_mpsbr`
-  ADD CONSTRAINT `resultado_esperado_mpsbr_FK` FOREIGN KEY (`ID_Processo`) REFERENCES `processo` (`ID`),
-  ADD CONSTRAINT `resultado_esperado_mpsbr_FK_1` FOREIGN KEY (`ID_Nivel_Intervalo_Inicio`) REFERENCES `nivel_maturidade_mpsbr` (`ID`),
-  ADD CONSTRAINT `resultado_esperado_mpsbr_FK_2` FOREIGN KEY (`ID_Nivel_Intervalo_Fim`) REFERENCES `nivel_maturidade_mpsbr` (`ID`);
+ALTER TABLE `evidencia` ADD CONSTRAINT `indicador_FK` FOREIGN KEY (`ID_Documento`) REFERENCES `documento` (`ID`);
+ALTER TABLE `evidencia` ADD CONSTRAINT `indicador_FK_1` FOREIGN KEY (`ID_Resultado_Esperado`) REFERENCES `resultado_esperado_mpsbr` (`ID`);
 
-ALTER TABLE `usuario`
-  ADD CONSTRAINT `usuario_FK` FOREIGN KEY (`ID_Tipo`) REFERENCES `tipo_usuario` (`ID`);
+ALTER TABLE `grau_implementacao_processo_projeto` ADD CONSTRAINT `grau_implementacao_processo_projeto_FK` FOREIGN KEY (`ID_Projeto`) REFERENCES `projeto` (`ID`);
+ALTER TABLE `grau_implementacao_processo_projeto` ADD CONSTRAINT `grau_implementacao_processo_projeto_FK_1` FOREIGN KEY (`ID_Resultado_Esperado`) REFERENCES `resultado_esperado_mpsbr` (`ID`);
 
-ALTER TABLE `usuarios_projeto`
-  ADD CONSTRAINT `usuarios_projeto_FK` FOREIGN KEY (`ID_Usuario`) REFERENCES `usuario` (`ID`),
-  ADD CONSTRAINT `usuarios_projeto_FK_1` FOREIGN KEY (`ID_Funcao`) REFERENCES `funcao_usuario` (`ID`),
-  ADD CONSTRAINT `usuarios_projeto_FK_2` FOREIGN KEY (`ID_Projeto`) REFERENCES `avaliacao` (`ID`);
+ALTER TABLE `grau_implementacao_unidade_organizacional` ADD CONSTRAINT `grau_implementacao_unidade_organizacional_FK` FOREIGN KEY (`ID_Projeto`) REFERENCES `projeto` (`ID`);
+ALTER TABLE `grau_implementacao_unidade_organizacional` ADD CONSTRAINT `grau_implementacao_unidade_organizacional_FK_1` FOREIGN KEY (`ID_Resultado_Esperado`) REFERENCES `resultado_esperado_mpsbr` (`ID`);
+
+ALTER TABLE `nivel_maturidade_mpsbr` ADD CONSTRAINT `nivel_maturidade_mpsbr_FK` FOREIGN KEY (`ID_Versao_Modelo`) REFERENCES `versao_modelo` (`ID`);
+
+ALTER TABLE `processo` ADD CONSTRAINT `processo_FK` FOREIGN KEY (`ID_Versao_Modelo`) REFERENCES `versao_modelo` (`ID`);
+
+ALTER TABLE `projeto` ADD CONSTRAINT `projeto_avaliacao_FK` FOREIGN KEY (`ID_Avaliacao`) REFERENCES `avaliacao` (`ID`);
+
+ALTER TABLE `resultado_esperado_mpsbr` ADD CONSTRAINT `resultado_esperado_mpsbr_FK` FOREIGN KEY (`ID_Processo`) REFERENCES `processo` (`ID`);
+ALTER TABLE `resultado_esperado_mpsbr` ADD CONSTRAINT `resultado_esperado_mpsbr_FK_1` FOREIGN KEY (`ID_Nivel_Intervalo_Inicio`) REFERENCES `nivel_maturidade_mpsbr` (`ID`);
+ALTER TABLE `resultado_esperado_mpsbr` ADD CONSTRAINT `resultado_esperado_mpsbr_FK_2` FOREIGN KEY (`ID_Nivel_Intervalo_Fim`) REFERENCES `nivel_maturidade_mpsbr` (`ID`);
+
+ALTER TABLE `usuario` ADD CONSTRAINT `usuario_FK` FOREIGN KEY (`ID_Tipo`) REFERENCES `tipo_usuario` (`ID`);
+
+ALTER TABLE `usuarios_projeto` ADD CONSTRAINT `usuarios_projeto_FK` FOREIGN KEY (`ID_Usuario`) REFERENCES `usuario` (`ID`);
+ALTER TABLE `usuarios_projeto` ADD CONSTRAINT `usuarios_projeto_FK_1` FOREIGN KEY (`ID_Funcao`) REFERENCES `funcao_usuario` (`ID`);
+ALTER TABLE `usuarios_projeto` ADD CONSTRAINT `usuarios_projeto_FK_2` FOREIGN KEY (`ID_Projeto`) REFERENCES `avaliacao` (`ID`);
 
 --
 -- Dumping routines for database 'checkfy'
@@ -483,4 +493,4 @@ ALTER TABLE `usuarios_projeto`
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-06-05 19:32:56
+-- Dump completed on 2024-08-05 18:33:00
