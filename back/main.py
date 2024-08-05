@@ -533,7 +533,7 @@ def delete_versao_modelo(versao_modelo_id):
         return jsonify({"message": "Erro ao deletar versao_modelo", "error": str(e)}), 500
 
 @app.route('/update_versao_modelo/<int:versao_modelo_id>', methods=['PUT'])
-def update_processo(versao_modelo_id):
+def update_versao_modelo(versao_modelo_id):
     try:
         data = request.json
         versao_modelo_id.update_versao_modelo(nome=data['nome'], status=data['status'], id=versao_modelo_id)
