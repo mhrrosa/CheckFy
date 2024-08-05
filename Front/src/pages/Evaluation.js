@@ -16,7 +16,7 @@ const etapaComponents = {
   2: Etapa2,
   3: Etapa3,
   4: Etapa4,
-  5: Etapa5 // Adicione esta linha
+  5: Etapa5
 };
 
 function Evaluation() {

@@ -235,7 +235,6 @@ function deleteEvidencia(data) {
 
 function getProcessosPorAvaliacao(avaliacaoId) {
   return get(`/get_processos_por_avaliacao/${avaliacaoId}`).then(response => {
-    console.log('Processos por Avaliação:', response);
     return response;
   });
 }
@@ -251,7 +250,6 @@ function getResultadosEsperadosPorProcesso(processoId, avaliacaoId) {
 function addOrUpdateGrauImplementacao(data) {
   return post('/add_or_update_grau_implementacao', data)
     .then(response => {
-      console.log('Resposta da API para adição/atualização de grau de implementação:', response);
       return response;
     })
     .catch(error => {
@@ -270,6 +268,29 @@ function getGrausImplementacao(avaliacaoId) {
       console.error('Erro ao buscar graus de implementação:', error);
       throw error;
     });
+}
+
+function get_versao_modelo(){
+  return get(`/get_versao_modelo`)
+}
+
+function add_versao_modelo(data){
+  return post('/add_versao_modelo', data)
+  .then(response => {
+    return response;
+  })
+  .catch(error => {
+    console.error('Erro ao adicionar versão do modelo:', error);
+    throw error;
+  });
+}
+
+function delete_versao_modelo(idVersaoModelo){
+  return idVersaoModelo(`/delete_versao_modelo/${idVersaoModelo}`);
+}
+
+function update_versao_modelo(idVersaoModelo, data){
+  return put(`/update_versao_modelo/${idVersaoModelo}`, data);
 }
 
 export {
@@ -305,5 +326,9 @@ export {
   getProcessosPorAvaliacao,
   getResultadosEsperadosPorProcesso,
   addOrUpdateGrauImplementacao,
-  getGrausImplementacao
+  getGrausImplementacao,
+  get_versao_modelo,
+  add_versao_modelo,
+  delete_versao_modelo,
+  update_versao_modelo
 };

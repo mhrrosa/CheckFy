@@ -86,10 +86,10 @@ def add_processo():
         print(f"Erro ao adicionar processo: {e}")
         return jsonify({"message": "Erro ao adicionar processo", "error": str(e)}), 500
 
-@app.route('/get_all_processos', methods=['GET'])
-def get_all_processos():
+@app.route('/get_processos', methods=['GET'])
+def get_processos():
     try:
-        processos = processo.get_all_processos()
+        processos = processo.get_processos()
         return jsonify(processos), 200  
     except Exception as e:
         print(f"Erro ao buscar processos: {e}")
@@ -507,8 +507,7 @@ def get_graus_implementacao(avaliacao_id):
 @app.route('/get_versao_modelo', methods=['GET'])
 def get_versao_modelo():
     try:
-        versao_modelo = versao_modelo.get_versao_modelo()
-        return jsonify(versao_modelo), 200  
+        return jsonify(versao_modelo.get_versao_modelo()), 200  
     except Exception as e:
         print(f"Erro ao buscar versao_modelo: {e}")
         return jsonify({"message": "Erro ao buscar versao_modelo", "error": str(e)}), 500

@@ -10,7 +10,7 @@ class Processo:
             print(f"Erro ao adicionar processo ao banco de dados: {e}")
             raise e
 
-    def get_all_processos(self):
+    def get_processos(self):
         query = "SELECT * FROM processo ORDER BY id"
         print(f"Executando query: {query}")
         self.db.cursor.execute(query)
