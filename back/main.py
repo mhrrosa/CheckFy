@@ -7,6 +7,7 @@ from ResultadoEsperado import ResultadoEsperado
 from Avaliacao import Avaliacao
 from Projeto import Projeto
 from Documento import Documento
+from Versao_Modelo import Versao_Modelo
 import os
 
 app = Flask(__name__)
@@ -32,11 +33,11 @@ resultado_esperado = ResultadoEsperado(db)
 avaliacao = Avaliacao(db)
 projeto = Projeto(db)
 documento = Documento(db)
+versao_modelo = Versao_Modelo(db)
 
 @app.route('/add_nivel', methods=['POST'])
 def add_nivel():
     nivel_data = request.json
-    print(f"Recebido nivel_data: {nivel_data}")  # Adicionado para debugging
     if 'nivel' not in nivel_data or 'nome_nivel' not in nivel_data:
         return jsonify({"message": "Campos 'nivel' e/ou 'nome_nivel' ausentes no JSON"}), 400
     try:
@@ -48,8 +49,9 @@ def add_nivel():
 
 @app.route('/get_all_niveis', methods=['GET'])
 def get_all_niveis():
+    nivel_data = request.json
     try:
-        niveis = nivel.get_all_niveis_ordered()
+        niveis = nivel.get_all_niveis_ordered(nivel_data['versao_modelo'])
         return jsonify(niveis), 200
     except Exception as e:
         print(f"Erro ao buscar níveis: {e}")
@@ -501,6 +503,45 @@ def get_graus_implementacao(avaliacao_id):
     except Exception as e:
         print(f"Erro ao buscar graus de implementação: {e}")
         return jsonify({"message": "Erro ao buscar graus de implementação", "error": str(e)}), 500
+
+@app.route('/get_versao_modelo', methods=['GET'])
+def get_versao_modelo():
+    try:
+        versao_modelo = versao_modelo.get_versao_modelo()
+        return jsonify(versao_modelo), 200  
+    except Exception as e:
+        print(f"Erro ao buscar versao_modelo: {e}")
+        return jsonify({"message": "Erro ao buscar versao_modelo", "error": str(e)}), 500
+    
+@app.route('/add_versao_modelo', methods=['POST'])
+def add_versao_modelo():
+    try:
+        data = request.json
+        versao_modelo.add_versao_modelo(nome=data['nome'], status=data['status'])
+        return jsonify({"message": "Processo adicionado com sucesso"}), 200
+    except Exception as e:
+        print(f"Erro ao adicionar processo: {e}")
+        return jsonify({"message": "Erro ao adicionar processo", "error": str(e)}), 500
+
+
+@app.route('/delete_versao_modelo/<int:versao_modelo_id>', methods=['DELETE'])
+def delete_versao_modelo(versao_modelo_id):
+    try:
+        versao_modelo.delete_versao_modelo(versao_modelo_id)
+        return jsonify({"message": "versao_modelo deletado com sucesso"}), 200
+    except Exception as e:
+        return jsonify({"message": "Erro ao deletar versao_modelo", "error": str(e)}), 500
+
+@app.route('/update_versao_modelo/<int:versao_modelo_id>', methods=['PUT'])
+def update_processo(versao_modelo_id):
+    try:
+        data = request.json
+        versao_modelo_id.update_versao_modelo(nome=data['nome'], status=data['status'], id=versao_modelo_id)
+        return jsonify({"message": "Processo atualizado com sucesso"}), 200
+    except Exception as e:
+        print(f"Erro ao atualizar processo: {e}")
+        return jsonify({"message": "Erro ao atualizar processo", "error": str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)

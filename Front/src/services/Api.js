@@ -118,8 +118,8 @@ function createNivel(data) {
   return post('/add_nivel', data);
 }
 
-function getNiveis() {
-  return get('/get_all_niveis');
+function getNiveis(idVersaoModelo) {
+  return get(`/get_niveis/${idVersaoModelo}`);
 }
 
 function updateNivel(id, data) {
@@ -131,8 +131,8 @@ function deleteNivel(id) {
 }
 
 // Funções para Processos
-function getProcessos() {
-  return get('/get_all_processos');
+function getProcessos(idVersaoModelo) {
+  return get(`/get_processos/${idVersaoModelo}`);
 }
 
 function createProcesso(data) {
@@ -148,8 +148,8 @@ function deleteProcesso(id) {
 }
 
 // Funções para Resultados Esperados
-function getResultadosEsperados() {
-  return get('/get_all_resultados_esperados');
+function getResultadosEsperados(idVersaoModelo) {
+  return get(`/get_resultados_esperados/${idVersaoModelo}`);
 }
 
 function createResultadoEsperado(data) {

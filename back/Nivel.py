@@ -6,8 +6,8 @@ class Nivel:
         self.db.cursor.execute("INSERT INTO nivel_maturidade_mpsbr (Nivel, Nome_Nivel) VALUES (%s, %s)", (nivel, nome_nivel))
         self.db.conn.commit()
 
-    def get_all_niveis_ordered(self):
-        query = "SELECT * FROM nivel_maturidade_mpsbr ORDER BY Nivel"
+    def get_all_niveis_ordered(self, versao_modelo):
+        query = "SELECT * FROM nivel_maturidade_mpsbr where ID_Versao_Modelo = %s ORDER BY Nivel", (versao_modelo)
         print(f"Executando query: {query}")
         self.db.cursor.execute(query)
         result = self.db.cursor.fetchall()

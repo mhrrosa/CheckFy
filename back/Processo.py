@@ -19,7 +19,6 @@ class Processo:
 
     def delete_processo(self, processo_id):
         try:
-            print(f"Deletando processo com ID: {processo_id}")
             self.db.cursor.execute("DELETE FROM processo WHERE ID = %s", (processo_id,))
             self.db.conn.commit()
             print(f"Processo com ID {processo_id} deletado com sucesso.")

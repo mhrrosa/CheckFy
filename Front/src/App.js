@@ -26,10 +26,10 @@ function App() {
             <Route path="/evaluation" element={<Evaluation />} />
             <Route path="/update-evaluation" element={<UpdateEvaluation />} />
             <Route path="/results" element={<Results />} />
-            <Route path="/modelo/:ano" element={<Modelo />} />
+            <Route path="/modelo" element={<Modelo />} />
             <Route path="/gerenciamento-anos" element={<GerenciamentoAnos />} />
-            <Route path="/niveis/:ano" element={<Niveis />} />
-            <Route path="/processos/:ano" element={<Processos />} />
+            <Route path="/niveis" element={<Niveis />} />
+            <Route path="/processos" element={<Processos />} />
             <Route path="/resultados-esperados/:ano" element={<ResultadosEsperados />} />
           </Routes>
         </div>
