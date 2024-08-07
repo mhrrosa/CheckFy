@@ -47,7 +47,6 @@ function Etapa3({ avaliacaoId, onNext }) {
     try {
       const data = await getProcessosPorAvaliacao(avaliacaoId);
       setProcessos(data.processos);
-      console.log('Processos carregados:', data.processos);
     } catch (error) {
       console.error('Erro ao carregar processos:', error);
     }
@@ -57,7 +56,6 @@ function Etapa3({ avaliacaoId, onNext }) {
     try {
       const data = await getProjetosByAvaliacao(avaliacaoId);
       setProjetos(data);
-      console.log('Projetos carregados:', data);
     } catch (error) {
       console.error('Erro ao carregar projetos:', error);
     }
@@ -70,7 +68,6 @@ function Etapa3({ avaliacaoId, onNext }) {
         ...prevResultados,
         [processoId]: data
       }));
-      console.log(`Resultados esperados carregados para o processo ${processoId}:`, data);
 
       for (const resultado of data) {
         for (const projeto of projetos) {
@@ -92,7 +89,6 @@ function Etapa3({ avaliacaoId, onNext }) {
         idProjeto: doc[3]
       }));
       setDocumentos(documentosFormatados);
-      console.log('Documentos carregados:', documentosFormatados);
     } catch (error) {
       console.error('Erro ao carregar documentos:', error);
     }
@@ -111,7 +107,6 @@ function Etapa3({ avaliacaoId, onNext }) {
         ...prevEvidencias,
         [`${resultadoId}-${projetoId}`]: evidenciasFormatadas
       }));
-      console.log(`Evidencias carregadas para resultado ${resultadoId} e projeto ${projetoId}:`, evidenciasFormatadas);
     } catch (error) {
       console.error('Erro ao carregar evidencias:', error);
     }
@@ -212,7 +207,6 @@ function Etapa3({ avaliacaoId, onNext }) {
 
   const handleExcluirEvidencia = async (resultadoId, documentoId) => {
     try {
-      console.log('Excluindo evidência:', { resultadoId, documentoId });
       await deleteEvidencia({ id_resultado_esperado: resultadoId, id_documento: documentoId });
       recarregarEvidencias(); // Recarregar todas as evidências após a exclusão
     } catch (error) {

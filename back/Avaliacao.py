@@ -63,7 +63,8 @@ class Avaliacao:
                 "status": row[4],
                 "id_atividade": row[5],
                 "id_empresa": row[6],
-                "id_nivel_solicitado": row[7]
+                "id_nivel_solicitado": row[7],
+                "id_versao_modelo": row[10]
             }
             return avaliacao_data
         return None

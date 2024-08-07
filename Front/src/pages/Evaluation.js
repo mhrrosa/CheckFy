@@ -24,6 +24,7 @@ function Evaluation() {
   const navigate = useNavigate();
   const [idAtividade, setIdAtividade] = useState(null);
   const [avaliacaoId, setAvaliacaoId] = useState(null);
+  const [idVersaoModelo, setIdVersaoModelo] = useState(null);
 
   useEffect(() => {
     if (location.state?.id) {
@@ -36,6 +37,7 @@ function Evaluation() {
       const avaliacao = await getAvaliacaoById(id);
       setAvaliacaoId(avaliacao.id);
       setIdAtividade(avaliacao.id_atividade);
+      setIdVersaoModelo(avaliacao.id_versao_modelo);
     } catch (error) {
       console.error('Erro ao buscar avaliação:', error);
     }
@@ -62,7 +64,14 @@ function Evaluation() {
       <div className="main-content-evaluation">
         <h1 className="evaluation-title">AVALIAÇÃO</h1>
         <div className="form-section-evaluation">
-          {EtapaComponent ? <EtapaComponent onNext={handleNextStep} avaliacaoId={avaliacaoId} /> : <p>Etapa não encontrada</p>}
+          {EtapaComponent ? 
+            <EtapaComponent 
+              onNext={handleNextStep} 
+              avaliacaoId={avaliacaoId} 
+              idVersaoModelo={idVersaoModelo} 
+            /> 
+            : 
+            <p>Etapa não encontrada</p>}
         </div>
       </div>
       <div className="sidebar">

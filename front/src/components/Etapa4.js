@@ -50,7 +50,6 @@ function Etapa4({ onNext, avaliacaoId }) {
     try {
       const data = await getProcessosPorAvaliacao(avaliacaoId);
       setProcessos(data.processos);
-      console.log('Processos carregados:', data.processos);
     } catch (error) {
       console.error('Erro ao carregar processos:', error);
     }
@@ -60,7 +59,6 @@ function Etapa4({ onNext, avaliacaoId }) {
     try {
       const data = await getProjetosByAvaliacao(avaliacaoId);
       setProjetos(data);
-      console.log('Projetos carregados:', data);
     } catch (error) {
       console.error('Erro ao carregar projetos:', error);
     }
@@ -73,7 +71,6 @@ function Etapa4({ onNext, avaliacaoId }) {
         ...prevResultados,
         [processoId]: data
       }));
-      console.log(`Resultados esperados carregados para o processo ${processoId}:`, data);
 
       for (const resultado of data) {
         for (const projeto of projetos) {
@@ -98,7 +95,6 @@ function Etapa4({ onNext, avaliacaoId }) {
         ...prevEvidencias,
         [`${resultadoId}-${projetoId}`]: evidenciasFormatadas
       }));
-      console.log(`Evidencias carregadas para resultado ${resultadoId} e projeto ${projetoId}:`, evidenciasFormatadas);
     } catch (error) {
       console.error('Erro ao carregar evidencias:', error);
     }
@@ -112,7 +108,6 @@ function Etapa4({ onNext, avaliacaoId }) {
         graus[`${grau.ID_Resultado_Esperado}-${grau.ID_Projeto}`] = grau.Nota;
       });
       setGrausImplementacao(graus);
-      console.log('Graus de implementação carregados:', graus);
     } catch (error) {
       console.error('Erro ao carregar graus de implementação:', error);
     }
@@ -126,7 +121,6 @@ function Etapa4({ onNext, avaliacaoId }) {
         ...prevGraus,
         [`${resultadoId}-${projetoId}`]: nota
       }));
-      console.log(`Grau de implementação atualizado ${nota} para Resultado ${resultadoId} e Projeto ${projetoId}`);
     } catch (error) {
       console.error('Erro ao atualizar grau de implementação:', error);
     }
