@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getNiveis, createNivel, updateNivel, deleteNivel } from '../services/Api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation  } from 'react-router-dom';
 import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
@@ -13,13 +13,15 @@ function Niveis() {
   const [novoNivel, setNovoNivel] = useState('');
   const [nomeNovoNivel, setNomeNovoNivel] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+  const anoSelecionado = location.state?.anoSelecionado || localStorage.getItem('anoSelecionado');
 
   useEffect(() => {
     carregarNiveis();
-  }, []);
+  }, [anoSelecionado]);
 
   const carregarNiveis = () => {
-    getNiveis(1)
+    getNiveis(anoSelecionado)
       .then(data => {
         const niveisFormatados = data.map(n => ({ id: n[0], nivel: n[1], nome: n[2] }));
         setNiveis(niveisFormatados);
@@ -31,7 +33,7 @@ function Niveis() {
   };
 
   const adicionarNivel = () => {
-    const nivelData = { nivel: novoNivel, nome_nivel: nomeNovoNivel };
+    const nivelData = { nivel: novoNivel, nome_nivel: nomeNovoNivel, id_versao_modelo: anoSelecionado };
     createNivel(nivelData)
       .then(() => {
         carregarNiveis();

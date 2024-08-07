@@ -2,14 +2,16 @@ class Nivel:
     def __init__(self, db):
         self.db = db
 
-    def add_nivel(self, nivel, nome_nivel):
-        self.db.cursor.execute("INSERT INTO nivel_maturidade_mpsbr (Nivel, Nome_Nivel) VALUES (%s, %s)", (nivel, nome_nivel))
-        self.db.conn.commit()
-
-    def get_all_niveis_ordered(self, versao_modelo):
-        query = "SELECT * FROM nivel_maturidade_mpsbr where ID_Versao_Modelo = %s ORDER BY Nivel", (versao_modelo)
-        print(f"Executando query: {query}")
-        self.db.cursor.execute(query)
+    def add_nivel(self, nivel, nome_nivel, id_versao_modelo):
+        try:
+            self.db.cursor.execute("INSERT INTO nivel_maturidade_mpsbr (Nivel, Nome_Nivel, id_versao_modelo) VALUES (%s, %s, %s)", (nivel, nome_nivel, id_versao_modelo))
+            self.db.conn.commit()
+        except Exception as e:
+            print(f"Erro ao adicionar nivel ao banco de dados: {e}")
+            raise e
+        
+    def get_niveis(self, id_versao_modelo):
+        self.db.cursor.execute("SELECT * FROM nivel_maturidade_mpsbr where ID_Versao_Modelo = %s ORDER BY Nivel", (id_versao_modelo,))
         result = self.db.cursor.fetchall()
         return result
 

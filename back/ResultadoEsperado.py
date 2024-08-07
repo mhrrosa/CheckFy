@@ -17,8 +17,8 @@ class ResultadoEsperado:
         print(f"Executando query: {query} com valor ({resultado_id})")
         self.db.execute_query(query, (resultado_id,))
 
-    def get_all_resultados_esperados(self):
-        query = "SELECT * FROM resultado_esperado_mpsbr"
-        print(f"Executando query: {query}")
-        resultados = self.db.fetch_all(query)
+    def get_resultados_esperados(self, id_processos):
+        placeholders = ', '.join(['%s'] * len(id_processos))
+        print(id_processos, placeholders, tuple(id_processos))
+        resultados = self.db.fetch_all(f"SELECT * FROM resultado_esperado_mpsbr WHERE ID_Processo IN ({placeholders})", tuple(id_processos))
         return resultados

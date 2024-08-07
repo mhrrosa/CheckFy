@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { getProcessos, createProcesso, updateProcesso, deleteProcesso } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/Container.css';
@@ -13,13 +13,16 @@ function Processos() {
   const [novoProcessoDescricao, setNovoProcessoDescricao] = useState('');
   const [novoProcessoTipo, setNovoProcessoTipo] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+  const anoSelecionado = location.state?.anoSelecionado || localStorage.getItem('anoSelecionado');
 
   useEffect(() => {
     carregarProcessos();
-  }, []);
+  }, [anoSelecionado]);
 
   const carregarProcessos = () => {
-    getProcessos()
+    if (!anoSelecionado) return;
+    getProcessos(anoSelecionado)
       .then(data => {
         const processosFormatados = data.map(p => ({ id: p[0], descricao: p[1], tipo: p[2] }));
         setProcessos(processosFormatados);
@@ -33,7 +36,8 @@ function Processos() {
   const adicionarProcesso = () => {
     const processoData = {
       descricao: novoProcessoDescricao,
-      tipo: novoProcessoTipo
+      tipo: novoProcessoTipo,
+      id_versao_modelo: anoSelecionado
     };
     createProcesso(processoData)
       .then(novo => {
@@ -68,7 +72,7 @@ function Processos() {
   return (
     <div className="container">
       <div className="form-section-process">
-        <button className="button-close-form" onClick={() => navigate('/modelo')}>
+        <button className="button-close-form" onClick={() => navigate('/modelo', { state: { anoSelecionado } })}>
           <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>

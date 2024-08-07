@@ -38,20 +38,17 @@ versao_modelo = Versao_Modelo(db)
 @app.route('/add_nivel', methods=['POST'])
 def add_nivel():
     nivel_data = request.json
-    if 'nivel' not in nivel_data or 'nome_nivel' not in nivel_data:
-        return jsonify({"message": "Campos 'nivel' e/ou 'nome_nivel' ausentes no JSON"}), 400
     try:
-        nivel.add_nivel(nivel_data['nivel'], nivel_data['nome_nivel'])
+        nivel.add_nivel(nivel_data['nivel'], nivel_data['nome_nivel'], nivel_data['id_versao_modelo'])
         return jsonify({"message": "Nível adicionado com sucesso"}), 200
     except Exception as e:
         print(f"Erro ao adicionar nível: {e}")
         return jsonify({"message": "Erro ao adicionar nível", "error": str(e)}), 500
 
-@app.route('/get_all_niveis', methods=['GET'])
-def get_all_niveis():
-    nivel_data = request.json
+@app.route('/get_niveis/<int:id_versao_modelo>', methods=['GET'])
+def get_niveis(id_versao_modelo):
     try:
-        niveis = nivel.get_all_niveis_ordered(nivel_data['versao_modelo'])
+        niveis = nivel.get_niveis(id_versao_modelo)
         return jsonify(niveis), 200
     except Exception as e:
         print(f"Erro ao buscar níveis: {e}")
@@ -80,16 +77,17 @@ def add_processo():
     try:
         descricao = request.json['descricao']
         tipo = request.json['tipo']
-        processo.add_processo(descricao, tipo)
+        id_versao_modelo = request.json['id_versao_modelo']
+        processo.add_processo(descricao, tipo, id_versao_modelo)
         return jsonify({"message": "Processo adicionado com sucesso"}), 200
     except Exception as e:
         print(f"Erro ao adicionar processo: {e}")
         return jsonify({"message": "Erro ao adicionar processo", "error": str(e)}), 500
 
-@app.route('/get_processos', methods=['GET'])
-def get_processos():
+@app.route('/get_processos/<int:id_versao_modelo>', methods=['GET'])
+def get_processos(id_versao_modelo):
     try:
-        processos = processo.get_processos()
+        processos = processo.get_processos(id_versao_modelo)
         return jsonify(processos), 200  
     except Exception as e:
         print(f"Erro ao buscar processos: {e}")
@@ -129,14 +127,20 @@ def add_resultado_esperado():
         print(f"Erro ao adicionar resultado esperado: {e}")
         return jsonify({"message": "Erro ao adicionar resultado esperado", "error": str(e)}), 500
 
-@app.route('/get_all_resultados_esperados', methods=['GET'])
-def get_all_resultados_esperados():
+@app.route('/get_resultados_esperados', methods=['GET'])
+def get_resultados_esperados_route():
     try:
-        resultados_esperados = resultado_esperado.get_all_resultados_esperados()
+        processos_ids = request.args.get('processosId')
+        if not processos_ids:
+            return jsonify({"message": "No process IDs provided"}), 400
+        processos_ids_list = [int(id) for id in processos_ids.split(',')]
+        resultado_esperado = ResultadoEsperado(db)
+        resultados_esperados = resultado_esperado.get_resultados_esperados(processos_ids_list)
         return jsonify(resultados_esperados), 200
     except Exception as e:
         print(f"Erro ao buscar resultados esperados: {e}")
         return jsonify({"message": "Erro ao buscar resultados esperados", "error": str(e)}), 500
+
 
 @app.route('/delete_resultado_esperado/<int:resultado_id>', methods=['DELETE'])
 def delete_resultado_esperado(resultado_id):

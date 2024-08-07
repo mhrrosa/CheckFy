@@ -148,8 +148,19 @@ function deleteProcesso(id) {
 }
 
 // Funções para Resultados Esperados
-function getResultadosEsperados(idVersaoModelo) {
-  return get(`/get_resultados_esperados/${idVersaoModelo}`);
+function getResultadosEsperados(processosId) {
+  const query = processosId.join(',');
+  return fetch(`${baseUrl}/get_resultados_esperados?processosId=${query}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Erro na requisição GET');
+      }
+      return response.json();
+    })
+    .catch(error => {
+      console.error('Erro ao realizar GET:', error);
+      throw error;
+    });
 }
 
 function createResultadoEsperado(data) {

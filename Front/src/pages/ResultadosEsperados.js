@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   getResultadosEsperados,
   createResultadoEsperado,
@@ -24,30 +24,33 @@ function ResultadosEsperados() {
   const [niveis, setNiveis] = useState([]);
   const [processos, setProcessos] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
+  const anoSelecionado = location.state?.anoSelecionado || localStorage.getItem('anoSelecionado');
 
   useEffect(() => {
     carregarDadosIniciais();
-  }, []);
+  }, [anoSelecionado]);
 
   const carregarDadosIniciais = async () => {
     try {
-      const niveisData = await getNiveis();
+      const niveisData = await getNiveis(anoSelecionado);
       const niveisFormatados = niveisData.map(n => ({ id: n[0], nivel: n[1] }));
       setNiveis(niveisFormatados);
-
-      const processosData = await getProcessos();
+  
+      const processosData = await getProcessos(anoSelecionado);
       const processosFormatados = processosData.map(p => ({ id: p[0], nome: p[1], tipo: p[2] }));
       setProcessos(processosFormatados);
-
-      carregarResultadosEsperados();
+  
+      const processosId = processosFormatados.map(p => p.id);
+      carregarResultadosEsperados(processosId);
     } catch (error) {
       console.error('Erro ao buscar dados iniciais:', error);
     }
   };
 
-  const carregarResultadosEsperados = async () => {
+  const carregarResultadosEsperados = async (processosId) => {
     try {
-      const resultadosData = await getResultadosEsperados();
+      const resultadosData = await getResultadosEsperados(processosId);
       const resultadosFormatados = resultadosData.map(r => {
         const [id, descricao, idNivelFim, idNivelInicio, idProcesso] = r;
         return {
@@ -74,7 +77,7 @@ function ResultadosEsperados() {
     };
     try {
       await createResultadoEsperado(resultadoData);
-      carregarResultadosEsperados();
+      carregarResultadosEsperados(processos.map(p => p.id));
       setNovoResultado('');
       setNivelInicioSelecionado('');
       setNivelFimSelecionado('');
@@ -87,7 +90,7 @@ function ResultadosEsperados() {
   const removerResultadoEsperado = async (id) => {
     try {
       await deleteResultadoEsperado(id);
-      carregarResultadosEsperados();
+      carregarResultadosEsperados(processos.map(p => p.id));
     } catch (error) {
       console.error('Erro ao remover resultado esperado:', error);
     }
@@ -102,7 +105,7 @@ function ResultadosEsperados() {
     };
     try {
       await updateResultadoEsperado(id, atualizado);
-      carregarResultadosEsperados();
+      carregarResultadosEsperados(processos.map(p => p.id));
     } catch (error) {
       console.error('Erro ao atualizar resultado esperado:', error);
     }

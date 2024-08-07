@@ -12,7 +12,7 @@ function GerenciamentoAnos() {
       try {
         const response = await get_versao_modelo();
         console.log('Resposta da API:', response);
-        const anosNomes = response.map(versao => versao[1]);
+        const anosNomes = response.map(versao => versao);
         console.log('Anos:', anosNomes);
         setAnos(anosNomes);
       } catch (error) {
@@ -24,6 +24,7 @@ function GerenciamentoAnos() {
   }, []);
 
   const handleAnoClick = (ano) => {
+    localStorage.setItem('anoSelecionado', ano);  // Armazena no localStorage
     navigate('/modelo', { state: { anoSelecionado: ano } });
   };
 
@@ -32,8 +33,8 @@ function GerenciamentoAnos() {
       <h1>Selecionar Ano do Modelo MPS-BR</h1>
       <div className='botoes-anos'>
         {anos.map((ano) => (
-          <button key={ano} className='botao-ano' onClick={() => handleAnoClick(ano)}>
-            {ano}
+          <button key={ano} className='botao-ano' onClick={() => handleAnoClick(ano[0])}>
+            {ano[1]}
           </button>
         ))}
       </div>

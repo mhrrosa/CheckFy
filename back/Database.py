@@ -3,7 +3,7 @@ import mysql.connector
 class Database:
     def __init__(self, host, user, password, database):
         self.host = host
-        self.user = user
+        self.user = user  # Corrigido aqui
         self.password = password
         self.database = database
         self.conn = None
@@ -36,7 +36,10 @@ class Database:
             self.conn.rollback()
             raise
 
-    def fetch_all(self, query):
+    def fetch_all(self, query, params=None):
         self.reconnect()
-        self.cursor.execute(query)
+        if params:
+            self.cursor.execute(query, params)
+        else:
+            self.cursor.execute(query)
         return self.cursor.fetchall()

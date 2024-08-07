@@ -30,7 +30,7 @@ function App() {
             <Route path="/gerenciamento-anos" element={<GerenciamentoAnos />} />
             <Route path="/niveis" element={<Niveis />} />
             <Route path="/processos" element={<Processos />} />
-            <Route path="/resultados-esperados/:ano" element={<ResultadosEsperados />} />
+            <Route path="/resultados-esperados" element={<ResultadosEsperados />} />
           </Routes>
         </div>
         <Footer />

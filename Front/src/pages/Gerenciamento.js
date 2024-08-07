@@ -8,17 +8,20 @@ import '../pages/styles/Gerenciamento.css';
 function Modelo() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { anoSelecionado } = location.state || {};
+  const anoSelecionado = location.state?.anoSelecionado || localStorage.getItem('anoSelecionado');
+
+  const navigateWithAno = (path) => {
+    navigate(path, { state: { anoSelecionado } });
+  };
 
   return (
     <div className="container">
       <h1>GERENCIAMENTO</h1>
       <div className='botoes-home-gerenciamento'>
-        <button className='button-home-gerenciamento' onClick={() => navigate('/processos')}>PROCESSOS</button>
-        <button className='button-home-gerenciamento' onClick={() => navigate('/niveis')}>NÍVEIS</button>
-        <button className='button-home-gerenciamento' onClick={() => navigate('/resultados-esperados')}>RESULTADOS ESPERADOS</button>
+        <button className='button-home-gerenciamento' onClick={() => navigateWithAno('/processos')}>PROCESSOS</button>
+        <button className='button-home-gerenciamento' onClick={() => navigateWithAno('/niveis')}>NÍVEIS</button>
+        <button className='button-home-gerenciamento' onClick={() => navigateWithAno('/resultados-esperados')}>RESULTADOS ESPERADOS</button>
       </div>
-      {anoSelecionado && <p>Ano Selecionado: {anoSelecionado}</p>} {/* Exibe o ano selecionado */}
     </div>
   );
 }
