@@ -15,7 +15,7 @@ import '../components/styles/Etapa4.css';
 
 Modal.setAppElement('#root');
 
-function Etapa4({ onNext, avaliacaoId }) {
+function Etapa4({ onNext, avaliacaoId, idVersaoModelo }) {
   const [processos, setProcessos] = useState([]);
   const [resultadosEsperados, setResultadosEsperados] = useState({});
   const [projetos, setProjetos] = useState([]);
@@ -35,10 +35,10 @@ function Etapa4({ onNext, avaliacaoId }) {
   ];
 
   useEffect(() => {
-    if (avaliacaoId) {
+    if (avaliacaoId && idVersaoModelo) {
       carregarDados();
     }
-  }, [avaliacaoId]);
+  }, [avaliacaoId, idVersaoModelo]);
 
   const carregarDados = async () => {
     await carregarProcessos();
@@ -48,7 +48,7 @@ function Etapa4({ onNext, avaliacaoId }) {
 
   const carregarProcessos = async () => {
     try {
-      const data = await getProcessosPorAvaliacao(avaliacaoId);
+      const data = await getProcessosPorAvaliacao(avaliacaoId, idVersaoModelo);
       setProcessos(data.processos);
     } catch (error) {
       console.error('Erro ao carregar processos:', error);

@@ -2,25 +2,22 @@ class Avaliacao:
     def __init__(self, db):
         self.db = db
 
-    def adicionar_avaliacao(self, nome, descricao, id_nivel_solicitado, adjunto_emails, colaborador_emails):
+    def adicionar_avaliacao(self, nome, descricao, id_nivel_solicitado, adjunto_emails, colaborador_emails, id_versao_modelo):
         try:
-            print(f"Adicionando avaliação com Nome: {nome}, Descricao: {descricao}, ID_Nivel_Solicitado: {id_nivel_solicitado}")
             query = """
-                INSERT INTO avaliacao (Nome, Descricao, Status, ID_Empresa, ID_Nivel_Solicitado, ID_Avaliador_Lider, ID_Atividade) 
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO avaliacao (Nome, Descricao, Status, ID_Empresa, ID_Nivel_Solicitado, ID_Avaliador_Lider, ID_Atividade, ID_Versao_Modelo) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             """
-            values = (nome, descricao, "Em andamento", 1, id_nivel_solicitado, 1, 1)
+            values = (nome, descricao, "Em andamento", 1, id_nivel_solicitado, 1, 1, id_versao_modelo)
             self.db.execute_query(query, values)
             
             avaliacao_id = self.db.cursor.lastrowid
 
             for email in adjunto_emails:
-                print(f"Inserindo email adjunto: {email}")
                 query = "INSERT INTO usuario (Nome, Email, Senha, ID_Tipo) VALUES (%s, %s, %s, %s)"
                 self.db.execute_query(query, ("Adjunto", email, "Senha Teste", 2), commit=False)
 
             for email in colaborador_emails:
-                print(f"Inserindo email colaborador: {email}")
                 query = "INSERT INTO usuario (Nome, Email, Senha, ID_Tipo) VALUES (%s, %s, %s, %s)"
                 self.db.execute_query(query, ("Adjunto", email, "Senha Teste", 3), commit=False)
 
@@ -32,7 +29,6 @@ class Avaliacao:
 
     def listar_avaliacoes(self):
         query = "SELECT * FROM avaliacao"
-        print(f"Executando query: {query}")
         self.db.cursor.execute(query)
         result = self.db.cursor.fetchall()
         avaliacoes = []
@@ -45,7 +41,8 @@ class Avaliacao:
                 "status": row[4],
                 "id_atividade": row[5],
                 "id_empresa": row[6],
-                "id_nivel_solicitado": row[7]
+                "id_nivel_solicitado": row[7],
+                "id_versao_modelo": row[10]
             }
             avaliacoes.append(avaliacao)
         return avaliacoes

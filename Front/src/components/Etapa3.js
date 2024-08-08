@@ -19,7 +19,7 @@ import '../components/styles/Etapa3.css';
 
 Modal.setAppElement('#root');
 
-function Etapa3({ avaliacaoId, onNext }) {
+function Etapa3({ avaliacaoId, idVersaoModelo, onNext }) {
   const [processos, setProcessos] = useState([]);
   const [resultadosEsperados, setResultadosEsperados] = useState({});
   const [projetos, setProjetos] = useState([]);
@@ -33,10 +33,10 @@ function Etapa3({ avaliacaoId, onNext }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    if (avaliacaoId) {
+    if (avaliacaoId && idVersaoModelo) {
       carregarDados();
     }
-  }, [avaliacaoId]);
+  }, [avaliacaoId, idVersaoModelo]);
 
   const carregarDados = async () => {
     await carregarProcessos();
@@ -45,7 +45,7 @@ function Etapa3({ avaliacaoId, onNext }) {
 
   const carregarProcessos = async () => {
     try {
-      const data = await getProcessosPorAvaliacao(avaliacaoId);
+      const data = await getProcessosPorAvaliacao(avaliacaoId, idVersaoModelo);
       setProcessos(data.processos);
     } catch (error) {
       console.error('Erro ao carregar processos:', error);

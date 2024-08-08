@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { startNewEvaluation, getNiveis } from '../services/Api';
+import { startNewEvaluation, getNiveis, getVersaoModelo } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
@@ -15,29 +15,55 @@ function CreateEvaluation() {
   const [niveis, setNiveis] = useState([]);
   const [adjuntoEmails, setAdjuntoEmails] = useState(['']);
   const [colaboradorEmails, setColaboradorEmails] = useState(['']);
+  const [versoesModelo, setVersoesModelo] = useState([]);
+  const [idVersaoModelo, setIdVersaoModelo] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
     carregarDadosIniciais();
   }, []);
 
+  useEffect(() => {
+    if (idVersaoModelo) {
+      carregarNiveis(idVersaoModelo);
+    }
+  }, [idVersaoModelo]);
+
   const carregarDadosIniciais = async () => {
     try {
-      const niveisData = await getNiveis();
-      const niveisFormatados = niveisData.map(n => ({ id: n[0], nivel: n[1] }));
-      setNiveis(niveisFormatados);
+      const versoesData = await getVersaoModelo();
+      const versoesFormatadas = versoesData.map(v => ({ id: v[0], nome: v[1] }));
+      setVersoesModelo(versoesFormatadas);
+
+      if (versoesFormatadas.length > 0) {
+        const versaoId = versoesFormatadas[0].id;
+        setIdVersaoModelo(versaoId);
+      }
     } catch (error) {
       console.error('Erro ao buscar dados iniciais:', error);
     }
   };
 
-  const handleStartEvaluation = async () => {
+  const carregarNiveis = async (versaoId) => {
+    try {
+      const niveisData = await getNiveis(versaoId);
+      const niveisFormatados = niveisData.map(n => ({ id: n[0], nivel: n[1] }));
+      setNiveis(niveisFormatados);
+    } catch (error) {
+      console.error('Erro ao buscar níveis:', error);
+    }
+  };
+
+  const handleStartEvaluation = async (event) => {
+    event.preventDefault(); // Adicionado para prevenir o comportamento padrão do botão de formulário
+  
     const data = {
       companyName,
       descricao,
       nivelSolicitado,
       adjuntoEmails,
-      colaboradorEmails
+      colaboradorEmails,
+      idVersaoModelo
     };
     try {
       const response = await startNewEvaluation(data);
@@ -46,6 +72,7 @@ function CreateEvaluation() {
       console.error('Erro ao iniciar avaliação:', error);
     }
   };
+  
 
   const addEmail = (setEmails) => {
     setEmails(currentEmails => [...currentEmails, '']);
@@ -91,6 +118,18 @@ function CreateEvaluation() {
             />
           </div>
           <div className="input-wrapper">
+            <label className="label">Versão do Modelo:</label>
+            <select
+              className="input-field"
+              value={idVersaoModelo}
+              onChange={(e) => setIdVersaoModelo(e.target.value)}
+            >
+              {versoesModelo.map(v => (
+                <option key={v.id} value={v.id}>{v.nome}</option>
+              ))}
+            </select>
+          </div>
+          <div className="input-wrapper">
             <label className="label">Nível Solicitado:</label>
             <select
               className="input-field"
@@ -117,13 +156,13 @@ function CreateEvaluation() {
                 <button className="button-add-email" type="button" onClick={() => addEmail(setAdjuntoEmails)}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="12" y1="6" x2="12" y2="18"></line>
-                    <line x1="6" y1="12" x2="18" y2="12"></line>
+                    <line x1="6" y1="12" x2="18" y1="12"></line>
                   </svg>
                 </button>
               </div>
               {adjuntoEmails.length > 1 && (
-                  <button className="button-remove-email" type="button" onClick={() => removeEmail(index, setAdjuntoEmails)}>REMOVER</button>
-                )}
+                <button className="button-remove-email" type="button" onClick={() => removeEmail(index, setAdjuntoEmails)}>REMOVER</button>
+              )}
             </div>
           ))}
           {colaboradorEmails.map((email, index) => (
@@ -140,13 +179,13 @@ function CreateEvaluation() {
                 <button className="button-add-email" type="button" onClick={() => addEmail(setColaboradorEmails)}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="12" y1="6" x2="12" y2="18"></line>
-                    <line x1="6" y1="12" x2="18" y2="12"></line>
+                    <line x1="6" y1="12" x2="18" y1="12"></line>
                   </svg>
                 </button>
               </div>
               {colaboradorEmails.length > 1 && (
-                  <button className="button-remove-email" type="button" onClick={() => removeEmail(index, setColaboradorEmails)}>REMOVER</button>
-                )}
+                <button className="button-remove-email" type="button" onClick={() => removeEmail(index, setColaboradorEmails)}>REMOVER</button>
+              )}
             </div>
           ))}
         </div>

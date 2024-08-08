@@ -173,7 +173,8 @@ def add_avaliacao():
         nivel_solicitado = avaliacao_data['nivelSolicitado']
         adjunto_emails = avaliacao_data['adjuntoEmails']
         colaborador_emails = avaliacao_data['colaboradorEmails']
-        avaliacao.adicionar_avaliacao(nome, descricao, nivel_solicitado, adjunto_emails, colaborador_emails)
+        id_versao_modelo = avaliacao_data['idVersaoModelo']
+        avaliacao.adicionar_avaliacao(nome, descricao, nivel_solicitado, adjunto_emails, colaborador_emails, id_versao_modelo)
         return jsonify({"message": "Avaliação adicionada com sucesso"}), 200
     except KeyError as e:
         print(f"Erro: Campo necessário não fornecido - {str(e)}")
@@ -239,14 +240,11 @@ def obter_avaliacao(projeto_id):
 def add_projeto():
     projeto_data = request.json
     try:
-        print(f"Recebido projeto_data: {projeto_data}")
         avaliacao_id = projeto_data['avaliacaoId']
         nome_projeto = projeto_data['nome']
         habilitado = projeto_data['habilitado']
         numero_projeto = projeto.get_next_numero_projeto(avaliacao_id)
-        print(f"Calculado numero_projeto: {numero_projeto}")
         projeto_id = projeto.add_projeto(avaliacao_id, nome_projeto, habilitado, numero_projeto)
-        print(f"Projeto adicionado com ID: {projeto_id}")
         return jsonify({"message": "Projeto adicionado com sucesso", "projetoId": projeto_id}), 200
     except KeyError as e:
         print(f"Erro: Campo necessário não fornecido - {e}")
@@ -297,12 +295,10 @@ def uploaded_file(filename):
 def add_documento():
     documento_data = request.json
     try:
-        print(f"Recebido documento_data: {documento_data}")
         id_projeto = documento_data['id_projeto']
         caminho_arquivo = documento_data['caminho_arquivo']
         nome_arquivo = documento_data['nome_arquivo']
         documento_id = documento.add_documento(caminho_arquivo, nome_arquivo, id_projeto)
-        print(f"Documento adicionado com ID: {documento_id}")
         return jsonify({"message": "Documento adicionado com sucesso", "documentoId": documento_id}), 200
     except Exception as e:
         print(f"Erro ao adicionar documento: {e}")
@@ -338,8 +334,8 @@ def delete_documento(documento_id):
         print(f"Erro ao remover documento: {e}")
         return jsonify({"message": "Erro ao remover documento", "error": str(e)}), 500
 
-@app.route('/get_processos_por_avaliacao/<int:avaliacao_id>', methods=['GET'])
-def get_processos_por_avaliacao(avaliacao_id):
+@app.route('/get_processos_por_avaliacao/<int:avaliacao_id>/<int:id_versao_modelo>', methods=['GET'])
+def get_processos_por_avaliacao(avaliacao_id, id_versao_modelo):
     try:
         nivel_solicitado_query = "SELECT ID_Nivel_Solicitado FROM avaliacao WHERE ID = %s"
         db.cursor.execute(nivel_solicitado_query, (avaliacao_id,))
@@ -349,9 +345,9 @@ def get_processos_por_avaliacao(avaliacao_id):
             SELECT DISTINCT p.ID, p.Descricao 
             FROM processo p
             JOIN resultado_esperado_mpsbr re ON p.ID = re.ID_Processo
-            WHERE %s <= re.ID_Nivel_Intervalo_Inicio AND %s >= re.ID_Nivel_Intervalo_Fim
+            WHERE %s <= re.ID_Nivel_Intervalo_Inicio AND %s >= re.ID_Nivel_Intervalo_Fim and p.ID_Versao_Modelo = %s
         """
-        db.cursor.execute(processos_query, (nivel_solicitado, nivel_solicitado))
+        db.cursor.execute(processos_query, (nivel_solicitado, nivel_solicitado, id_versao_modelo))
         processos = db.cursor.fetchall()
 
         return jsonify({
@@ -394,7 +390,6 @@ def add_evidencia():
     try:
         id_resultado_esperado = evidencia_data['id_resultado_esperado']
         id_documento = evidencia_data['id_documento']
-        print(f"Adicionando evidencia: id_resultado_esperado={id_resultado_esperado}, id_documento={id_documento}")
         query = "INSERT INTO evidencia (ID_Resultado_Esperado, ID_Documento) VALUES (%s, %s)"
         db.cursor.execute(query, (id_resultado_esperado, id_documento))
         db.conn.commit()

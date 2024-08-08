@@ -11,7 +11,7 @@ class Versao_Modelo:
             raise e
 
     def get_versao_modelo(self):
-        query = "SELECT * FROM versao_modelo ORDER BY Nome ASC"
+        query = "SELECT * FROM versao_modelo ORDER BY Nome DESC"
         self.db.cursor.execute(query)
         result = self.db.cursor.fetchall()
         return result

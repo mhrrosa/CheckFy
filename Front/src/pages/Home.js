@@ -16,7 +16,6 @@ function Home() {
   const carregarAvaliacoes = async () => {
     try {
       const data = await getAllAvaliacoes();
-      console.log('Avaliações carregadas:', data);
       setAvaliacoes(data);
     } catch (error) {
       console.error('Erro ao buscar avaliações:', error);
@@ -35,7 +34,6 @@ function Home() {
   const handleContinue = async (id) => {
     try {
       const avaliacao = await getAvaliacaoById(id);
-      console.log('Navegando para avaliação com os dados:', avaliacao); // Adicionando log para verificar os dados na navegação
       navigate('/evaluation', { state: { id: avaliacao.id, idAtividade: avaliacao.id_atividade } });
     } catch (error) {
       console.error('Erro ao buscar avaliação:', error);
@@ -46,7 +44,7 @@ function Home() {
     <div className="container">
       <div className="botoes-home-gerenciamento">
         <Link to="/create-evaluation" className="button-home-gerenciamento">NOVA AVALIAÇÃO</Link>
-        <Link to="/gerenciamento-anos" className="button-home-gerenciamento">GERENCIAMENTO</Link> {/* Ajuste esta linha */}
+        <Link to="/gerenciamento-versao-modelo" className="button-home-gerenciamento">GERENCIAMENTO</Link> {/* Ajuste esta linha */}
       </div>
       <div className="avaliacoes-lista">
         <p className='title-avaliacoes-criadas'>Avaliações cadastradas:</p>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../pages/styles/GerenciamentoAnos.css';
-import { get_versao_modelo } from '../services/Api';
+import { getVersaoModelo } from '../services/Api';
 
 function GerenciamentoAnos() {
   const [anos, setAnos] = useState([]);
@@ -10,10 +10,8 @@ function GerenciamentoAnos() {
   useEffect(() => {
     async function fetchAnos() {
       try {
-        const response = await get_versao_modelo();
-        console.log('Resposta da API:', response);
+        const response = await getVersaoModelo();
         const anosNomes = response.map(versao => versao);
-        console.log('Anos:', anosNomes);
         setAnos(anosNomes);
       } catch (error) {
         console.error('Erro ao buscar versões do modelo:', error);

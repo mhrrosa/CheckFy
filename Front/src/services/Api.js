@@ -244,8 +244,8 @@ function deleteEvidencia(data) {
   return deleteRequest(`/delete_evidencia/${id_resultado_esperado}/${id_documento}`);
 }
 
-function getProcessosPorAvaliacao(avaliacaoId) {
-  return get(`/get_processos_por_avaliacao/${avaliacaoId}`).then(response => {
+function getProcessosPorAvaliacao(avaliacaoId, idVersaoModelo) {
+  return get(`/get_processos_por_avaliacao/${avaliacaoId}/${idVersaoModelo}`).then(response => {
     return response;
   });
 }
@@ -281,7 +281,7 @@ function getGrausImplementacao(avaliacaoId) {
     });
 }
 
-function get_versao_modelo(){
+function getVersaoModelo(){
   return get(`/get_versao_modelo`)
 }
 
@@ -338,7 +338,7 @@ export {
   getResultadosEsperadosPorProcesso,
   addOrUpdateGrauImplementacao,
   getGrausImplementacao,
-  get_versao_modelo,
+  getVersaoModelo,
   add_versao_modelo,
   delete_versao_modelo,
   update_versao_modelo

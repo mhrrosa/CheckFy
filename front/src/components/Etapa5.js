@@ -8,17 +8,17 @@ import {
 } from '../services/Api';
 import '../components/styles/Etapa5.css';
 
-function Etapa5({ avaliacaoId, onNext }) {
+function Etapa5({ avaliacaoId, idVersaoModelo, onNext }) {
   const [processos, setProcessos] = useState([]);
   const [resultadosEsperados, setResultadosEsperados] = useState({});
   const [grausImplementacao, setGrausImplementacao] = useState({});
   const [notas, setNotas] = useState({});
 
   useEffect(() => {
-    if (avaliacaoId) {
+    if (avaliacaoId && idVersaoModelo) {
       carregarDados();
     }
-  }, [avaliacaoId]);
+  }, [avaliacaoId, idVersaoModelo]);
 
   const carregarDados = async () => {
     try {
@@ -31,7 +31,7 @@ function Etapa5({ avaliacaoId, onNext }) {
 
   const carregarProcessos = async () => {
     try {
-      const data = await getProcessosPorAvaliacao(avaliacaoId);
+      const data = await getProcessosPorAvaliacao(avaliacaoId, idVersaoModelo);
       setProcessos(data.processos);
       for (const processo of data.processos) {
         await carregarResultadosEsperados(processo.ID);
