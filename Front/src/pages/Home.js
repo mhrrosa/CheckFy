@@ -1,17 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getAllAvaliacoes, deleteAvaliacao, getAvaliacaoById } from '../services/Api';
+import { UserContext } from '../contexts/UserContext'; // Importe o UserContext
 import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../pages/styles/Home.css';
 
 function Home() {
   const [avaliacoes, setAvaliacoes] = useState([]);
+  const { userType, setUserType } = useContext(UserContext); // Use o contexto
+  const [isLoading, setIsLoading] = useState(true); // Novo estado para carregamento
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Carrega o tipo de usuário do localStorage
+    const storedUserType = localStorage.getItem('userType');
+    if (storedUserType) {
+      setUserType(parseInt(storedUserType));
+    }
+    setIsLoading(false); // Após carregar, define isLoading como falso
     carregarAvaliacoes();
-  }, []);
+  }, [setUserType]);
 
   const carregarAvaliacoes = async () => {
     try {
@@ -40,11 +49,33 @@ function Home() {
     }
   };
 
+  const handleUserChange = (event) => {
+    const selectedUserType = parseInt(event.target.value);
+    setUserType(selectedUserType); // Atualiza o tipo de usuário no contexto
+    localStorage.setItem('userType', selectedUserType); // Salva no localStorage
+  };
+
+  if (isLoading) {
+    return <p>Carregando...</p>; // Mostra uma mensagem de carregamento enquanto isLoading é verdadeiro
+  }
+
   return (
     <div className="container">
+      <div className="user-simulation">
+        <label htmlFor="userType">Simular Tipo de Usuário: </label>
+        <select id="userType" value={userType} onChange={handleUserChange}>
+          <option value={1}>Administrador</option>
+          <option value={2}>Avaliador</option>
+          <option value={3}>Colaborador</option>
+        </select>
+      </div>
       <div className="botoes-home-gerenciamento">
-        <Link to="/create-evaluation" className="button-home-gerenciamento">NOVA AVALIAÇÃO</Link>
-        <Link to="/gerenciamento-versao-modelo" className="button-home-gerenciamento">GERENCIAMENTO</Link> {/* Ajuste esta linha */}
+        {(userType === 1 || userType === 2) && (
+          <Link to="/create-evaluation" className="button-home-gerenciamento">NOVA AVALIAÇÃO</Link>
+        )}
+        {userType === 1 && (
+          <Link to="/gerenciamento-versao-modelo" className="button-home-gerenciamento">GERENCIAMENTO</Link>
+        )}
       </div>
       <div className="avaliacoes-lista">
         <p className='title-avaliacoes-criadas'>Avaliações cadastradas:</p>

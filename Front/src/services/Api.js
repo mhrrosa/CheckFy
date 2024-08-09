@@ -85,10 +85,8 @@ function remove(url) {
 // Funções para avaliação
 function startNewEvaluation(data) {
   const url = '/add_avaliacao';
-  console.log('Enviando dados para iniciar nova avaliação:', data);
   return post(url, data)
     .then(response => {
-      console.log('Resposta do início da avaliação:', response);
       return response;
     });
 }
@@ -179,7 +177,6 @@ function deleteResultadoEsperado(id) {
 function getProjetosByAvaliacao(avaliacaoId) {
   return get(`/get_projetos_by_avaliacao/${avaliacaoId}`)
     .then(response => {
-      console.log('Projetos encontrados:', response);
       return response;
     })
     .catch(error => {
@@ -197,10 +194,8 @@ function updateProjeto(id, data) {
 }
 
 function addDocumento(data) {
-  console.log('Chamando API para adicionar documento:', data);
   return post('/add_documento', data)
     .then(response => {
-      console.log('Resposta da API para adição de documento:', response);
       return response;
     })
     .catch(error => {
@@ -214,7 +209,6 @@ function getDocumentosPorProjeto(idProjeto) {
 }
 
 function updateDocumento(id, data) {
-  console.log('Chamando API para atualizar documento:', id, data);
   return put(`/update_documento/${id}`, data);
 }
 
@@ -230,7 +224,6 @@ function addEvidencia(data) {
 function getEvidenciasPorResultado(resultadoId, projetoId) {
   return get(`/get_evidencias_por_resultado/${resultadoId}/${projetoId}`)
     .then(response => {
-      console.log('Evidencias por Resultado:', response);
       return response;
     });
 }
@@ -252,7 +245,6 @@ function getProcessosPorAvaliacao(avaliacaoId, idVersaoModelo) {
 
 function getResultadosEsperadosPorProcesso(processoId, avaliacaoId) {
   return get(`/get_resultados_esperados_por_processo/${processoId}/${avaliacaoId}`).then(response => {
-    console.log('Resultados Esperados por Processo:', response);
     return response;
   });
 }
@@ -272,7 +264,6 @@ function addOrUpdateGrauImplementacao(data) {
 function getGrausImplementacao(avaliacaoId) {
   return get(`/get_graus_implementacao/${avaliacaoId}`)
     .then(response => {
-      console.log('Graus de implementação encontrados:', response);
       return response;
     })
     .catch(error => {
