@@ -58,7 +58,7 @@ function Etapa_atividades_planejamento({ onNext, avaliacaoId }) {
   return (
     <div className='container-etapa'>
       <div className='title-container'>
-        <h1 className='title-form'>Planejamento</h1>
+        <h1 className='title-form'>Planejamento(deve ficar antes da etapa de criação dos projetos)</h1>
       </div>
       <label className="label">Avaliação aprovada pela Softex?</label>
       <div className='checkbox-wrapper-project'>
@@ -97,11 +97,11 @@ function Etapa_atividades_planejamento({ onNext, avaliacaoId }) {
               style={{ marginLeft: 10 , width: 500}}
             ></textarea>
           </div>
-
+          <br></br>
           <div className='textarea-wrapper'>
             <label className="label">Planejamento de cronograma para a avaliação:</label>
-            <p className="dica-text" style={{ color: 'grey', marginLeft: 10, fontSize: 13 }}>
-                Uma base para estimar o tempo da avaliação inicial, da avaliação final e a composição da equipe sugerida pelo MA-MPS:
+            <p className="dica-text" style={{ color: 'white', marginLeft: 10, fontSize: 13 }}>
+            Dica para preencher: Uma base para estimar o tempo da avaliação inicial, da avaliação final e a composição da equipe sugerida pelo MA-MPS:
                 <ul>
                     <li><strong>Níveis A e B:</strong> 4-5 dias, com avaliador líder, adjunto(s) e representante(s) da unidade.</li>
                     <li><strong>Níveis C e D:</strong> 2-4 dias, com avaliador líder, adjunto(s) e opcionalmente representante(s).</li>
