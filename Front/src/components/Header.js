@@ -14,7 +14,7 @@ function Header() {
           <Link to="/sobre" className="link-header">Sobre</Link>
           <Link to="/documentos" className="link-header">Documentos</Link>
         </div>
-        <Link to="/login">
+        <Link to="/perfil">
           <img src={icon_user} className="icon-user" alt="Usuário" />
         </Link>
       </div>
