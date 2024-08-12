@@ -4,6 +4,7 @@ import { getAllAvaliacoes, deleteAvaliacao, getAvaliacaoById } from '../services
 import { UserContext } from '../contexts/UserContext'; // Importe o UserContext
 import '../components/styles/Body.css';
 import '../components/styles/Container.css';
+import '../components/styles/Button.css';
 import '../pages/styles/Home.css';
 
 function Home() {
