@@ -1,13 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import { UserProvider } from './contexts/UserContext'; // Importe o UserProvider
 
 ReactDOM.render(
   <React.StrictMode>
+<<<<<<< HEAD
     <UserProvider>
       <App />
     </UserProvider>
+=======
+    <App />
+>>>>>>> parent of 7ee08dab (Funcionalidade de controle de usuário)
   </React.StrictMode>,
   document.getElementById('root')
 );

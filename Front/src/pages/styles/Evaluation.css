@@ -18,14 +18,6 @@
   margin-bottom: 20px; /* Espaçamento inferior */
 }
 
-/* Estilo para os botões desabilitados */
-button.button-disabled {
-  background-color: #d3d3d3 !important; /* Cor de fundo cinza */
-  color: #6c757d !important; /* Cor do texto cinza */
-  cursor: not-allowed !important; /* Cursor que indica que não pode ser clicado */
-  border-color: #ced4da !important; /* Cor da borda */
-}
-
 .evaluation-title {
   color: #333;
   font-size: 2em;
