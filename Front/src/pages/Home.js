@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getAllAvaliacoes, deleteAvaliacao, getAvaliacaoById } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/Container.css';
+import '../components/styles/Button.css';
 import '../pages/styles/Home.css';
 
 function Home() {
