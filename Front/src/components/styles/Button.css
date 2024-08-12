@@ -1,3 +1,41 @@
+.button {
+    border-radius: 15px;
+    text-transform: uppercase;
+    color: #fff;
+    font-size: 10px;
+    padding: 10px 50px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 150px;
+    align-self: center;
+    border: none;
+    margin-top: 1rem;
+}
+
+.button-primary {
+    background-color: transparent;
+    border: 1px solid #fff;
+    padding: 10px 10px;
+}
+
+.button-primary:hover {
+    background-color: #fff;
+    color: #001034;
+}
+
+.button-second {
+    color: #fff;
+    background-color: #001034;
+    border: 1px solid #001034;
+    padding: 10px 10px;
+}
+
+.button-second:hover {
+    background-color: #fff;
+    border: 1px solid #001034;
+    color: #001034;
+}
+
 .botoes-home-gerenciamento {
     display: flex;
     justify-content: space-between;
