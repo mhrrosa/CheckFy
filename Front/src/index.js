@@ -5,7 +5,7 @@ import { UserProvider } from './contexts/UserContext'; // Importe o UserProvider
 
 ReactDOM.render(
   <React.StrictMode>
-    <UserProvider> {/* Envolva o App com o UserProvider */}
+    <UserProvider>
       <App />
     </UserProvider>
   </React.StrictMode>,
