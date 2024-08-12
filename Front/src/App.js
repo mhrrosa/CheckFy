@@ -16,10 +16,18 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 
 function App() {
-  const location = useLocation();
-  const isLoginRoute = location.pathname === '/login';
   return (
     <Router>
+      <AppContent />
+    </Router>
+  );
+}
+
+function AppContent() {
+  const location = useLocation();
+  const isLoginRoute = location.pathname === '/login';
+
+  return (
     <div id="app-container">
       {!isLoginRoute && <Header />}
       <div id="content-wrap">
@@ -39,7 +47,6 @@ function App() {
       </div>
       {!isLoginRoute && <Footer />}
     </div>
-    </Router>
   );
 }
 
