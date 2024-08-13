@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { getInstituicoes, createInstituicao } from '../services/Api';
+import { getInstituicoes, addInstituicao } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
 import '../components/styles/Button.css';
 import logo from '../img/logo_horizontal.png';
 
-function Etapa_instituicao_avaliadora({ onNext, avaliacaoId }) {
+function EtapaInstituicaoAvaliadora({ onNext, avaliacaoId }) {
   const [instituicoes, setInstituicoes] = useState([]);
   const [instituicaoSelecionada, setInstituicaoSelecionada] = useState('');
   const [novaInstituicao, setNovaInstituicao] = useState('');
@@ -29,7 +29,7 @@ function Etapa_instituicao_avaliadora({ onNext, avaliacaoId }) {
   const salvarDados = async () => {
     try {
       if (!instituicaoCadastrada && novaInstituicao && novoCnpj) {
-        await createInstituicao({ nome: novaInstituicao, cnpj: novoCnpj });
+        await addInstituicao({ nome: novaInstituicao, cnpj: novoCnpj });
         alert('Instituição cadastrada com sucesso!');
       }
       alert('Dados salvos com sucesso!');
@@ -119,4 +119,4 @@ function Etapa_instituicao_avaliadora({ onNext, avaliacaoId }) {
   );
 }
 
-export default Etapa_instituicao_avaliadora;
+export default EtapaInstituicaoAvaliadora;

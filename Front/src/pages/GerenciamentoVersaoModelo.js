@@ -23,7 +23,7 @@ function GerenciamentoAnos() {
 
   const handleAnoClick = (ano) => {
     localStorage.setItem('anoSelecionado', ano);  // Armazena no localStorage
-    navigate('/modelo', { state: { anoSelecionado: ano } });
+    navigate('/gerenciamento', { state: { anoSelecionado: ano } });
   };
 
   return (

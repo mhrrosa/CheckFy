@@ -9,7 +9,7 @@ import Evaluation from './pages/Evaluation';
 import UpdateEvaluation from './pages/UpdateEvaluation';
 import Results from './pages/Results';
 import LoginCadastro from './pages/LoginCadastro';
-import Modelo from './pages/Gerenciamento';
+import Gerenciamento from './pages/Gerenciamento';
 import Niveis from './pages/Niveis';
 import Processos from './pages/Processos';
 import ResultadosEsperados from './pages/ResultadosEsperados';
@@ -28,7 +28,7 @@ function App() {
             <Route path="/update-evaluation" element={<UpdateEvaluation />} />
             <Route path="/results" element={<Results />} />
             <Route path="/login-cadastro" element={<LoginCadastro />} />
-            <Route path="/modelo" element={<Modelo />} />
+            <Route path="/gerenciamento" element={<Gerenciamento />} />
             <Route path="/gerenciamento-versao-modelo" element={<GerenciamentoVersaoModelo />} />
             <Route path="/niveis" element={<Niveis />} />
             <Route path="/processos" element={<Processos />} />

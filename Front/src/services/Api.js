@@ -276,7 +276,7 @@ function getVersaoModelo(){
   return get(`/get_versao_modelo`)
 }
 
-function add_versao_modelo(data){
+function addVersaoModelo(data){
   return post('/add_versao_modelo', data)
   .then(response => {
     return response;
@@ -287,13 +287,60 @@ function add_versao_modelo(data){
   });
 }
 
-function delete_versao_modelo(idVersaoModelo){
+function deleteVersaoModelo(idVersaoModelo){
   return idVersaoModelo(`/delete_versao_modelo/${idVersaoModelo}`);
 }
 
-function update_versao_modelo(idVersaoModelo, data){
+function updateVersaoModelo(idVersaoModelo, data){
   return put(`/update_versao_modelo/${idVersaoModelo}`, data);
 }
+
+function getEmpresas(){
+  return get(`/get_empresas`)
+}
+
+function addEmpresa(data){
+  return post('/add_empresa', data)
+  .then(response => {
+    return response;
+  })
+  .catch(error => {
+    console.error('Erro ao adicionar versão do modelo:', error);
+    throw error;
+  });
+}
+
+function deleteEmpresa(idEmpresa){
+  return deleteRequest(`/delete_empresa/${idEmpresa}`);
+}
+
+function updateEmpresa(idEmpresa, data){
+  return put(`/update_empresa/${idEmpresa}`, data);
+}
+
+function getInstituicoes(){
+  return get(`/get_instituicoes`)
+}
+
+function addInstituicao(data){
+  return post('/add_instituicao', data)
+  .then(response => {
+    return response;
+  })
+  .catch(error => {
+    console.error('Erro ao adicionar versão do modelo:', error);
+    throw error;
+  });
+}
+
+function deleteInstituicao(idInstituicao){
+  return deleteRequest(`/delete_instituicao/${idInstituicao}`);
+}
+
+function updateInstituicao(idInstituicao, data){
+  return put(`/update_instituicao/${idInstituicao}`, data);
+}
+
 
 export {
   startNewEvaluation,
@@ -330,7 +377,15 @@ export {
   addOrUpdateGrauImplementacao,
   getGrausImplementacao,
   getVersaoModelo,
-  add_versao_modelo,
-  delete_versao_modelo,
-  update_versao_modelo
+  addVersaoModelo,
+  deleteVersaoModelo,
+  updateVersaoModelo,
+  getEmpresas,
+  addEmpresa,
+  deleteEmpresa,
+  updateEmpresa,
+  getInstituicoes,
+  addInstituicao,
+  deleteInstituicao,
+  updateInstituicao
 };

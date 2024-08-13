@@ -33,7 +33,11 @@ function Niveis() {
   };
 
   const adicionarNivel = () => {
-    const nivelData = { nivel: novoNivel, nome_nivel: nomeNovoNivel, id_versao_modelo: anoSelecionado };
+    const nivelData = { 
+      nivel: novoNivel, 
+      nome_nivel: nomeNovoNivel, 
+      id_versao_modelo: anoSelecionado 
+    };
     createNivel(nivelData)
       .then(() => {
         carregarNiveis();
@@ -63,7 +67,7 @@ function Niveis() {
   return (
     <div className="container">
       <div className="form-niveis">
-        <button className="button-close-form" onClick={() => navigate('/modelo')}>
+        <button className="button-close-form" onClick={() => navigate('/gerenciamento')}>
           <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>

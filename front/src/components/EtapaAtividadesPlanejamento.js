@@ -7,7 +7,7 @@ import '../components/styles/Button.css';
 import '../components/styles/Etapa2.css';
 import logo from '../img/logo_horizontal.png';
 
-function Etapa_atividades_planejamento({ onNext, avaliacaoId }) {
+function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
   const [avaliacaoAprovada, setAvaliacaoAprovada] = useState(null); // null para não selecionado
   const [planejamentoAtividades, setPlanejamentoAtividades] = useState('');
   const [planejamentoCronograma, setPlanejamentoCronograma] = useState('');
@@ -124,4 +124,4 @@ function Etapa_atividades_planejamento({ onNext, avaliacaoId }) {
   );
 }
 
-export default Etapa_atividades_planejamento;
+export default EtapaAtividadesPlanejamento;

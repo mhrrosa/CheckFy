@@ -5,7 +5,7 @@ import '../components/styles/Container.css';
 import '../components/styles/Button.css';
 import '../pages/styles/Gerenciamento.css';
 
-function Modelo() {
+function Gerenciamento() {
   const navigate = useNavigate();
   const location = useLocation();
   const anoSelecionado = location.state?.anoSelecionado || localStorage.getItem('anoSelecionado');
@@ -26,4 +26,4 @@ function Modelo() {
   );
 }
 
-export default Modelo;
+export default Gerenciamento;

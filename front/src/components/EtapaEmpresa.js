@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { getEmpresas, createEmpresa } from '../services/Api';
+import { getEmpresas, addEmpresa } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
 import '../components/styles/Button.css';
 import logo from '../img/logo_horizontal.png';
 
-function Etapa_empresa({ onNext, avaliacaoId }) {
+function EtapaEmpresa({ onNext, avaliacaoId }) {
   const [empresas, setEmpresas] = useState([]);
   const [empresaSelecionada, setEmpresaSelecionada] = useState('');
   const [novaEmpresa, setNovaEmpresa] = useState('');
@@ -29,7 +29,7 @@ function Etapa_empresa({ onNext, avaliacaoId }) {
   const salvarDados = async () => {
     try {
       if (!empresaCadastrada && novaEmpresa && novoCnpj) {
-        await createEmpresa({ nome: novaEmpresa, cnpj: novoCnpj });
+        await addEmpresa({ nome: novaEmpresa, cnpj: novoCnpj });
         alert('Empresa cadastrada com sucesso!');
       }
       alert('Dados salvos com sucesso!');
@@ -119,4 +119,4 @@ function Etapa_empresa({ onNext, avaliacaoId }) {
   );
 }
 
-export default Etapa_empresa;
+export default EtapaEmpresa;

@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import EtapaAtividadesPlanejamento from '../components/EtapaAtividadesPlanejamento';
+import EtapaEmpresa from '../components/EtapaEmpresa';
+import EtapaInstituicao from '../components/EtapaInstituicao';
 import Etapa1 from '../components/Etapa1';
 import Etapa2 from '../components/Etapa2';
 import Etapa3 from '../components/Etapa3';
@@ -13,11 +16,14 @@ import '../components/styles/Button.css';
 import '../pages/styles/Evaluation.css';
 
 const etapaComponents = {
-  1: Etapa1,
-  2: Etapa2,
-  3: Etapa3,
-  4: Etapa4,
-  5: Etapa5
+  1: EtapaAtividadesPlanejamento,
+  2: EtapaEmpresa,
+  3: EtapaInstituicao,
+  4: Etapa1,
+  5: Etapa2,
+  6: Etapa3,
+  7: Etapa4,
+  8: Etapa5
 };
 
 const etapaUsuarioMap = { // Constante que define quais usuários podem ver quais etapas
