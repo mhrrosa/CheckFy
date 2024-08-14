@@ -318,6 +318,10 @@ function updateEmpresa(idEmpresa, data){
   return put(`/update_empresa/${idEmpresa}`, data);
 }
 
+function empresaAvaliacaoInsert(avaliacaoId, data){
+  return put(`/empresa_avaliacao_insert/${avaliacaoId}`, data);
+}
+
 function getInstituicoes(){
   return get(`/get_instituicoes`)
 }
@@ -341,6 +345,13 @@ function updateInstituicao(idInstituicao, data){
   return put(`/update_instituicao/${idInstituicao}`, data);
 }
 
+function instituicaoAvaliacaoInsert(avaliacaoId, data){
+  return put(`/instituicao_avaliacao_insert/${avaliacaoId}`, data);
+}
+
+function inserir_planejamento(avaliacaoId, data){
+  return put(`/inserir_planejamento/${avaliacaoId}`, data);
+}
 
 export {
   startNewEvaluation,
@@ -384,8 +395,11 @@ export {
   addEmpresa,
   deleteEmpresa,
   updateEmpresa,
+  empresaAvaliacaoInsert,
   getInstituicoes,
   addInstituicao,
   deleteInstituicao,
-  updateInstituicao
+  updateInstituicao,
+  instituicaoAvaliacaoInsert,
+  inserir_planejamento
 };

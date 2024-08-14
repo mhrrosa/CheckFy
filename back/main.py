@@ -8,6 +8,8 @@ from Avaliacao import Avaliacao
 from Projeto import Projeto
 from Documento import Documento
 from Versao_Modelo import Versao_Modelo
+from Empresa import Empresa
+from Instituicao import Instituicao
 import os
 
 app = Flask(__name__)
@@ -34,6 +36,8 @@ avaliacao = Avaliacao(db)
 projeto = Projeto(db)
 documento = Documento(db)
 versao_modelo = Versao_Modelo(db)
+empresa = Empresa(db)
+instituicao = Instituicao(db)
 
 @app.route('/add_nivel', methods=['POST'])
 def add_nivel():
@@ -223,6 +227,16 @@ def atualizar_atividade(projeto_id):
     except Exception as e:
         print(f"Erro ao atualizar ID_Atividade: {e}")
         return jsonify({"message": "Erro ao atualizar ID_Atividade", "error": str(e)}), 500
+    
+@app.route('/inserir_planejamento/<int:projeto_id>', methods=['PUT'])
+def inserir_planejamento(projeto_id):
+    try:
+        data = request.json
+        avaliacao.inserir_planejamento(projeto_id, data['atividadePlanejamento'], data['cronogramaPlanejamento'])
+        return jsonify({"message": "Planejamento adicionado com sucesso"}), 200
+    except Exception as e:
+        print(f"Erro ao atualizar ID_Atividade: {e}")
+        return jsonify({"message": "Erro ao adicionar planejamento", "error": str(e)}), 500
 
 @app.route('/avaliacao/<int:projeto_id>', methods=['GET'])
 def obter_avaliacao(projeto_id):
@@ -539,6 +553,77 @@ def update_versao_modelo(versao_modelo_id):
     except Exception as e:
         print(f"Erro ao atualizar processo: {e}")
         return jsonify({"message": "Erro ao atualizar processo", "error": str(e)}), 500
+
+@app.route('/get_empresas', methods=['GET'])
+def get_empresas():
+    try:
+        empresas = empresa.get_empresas()
+        return jsonify(empresas)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/add_empresa', methods=['POST'])
+def add_empresa():
+    data = request.json
+    try:
+        empresa_id = empresa.add_empresa(data['nome'], data['cnpj'])
+        return jsonify({'id': empresa_id, 'message': 'Empresa adicionada com sucesso!'}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/update_empresa/<int:id>', methods=['PUT'])
+def update_empresa(id):
+    data = request.json
+    try:
+        empresa.update_empresa(id, data['nome'], data['cnpj'])
+        return jsonify({'message': 'Empresa atualizada com sucesso!'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/delete_empresa/<int:id>', methods=['DELETE'])
+def delete_empresa(id):
+    try:
+        empresa.delete_empresa(id)
+        return jsonify({'message': 'Empresa deletada com sucesso!'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/empresa_avaliacao_insert/<int:avaliacao_id>', methods=['PUT'])
+def empresa_avaliacao_insert(avaliacao_id):
+    data = request.json
+    try:
+        empresa.empresa_avaliacao_insert(avaliacao_id, data['idEmpresa'])
+        return jsonify({'message': 'Empresa atualizada com sucesso!'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/get_instituicoes', methods=['GET'])
+def get_instituicoes():
+    try:
+        instituicoes = instituicao.get_instituicoes()
+        return jsonify(instituicoes)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/add_instituicao', methods=['POST'])
+def add_instituicao():
+    data = request.json
+    try:
+        instituicao_id = instituicao.add_instituicao(data['nome'], data['cnpj'])
+        return jsonify({'id': instituicao_id, 'message': 'Instituição adicionada com sucesso!'}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/instituicao_avaliacao_insert/<int:avaliacao_id>', methods=['PUT'])
+def instituicao_avaliacao_insert(avaliacao_id):
+    data = request.json
+    try:
+        instituicao.instituicao_avaliacao_insert(avaliacao_id, data['idInstituicao'])
+        return jsonify({'message': 'Instituição atualizada com sucesso!'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 
 if __name__ == '__main__':

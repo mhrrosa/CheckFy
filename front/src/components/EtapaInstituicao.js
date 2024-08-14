@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getInstituicoes, addInstituicao } from '../services/Api';
+import { getAvaliacaoById, getInstituicoes, addInstituicao, instituicaoAvaliacaoInsert } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
@@ -19,22 +19,49 @@ function EtapaInstituicaoAvaliadora({ onNext, avaliacaoId }) {
 
   const carregarInstituicoes = async () => {
     try {
-      const data = await getInstituicoes();
-      setInstituicoes(data);
+      const instituicoesData = await getInstituicoes();
+      const instituicoesFormatadas = instituicoesData.map(item => ({
+        id: item[0],
+        nome: item[1],
+        cnpj: item[2],
+      }));
+      setInstituicoes(instituicoesFormatadas);
+
+      const avaliacaoData = await getAvaliacaoById(avaliacaoId);
+      if (avaliacaoData && avaliacaoData.id_instituicao) {  // Verifica se já há uma instituição associada
+        setInstituicaoSelecionada(avaliacaoData.id_instituicao);
+        setInstituicaoCadastrada(true);
+      } else {
+        setInstituicaoSelecionada('');
+        setInstituicaoCadastrada(false);
+      }
     } catch (error) {
-      console.error('Erro ao carregar instituições:', error);
+      console.error('Erro ao carregar instituições ou avaliação:', error);
     }
   };
 
   const salvarDados = async () => {
     try {
-      if (!instituicaoCadastrada && novaInstituicao && novoCnpj) {
-        await addInstituicao({ nome: novaInstituicao, cnpj: novoCnpj });
-        alert('Instituição cadastrada com sucesso!');
+      if (!instituicaoCadastrada) {
+        if (novaInstituicao && novoCnpj) {
+          const novaInstituicaoResponse = await addInstituicao({ nome: novaInstituicao, cnpj: novoCnpj });
+          await carregarInstituicoes();
+          const novaInstituicaoId = novaInstituicaoResponse.id;
+          await instituicaoAvaliacaoInsert(avaliacaoId, { idInstituicao: novaInstituicaoId });
+          setInstituicaoSelecionada(novaInstituicaoId);
+          setNovaInstituicao('');
+          setNovoCnpj('');
+          setInstituicaoCadastrada(true);
+        } else {
+          alert('Por favor, preencha todos os campos da nova instituição.');
+          return;
+        }
+      } else if (instituicaoSelecionada) {
+        await instituicaoAvaliacaoInsert(avaliacaoId, { idInstituicao: instituicaoSelecionada });
       }
-      alert('Dados salvos com sucesso!');
     } catch (error) {
       console.error('Erro ao salvar os dados:', error);
+      alert('Erro ao salvar os dados. Tente novamente.');
     }
   };
 

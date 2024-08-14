@@ -5,10 +5,10 @@ class Avaliacao:
     def adicionar_avaliacao(self, nome, descricao, id_nivel_solicitado, adjunto_emails, colaborador_emails, id_versao_modelo):
         try:
             query = """
-                INSERT INTO avaliacao (Nome, Descricao, Status, ID_Empresa, ID_Nivel_Solicitado, ID_Avaliador_Lider, ID_Atividade, ID_Versao_Modelo) 
+                INSERT INTO avaliacao (Nome, Descricao, Status, ID_Nivel_Solicitado, ID_Avaliador_Lider, ID_Atividade, ID_Versao_Modelo) 
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             """
-            values = (nome, descricao, "Em andamento", 1, id_nivel_solicitado, 1, 1, id_versao_modelo)
+            values = (nome, descricao, "Em andamento", id_nivel_solicitado, 1, 1, id_versao_modelo)
             self.db.execute_query(query, values)
             
             avaliacao_id = self.db.cursor.lastrowid
@@ -61,7 +61,10 @@ class Avaliacao:
                 "id_atividade": row[5],
                 "id_empresa": row[6],
                 "id_nivel_solicitado": row[7],
-                "id_versao_modelo": row[10]
+                "id_versao_modelo": row[10],
+                "id_instituicao": row[11],
+                "atividade_planejamento": row[12],
+                "cronograma_planejamento": row[13]
             }
             return avaliacao_data
         return None
@@ -80,5 +83,11 @@ class Avaliacao:
     def atualizar_id_atividade(self, projeto_id, nova_id_atividade):
         query = "UPDATE avaliacao SET ID_Atividade = %s WHERE ID = %s"
         values = (nova_id_atividade, projeto_id)
+        self.db.cursor.execute(query, values)
+        self.db.conn.commit()
+
+    def inserir_planejamento(self, projeto_id, atividade_planejamento, cronograma_planejamento):
+        query = "UPDATE avaliacao SET Atividade_Planejamento = %s, Cronograma_Planejamento = %s WHERE ID = %s"
+        values = (atividade_planejamento, cronograma_planejamento, projeto_id)
         self.db.cursor.execute(query, values)
         self.db.conn.commit()

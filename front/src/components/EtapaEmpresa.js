@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getEmpresas, addEmpresa } from '../services/Api';
+import { getAvaliacaoById, getEmpresas, addEmpresa, empresaAvaliacaoInsert } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
@@ -19,24 +19,50 @@ function EtapaEmpresa({ onNext, avaliacaoId }) {
 
   const carregarEmpresas = async () => {
     try {
-      const data = await getEmpresas();
-      setEmpresas(data);
+      const empresasData = await getEmpresas();
+      const empresasFormatadas = empresasData.map(item => ({
+        id: item[0],
+        nome: item[1],
+        cnpj: item[2],
+      }));
+      setEmpresas(empresasFormatadas);
+      const avaliacaoData = await getAvaliacaoById(avaliacaoId);
+      if (avaliacaoData && avaliacaoData.id_empresa) {
+        setEmpresaSelecionada(avaliacaoData.id_empresa);
+        setEmpresaCadastrada(true);
+      } else {
+        setEmpresaSelecionada('');
+        setEmpresaCadastrada(false);
+      }
     } catch (error) {
-      console.error('Erro ao carregar empresas:', error);
+      console.error('Erro ao carregar empresas ou avaliação:', error);
     }
   };
 
   const salvarDados = async () => {
     try {
-      if (!empresaCadastrada && novaEmpresa && novoCnpj) {
-        await addEmpresa({ nome: novaEmpresa, cnpj: novoCnpj });
-        alert('Empresa cadastrada com sucesso!');
+      if (!empresaCadastrada) {
+        if (novaEmpresa && novoCnpj) {
+          const novaEmpresaResponse = await addEmpresa({ nome: novaEmpresa, cnpj: novoCnpj });
+          await carregarEmpresas();
+          const novaEmpresaId = novaEmpresaResponse.id;
+          await empresaAvaliacaoInsert(avaliacaoId, { idEmpresa: novaEmpresaId });
+          setEmpresaSelecionada(novaEmpresaId);
+          setNovaEmpresa('');
+          setNovoCnpj('');
+          setEmpresaCadastrada(true);
+        } else {
+          alert('Por favor, preencha todos os campos da nova empresa.');
+          return;
+        }
+      } else if (empresaSelecionada) {
+        await empresaAvaliacaoInsert(avaliacaoId, { idEmpresa: empresaSelecionada });
       }
-      alert('Dados salvos com sucesso!');
     } catch (error) {
       console.error('Erro ao salvar os dados:', error);
+      alert('Erro ao salvar os dados. Tente novamente.');
     }
-  };
+  };  
 
   const handleCheckboxChange = (value) => {
     setEmpresaCadastrada(value);

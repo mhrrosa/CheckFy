@@ -16,9 +16,9 @@ import '../components/styles/Button.css';
 import '../pages/styles/Evaluation.css';
 
 const etapaComponents = {
-  1: EtapaAtividadesPlanejamento,
-  2: EtapaEmpresa,
-  3: EtapaInstituicao,
+  1: EtapaEmpresa,
+  2: EtapaInstituicao,
+  3: EtapaAtividadesPlanejamento,
   4: Etapa1,
   5: Etapa2,
   6: Etapa3,

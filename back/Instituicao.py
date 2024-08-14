@@ -5,38 +5,28 @@ class Instituicao:
     def add_instituicao(self, nome_instituicao, cnpj):
         try:
             self.db.cursor.execute(
-                "INSERT INTO instituicoes (Nome_Instituicao, CNPJ) VALUES (%s, %s)", 
+                "INSERT INTO instituicao (Nome, Cnpj) VALUES (%s, %s)", 
                 (nome_instituicao, cnpj)
             )
             self.db.conn.commit()
+            return self.db.cursor.lastrowid
         except Exception as e:
             print(f"Erro ao adicionar instituição ao banco de dados: {e}")
             raise e
         
     def get_instituicoes(self):
         try:
-            self.db.cursor.execute("SELECT * FROM instituicoes ORDER BY Nome_Instituicao")
+            self.db.cursor.execute("SELECT * FROM instituicao ORDER BY Nome")
             result = self.db.cursor.fetchall()
             return result
         except Exception as e:
             print(f"Erro ao obter instituições do banco de dados: {e}")
             raise e
 
-    def delete_instituicao(self, instituicao_id):
+    def instituicao_avaliacao_insert(self, avaliacao_id, instituicao_id):
         try:
-            self.db.cursor.execute("DELETE FROM instituicoes WHERE ID = %s", (instituicao_id,))
+            self.db.cursor.execute("UPDATE avaliacao set ID_Instituicao = %s WHERE ID = %s", (instituicao_id, avaliacao_id))
             self.db.conn.commit()
         except Exception as e:
-            print(f"Erro ao deletar instituição do banco de dados: {e}")
-            raise e
-
-    def update_instituicao(self, instituicao_id, novo_nome, novo_cnpj):
-        try:
-            self.db.cursor.execute(
-                "UPDATE instituicoes SET Nome_Instituicao = %s, CNPJ = %s WHERE ID = %s", 
-                (novo_nome, novo_cnpj, instituicao_id)
-            )
-            self.db.conn.commit()
-        except Exception as e:
-            print(f"Erro ao atualizar instituição no banco de dados: {e}")
+            print(f"Erro ao atualizar instituição na avaliação: {e}")
             raise e

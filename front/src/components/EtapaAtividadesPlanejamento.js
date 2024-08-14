@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getProjetosByAvaliacao, createProjeto, updateProjeto } from '../services/Api';
+import { getProjetosByAvaliacao, inserir_planejamento } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
@@ -8,7 +8,7 @@ import '../components/styles/Etapa2.css';
 import logo from '../img/logo_horizontal.png';
 
 function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
-  const [avaliacaoAprovada, setAvaliacaoAprovada] = useState(null); // null para não selecionado
+  const [avaliacaoAprovada, setAvaliacaoAprovada] = useState(null);
   const [planejamentoAtividades, setPlanejamentoAtividades] = useState('');
   const [planejamentoCronograma, setPlanejamentoCronograma] = useState('');
   
@@ -23,31 +23,26 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
       const data = await getProjetosByAvaliacao(avaliacaoId);
       if (data) {
         setAvaliacaoAprovada(data.avaliacaoAprovada);
-        setPlanejamentoAtividades(data.planejamentoAtividades);
-        setPlanejamentoCronograma(data.planejamentoCronograma);
+        setPlanejamentoAtividades(data.atividade_planejamento || '');
+        setPlanejamentoCronograma(data.cronograma_planejamento || '');
       }
     } catch (error) {
       console.error('Erro ao carregar dados da avaliação:', error);
     }
   };
 
-  const salvarDados = async () => {
+  const salvarPlanejamento = async () => {
     try {
-      const projetoData = {
-        avaliacaoAprovada,
-        planejamentoAtividades,
-        planejamentoCronograma,
-        avaliacaoId
+      const data = {
+        atividadePlanejamento: planejamentoAtividades,
+        cronogramaPlanejamento: planejamentoCronograma,
       };
-      
-      if (avaliacaoId) {
-        await updateProjeto(projetoData);
-      } else {
-        await createProjeto(projetoData);
-      }
-      alert('Dados salvos com sucesso!');
+
+      await inserir_planejamento(avaliacaoId, data);
+      alert('Planejamento salvo com sucesso!');
     } catch (error) {
-      console.error('Erro ao salvar os dados:', error);
+      console.error('Erro ao salvar o planejamento:', error);
+      alert('Erro ao salvar o planejamento. Tente novamente.');
     }
   };
 
@@ -58,7 +53,7 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
   return (
     <div className='container-etapa'>
       <div className='title-container'>
-        <h1 className='title-form'>Planejamento(deve ficar antes da etapa de criação dos projetos)</h1>
+        <h1 className='title-form'>Planejamento</h1>
       </div>
       <label className="label">Avaliação aprovada pela Softex?</label>
       <div className='checkbox-wrapper-project'>
@@ -117,6 +112,10 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
               style={{ marginLeft: 10, width: 500 }}
             ></textarea>
           </div>
+
+          {/* Botão de Salvar */}
+          <button className='button-save' onClick={salvarPlanejamento}>SALVAR PLANEJAMENTO</button>
+
           <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
         </>
       )}
