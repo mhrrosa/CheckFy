@@ -20,23 +20,13 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
 
   const carregarAvaliacao = async () => {
     try {
-      console.log('Carregando dados para a avaliação ID:', avaliacaoId);
       const data = await getAvaliacaoById(avaliacaoId);
-      console.log('Dados recebidos da API:', data);
   
       if (data) {
         const isAprovacaoSoftex = data.aprovacao_softex === 1; // Converte 1 para true
-        console.log('Aprovacao Softex (antes):', data.aprovacao_softex);
         setAvaliacaoAprovada(isAprovacaoSoftex);
-        console.log('Aprovacao Softex (depois):', isAprovacaoSoftex);
-  
-        console.log('Planejamento Atividades (antes):', data.atividade_planejamento);
         setPlanejamentoAtividades(data.atividade_planejamento || '');
-        console.log('Planejamento Atividades (depois):', data.atividade_planejamento);
-  
-        console.log('Planejamento Cronograma (antes):', data.cronograma_planejamento);
         setPlanejamentoCronograma(data.cronograma_planejamento || '');
-        console.log('Planejamento Cronograma (depois):', data.cronograma_planejamento);
       }
     } catch (error) {
       console.error('Erro ao carregar dados da avaliação:', error);
@@ -62,7 +52,6 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
 
   const handleCheckboxChange = (value) => {
     setAvaliacaoAprovada(value);
-    console.log('Checkbox atualizado para:', value);
   };
 
   return (
