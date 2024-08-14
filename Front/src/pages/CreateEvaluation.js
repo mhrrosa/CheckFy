@@ -124,6 +124,7 @@ function CreateEvaluation() {
               value={idVersaoModelo}
               onChange={(e) => setIdVersaoModelo(e.target.value)}
             >
+              <option value="" disabled>Selecione a Versão</option>
               {versoesModelo.map(v => (
                 <option key={v.id} value={v.id}>{v.nome}</option>
               ))}
@@ -136,7 +137,7 @@ function CreateEvaluation() {
               value={nivelSolicitado}
               onChange={(e) => setNivelSolicitado(e.target.value)}
             >
-              <option value="">Selecione o Nível</option>
+              <option value="" disabled>Selecione o Nível</option>
               {niveis.map(n => (
                 <option key={n.id} value={n.id}>{n.nivel}</option>
               ))}
@@ -153,10 +154,11 @@ function CreateEvaluation() {
                   onChange={(e) => updateEmail(index, e.target.value, setAdjuntoEmails)}
                   placeholder="Digite o email do avaliador adjunto"
                 />
-                <button className="button-add-email" type="button" onClick={() => addEmail(setAdjuntoEmails)}>
+                <button className="button-add-email" type="button" onClick={() => addEmail(setColaboradorEmails)}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="12" y1="6" x2="12" y2="18"></line>
-                    <line x1="6" y1="12" x2="18" y1="12"></line>
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
                   </svg>
                 </button>
               </div>
@@ -178,8 +180,9 @@ function CreateEvaluation() {
                 />
                 <button className="button-add-email" type="button" onClick={() => addEmail(setColaboradorEmails)}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="12" y1="6" x2="12" y2="18"></line>
-                    <line x1="6" y1="12" x2="18" y1="12"></line>
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
                   </svg>
                 </button>
               </div>
@@ -191,7 +194,7 @@ function CreateEvaluation() {
         </div>
         <div className='logo-and-button'>
           <img src={logo} className="logo" alt="Logo Checkfy" />
-          <button className="form-end-button" onClick={handleStartEvaluation}>ADICIONAR</button>
+          <button className="button-end-form" onClick={handleStartEvaluation}>ADICIONAR</button>
         </div>
       </form>
     </div>

@@ -115,16 +115,16 @@
     padding: 3px 10px 0px 10px;
     font-weight: bolder;
     color: white;
-    border: 3px solid #00437e;
-    border-radius: 15px;
+    border: none;
     cursor: pointer;
     background-color: #001034;
     transition: background-color 0.3s;
     margin-left: 10px;
+    transition: color 0.3s;
 }
 
 .button-add-email:hover {
-    background-color: #00437e;
+    color: #58b66e;
 }
 
 .button-remove-email {

@@ -5,7 +5,6 @@ import '../components/styles/Container.css';
 import '../components/styles/Form.css';
 import '../components/styles/Button.css';
 import '../components/styles/Etapa2.css';
-import logo from '../img/logo_horizontal.png';
 
 function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
   const [avaliacaoAprovada, setAvaliacaoAprovada] = useState(false);
@@ -120,9 +119,9 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
       )}
 
       {/* Botão de Salvar sempre visível */}
-      <button className='button-save' onClick={salvarPlanejamento}>SALVAR</button>
+      <button className='button-next' onClick={salvarPlanejamento}>SALVAR</button>
 
-      <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
+      <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button> // LEMBRAR QUE SE O USUÁRIO CLICAR NO NÃO, O BOTÃO DE PRÓXIMO DEVE LEVAR PARA A HOME
     </div>
   );
 }

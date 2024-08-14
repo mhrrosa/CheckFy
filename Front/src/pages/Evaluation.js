@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import EtapaAtividadesPlanejamento from '../components/EtapaAtividadesPlanejamento';
 import EtapaEmpresa from '../components/EtapaEmpresa';
 import EtapaInstituicao from '../components/EtapaInstituicao';
@@ -60,17 +60,15 @@ function Evaluation() {
       setIdVersaoModelo(avaliacao.id_versao_modelo);
 
       const initialEtapa = avaliacao.id_atividade;
-      setSelectedEtapa(initialEtapa);
-
-      if (!etapaUsuarioMap[initialEtapa]?.includes(userType)) {
+      
+      // Verifica se o usuário tem permissão para a etapa inicial
+      if (userType === 1 || etapaUsuarioMap[initialEtapa]?.includes(userType)) {
+        setSelectedEtapa(initialEtapa);
+        setAnotherUserWorking(userType !== 1 && userType !== 2);
+      } else {
+        // Se o usuário não tiver permissão para a etapa inicial, encontra a primeira etapa permitida
         const firstPermittedEtapa = Object.keys(etapaUsuarioMap).find(etapa => etapaUsuarioMap[etapa].includes(userType));
         setSelectedEtapa(parseInt(firstPermittedEtapa));
-      }
-
-      if (etapaUsuarioMap[initialEtapa]?.includes(userType) && userType !== 1) {
-        setAnotherUserWorking(true);
-      } else {
-        setAnotherUserWorking(false);
       }
     } catch (error) {
       console.error('Erro ao buscar avaliação:', error);
@@ -82,12 +80,14 @@ function Evaluation() {
       const newIdAtividade = idAtividade + 1;
       await updateIdAtividade(avaliacaoId, newIdAtividade);
       setIdAtividade(newIdAtividade);
-      setSelectedEtapa(newIdAtividade);
 
-      if (etapaUsuarioMap[newIdAtividade]?.includes(userType) && userType !== 1) {
-        setAnotherUserWorking(true);
+      // Verifica se o usuário tem permissão para a nova etapa
+      if (userType === 1 || etapaUsuarioMap[newIdAtividade]?.includes(userType)) {
+        setSelectedEtapa(newIdAtividade);
+        setAnotherUserWorking(userType !== 1 && userType !== 2);
       } else {
-        setAnotherUserWorking(false);
+        const firstPermittedEtapa = Object.keys(etapaUsuarioMap).find(etapa => etapaUsuarioMap[etapa].includes(userType));
+        setSelectedEtapa(parseInt(firstPermittedEtapa));
       }
     } catch (error) {
       console.error('Erro ao atualizar atividade:', error);
@@ -95,17 +95,15 @@ function Evaluation() {
   };
 
   const handleStepClick = (etapa) => {
-    setSelectedEtapa(etapa);
-
-    if (etapaUsuarioMap[etapa]?.includes(userType) && userType !== 1) {
-      setAnotherUserWorking(true);
-    } else {
-      setAnotherUserWorking(false);
+    // Verifica se o usuário tem permissão antes de permitir a mudança de etapa
+    if (userType === 1 || etapaUsuarioMap[etapa]?.includes(userType)) {
+      setSelectedEtapa(etapa);
+      setAnotherUserWorking(userType !== 1 && userType !== 2);
     }
   };
 
   const EtapaComponent = etapaComponents[selectedEtapa];
-  const hasPermission = selectedEtapa && etapaUsuarioMap[selectedEtapa]?.includes(userType);
+  const hasPermission = selectedEtapa && (userType === 1 || etapaUsuarioMap[selectedEtapa]?.includes(userType));
 
   return (
     <div className="container">
