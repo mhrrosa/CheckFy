@@ -91,7 +91,7 @@ CREATE TABLE `avaliacao` (
 
 LOCK TABLES `avaliacao` WRITE;
 /*!40000 ALTER TABLE `avaliacao` DISABLE KEYS */;
-INSERT INTO `avaliacao` VALUES (9,'Avaliação de teste 1','Primeiro Teste de Inserção',1,'Em andamento',3,NULL,51,NULL,NULL,1,NULL,'',''),(16,'asdf','asdf',1,'Em andamento',3,NULL,44,NULL,NULL,1,1,'aaa','aaa'),(22,'AAA','BBB',1,'Em andamento',3,NULL,43,NULL,NULL,1,1,NULL,NULL);
+INSERT INTO `avaliacao` VALUES (9,'Avaliação de teste 1','Primeiro Teste de Inserção',1,'Em andamento',3,NULL,51,NULL,NULL,1,NULL,'','',''),(16,'asdf','asdf',1,'Em andamento',3,NULL,44,NULL,NULL,1,1,'aaa','aaa',''),(22,'AAA','BBB',1,'Em andamento',3,NULL,43,NULL,NULL,1,1,NULL,NULL,'');
 /*!40000 ALTER TABLE `avaliacao` ENABLE KEYS */;
 UNLOCK TABLES;
 
