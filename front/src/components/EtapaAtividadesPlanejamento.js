@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getProjetosByAvaliacao, inserir_planejamento } from '../services/Api';
+import { getAvaliacaoById, inserir_planejamento } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
@@ -11,23 +11,23 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
   const [avaliacaoAprovada, setAvaliacaoAprovada] = useState(false);
   const [planejamentoAtividades, setPlanejamentoAtividades] = useState('');
   const [planejamentoCronograma, setPlanejamentoCronograma] = useState('');
-  
+
   useEffect(() => {
     if (avaliacaoId) {
-      carregarProjetos();
+      carregarAvaliacao();
     }
   }, [avaliacaoId]);
 
-  const carregarProjetos = async () => {
+  const carregarAvaliacao = async () => {
     try {
       console.log('Carregando dados para a avaliação ID:', avaliacaoId);
-      const data = await getProjetosByAvaliacao(avaliacaoId);
+      const data = await getAvaliacaoById(avaliacaoId);
       console.log('Dados recebidos da API:', data);
-      
+
       if (data) {
-        console.log('Avaliacao Aprovada (antes):', data.avaliacaoAprovada);
-        setAvaliacaoAprovada(data.avaliacaoAprovada !== null ? data.avaliacaoAprovada : false);
-        console.log('Avaliacao Aprovada (depois):', avaliacaoAprovada);
+        console.log('Aprovacao Softex (antes):', data.aprovacao_softex);
+        setAvaliacaoAprovada(data.aprovacao_softex !== null ? data.aprovacao_softex : false);
+        console.log('Aprovacao Softex (depois):', avaliacaoAprovada);
 
         console.log('Planejamento Atividades (antes):', data.atividade_planejamento);
         setPlanejamentoAtividades(data.atividade_planejamento || '');
@@ -45,6 +45,7 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
   const salvarPlanejamento = async () => {
     try {
       const data = {
+        aprovacaoSoftex: avaliacaoAprovada,
         atividadePlanejamento: planejamentoAtividades,
         cronogramaPlanejamento: planejamentoCronograma,
       };
