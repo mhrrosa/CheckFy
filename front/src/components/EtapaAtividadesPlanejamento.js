@@ -8,7 +8,7 @@ import '../components/styles/Etapa2.css';
 import logo from '../img/logo_horizontal.png';
 
 function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
-  const [avaliacaoAprovada, setAvaliacaoAprovada] = useState(null);
+  const [avaliacaoAprovada, setAvaliacaoAprovada] = useState(false);
   const [planejamentoAtividades, setPlanejamentoAtividades] = useState('');
   const [planejamentoCronograma, setPlanejamentoCronograma] = useState('');
   
@@ -20,11 +20,22 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
 
   const carregarProjetos = async () => {
     try {
+      console.log('Carregando dados para a avaliação ID:', avaliacaoId);
       const data = await getProjetosByAvaliacao(avaliacaoId);
+      console.log('Dados recebidos da API:', data);
+      
       if (data) {
-        setAvaliacaoAprovada(data.avaliacaoAprovada);
+        console.log('Avaliacao Aprovada (antes):', data.avaliacaoAprovada);
+        setAvaliacaoAprovada(data.avaliacaoAprovada !== null ? data.avaliacaoAprovada : false);
+        console.log('Avaliacao Aprovada (depois):', avaliacaoAprovada);
+
+        console.log('Planejamento Atividades (antes):', data.atividade_planejamento);
         setPlanejamentoAtividades(data.atividade_planejamento || '');
+        console.log('Planejamento Atividades (depois):', planejamentoAtividades);
+
+        console.log('Planejamento Cronograma (antes):', data.cronograma_planejamento);
         setPlanejamentoCronograma(data.cronograma_planejamento || '');
+        console.log('Planejamento Cronograma (depois):', planejamentoCronograma);
       }
     } catch (error) {
       console.error('Erro ao carregar dados da avaliação:', error);
@@ -48,6 +59,7 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
 
   const handleCheckboxChange = (value) => {
     setAvaliacaoAprovada(value);
+    console.log('Checkbox atualizado para:', value);
   };
 
   return (

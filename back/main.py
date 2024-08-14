@@ -232,7 +232,7 @@ def atualizar_atividade(projeto_id):
 def inserir_planejamento(projeto_id):
     try:
         data = request.json
-        avaliacao.inserir_planejamento(projeto_id, data['atividadePlanejamento'], data['cronogramaPlanejamento'])
+        avaliacao.inserir_planejamento(projeto_id, data['aprovacaoSoftex'], data['atividadePlanejamento'], data['cronogramaPlanejamento'])
         return jsonify({"message": "Planejamento adicionado com sucesso"}), 200
     except Exception as e:
         print(f"Erro ao atualizar ID_Atividade: {e}")

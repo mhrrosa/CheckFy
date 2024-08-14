@@ -64,7 +64,8 @@ class Avaliacao:
                 "id_versao_modelo": row[10],
                 "id_instituicao": row[11],
                 "atividade_planejamento": row[12],
-                "cronograma_planejamento": row[13]
+                "cronograma_planejamento": row[13],
+                "aprovacao_softex": row[14]
             }
             return avaliacao_data
         return None
@@ -86,8 +87,8 @@ class Avaliacao:
         self.db.cursor.execute(query, values)
         self.db.conn.commit()
 
-    def inserir_planejamento(self, projeto_id, atividade_planejamento, cronograma_planejamento):
-        query = "UPDATE avaliacao SET Atividade_Planejamento = %s, Cronograma_Planejamento = %s WHERE ID = %s"
-        values = (atividade_planejamento, cronograma_planejamento, projeto_id)
+    def inserir_planejamento(self, projeto_id, aprovacaoSoftex, atividade_planejamento, cronograma_planejamento):
+        query = "UPDATE avaliacao SET Avaliacao_Aprovada_Pela_Softex = %s, Atividade_Planejamento = %s, Cronograma_Planejamento = %s WHERE ID = %s"
+        values = (aprovacaoSoftex, atividade_planejamento, cronograma_planejamento, projeto_id)
         self.db.cursor.execute(query, values)
         self.db.conn.commit()
