@@ -1,3 +1,7 @@
+-- Desabilitar a verificação de chaves estrangeiras
+SET FOREIGN_KEY_CHECKS = 0;
+
+
 -- Criação das tabelas
 CREATE TABLE `atividade` (
   `ID` int NOT NULL AUTO_INCREMENT,
@@ -22,6 +26,8 @@ CREATE TABLE `avaliacao` (
   `ID_Instituicao` int DEFAULT NULL,
   `Atividade_Planejamento` varchar(5000) DEFAULT NULL,
   `Cronograma_Planejamento` varchar(5000) DEFAULT NULL,
+  `Avaliacao_Aprovada_Pela_Softex` tinyint(1) DEFAULT NULL,
+
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -170,6 +176,11 @@ INSERT INTO `tipo_usuario` VALUES (1,'Administrador'),(2,'Avaliador'),(3,'Colabo
 
 INSERT INTO `usuario` VALUES (1,'Avaliador teste',1,'teste','teste'),(3,'Adjunto',2,'Senha Teste','asdfg'),(4,'Adjunto',3,'Senha Teste','hfgd'),(5,'Adjunto',2,'Senha Teste','asfd'),(6,'Adjunto',3,'Senha Teste','asdf'),(7,'Adjunto',3,'Senha Teste','asdf'),(8,'Adjunto',2,'Senha Teste',''),(9,'Adjunto',3,'Senha Teste',''),(10,'Adjunto',2,'Senha Teste',''),(11,'Adjunto',3,'Senha Teste',''),(12,'Adjunto',2,'Senha Teste',''),(13,'Adjunto',3,'Senha Teste',''),(14,'Adjunto',2,'Senha Teste','arthur.pr.andrade@hotmail.com'),(15,'Adjunto',3,'Senha Teste','arthur.pr.andrade@hotmail.com'),(16,'Adjunto',2,'Senha Teste','ccc'),(17,'Adjunto',3,'Senha Teste','ddd'),(18,'Adjunto',2,'Senha Teste','CCC'),(19,'Adjunto',3,'Senha Teste','DDD');
 
+
+-- Reabilitar a verificação de chaves estrangeiras
+SET FOREIGN_KEY_CHECKS = 1;
+
+
 -- Criação das chaves estrangeiras
 
 ALTER TABLE `atividade` 
@@ -221,4 +232,3 @@ ALTER TABLE `usuarios_projeto`
   ADD CONSTRAINT `usuarios_projeto_FK` FOREIGN KEY (`ID_Usuario`) REFERENCES `usuario` (`ID`),
   ADD CONSTRAINT `usuarios_projeto_FK_1` FOREIGN KEY (`ID_Funcao`) REFERENCES `funcao_usuario` (`ID`),
   ADD CONSTRAINT `usuarios_projeto_FK_2` FOREIGN KEY (`ID_Projeto`) REFERENCES `avaliacao` (`ID`);
-
