@@ -67,6 +67,7 @@ CREATE TABLE `avaliacao` (
   `ID_Instituicao` int DEFAULT NULL,
   `Atividade_Planejamento` varchar(5000) DEFAULT NULL,
   `Cronograma_Planejamento` varchar(5000) DEFAULT NULL,
+  `Avaliacao_Aprovada_Pela_Softex` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `avaliacao_FK` (`ID_Atividade`),
   KEY `avaliacao_FK_1` (`ID_Avaliador_Lider`),
@@ -91,7 +92,7 @@ CREATE TABLE `avaliacao` (
 
 LOCK TABLES `avaliacao` WRITE;
 /*!40000 ALTER TABLE `avaliacao` DISABLE KEYS */;
-INSERT INTO `avaliacao` VALUES (9,'Avaliação de teste 1','Primeiro Teste de Inserção',1,'Em andamento',3,NULL,51,NULL,NULL,1,NULL,'','',''),(16,'asdf','asdf',1,'Em andamento',3,NULL,44,NULL,NULL,1,1,'aaa','aaa',''),(22,'AAA','BBB',1,'Em andamento',3,NULL,43,NULL,NULL,1,1,NULL,NULL,'');
+INSERT INTO `avaliacao` VALUES (9,'Avaliação de teste 1','Primeiro Teste de Inserção',1,'Em andamento',3,NULL,51,NULL,NULL,1,NULL,'','',NULL),(16,'asdf','asdf',1,'Em andamento',3,NULL,44,NULL,NULL,1,1,'Teste','Teste',1),(22,'AAA','BBB',1,'Em andamento',3,NULL,43,NULL,NULL,1,1,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `avaliacao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -525,4 +526,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-08-14 18:28:30
+-- Dump completed on 2024-08-14 19:10:34
