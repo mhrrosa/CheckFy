@@ -5,7 +5,6 @@ import '../components/styles/Container.css';
 import '../components/styles/Form.css';
 import '../components/styles/Button.css';
 import '../components/styles/Etapa2.css';
-import logo from '../img/logo_horizontal.png';
 
 function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
   const [avaliacaoAprovada, setAvaliacaoAprovada] = useState(false);
@@ -118,7 +117,7 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
           </div>
 
           {/* Botão de Salvar */}
-          <button className='button-save' onClick={salvarPlanejamento}>SALVAR PLANEJAMENTO</button>
+          <button className='button-next' onClick={salvarPlanejamento}>SALVAR PLANEJAMENTO</button>
 
           <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
         </>

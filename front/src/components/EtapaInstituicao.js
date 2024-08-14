@@ -4,7 +4,6 @@ import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
 import '../components/styles/Button.css';
-import logo from '../img/logo_horizontal.png';
 
 function EtapaInstituicaoAvaliadora({ onNext, avaliacaoId }) {
   const [instituicoes, setInstituicoes] = useState([]);
