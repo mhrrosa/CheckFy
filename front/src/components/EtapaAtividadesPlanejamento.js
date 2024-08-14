@@ -33,7 +33,6 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
     }
   };
   
-
   const salvarPlanejamento = async () => {
     try {
       const data = {
@@ -81,7 +80,8 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
         </div>
       </div>
 
-      {avaliacaoAprovada === true && (
+      {/* Exibe os campos de planejamento apenas se a avaliação estiver aprovada */}
+      {avaliacaoAprovada && (
         <>
           <div className='textarea-wrapper'>
             <label className="label">Planejamento de atividades para a avaliação:</label>
@@ -116,13 +116,13 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
               style={{ marginLeft: 10, width: 500 }}
             ></textarea>
           </div>
-
-          {/* Botão de Salvar */}
-          <button className='button-save' onClick={salvarPlanejamento}>SALVAR PLANEJAMENTO</button>
-
-          <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
         </>
       )}
+
+      {/* Botão de Salvar sempre visível */}
+      <button className='button-save' onClick={salvarPlanejamento}>SALVAR</button>
+
+      <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
     </div>
   );
 }

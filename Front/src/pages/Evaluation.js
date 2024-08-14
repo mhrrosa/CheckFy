@@ -26,22 +26,25 @@ const etapaComponents = {
   8: Etapa5
 };
 
-const etapaUsuarioMap = { // Constante que define quais usuários podem ver quais etapas
+const etapaUsuarioMap = {
   1: [1, 2, 3],
-  2: [1, 3],
-  3: [1, 3],
+  2: [1, 2],
+  3: [1, 2],
   4: [1, 2],
-  5: [1, 2]
+  5: [1, 3],
+  6: [1, 3],
+  7: [1],
+  8: [1]
 };
 
 function Evaluation() {
   const location = useLocation();
-  const navigate = useNavigate();
   const { userType } = useContext(UserContext);
   const [idAtividade, setIdAtividade] = useState(null);
   const [avaliacaoId, setAvaliacaoId] = useState(null);
   const [idVersaoModelo, setIdVersaoModelo] = useState(null);
-  const [selectedEtapa, setSelectedEtapa] = useState(null); // Estado separado para etapa selecionada
+  const [selectedEtapa, setSelectedEtapa] = useState(null);
+  const [anotherUserWorking, setAnotherUserWorking] = useState(false);
 
   useEffect(() => {
     if (location.state?.id) {
@@ -55,35 +58,53 @@ function Evaluation() {
       setAvaliacaoId(avaliacao.id);
       setIdAtividade(avaliacao.id_atividade);
       setIdVersaoModelo(avaliacao.id_versao_modelo);
-      setSelectedEtapa(avaliacao.id_atividade); // Define a etapa selecionada como a idAtividade inicial
+
+      const initialEtapa = avaliacao.id_atividade;
+      setSelectedEtapa(initialEtapa);
+
+      if (!etapaUsuarioMap[initialEtapa]?.includes(userType)) {
+        const firstPermittedEtapa = Object.keys(etapaUsuarioMap).find(etapa => etapaUsuarioMap[etapa].includes(userType));
+        setSelectedEtapa(parseInt(firstPermittedEtapa));
+      }
+
+      if (etapaUsuarioMap[initialEtapa]?.includes(userType) && userType !== 1) {
+        setAnotherUserWorking(true);
+      } else {
+        setAnotherUserWorking(false);
+      }
     } catch (error) {
       console.error('Erro ao buscar avaliação:', error);
     }
   };
-
-  useEffect(() => {
-    if (idAtividade !== null && selectedEtapa !== idAtividade) {
-      setSelectedEtapa(idAtividade); // Sincroniza selectedEtapa com idAtividade
-    }
-  }, [idAtividade]);
 
   const handleNextStep = async () => {
     try {
       const newIdAtividade = idAtividade + 1;
       await updateIdAtividade(avaliacaoId, newIdAtividade);
       setIdAtividade(newIdAtividade);
-      setSelectedEtapa(newIdAtividade); // Atualiza também a etapa selecionada
+      setSelectedEtapa(newIdAtividade);
+
+      if (etapaUsuarioMap[newIdAtividade]?.includes(userType) && userType !== 1) {
+        setAnotherUserWorking(true);
+      } else {
+        setAnotherUserWorking(false);
+      }
     } catch (error) {
       console.error('Erro ao atualizar atividade:', error);
     }
   };
 
   const handleStepClick = (etapa) => {
-    setSelectedEtapa(etapa); // Atualiza apenas a etapa selecionada, sem alterar idAtividade
+    setSelectedEtapa(etapa);
+
+    if (etapaUsuarioMap[etapa]?.includes(userType) && userType !== 1) {
+      setAnotherUserWorking(true);
+    } else {
+      setAnotherUserWorking(false);
+    }
   };
 
-  const EtapaComponent = etapaComponents[selectedEtapa]; // Renderiza com base na etapa selecionada
-
+  const EtapaComponent = etapaComponents[selectedEtapa];
   const hasPermission = selectedEtapa && etapaUsuarioMap[selectedEtapa]?.includes(userType);
 
   return (
@@ -93,17 +114,19 @@ function Evaluation() {
         <div className="form-section-evaluation">
           {EtapaComponent ? (
             hasPermission ? (
-              <EtapaComponent
-                onNext={handleNextStep}
-                avaliacaoId={avaliacaoId}
-                idVersaoModelo={idVersaoModelo}
-              />
+              anotherUserWorking ? (
+                <p>
+                  O usuário comum está realizando o trabalho nesta etapa.
+                </p>
+              ) : (
+                <EtapaComponent
+                  onNext={handleNextStep}
+                  avaliacaoId={avaliacaoId}
+                  idVersaoModelo={idVersaoModelo}
+                />
+              )
             ) : (
-              <p>
-                {userType === 2
-                  ? 'O usuário comum está realizando o trabalho nesta etapa.'
-                  : 'O avaliador está realizando o trabalho nesta etapa.'}
-              </p>
+              <p>Você não tem permissão para acessar esta etapa.</p>
             )
           ) : (
             <p>Etapa não encontrada</p>
