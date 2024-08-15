@@ -26,15 +26,15 @@ const etapaComponents = {
   8: Etapa5
 };
 
-const etapaUsuarioMap = {
-  1: [1, 2, 3],
+const etapaUsuarioMap = { 
+  1: [1, 2],
   2: [1, 2],
   3: [1, 2],
   4: [1, 2],
   5: [1, 3],
   6: [1, 3],
-  7: [1],
-  8: [1]
+  7: [1, 2],
+  8: [1, 2]
 };
 
 function Evaluation() {
@@ -44,11 +44,13 @@ function Evaluation() {
   const [avaliacaoId, setAvaliacaoId] = useState(null);
   const [idVersaoModelo, setIdVersaoModelo] = useState(null);
   const [selectedEtapa, setSelectedEtapa] = useState(null);
-  const [anotherUserWorking, setAnotherUserWorking] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasPermission, setHasPermission] = useState(false);
 
   useEffect(() => {
-    if (location.state?.id) {
-      fetchAvaliacaoData(location.state.id);
+    const avaliacaoId = location.state?.id;
+    if (avaliacaoId) {
+      fetchAvaliacaoData(avaliacaoId);
     }
   }, [location.state]);
 
@@ -58,76 +60,65 @@ function Evaluation() {
       setAvaliacaoId(avaliacao.id);
       setIdAtividade(avaliacao.id_atividade);
       setIdVersaoModelo(avaliacao.id_versao_modelo);
-
-      const initialEtapa = avaliacao.id_atividade;
-      
-      // Verifica se o usuário tem permissão para a etapa inicial
-      if (userType === 1 || etapaUsuarioMap[initialEtapa]?.includes(userType)) {
-        setSelectedEtapa(initialEtapa);
-        setAnotherUserWorking(userType !== 1 && userType !== 2);
-      } else {
-        // Se o usuário não tiver permissão para a etapa inicial, encontra a primeira etapa permitida
-        const firstPermittedEtapa = Object.keys(etapaUsuarioMap).find(etapa => etapaUsuarioMap[etapa].includes(userType));
-        setSelectedEtapa(parseInt(firstPermittedEtapa));
-      }
+      setSelectedEtapa(avaliacao.id_atividade);
     } catch (error) {
       console.error('Erro ao buscar avaliação:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  useEffect(() => {
+    if (selectedEtapa !== null) {
+      const validEtapa = etapaUsuarioMap[selectedEtapa];
+      setHasPermission(validEtapa?.includes(Number(userType)) || false);
+    }
+  }, [selectedEtapa, userType]);
+
   const handleNextStep = async () => {
-    try {
+    // Verifica se está na última etapa disponível
+    if (selectedEtapa === idAtividade) {
       const newIdAtividade = idAtividade + 1;
       await updateIdAtividade(avaliacaoId, newIdAtividade);
       setIdAtividade(newIdAtividade);
-
-      // Verifica se o usuário tem permissão para a nova etapa
-      if (userType === 1 || etapaUsuarioMap[newIdAtividade]?.includes(userType)) {
-        setSelectedEtapa(newIdAtividade);
-        setAnotherUserWorking(userType !== 1 && userType !== 2);
-      } else {
-        const firstPermittedEtapa = Object.keys(etapaUsuarioMap).find(etapa => etapaUsuarioMap[etapa].includes(userType));
-        setSelectedEtapa(parseInt(firstPermittedEtapa));
-      }
-    } catch (error) {
-      console.error('Erro ao atualizar atividade:', error);
+      setSelectedEtapa(newIdAtividade);
+    } else {
+      // Se estiver em uma etapa anterior, apenas avança para a próxima
+      setSelectedEtapa(selectedEtapa + 1);
     }
   };
 
   const handleStepClick = (etapa) => {
-    // Verifica se o usuário tem permissão antes de permitir a mudança de etapa
-    if (userType === 1 || etapaUsuarioMap[etapa]?.includes(userType)) {
-      setSelectedEtapa(etapa);
-      setAnotherUserWorking(userType !== 1 && userType !== 2);
-    }
+    setSelectedEtapa(etapa);
   };
 
+  if (isLoading) {
+    return <p>Carregando...</p>;
+  }
+
+  if (!selectedEtapa) {
+    return <p>Etapa não encontrada</p>;
+  }
+
   const EtapaComponent = etapaComponents[selectedEtapa];
-  const hasPermission = selectedEtapa && (userType === 1 || etapaUsuarioMap[selectedEtapa]?.includes(userType));
 
   return (
     <div className="container">
       <div className="main-content-evaluation">
         <h1 className="evaluation-title">AVALIAÇÃO</h1>
         <div className="form-section-evaluation">
-          {EtapaComponent ? (
-            hasPermission ? (
-              anotherUserWorking ? (
-                <p>
-                  O usuário comum está realizando o trabalho nesta etapa.
-                </p>
-              ) : (
-                <EtapaComponent
-                  onNext={handleNextStep}
-                  avaliacaoId={avaliacaoId}
-                  idVersaoModelo={idVersaoModelo}
-                />
-              )
-            ) : (
-              <p>Você não tem permissão para acessar esta etapa.</p>
-            )
+          {hasPermission ? (
+            <EtapaComponent
+              onNext={handleNextStep}
+              avaliacaoId={avaliacaoId}
+              idVersaoModelo={idVersaoModelo}
+            />
           ) : (
-            <p>Etapa não encontrada</p>
+            <p>
+              {userType === 2
+                ? 'O colaborador é o responsável dessa atividade.'
+                : 'O avaliador é o responsável dessa atividade.'}
+            </p>
           )}
         </div>
       </div>
