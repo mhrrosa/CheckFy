@@ -13,7 +13,7 @@ import Gerenciamento from './pages/Gerenciamento';
 import Niveis from './pages/Niveis';
 import Processos from './pages/Processos';
 import ResultadosEsperados from './pages/ResultadosEsperados';
-import GerenciamentoVersaoModelo from './pages/GerenciamentoVersaoModelo';
+import GerenciamentoVersaoModelo from './components/GerenciamentoVersaoModelo';
 
 function App() {
   return (
@@ -29,7 +29,6 @@ function App() {
             <Route path="/results" element={<Results />} />
             <Route path="/login-cadastro" element={<LoginCadastro />} />
             <Route path="/gerenciamento" element={<Gerenciamento />} />
-            <Route path="/gerenciamento-versao-modelo" element={<GerenciamentoVersaoModelo />} />
             <Route path="/niveis" element={<Niveis />} />
             <Route path="/processos" element={<Processos />} />
             <Route path="/resultados-esperados" element={<ResultadosEsperados />} />

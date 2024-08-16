@@ -57,3 +57,7 @@ button.button-disabled {
 .checkbox-input {
   margin-right: 10px;
 }
+
+.mensagem-usuario {
+  color: white;
+}

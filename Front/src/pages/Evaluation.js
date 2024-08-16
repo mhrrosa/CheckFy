@@ -93,11 +93,11 @@ function Evaluation() {
   };
 
   if (isLoading) {
-    return <p>Carregando...</p>;
+    return <p className='mensagem-usuario'>Carregando...</p>;
   }
 
   if (!selectedEtapa) {
-    return <p>Etapa não encontrada</p>;
+    return <p className='mensagem-usuario'>Etapa não encontrada</p>;
   }
 
   const EtapaComponent = etapaComponents[selectedEtapa];
@@ -114,7 +114,7 @@ function Evaluation() {
               idVersaoModelo={idVersaoModelo}
             />
           ) : (
-            <p>
+            <p className='mensagem-usuario'>
               {userType === 2
                 ? 'O colaborador é o responsável dessa atividade.'
                 : 'O avaliador é o responsável dessa atividade.'}

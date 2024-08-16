@@ -74,7 +74,7 @@ function Home() {
           <Link to="/create-evaluation" className="button-home-gerenciamento">NOVA AVALIAÇÃO</Link>
         )}
         {userType === 1 && (
-          <Link to="/gerenciamento-versao-modelo" className="button-home-gerenciamento">GERENCIAMENTO</Link>
+          <Link to="/gerenciamento" className="button-home-gerenciamento">GERENCIAMENTO</Link>
         )}
       </div>
       <div className="avaliacoes-lista">
