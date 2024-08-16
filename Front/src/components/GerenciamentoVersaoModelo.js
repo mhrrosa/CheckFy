@@ -32,7 +32,7 @@ function GerenciamentoAnos() {
       <p className='p-selecione-ano'>Selecionar Ano do Modelo MPS-BR</p>
       <div className='botoes-anos'>
         <select className='select-home-gerenciamento' onChange={(e) => handleAnoClick(e.target.value)}>
-            <option value='' disabled>-</option>
+            <option value=''>-</option>
           {anos.map((ano) => (
             <option key={ano[0]} value={ano[0]}>
               {ano[1]}
