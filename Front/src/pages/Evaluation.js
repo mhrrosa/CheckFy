@@ -126,7 +126,7 @@ function Evaluation() {
         <h3>Etapas:</h3>
         {Object.keys(etapaComponents).map((etapa) => {
           const etapaNumber = parseInt(etapa);
-          const isDisabled = etapaNumber > idAtividade && idAtividade !== 5;
+          const isDisabled = etapaNumber > idAtividade;
           return (
             <button
               key={etapa}
