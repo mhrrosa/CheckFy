@@ -640,18 +640,18 @@ def user_login():
     return jsonify(response), response.get("status", 200)
 
 @app.route('/cadastro', methods=['POST'])
-def user_cadastro():
+def cadastro_route():
     data = request.json
+    print(f"Dados recebidos: {data}")
+    
     nome = data.get('nome')
     email = data.get('email')
     senha = data.get('senha')
     cargo = data.get('cargo')
 
-    if not nome or not email or not senha or not cargo:
-        return jsonify({"message": "Todos os campos são obrigatórios."}), 400
-
     response, status = cadastro.cadastrar_usuario(nome, email, senha, cargo)
     return jsonify(response), status
+
 
 
 

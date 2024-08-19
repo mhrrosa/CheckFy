@@ -13,12 +13,15 @@ function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Carrega o tipo de usuário do localStorage
+    console.log('Home Component Mounted');
+    console.log('Valor de userType ao montar Home:', userType);
+    
     const storedUserType = localStorage.getItem('userType');
     if (storedUserType) {
       setUserType(parseInt(storedUserType));
+      console.log('UserType carregado do localStorage:', storedUserType);
     }
-    setIsLoading(false); // Após carregar, define isLoading como falso
+    setIsLoading(false);
     carregarAvaliacoes();
   }, [setUserType]);
 

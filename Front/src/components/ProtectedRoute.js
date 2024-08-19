@@ -4,15 +4,14 @@ import { UserContext } from '../contexts/UserContext';
 
 const ProtectedRoute = ({ children }) => {
   const { userType } = useContext(UserContext);
-
   console.log('userType no ProtectedRoute:', userType);
 
-  if (userType === null) {
-    console.log('ProtectedRoute: Redirecionando para /login-cadastro');
+  if (!userType) {
+    console.log('Redirecionando para login-cadastro, userType não definido.');
     return <Navigate to="/login-cadastro" replace />;
   }
 
-  console.log('ProtectedRoute: Autorizado, renderizando a rota');
+  console.log('Autorizado, renderizando a rota');
   return children; // Se estiver logado, renderiza a rota normalmente
 };
 

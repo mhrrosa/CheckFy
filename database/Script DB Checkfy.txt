@@ -442,7 +442,7 @@ CREATE TABLE `usuario` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `Nome` varchar(75) NOT NULL,
   `ID_Tipo` int NOT NULL,
-  `Senha` varchar(100) NOT NULL,
+  `Senha` varchar(255) NOT NULL,
   `Email` varchar(100) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `usuario_FK` (`ID_Tipo`),

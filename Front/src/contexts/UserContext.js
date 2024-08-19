@@ -6,12 +6,10 @@ export const UserProvider = ({ children }) => {
   const [userType, setUserType] = useState(() => {
     const storedUserType = localStorage.getItem('userType');
     const parsedUserType = storedUserType ? parseInt(storedUserType) : null;
-    console.log('Valor inicial de userType:', parsedUserType);
     return parsedUserType;
   });
 
   useEffect(() => {
-    console.log('userType atualizado:', userType);
     if (userType !== null) {
       localStorage.setItem('userType', userType);
     } else {

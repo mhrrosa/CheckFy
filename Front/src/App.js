@@ -17,10 +17,6 @@ import ProtectedRoute from './components/ProtectedRoute'; // Importe o Protected
 function App() {
   const location = useLocation();
   const isLoginCadastro = location.pathname === '/login-cadastro';
-
-  console.log('Rota atual:', location.pathname);
-  console.log('É a página de login/cadastro?', isLoginCadastro);
-
   return (
     <div id="app-container">
       {!isLoginCadastro && <Header />}
