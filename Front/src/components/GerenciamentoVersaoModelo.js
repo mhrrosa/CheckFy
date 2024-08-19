@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../pages/styles/GerenciamentoAnos.css';
+import '../components/styles/GerenciamentoVersaoModelo.css';
+import '../components/styles/Button.css';
 import { getVersaoModelo } from '../services/Api';
 
 function GerenciamentoAnos() {
@@ -27,14 +28,17 @@ function GerenciamentoAnos() {
   };
 
   return (
-    <div className="gerenciamento-anos-container">
-      <h1>Selecionar Ano do Modelo MPS-BR</h1>
+    <div className='container-versao-modelo centralizado'>
+      <p className='p-selecione-ano'>Selecionar Ano do Modelo MPS-BR</p>
       <div className='botoes-anos'>
-        {anos.map((ano) => (
-          <button key={ano} className='botao-ano' onClick={() => handleAnoClick(ano[0])}>
-            {ano[1]}
-          </button>
-        ))}
+        <select className='select-home-gerenciamento' onChange={(e) => handleAnoClick(e.target.value)}>
+            <option value=''>-</option>
+          {anos.map((ano) => (
+            <option key={ano[0]} value={ano[0]}>
+              {ano[1]}
+            </option>
+          ))}
+        </select>
       </div>
     </div>
   );
