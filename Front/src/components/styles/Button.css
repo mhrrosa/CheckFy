@@ -127,7 +127,7 @@
     color: #58b66e;
 }
 
-.button-remove-email {
+.button-remove {
     margin-top: 5px;
     padding: 5px 10px;
     border: 3px solid #7e0000;
@@ -135,10 +135,11 @@
     border-radius: 10px;
     cursor: pointer;
     background-color: #001034;
+    align-self: flex-start;
     transition: background-color 0.3s;
 }
 
-.button-remove-email:hover {
+.button-remove:hover {
     background-color: #7e0000;
 }
 

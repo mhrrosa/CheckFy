@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import EtapaAtividadesPlanejamento from '../components/EtapaAtividadesPlanejamento';
 import EtapaEmpresa from '../components/EtapaEmpresa';
 import EtapaInstituicao from '../components/EtapaInstituicao';
+import EtapaAcordoConfidencialidade from '../components/EtapaAcordoConfidencialidade';
 import Etapa1 from '../components/Etapa1';
 import Etapa2 from '../components/Etapa2';
 import Etapa3 from '../components/Etapa3';
@@ -19,11 +20,12 @@ const etapaComponents = {
   1: EtapaEmpresa,
   2: EtapaInstituicao,
   3: EtapaAtividadesPlanejamento,
-  4: Etapa1,
-  5: Etapa2,
-  6: Etapa3,
-  7: Etapa4,
-  8: Etapa5
+  4: EtapaAcordoConfidencialidade,
+  5: Etapa1,
+  6: Etapa2,
+  7: Etapa3,
+  8: Etapa4,
+  9: Etapa5
 };
 
 const etapaUsuarioMap = { 
@@ -31,10 +33,11 @@ const etapaUsuarioMap = {
   2: [1, 2],
   3: [1, 2],
   4: [1, 2],
-  5: [1, 3],
+  5: [1, 2],
   6: [1, 3],
-  7: [1, 2],
-  8: [1, 2]
+  7: [1, 3],
+  8: [1, 2],
+  9: [1, 2]
 };
 
 function Evaluation() {
