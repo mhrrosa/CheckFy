@@ -163,7 +163,7 @@ function CreateEvaluation() {
                 </button>
               </div>
               {adjuntoEmails.length > 1 && (
-                <button className="button-remove-email" type="button" onClick={() => removeEmail(index, setAdjuntoEmails)}>REMOVER</button>
+                <button className="button-remove" type="button" onClick={() => removeEmail(index, setAdjuntoEmails)}>REMOVER</button>
               )}
             </div>
           ))}
@@ -187,7 +187,7 @@ function CreateEvaluation() {
                 </button>
               </div>
               {colaboradorEmails.length > 1 && (
-                <button className="button-remove-email" type="button" onClick={() => removeEmail(index, setColaboradorEmails)}>REMOVER</button>
+                <button className="button-remove" type="button" onClick={() => removeEmail(index, setColaboradorEmails)}>REMOVER</button>
               )}
             </div>
           ))}

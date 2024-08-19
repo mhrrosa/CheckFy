@@ -1,0 +1,31 @@
+.div-input-acordo-confidencialidade {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin: 10px 0px;
+    gap: 10px;
+}
+
+.input-campo-acordo-confidencialidade {
+    display: none;
+}
+
+.input-campo-acordo-confidencialidade + label {
+    padding: 10px;
+    background-color: #00437e;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.input-campo-acordo-confidencialidade + label:hover {
+    background-color: #0066cc; 
+}
+
+.acordo-adicionado {
+    color: #ffffff;
+    margin-left: 10px; /* Adiciona um espaço entre o texto e o botão */
+    font-size: 14px; /* Mantém o tamanho da fonte consistente */
+    font-weight: normal; /* Mantém o peso da fonte consistente */
+}
