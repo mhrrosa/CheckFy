@@ -4,11 +4,19 @@ export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [userType, setUserType] = useState(() => {
-    return localStorage.getItem('userType') || 1;
+    const storedUserType = localStorage.getItem('userType');
+    const parsedUserType = storedUserType ? parseInt(storedUserType) : null;
+    console.log('Valor inicial de userType:', parsedUserType);
+    return parsedUserType;
   });
 
   useEffect(() => {
-    localStorage.setItem('userType', userType);
+    console.log('userType atualizado:', userType);
+    if (userType !== null) {
+      localStorage.setItem('userType', userType);
+    } else {
+      localStorage.removeItem('userType');
+    }
   }, [userType]);
 
   return (

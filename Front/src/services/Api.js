@@ -353,6 +353,30 @@ function inserir_planejamento(avaliacaoId, data){
   return put(`/inserir_planejamento/${avaliacaoId}`, data);
 }
 
+function registerUser(data) {
+  const url = '/cadastro';
+  return post(url, data)
+    .then(response => {
+      return response;
+    })
+    .catch(error => {
+      console.error('Erro ao realizar o cadastro:', error);
+      throw error;
+    });
+}
+
+function loginUser(data) {
+  const url = '/login';
+  return post(url, data)
+    .then(response => {
+      return response;
+    })
+    .catch(error => {
+      console.error('Erro ao realizar o login:', error);
+      throw error;
+    });
+}
+
 export {
   startNewEvaluation,
   getAllAvaliacoes,
@@ -401,5 +425,7 @@ export {
   deleteInstituicao,
   updateInstituicao,
   instituicaoAvaliacaoInsert,
-  inserir_planejamento
+  inserir_planejamento,
+  registerUser,
+  loginUser
 };

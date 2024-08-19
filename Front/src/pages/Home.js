@@ -61,14 +61,6 @@ function Home() {
 
   return (
     <div className="container">
-      <div className="user-simulation">
-        <label htmlFor="userType">Simular Tipo de Usuário: </label>
-        <select id="userType" value={userType} onChange={handleUserChange}>
-          <option value={1}>Administrador</option>
-          <option value={2}>Avaliador</option>
-          <option value={3}>Colaborador</option>
-        </select>
-      </div>
       <div className="botoes-home-gerenciamento">
         {(userType === 1 || userType === 2) && (
           <Link to="/create-evaluation" className="button-home-gerenciamento">NOVA AVALIAÇÃO</Link>

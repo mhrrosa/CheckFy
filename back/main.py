@@ -10,6 +10,8 @@ from Documento import Documento
 from Versao_Modelo import Versao_Modelo
 from Empresa import Empresa
 from Instituicao import Instituicao
+from Login import Login
+from Cadastro import Cadastro
 import os
 
 app = Flask(__name__)
@@ -38,6 +40,8 @@ documento = Documento(db)
 versao_modelo = Versao_Modelo(db)
 empresa = Empresa(db)
 instituicao = Instituicao(db)
+login = Login(db)
+cadastro = Cadastro(db)
 
 @app.route('/add_nivel', methods=['POST'])
 def add_nivel():
@@ -623,6 +627,31 @@ def instituicao_avaliacao_insert(avaliacao_id):
         return jsonify({'message': 'Instituição atualizada com sucesso!'})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/login', methods=['POST'])
+def user_login():
+    data = request.json
+    email = data.get('email')
+    senha = data.get('senha')
+    if not email or not senha:
+        return jsonify({"message": "Email e senha são obrigatórios."}), 400
+
+    response = login.login(email, senha)
+    return jsonify(response), response.get("status", 200)
+
+@app.route('/cadastro', methods=['POST'])
+def user_cadastro():
+    data = request.json
+    nome = data.get('nome')
+    email = data.get('email')
+    senha = data.get('senha')
+    cargo = data.get('cargo')
+
+    if not nome or not email or not senha or not cargo:
+        return jsonify({"message": "Todos os campos são obrigatórios."}), 400
+
+    response, status = cadastro.cadastrar_usuario(nome, email, senha, cargo)
+    return jsonify(response), status
 
 
 
