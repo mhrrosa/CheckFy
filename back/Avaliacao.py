@@ -11,7 +11,8 @@ class Avaliacao:
             values = (nome, descricao, "Em andamento", id_nivel_solicitado, id_usuario, 1, id_versao_modelo)
             self.db.execute_query(query, values)
             id_avaliacao = self.db.cursor.lastrowid
-            print(id_usuario, id_avaliacao)
+
+            # Inserir o criador da avaliação na tabela usuarios_avaliacao
             query = """
                 INSERT INTO usuarios_avaliacao (ID_Avaliacao, ID_Usuario, ID_Funcao) 
                 VALUES (%s, %s, %s)
@@ -19,49 +20,66 @@ class Avaliacao:
             values = (id_avaliacao, id_usuario, 1)
             self.db.execute_query(query, values)
 
-            for email in adjunto_emails:
-                query = "INSERT INTO usuario (Nome, Email, Senha, ID_Tipo) VALUES (%s, %s, %s, %s)"
-                self.db.execute_query(query, ("Adjunto", email, "Senha Teste", 2), commit=False)
+            # Função auxiliar para inserir ou linkar usuário à avaliação
+            def inserir_ou_linkar_usuario(email, id_funcao):
+                # Verificar se o usuário já existe
+                query = "SELECT ID FROM usuario WHERE Email = %s"
+                self.db.cursor.execute(query, (email,))
+                usuario = self.db.cursor.fetchone()
 
+                if usuario:
+                    # Usuário já existe, linkar à avaliação
+                    query = "INSERT INTO usuarios_avaliacao (ID_Avaliacao, ID_Usuario, ID_Funcao) VALUES (%s, %s, %s)"
+                    self.db.execute_query(query, (id_avaliacao, usuario[0], id_funcao))
+                else:
+                    # Usuário não existe, inserir e linkar à avaliação
+                    query = "INSERT INTO usuario (Nome, Email, Senha, ID_Tipo) VALUES (%s, %s, %s, %s)"
+                    self.db.execute_query(query, ("Usuário", email, "Senha Teste", id_funcao))
+                    novo_usuario_id = self.db.cursor.lastrowid
+
+                    # Linkar o novo usuário à avaliação
+                    query = "INSERT INTO usuarios_avaliacao (ID_Avaliacao, ID_Usuario, ID_Funcao) VALUES (%s, %s, %s)"
+                    self.db.execute_query(query, (id_avaliacao, novo_usuario_id, id_funcao))
+
+                    # Simular envio de e-mail para cadastro
+                    print(f"Simulação de envio de e-mail para {email} solicitando cadastro no sistema.")
+
+            # Processar os e-mails dos avaliadores adjuntos
+            for email in adjunto_emails:
+                inserir_ou_linkar_usuario(email, 2)
+
+            # Processar os e-mails dos colaboradores empresariais
             for email in colaborador_emails:
-                query = "INSERT INTO usuario (Nome, Email, Senha, ID_Tipo) VALUES (%s, %s, %s, %s)"
-                self.db.execute_query(query, ("Adjunto", email, "Senha Teste", 3), commit=False)
+                inserir_ou_linkar_usuario(email, 5)
 
             self.db.conn.commit()
+
         except Exception as e:
             print(f"Erro ao adicionar avaliação: {e}")
             self.db.conn.rollback()
             raise
 
+
     def listar_avaliacoes(self, idAvaliador):
         try:
-            # Primeiro, buscar IDs de avaliação associados ao usuário
-            print("Buscando IDs de avaliação para o usuário:", idAvaliador)
             query_ids = "SELECT ID_Avaliacao FROM usuarios_avaliacao WHERE ID_Usuario = %s"
             values = (idAvaliador,)
             self.db.cursor.execute(query_ids, values)
             avaliacao_ids = self.db.cursor.fetchall()
-            print("IDs de avaliação encontrados:", avaliacao_ids)
 
-            # Verificar se foram encontrados IDs de avaliação
             if not avaliacao_ids:
-                print("Nenhum ID de avaliação encontrado.")
+                print("Nenhum ID de avaliação encontrada")
                 return []
 
-            # Extrair IDs de avaliação para uma lista simples
             avaliacao_ids = [row[0] for row in avaliacao_ids]
 
-            # Agora, buscar as avaliações baseadas nos IDs encontrados
             placeholders = ','.join(['%s'] * len(avaliacao_ids))
             query = f"SELECT * FROM avaliacao WHERE ID IN ({placeholders})"
-            print("Executando query para avaliações:", query)
 
             # Executar a query para buscar as avaliações
             self.db.cursor.execute(query, tuple(avaliacao_ids))
             result = self.db.cursor.fetchall()
-            print("Avaliações encontradas:", result)
 
-            # Transformar o resultado em uma lista de dicionários
             avaliacoes = [
                 {
                     "id": row[0],
