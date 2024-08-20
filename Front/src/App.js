@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import CreateEvaluation from './pages/CreateEvaluation';
 import Evaluation from './pages/Evaluation';
+import DetailsEvaluation from './pages/detailsEvaluation';
 import UpdateEvaluation from './pages/UpdateEvaluation';
 import Results from './pages/Results';
 import LoginCadastro from './pages/LoginCadastro';
@@ -17,6 +18,10 @@ import ProtectedRoute from './components/ProtectedRoute'; // Importe o Protected
 function App() {
   const location = useLocation();
   const isLoginCadastro = location.pathname === '/login-cadastro';
+
+  console.log('Rota atual:', location.pathname);
+  console.log('É a página de login/cadastro?', isLoginCadastro);
+
   return (
     <div id="app-container">
       {!isLoginCadastro && <Header />}
@@ -46,6 +51,14 @@ function App() {
                 <Evaluation />
               </ProtectedRoute>
             } 
+          />
+          <Route
+            path="/details-evaluation"
+            element={
+              <ProtectedRoute>
+                <DetailsEvaluation />
+              </ProtectedRoute>
+            }
           />
           <Route 
             path="/update-evaluation" 
