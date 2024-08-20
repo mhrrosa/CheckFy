@@ -7,17 +7,19 @@ import '../components/styles/Button.css';
 import '../components/styles/Container.css';
 import '../pages/styles/LoginCadastro.css';
 import logo from '../img/logo_horizontal.png';
-import "https://kit.fontawesome.com/f0606dbd93.js";
 
 const LoginCadastro = () => {
   const navigate = useNavigate();
-  const { setUserType } = useContext(UserContext); // Use o contexto para obter `setUserType`
+  const { setUserId, setUserType } = useContext(UserContext); // Obtenha setUserId e setUserType do contexto
+
   const [formData, setFormData] = useState({
     nome: '',
     cargo: '',
     email: '',
     senha: ''
   });
+
+  const [isSignUp, setIsSignUp] = useState(false); // Estado para controlar se está na tela de SignUp
 
   useEffect(() => {
     const btnSignin = document.querySelector("#signin");
@@ -26,10 +28,12 @@ const LoginCadastro = () => {
 
     const handleSigninClick = () => {
       body.className = "sign-in-js";
+      setIsSignUp(false); // Muda para o modo de Login
     };
 
     const handleSignupClick = () => {
       body.className = "sign-up-js";
+      setIsSignUp(true); // Muda para o modo de SignUp
     };
 
     if (btnSignin) {
@@ -58,20 +62,6 @@ const LoginCadastro = () => {
     }));
   };
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await registerUser(formData);
-      if (response.user_id) {
-        setUserType(1); // Atualize o contexto para refletir o usuário logado
-        localStorage.setItem('userType', '1'); // Opcionalmente, armazene no localStorage
-        navigate('/'); // Redireciona para a página inicial após cadastro bem-sucedido
-      }
-    } catch (error) {
-      console.error('Erro ao registrar o usuário:', error);
-    }
-  };
-
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -79,14 +69,25 @@ const LoginCadastro = () => {
         email: formData.email,
         senha: formData.senha,
       });
-
       if (response.user_id) {
-        localStorage.setItem('userType', '1');
-        setUserType(1); // Atualize o contexto para refletir o usuário logado
-        navigate('/'); // Redirecione para a Home
+        setUserId(response.user_id);
+        setUserType(1);
+        navigate('/home');
       }
     } catch (error) {
       console.error('Erro ao fazer login:', error);
+    }
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await registerUser(formData);
+      if (response.user_id) {
+        handleLogin(e);
+      }
+    } catch (error) {
+      console.error('Erro ao registrar o usuário:', error);
     }
   };
 
@@ -111,7 +112,7 @@ const LoginCadastro = () => {
                 placeholder="Nome Completo"
                 name="nome"
                 value={formData.nome}
-                onChange={handleInputChange}
+                onChange={handleInputChange} 
               />
             </label>
             <label className="label-input" htmlFor="cargo">
@@ -119,7 +120,7 @@ const LoginCadastro = () => {
               <select
                 name="cargo"
                 value={formData.cargo}
-                onChange={handleInputChange}
+                onChange={handleInputChange} 
               >
                 <option value="" disabled>Cargo</option>
                 <option value="Avaliador">Avaliador</option>
@@ -135,7 +136,7 @@ const LoginCadastro = () => {
                 placeholder="Email"
                 name="email"
                 value={formData.email}
-                onChange={handleInputChange}
+                onChange={handleInputChange} 
               />
             </label>
             <label className="label-input" htmlFor="senha">
@@ -145,7 +146,7 @@ const LoginCadastro = () => {
                 placeholder="Senha"
                 name="senha"
                 value={formData.senha}
-                onChange={handleInputChange}
+                onChange={handleInputChange} 
               />
             </label>
             <button className="button button-second">Cadastrar</button>
@@ -171,7 +172,7 @@ const LoginCadastro = () => {
                 placeholder="Email"
                 name="email"
                 value={formData.email}
-                onChange={handleInputChange}
+                onChange={handleInputChange} 
               />
             </label>
             <label className="label-input" htmlFor="senha">
@@ -181,7 +182,7 @@ const LoginCadastro = () => {
                 placeholder="Senha"
                 name="senha"
                 value={formData.senha}
-                onChange={handleInputChange}
+                onChange={handleInputChange} 
               />
             </label>
             <a className="password" href="/">Esqueceu sua senha?</a>

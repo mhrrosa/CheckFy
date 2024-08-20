@@ -68,8 +68,12 @@ function CreateEvaluation() {
       idVersaoModelo,
       idUsuario: userId // Certifique-se de incluir o idUsuario
     };
+    
+    console.log('Data being sent:', data); // Log para verificar os dados antes de enviar
+
     try {
       const response = await startNewEvaluation(data);
+      console.log('Response from startNewEvaluation:', response); // Log para verificar a resposta da API
       navigate('/home', { state: { setup: response } });
     } catch (error) {
       console.error('Erro ao iniciar avaliação:', error);
