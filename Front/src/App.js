@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -12,25 +12,36 @@ import Gerenciamento from './pages/Gerenciamento';
 import Niveis from './pages/Niveis';
 import Processos from './pages/Processos';
 import ResultadosEsperados from './pages/ResultadosEsperados';
-import ProtectedRoute from './components/ProtectedRoute'; // Importe o ProtectedRoute
+import ProtectedRoute from './components/ProtectedRoute';
+import { UserContext } from './contexts/UserContext'; // Importando o contexto
 
 function App() {
   const location = useLocation();
   const isLoginCadastro = location.pathname === '/login-cadastro';
+  const { userType } = React.useContext(UserContext); // Usando o contexto para verificar o tipo de usuário
+
   return (
     <div id="app-container">
       {!isLoginCadastro && <Header />}
       <div id="content-wrap">
         <Routes>
           <Route path="/login-cadastro" element={<LoginCadastro />} />
+          
+          {/* Redirecionamento da raiz para /home */}
           <Route 
             path="/" 
+            element={<Navigate to="/home" replace />} 
+          />
+
+          <Route 
+            path="/home" 
             element={
               <ProtectedRoute>
                 <Home />
               </ProtectedRoute>
             } 
           />
+
           <Route 
             path="/create-evaluation" 
             element={
@@ -93,6 +104,16 @@ function App() {
               <ProtectedRoute>
                 <ResultadosEsperados />
               </ProtectedRoute>
+            } 
+          />
+
+          {/* Rota "catch-all" para rotas inexistentes */}
+          <Route 
+            path="*" 
+            element={
+              userType 
+                ? <Navigate to="/home" replace />  // Se estiver logado, redireciona para /home
+                : <Navigate to="/login-cadastro" replace />  // Se não estiver logado, redireciona para /login-cadastro
             } 
           />
         </Routes>

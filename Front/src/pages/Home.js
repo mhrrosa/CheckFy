@@ -12,14 +12,10 @@ function Home() {
   const [isLoading, setIsLoading] = useState(true); // Novo estado para carregamento
   const navigate = useNavigate();
 
-  useEffect(() => {
-    console.log('Home Component Mounted');
-    console.log('Valor de userType ao montar Home:', userType);
-    
+  useEffect(() => {    
     const storedUserType = localStorage.getItem('userType');
     if (storedUserType) {
       setUserType(parseInt(storedUserType));
-      console.log('UserType carregado do localStorage:', storedUserType);
     }
     setIsLoading(false);
     carregarAvaliacoes();

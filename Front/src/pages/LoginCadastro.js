@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Importe o hook useNavigate
-import { registerUser, loginUser } from '../services/Api'; // Importe as funções da API
+import React, { useEffect, useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { registerUser, loginUser } from '../services/Api';
+import { UserContext } from '../contexts/UserContext'; // Importe o UserContext
 import '../components/styles/Body.css';
 import '../components/styles/Button.css';
 import '../components/styles/Container.css';
@@ -9,7 +10,8 @@ import logo from '../img/logo_horizontal.png';
 import "https://kit.fontawesome.com/f0606dbd93.js";
 
 const LoginCadastro = () => {
-  const navigate = useNavigate(); // Inicialize o hook useNavigate
+  const navigate = useNavigate();
+  const { setUserType } = useContext(UserContext); // Use o contexto para obter `setUserType`
   const [formData, setFormData] = useState({
     nome: '',
     cargo: '',
@@ -18,19 +20,15 @@ const LoginCadastro = () => {
   });
 
   useEffect(() => {
-    console.log('LoginCadastro Component Mounted'); // Log para monitorar o carregamento do componente
-
     const btnSignin = document.querySelector("#signin");
     const btnSignup = document.querySelector("#signup");
     const body = document.querySelector("body");
 
     const handleSigninClick = () => {
-      console.log('Sign-in button clicked'); // Log para verificar clique no botão de login
       body.className = "sign-in-js";
     };
 
     const handleSignupClick = () => {
-      console.log('Sign-up button clicked'); // Log para verificar clique no botão de cadastro
       body.className = "sign-up-js";
     };
 
@@ -43,7 +41,6 @@ const LoginCadastro = () => {
     }
 
     return () => {
-      console.log('Cleanup event listeners'); // Log para verificar limpeza de eventos
       if (btnSignin) {
         btnSignin.removeEventListener("click", handleSigninClick);
       }
@@ -59,17 +56,15 @@ const LoginCadastro = () => {
       ...prevState,
       [name]: value
     }));
-    console.log(`Input changed: ${name} = ${value}`); // Log para monitorar mudanças nos inputs
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    console.log('handleRegister called with data:', formData); // Log para verificar dados no momento do cadastro
     try {
       const response = await registerUser(formData);
-      console.log('Resposta da API após cadastro:', response);
       if (response.user_id) {
-        console.log('Redirecionando para a Home após cadastro');
+        setUserType(1); // Atualize o contexto para refletir o usuário logado
+        localStorage.setItem('userType', '1'); // Opcionalmente, armazene no localStorage
         navigate('/'); // Redireciona para a página inicial após cadastro bem-sucedido
       }
     } catch (error) {
@@ -80,22 +75,14 @@ const LoginCadastro = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      console.log('handleLogin called with data:', {
-        email: formData.email,
-        senha: formData.senha,
-      });
-      
       const response = await loginUser({
         email: formData.email,
         senha: formData.senha,
       });
-  
-      console.log('Resposta da API após login:', response);
-  
+
       if (response.user_id) {
-        localStorage.setItem('userType', '1'); // Define um valor para userType, ajustado conforme necessário
-        setUserType(1); // Atualize o contexto
-        console.log('Redirecionando para a Home após login');
+        localStorage.setItem('userType', '1');
+        setUserType(1); // Atualize o contexto para refletir o usuário logado
         navigate('/'); // Redirecione para a Home
       }
     } catch (error) {

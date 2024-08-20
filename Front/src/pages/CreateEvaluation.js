@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { startNewEvaluation, getNiveis, getVersaoModelo } from '../services/Api';
+import { UserContext } from '../contexts/UserContext'; // Importe o UserContext
 import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
@@ -17,6 +18,7 @@ function CreateEvaluation() {
   const [colaboradorEmails, setColaboradorEmails] = useState(['']);
   const [versoesModelo, setVersoesModelo] = useState([]);
   const [idVersaoModelo, setIdVersaoModelo] = useState('');
+  const { userId } = useContext(UserContext); // Obtenha o userId do contexto
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -55,24 +57,24 @@ function CreateEvaluation() {
   };
 
   const handleStartEvaluation = async (event) => {
-    event.preventDefault(); // Adicionado para prevenir o comportamento padrão do botão de formulário
-  
+    event.preventDefault();
+
     const data = {
       companyName,
       descricao,
       nivelSolicitado,
       adjuntoEmails,
       colaboradorEmails,
-      idVersaoModelo
+      idVersaoModelo,
+      idUsuario: userId // Certifique-se de incluir o idUsuario
     };
     try {
       const response = await startNewEvaluation(data);
-      navigate('/', { state: { setup: response } });
+      navigate('/home', { state: { setup: response } });
     } catch (error) {
       console.error('Erro ao iniciar avaliação:', error);
     }
   };
-  
 
   const addEmail = (setEmails) => {
     setEmails(currentEmails => [...currentEmails, '']);
@@ -89,7 +91,7 @@ function CreateEvaluation() {
   return (
     <div className="container">
       <form className="form-create-evaluation">
-        <button className="button-close-form" onClick={() => navigate('/')}>
+        <button className="button-close-form" onClick={() => navigate('/home')}>
           <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -154,10 +156,10 @@ function CreateEvaluation() {
                   onChange={(e) => updateEmail(index, e.target.value, setAdjuntoEmails)}
                   placeholder="Digite o email do avaliador adjunto"
                 />
-                <button className="button-add-email" type="button" onClick={() => addEmail(setColaboradorEmails)}>
+                <button className="button-add-email" type="button" onClick={() => addEmail(setAdjuntoEmails)}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="12" y1="8" x2="12" y1="16"></line>
                     <line x1="8" y1="12" x2="16" y2="12"></line>
                   </svg>
                 </button>
@@ -181,7 +183,7 @@ function CreateEvaluation() {
                 <button className="button-add-email" type="button" onClick={() => addEmail(setColaboradorEmails)}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="12" y1="8" x2="12" y1="16"></line>
                     <line x1="8" y1="12" x2="16" y2="12"></line>
                   </svg>
                 </button>

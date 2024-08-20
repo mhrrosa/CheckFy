@@ -182,7 +182,8 @@ def add_avaliacao():
         adjunto_emails = avaliacao_data['adjuntoEmails']
         colaborador_emails = avaliacao_data['colaboradorEmails']
         id_versao_modelo = avaliacao_data['idVersaoModelo']
-        avaliacao.adicionar_avaliacao(nome, descricao, nivel_solicitado, adjunto_emails, colaborador_emails, id_versao_modelo)
+        id_usuario = avaliacao_data['idUsuario']
+        avaliacao.adicionar_avaliacao(nome, descricao, nivel_solicitado, adjunto_emails, colaborador_emails, id_usuario, id_versao_modelo)
         return jsonify({"message": "Avaliação adicionada com sucesso"}), 200
     except KeyError as e:
         print(f"Erro: Campo necessário não fornecido - {str(e)}")

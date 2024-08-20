@@ -2,13 +2,13 @@ class Avaliacao:
     def __init__(self, db):
         self.db = db
 
-    def adicionar_avaliacao(self, nome, descricao, id_nivel_solicitado, adjunto_emails, colaborador_emails, id_versao_modelo):
+    def adicionar_avaliacao(self, nome, descricao, id_nivel_solicitado, adjunto_emails, colaborador_emails, id_usuario, id_versao_modelo):
         try:
             query = """
                 INSERT INTO avaliacao (Nome, Descricao, Status, ID_Nivel_Solicitado, ID_Avaliador_Lider, ID_Atividade, ID_Versao_Modelo) 
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
             """
-            values = (nome, descricao, "Em andamento", id_nivel_solicitado, 1, 1, id_versao_modelo)
+            values = (nome, descricao, "Em andamento", id_nivel_solicitado, id_usuario, 1, id_versao_modelo)
             self.db.execute_query(query, values)
             
             avaliacao_id = self.db.cursor.lastrowid
