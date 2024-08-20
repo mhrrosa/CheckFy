@@ -22,8 +22,9 @@ function Home() {
   }, [setUserType]);
 
   const carregarAvaliacoes = async () => {
+    const userId = sessionStorage.getItem('userId');  // Obtém o userId do sessionStorage
     try {
-      const data = await getAllAvaliacoes();
+      const data = await getAllAvaliacoes(userId);  // Passa o userId para a API
       setAvaliacoes(data);
     } catch (error) {
       console.error('Erro ao buscar avaliações:', error);

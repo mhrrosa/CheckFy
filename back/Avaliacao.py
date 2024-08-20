@@ -10,8 +10,14 @@ class Avaliacao:
             """
             values = (nome, descricao, "Em andamento", id_nivel_solicitado, id_usuario, 1, id_versao_modelo)
             self.db.execute_query(query, values)
-            
-            avaliacao_id = self.db.cursor.lastrowid
+            id_avaliacao = self.db.cursor.lastrowid
+            print(id_usuario, id_avaliacao)
+            query = """
+                INSERT INTO usuarios_avaliacao (ID_Avaliacao, ID_Usuario, ID_Funcao) 
+                VALUES (%s, %s, %s)
+            """
+            values = (id_avaliacao, id_usuario, 1)
+            self.db.execute_query(query, values)
 
             for email in adjunto_emails:
                 query = "INSERT INTO usuario (Nome, Email, Senha, ID_Tipo) VALUES (%s, %s, %s, %s)"
@@ -27,25 +33,56 @@ class Avaliacao:
             self.db.conn.rollback()
             raise
 
-    def listar_avaliacoes(self):
-        query = "SELECT * FROM avaliacao"
-        self.db.cursor.execute(query)
-        result = self.db.cursor.fetchall()
-        avaliacoes = []
-        for row in result:
-            avaliacao = {
-                "id": row[0],
-                "nome": row[1],
-                "descricao": row[2],
-                "id_avaliador_lider": row[3],
-                "status": row[4],
-                "id_atividade": row[5],
-                "id_empresa": row[6],
-                "id_nivel_solicitado": row[7],
-                "id_versao_modelo": row[10]
-            }
-            avaliacoes.append(avaliacao)
-        return avaliacoes
+    def listar_avaliacoes(self, idAvaliador):
+        try:
+            # Primeiro, buscar IDs de avaliação associados ao usuário
+            print("Buscando IDs de avaliação para o usuário:", idAvaliador)
+            query_ids = "SELECT ID_Avaliacao FROM usuarios_avaliacao WHERE ID_Usuario = %s"
+            values = (idAvaliador,)
+            self.db.cursor.execute(query_ids, values)
+            avaliacao_ids = self.db.cursor.fetchall()
+            print("IDs de avaliação encontrados:", avaliacao_ids)
+
+            # Verificar se foram encontrados IDs de avaliação
+            if not avaliacao_ids:
+                print("Nenhum ID de avaliação encontrado.")
+                return []
+
+            # Extrair IDs de avaliação para uma lista simples
+            avaliacao_ids = [row[0] for row in avaliacao_ids]
+
+            # Agora, buscar as avaliações baseadas nos IDs encontrados
+            placeholders = ','.join(['%s'] * len(avaliacao_ids))
+            query = f"SELECT * FROM avaliacao WHERE ID IN ({placeholders})"
+            print("Executando query para avaliações:", query)
+
+            # Executar a query para buscar as avaliações
+            self.db.cursor.execute(query, tuple(avaliacao_ids))
+            result = self.db.cursor.fetchall()
+            print("Avaliações encontradas:", result)
+
+            # Transformar o resultado em uma lista de dicionários
+            avaliacoes = [
+                {
+                    "id": row[0],
+                    "nome": row[1],
+                    "descricao": row[2],
+                    "id_avaliador_lider": row[3],
+                    "status": row[4],
+                    "id_atividade": row[5],
+                    "id_empresa": row[6],
+                    "id_nivel_solicitado": row[7],
+                    "id_versao_modelo": row[10],
+                }
+                for row in result
+            ]
+
+            return avaliacoes
+
+        except Exception as e:
+            print(f"Erro ao executar query: {e}")
+            raise
+
     
     def obter_avaliacao(self, projeto_id):
         query = "SELECT * FROM avaliacao WHERE ID = %s"

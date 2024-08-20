@@ -192,10 +192,10 @@ def add_avaliacao():
         print(f"Erro ao adicionar avaliação: {e}")
         return jsonify({"message": "Erro ao adicionar avaliação", "error": str(e)}), 500
 
-@app.route('/listar_avaliacoes', methods=['GET'])
-def listar_avaliacoes():
+@app.route('/listar_avaliacoes/<int:id_usuario>', methods=['GET'])
+def listar_avaliacoes(id_usuario):
     try:
-        projetos = avaliacao.listar_avaliacoes()
+        projetos = avaliacao.listar_avaliacoes(id_usuario)
         return jsonify(projetos), 200
     except Exception as e:
         print(f"Erro ao listar projetos: {e}")

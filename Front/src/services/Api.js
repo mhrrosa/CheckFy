@@ -91,8 +91,8 @@ function startNewEvaluation(data) {
     });
 }
 
-function getAllAvaliacoes() {
-  return get('/listar_avaliacoes');
+function getAllAvaliacoes(userId) {
+  return get(`/listar_avaliacoes/${userId}`);
 }
 
 function deleteAvaliacao(id) {

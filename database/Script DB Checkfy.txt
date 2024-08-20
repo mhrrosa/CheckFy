@@ -461,34 +461,34 @@ INSERT INTO `usuario` VALUES (1,'Avaliador teste',1,'teste','teste'),(3,'Adjunto
 UNLOCK TABLES;
 
 --
--- Table structure for table `usuarios_projeto`
+-- Table structure for table `usuarios_avaliacao`
 --
 
-DROP TABLE IF EXISTS `usuarios_projeto`;
+DROP TABLE IF EXISTS `usuarios_avaliacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `usuarios_projeto` (
+CREATE TABLE `usuarios_avaliacao` (
   `ID` int NOT NULL AUTO_INCREMENT,
-  `ID_Projeto` int DEFAULT NULL,
+  `ID_Avaliacao` int DEFAULT NULL,
   `ID_Usuario` int NOT NULL,
   `ID_Funcao` int NOT NULL,
   PRIMARY KEY (`ID`),
-  KEY `usuarios_projeto_FK` (`ID_Usuario`),
-  KEY `usuarios_projeto_FK_1` (`ID_Funcao`),
-  KEY `usuarios_projeto_FK_2` (`ID_Projeto`),
-  CONSTRAINT `usuarios_projeto_FK` FOREIGN KEY (`ID_Usuario`) REFERENCES `usuario` (`ID`),
-  CONSTRAINT `usuarios_projeto_FK_1` FOREIGN KEY (`ID_Funcao`) REFERENCES `funcao_usuario` (`ID`),
-  CONSTRAINT `usuarios_projeto_FK_2` FOREIGN KEY (`ID_Projeto`) REFERENCES `avaliacao` (`ID`)
+  KEY `usuarios_avaliacao_FK` (`ID_Usuario`),
+  KEY `usuarios_avaliacao_FK_1` (`ID_Funcao`),
+  KEY `usuarios_avaliacao_FK_2` (`ID_Avaliacao`),
+  CONSTRAINT `usuarios_avaliacao_FK` FOREIGN KEY (`ID_Usuario`) REFERENCES `usuario` (`ID`),
+  CONSTRAINT `usuarios_avaliacao_FK_1` FOREIGN KEY (`ID_Funcao`) REFERENCES `funcao_usuario` (`ID`),
+  CONSTRAINT `usuarios_avaliacao_FK_2` FOREIGN KEY (`ID_Avaliacao`) REFERENCES `avaliacao` (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `usuarios_projeto`
+-- Dumping data for table `usuarios_avaliacao`
 --
 
-LOCK TABLES `usuarios_projeto` WRITE;
-/*!40000 ALTER TABLE `usuarios_projeto` DISABLE KEYS */;
-/*!40000 ALTER TABLE `usuarios_projeto` ENABLE KEYS */;
+LOCK TABLES `usuarios_avaliacao` WRITE;
+/*!40000 ALTER TABLE `usuarios_avaliacao` DISABLE KEYS */;
+/*!40000 ALTER TABLE `usuarios_avaliacao` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
