@@ -79,6 +79,9 @@ function Home() {
             <div key={avaliacao.id} className="avaliacao-item">
               <p>{avaliacao.nome} - {avaliacao.status}</p>
               <div className="botoes-avaliacao">
+                <button className="button-home-avaliacao" onClick={() => navigate(`/details-evaluation`, { state: { id: avaliacao.id } })}>
+                  DETALHES
+                </button>
                 <button className="button-home-avaliacao" onClick={() => handleContinue(avaliacao.id)}>
                   CONTINUAR
                 </button>
