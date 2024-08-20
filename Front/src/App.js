@@ -5,7 +5,6 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import CreateEvaluation from './pages/CreateEvaluation';
 import Evaluation from './pages/Evaluation';
-import DetailsEvaluation from './pages/detailsEvaluation';
 import UpdateEvaluation from './pages/UpdateEvaluation';
 import Results from './pages/Results';
 import LoginCadastro from './pages/LoginCadastro';
@@ -47,14 +46,6 @@ function App() {
                 <Evaluation />
               </ProtectedRoute>
             } 
-          />
-          <Route
-            path="/details-evaluation"
-            element={
-              <ProtectedRoute>
-                <DetailsEvaluation />
-              </ProtectedRoute>
-            }
           />
           <Route 
             path="/update-evaluation" 
