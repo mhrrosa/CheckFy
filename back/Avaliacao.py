@@ -26,6 +26,9 @@ class Avaliacao:
                 query = "SELECT ID FROM usuario WHERE Email = %s"
                 self.db.cursor.execute(query, (email,))
                 usuario = self.db.cursor.fetchone()
+                
+                # Consumir quaisquer resultados pendentes
+                self.db.cursor.fetchall()
 
                 if usuario:
                     # Usuário já existe, linkar à avaliação
@@ -58,6 +61,7 @@ class Avaliacao:
             print(f"Erro ao adicionar avaliação: {e}")
             self.db.conn.rollback()
             raise
+
 
 
     def listar_avaliacoes(self, idAvaliador):
