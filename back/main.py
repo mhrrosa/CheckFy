@@ -653,8 +653,47 @@ def cadastro_route():
     response, status = cadastro.cadastrar_usuario(nome, email, senha, cargo)
     return jsonify(response), status
 
+@app.route('/upload_acordo_confidencialidade/<int:avaliacao_id>', methods=['POST'])
+def upload_acordo_confidencialidade(avaliacao_id):
+    if 'file' not in request.files:
+        return jsonify({"message": "No file part"}), 400
 
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"message": "No selected file"}), 400
 
+    if file:
+        filename = file.filename
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(filepath)
+
+        # Atualizar o campo Caminho_Acordo_Confidencialidade na tabela avaliacao
+        try:
+            query = "UPDATE avaliacao SET Caminho_Acordo_Confidencialidade = %s WHERE ID = %s"
+            values = (filename, avaliacao_id)
+            db.cursor.execute(query, values)
+            db.conn.commit()
+            return jsonify({"message": "Acordo de confidencialidade salvo com sucesso!", "filepath": filename}), 200
+        except Exception as e:
+            print(f"Erro ao atualizar Caminho_Acordo_Confidencialidade: {e}")
+            return jsonify({"message": "Erro ao atualizar Caminho_Acordo_Confidencialidade", "error": str(e)}), 500
+
+@app.route('/get_acordo_confidencialidade/<int:avaliacao_id>', methods=['GET'])
+def get_acordo_confidencialidade(avaliacao_id):
+    try:
+        query = "SELECT Caminho_Acordo_Confidencialidade FROM avaliacao WHERE ID = %s"
+        db.cursor.execute(query, (avaliacao_id,))
+        result = db.cursor.fetchone()
+
+        if result and result[0]:
+            return jsonify({"filepath": result[0]}), 200
+        else:
+            # Retorna uma resposta com status 200, mas sem um caminho de arquivo
+            return jsonify({"message": "Nenhum acordo de confidencialidade encontrado.", "filepath": None}), 200
+    except Exception as e:
+        print(f"Erro ao obter Caminho_Acordo_Confidencialidade: {e}")
+        return jsonify({"message": "Erro ao obter Caminho_Acordo_Confidencialidade", "error": str(e)}), 500
+    
 
 if __name__ == '__main__':
     app.run(debug=True)

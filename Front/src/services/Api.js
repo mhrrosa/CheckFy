@@ -377,6 +377,39 @@ function loginUser(data) {
     });
 }
 
+function uploadAcordoConfidencialidade(avaliacaoId, file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  return fetch(`${baseUrl}/upload_acordo_confidencialidade/${avaliacaoId}`, {
+      method: 'POST',
+      body: formData,
+  })
+  .then(response => {
+      if (!response.ok) {
+          throw new Error('Erro no upload do Acordo de Confidencialidade');
+      }
+      return response.json();
+  })
+  .catch(error => {
+      console.error('Erro ao realizar upload:', error);
+      throw error;
+  });
+}
+
+function getAcordoConfidencialidade(avaliacaoId) {
+  return fetch(`${baseUrl}/get_acordo_confidencialidade/${avaliacaoId}`)
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Erro ao buscar o Acordo de Confidencialidade');
+          }
+          return response.json();
+      })
+      .catch(error => {
+          console.error('Erro ao buscar Acordo de Confidencialidade:', error);
+          throw error;
+      });
+}
+
 export {
   startNewEvaluation,
   getAllAvaliacoes,
@@ -427,5 +460,7 @@ export {
   instituicaoAvaliacaoInsert,
   inserir_planejamento,
   registerUser,
-  loginUser
+  loginUser,
+  uploadAcordoConfidencialidade,
+  getAcordoConfidencialidade
 };

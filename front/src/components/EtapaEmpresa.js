@@ -46,6 +46,7 @@ function EtapaEmpresa({ onNext, avaliacaoId }) {
           await carregarEmpresas();
           const novaEmpresaId = novaEmpresaResponse.id;
           await empresaAvaliacaoInsert(avaliacaoId, { idEmpresa: novaEmpresaId });
+          alert('Empresa salva com sucesso!');
           setEmpresaSelecionada(novaEmpresaId);
           setNovaEmpresa('');
           setNovoCnpj('');

@@ -47,6 +47,7 @@ function EtapaInstituicaoAvaliadora({ onNext, avaliacaoId }) {
           await carregarInstituicoes();
           const novaInstituicaoId = novaInstituicaoResponse.id;
           await instituicaoAvaliacaoInsert(avaliacaoId, { idInstituicao: novaInstituicaoId });
+          alert('Instituição salva com sucesso!');
           setInstituicaoSelecionada(novaInstituicaoId);
           setNovaInstituicao('');
           setNovoCnpj('');

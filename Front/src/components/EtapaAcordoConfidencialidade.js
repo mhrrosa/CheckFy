@@ -1,20 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
 import '../components/styles/Button.css';
 import '../components/styles/EtapaAcordoConfidencialidade.css';
+import { uploadAcordoConfidencialidade, getAcordoConfidencialidade } from '../services/Api.js';
 
-function EtapaAcordoConfidencialidade({ onNext }) {
+function EtapaAcordoConfidencialidade({ onNext, avaliacaoId, idAtividade }) {
     const [acordoConfidencialidade, setAcordoConfidencialidade] = useState(null);
+    const [existingAcordo, setExistingAcordo] = useState(null);
+    const [canEdit, setCanEdit] = useState(idAtividade === 4);
+    const [isSaved, setIsSaved] = useState(false);
+
+    useEffect(() => {
+        const fetchAcordoConfidencialidade = async () => {
+            try {
+                const data = await getAcordoConfidencialidade(avaliacaoId);
+                setExistingAcordo(data.filepath);
+                // Se o usuário já passou dessa etapa, não permitir edição
+                if (idAtividade > 4) {
+                    setCanEdit(false);
+                }
+            } catch (error) {
+                console.error('Erro ao buscar acordo de confidencialidade:', error);
+            }
+        };
+
+        fetchAcordoConfidencialidade();
+    }, [avaliacaoId, idAtividade]);
 
     const handleAcordoConfidencialidadeChange = (event) => {
-        setAcordoConfidencialidade(event.target.files[0]);
+        if (canEdit) {
+            setAcordoConfidencialidade(event.target.files[0]);
+        }
     };
 
     const removerAcordoConfidencialidade = () => {
-        setAcordoConfidencialidade(null);
-        document.getElementById('file').value = null; // Limpa o input file
+        if (canEdit) {
+            setAcordoConfidencialidade(null);
+            document.getElementById('file').value = null; // Limpa o input file
+        }
     };
 
     const salvarAcordoConfidencialidade = async () => {
@@ -23,14 +48,24 @@ function EtapaAcordoConfidencialidade({ onNext }) {
             return;
         }
         try {
-            // Lógica para salvar o acordo de confidencialidade
-            console.log('Acordo de confidencialidade salvo:', acordoConfidencialidade);
-            // Exemplo: enviar o arquivo para o servidor
+            const response = await uploadAcordoConfidencialidade(avaliacaoId, acordoConfidencialidade);
             alert('Acordo de confidencialidade salvo com sucesso!');
+            console.log('Acordo de confidencialidade salvo:', response.filepath);
+            setExistingAcordo(response.filepath);
+            setIsSaved(true);  // Marcar que o arquivo foi salvo
         } catch (error) {
             console.error('Erro ao salvar o acordo de confidencialidade:', error);
             alert('Erro ao salvar o acordo de confidencialidade. Tente novamente.');
         }
+    };
+
+    const handleNextStepClick = () => {
+        if (isSaved && canEdit) {
+            const proceed = window.confirm('Ao clicar em "Próxima Etapa", não será mais possível alterar o acordo de confidencialidade. Deseja continuar?');
+            if (!proceed) return;
+            setCanEdit(false); // Desabilitar edições futuras
+        }
+        onNext();
     };
 
     return (
@@ -39,23 +74,33 @@ function EtapaAcordoConfidencialidade({ onNext }) {
                 <h1 className="title-form">Acordo de Confidencialidade</h1>
             </div>
             <div className='div-input-acordo-confidencialidade'>
-                <label className="label">Upload de Acordo de Confidencialidade:</label>
-                <input
-                    className="input-campo-acordo-confidencialidade"
-                    type="file"
-                    id="file"
-                    onChange={handleAcordoConfidencialidadeChange}
-                />
-                <label htmlFor="file">Escolha um arquivo</label>
+                <label className="label">Acordo de Confidencialidade:</label>
+                {canEdit && (
+                    <>
+                        <input
+                            className="input-campo-acordo-confidencialidade"
+                            type="file"
+                            id="file"
+                            onChange={handleAcordoConfidencialidadeChange}
+                        />
+                        <label htmlFor="file">Escolha um arquivo</label>
+                    </>
+                )}
                 {acordoConfidencialidade && <p className='acordo-adicionado'>Arquivo adicionado</p>}
+                {existingAcordo && (
+                    <div>
+                        <p>Acordo de confidencialidade existente: <a href={`http://127.0.0.1:5000/uploads/${existingAcordo}`} target="_blank" rel="noopener noreferrer">Baixar</a></p>
+                    </div>
+                )}
             </div>
-            {acordoConfidencialidade && (
+            {canEdit && acordoConfidencialidade && (
                 <button className='button-remove' onClick={removerAcordoConfidencialidade}>REMOVER</button>
             )}
 
-            {/* Botão de Salvar sempre visível */}
-            <button className='button-next' onClick={salvarAcordoConfidencialidade}>SALVAR</button>
-            <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
+            {canEdit && (
+                <button className='button-next' onClick={salvarAcordoConfidencialidade}>SALVAR</button>
+            )}
+            <button className='button-next' onClick={handleNextStepClick}>PRÓXIMA ETAPA</button>
         </div>
     );
 }

@@ -2,9 +2,9 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import EtapaAtividadesPlanejamento from '../components/EtapaAtividadesPlanejamento';
 import EtapaEmpresa from '../components/EtapaEmpresa';
+import EtapaEmailSoftex from '../components/EtapaEmailSoftex';
 import EtapaInstituicao from '../components/EtapaInstituicao';
 import EtapaAcordoConfidencialidade from '../components/EtapaAcordoConfidencialidade';
-import Etapa1 from '../components/Etapa1';
 import Etapa2 from '../components/Etapa2';
 import Etapa3 from '../components/Etapa3';
 import Etapa4 from '../components/Etapa4';
@@ -19,9 +19,9 @@ import '../pages/styles/Evaluation.css';
 const etapaComponents = {
   1: EtapaEmpresa,
   2: EtapaInstituicao,
-  3: EtapaAtividadesPlanejamento,
-  4: EtapaAcordoConfidencialidade,
-  5: Etapa1,
+  3: EtapaEmailSoftex,
+  4: EtapaAtividadesPlanejamento,
+  5: EtapaAcordoConfidencialidade,
   6: Etapa2,
   7: Etapa3,
   8: Etapa4,
@@ -115,6 +115,7 @@ function Evaluation() {
               onNext={handleNextStep}
               avaliacaoId={avaliacaoId}
               idVersaoModelo={idVersaoModelo}
+              idAtividade={idAtividade}
             />
           ) : (
             <p className='mensagem-usuario'>
