@@ -13,6 +13,7 @@ class Cadastro:
             tipo_result = self.db.cursor.fetchone()
             
             if not tipo_result:
+                print(f"Cargo '{cargo}' não encontrado no banco de dados.")
                 return {"message": f"Cargo '{cargo}' não encontrado."}, 400
             
             id_tipo = tipo_result[0]
@@ -27,9 +28,11 @@ class Cadastro:
             self.db.cursor.execute("SELECT LAST_INSERT_ID()")
             user_id = self.db.cursor.fetchone()[0]
 
+            print(f"Usuário cadastrado com sucesso: ID {user_id}")
             return {"message": "Usuário cadastrado com sucesso!", "user_id": user_id}, 201
         
         except Exception as e:
             self.db.conn.rollback()
+            print(f"Erro ao cadastrar usuário: {str(e)}")
             return {"message": f"Erro ao cadastrar usuário: {str(e)}"}, 500
 

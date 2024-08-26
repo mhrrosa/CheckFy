@@ -25,7 +25,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 db_config = {
     "host": "127.0.0.1",
     "user": "root",
-    "password": "root",
+    "password": "I#p4Zp&zS!Zv",
     "database": "checkfy"
 }
 
@@ -638,7 +638,7 @@ def user_login():
         return jsonify({"message": "Email e senha são obrigatórios."}), 400
 
     response = login.login(email, senha)
-    return jsonify(response), response.get("status", 200)
+    return jsonify(response), response["status"]
 
 @app.route('/cadastro', methods=['POST'])
 def cadastro_route():

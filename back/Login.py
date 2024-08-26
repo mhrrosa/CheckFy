@@ -15,10 +15,10 @@ class Login:
             self.db.cursor.fetchall()  # Limpa qualquer resultado pendente
 
             if user and check_password_hash(user[1], senha):
-                return {"message": "Login realizado com sucesso!", "user_id": user[0]}
+                return {"message": "Login realizado com sucesso!", "user_id": user[0], "status": 200}
             else:
-                return {"message": "Credenciais inválidas."}, 401
+                return {"message": "Credenciais inválidas.", "status": 401}
         
         except Exception as e:
             print(f"Erro no login: {e}")
-            return {"message": f"Erro no login: {str(e)}"}, 500
+            return {"message": f"Erro no login: {str(e)}", "status": 500}
