@@ -13,7 +13,6 @@ class Login:
 
             # Garantir que todos os resultados sejam processados
             self.db.cursor.fetchall()  # Limpa qualquer resultado pendente
-            print(user)
             if user and check_password_hash(user[1], senha):
                 return {"message": "Login realizado com sucesso!", "user_id": user[0], "user_type": user[2], "status": 200}
             else:

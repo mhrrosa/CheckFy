@@ -17,16 +17,19 @@ function EtapaAcordoConfidencialidade({ onNext, avaliacaoId, idAtividade }) {
             try {
                 const data = await getAcordoConfidencialidade(avaliacaoId);
                 setExistingAcordo(data.filepath);
+                console.log('Acordo existente:', data.filepath);
                 // Se o usuário já passou dessa etapa, não permitir edição
-                if (idAtividade > 4) {
+                if (idAtividade > 5) {
                     setCanEdit(false);
                 }
+                console.log('CanEdit:', canEdit);
             } catch (error) {
                 console.error('Erro ao buscar acordo de confidencialidade:', error);
             }
         };
-
+    
         fetchAcordoConfidencialidade();
+        console.log('ID da Atividade:', idAtividade);
     }, [avaliacaoId, idAtividade]);
 
     const handleAcordoConfidencialidadeChange = (event) => {
@@ -50,7 +53,6 @@ function EtapaAcordoConfidencialidade({ onNext, avaliacaoId, idAtividade }) {
         try {
             const response = await uploadAcordoConfidencialidade(avaliacaoId, acordoConfidencialidade);
             alert('Acordo de confidencialidade salvo com sucesso!');
-            console.log('Acordo de confidencialidade salvo:', response.filepath);
             setExistingAcordo(response.filepath);
             setIsSaved(true);  // Marcar que o arquivo foi salvo
         } catch (error) {

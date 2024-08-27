@@ -633,7 +633,6 @@ def instituicao_avaliacao_insert(avaliacao_id):
 def user_login():
     try:
         data = request.json
-        print(f"Dados recebidos no login: {data}")  # Adicione esta linha para depuração
         email = data.get('email')
         senha = data.get('senha')
 

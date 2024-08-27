@@ -17,7 +17,6 @@ function Home() {
     if (storedUserType) {
       setUserType(parseInt(storedUserType));
     }
-    console.log('Tipo de usuário carregado:', storedUserType); // Adiciona um console.log para verificar o tipo de usuário
     setIsLoading(false); // Após carregar, define isLoading como falso
     carregarAvaliacoes();
   }, [setUserType]);
