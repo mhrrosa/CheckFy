@@ -1,11 +1,11 @@
 -- Desabilitar a verificação de chaves estrangeiras
 SET FOREIGN_KEY_CHECKS = 0;
 
--- MySQL dump 10.13  Distrib 8.0.30, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.28, for Win64 (x86_64)
 --
 -- Host: localhost    Database: checkfy
 -- ------------------------------------------------------
--- Server version	8.0.30
+-- Server version	8.0.28
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -71,6 +71,7 @@ CREATE TABLE `avaliacao` (
   `Atividade_Planejamento` varchar(5000) DEFAULT NULL,
   `Cronograma_Planejamento` varchar(5000) DEFAULT NULL,
   `Avaliacao_Aprovada_Pela_Softex` tinyint(1) DEFAULT NULL,
+  `Caminho_Acordo_Confidencialidade` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `avaliacao_FK` (`ID_Atividade`),
   KEY `avaliacao_FK_1` (`ID_Avaliador_Lider`),
@@ -86,7 +87,7 @@ CREATE TABLE `avaliacao` (
   CONSTRAINT `avaliacao_FK_4` FOREIGN KEY (`ID_Instituicao`) REFERENCES `instituicao` (`ID`),
   CONSTRAINT `projeto_empresa_FK` FOREIGN KEY (`ID_Empresa`) REFERENCES `empresa` (`ID`),
   CONSTRAINT `projeto_nivel_FK` FOREIGN KEY (`ID_Nivel_Solicitado`) REFERENCES `nivel_maturidade_mpsbr` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -95,7 +96,7 @@ CREATE TABLE `avaliacao` (
 
 LOCK TABLES `avaliacao` WRITE;
 /*!40000 ALTER TABLE `avaliacao` DISABLE KEYS */;
-INSERT INTO `avaliacao` VALUES (9,'AvaliaÃ§Ã£o de teste 1','Primeiro Teste de InserÃ§Ã£o',1,'Em andamento',3,NULL,51,NULL,NULL,1,NULL,'','',NULL),(16,'asdf','asdf',1,'Em andamento',3,NULL,44,NULL,NULL,1,1,'Teste','Teste',1),(22,'AAA','BBB',1,'Em andamento',3,NULL,43,NULL,NULL,1,1,NULL,NULL,NULL);
+INSERT INTO `avaliacao` VALUES (38,'Primeira avaliação','Primeira avaliação de teste',20,'Em andamento',6,1,43,NULL,NULL,1,1,'Atividade vão ser de uma forma definida','Cronograma: 15/08/2024 vai ser a primeira avaliação',1,'RA1 - ATIVIDADE 4.pdf');
 /*!40000 ALTER TABLE `avaliacao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -123,7 +124,6 @@ CREATE TABLE `documento` (
 
 LOCK TABLES `documento` WRITE;
 /*!40000 ALTER TABLE `documento` DISABLE KEYS */;
-INSERT INTO `documento` VALUES (30,'EAP2.png','Documento 1',64),(32,'EAP2.png','Documento 2',64),(33,'EAP2.png','Documento 3',64),(34,'EAP.png','Documento 4',64),(42,'relatorio projeto comunitario.pdf','Teste',67);
 /*!40000 ALTER TABLE `documento` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -177,7 +177,6 @@ CREATE TABLE `evidencia` (
 
 LOCK TABLES `evidencia` WRITE;
 /*!40000 ALTER TABLE `evidencia` DISABLE KEYS */;
-INSERT INTO `evidencia` VALUES (50,11,30);
 /*!40000 ALTER TABLE `evidencia` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -201,7 +200,7 @@ CREATE TABLE `funcao_usuario` (
 
 LOCK TABLES `funcao_usuario` WRITE;
 /*!40000 ALTER TABLE `funcao_usuario` DISABLE KEYS */;
-INSERT INTO `funcao_usuario` VALUES (1,'Avaliador LÃ­der'),(2,'Avaliador Adjunto'),(3,'Auditor'),(4,'Patrocinador'),(5,'Colaborador');
+INSERT INTO `funcao_usuario` VALUES (1,'Avaliador Lider'),(2,'Avaliador Adjunto'),(3,'Auditor'),(4,'Patrocinador'),(5,'Colaborador Empresarial');
 /*!40000 ALTER TABLE `funcao_usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -231,7 +230,6 @@ CREATE TABLE `grau_implementacao_processo_projeto` (
 
 LOCK TABLES `grau_implementacao_processo_projeto` WRITE;
 /*!40000 ALTER TABLE `grau_implementacao_processo_projeto` DISABLE KEYS */;
-INSERT INTO `grau_implementacao_processo_projeto` VALUES (1,'NÃ£o avaliado (NA)',11,67),(2,'Totalmente implementado (T)',11,64);
 /*!40000 ALTER TABLE `grau_implementacao_processo_projeto` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -313,7 +311,7 @@ CREATE TABLE `nivel_maturidade_mpsbr` (
 
 LOCK TABLES `nivel_maturidade_mpsbr` WRITE;
 /*!40000 ALTER TABLE `nivel_maturidade_mpsbr` DISABLE KEYS */;
-INSERT INTO `nivel_maturidade_mpsbr` VALUES (43,'A','Em OtimizaÃ§Ã£o',1),(44,'B','Gerenciado Quantitavitivamente',1),(45,'C','Definido',1),(46,'D','Largamente Definido',1),(49,'E','Parcialmente Definido',1),(51,'F','Gerenciado',1),(52,'G','Parcialmente Gerenciado',1),(62,'teste','teste',2);
+INSERT INTO `nivel_maturidade_mpsbr` VALUES (43,'A','Em Otimização',1),(44,'B','Gerenciado Quantitavitivamente',1),(45,'C','Definido',1),(46,'D','Largamente Definido',1),(49,'E','Parcialmente Definido',1),(51,'F','Gerenciado',1),(52,'G','Parcialmente Gerenciado',1),(62,'A','Nivel de teste',2);
 /*!40000 ALTER TABLE `nivel_maturidade_mpsbr` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -341,7 +339,7 @@ CREATE TABLE `processo` (
 
 LOCK TABLES `processo` WRITE;
 /*!40000 ALTER TABLE `processo` DISABLE KEYS */;
-INSERT INTO `processo` VALUES (26,'GerÃªncia de projetos','Processos de projeto',1),(27,'Engenharia de requisitos','Processos de projeto',1),(34,'teste','teste',2);
+INSERT INTO `processo` VALUES (26,'Gerência de projetos','Processos de projeto',1),(27,'Engenharia de requisitos','Processos de projeto',1),(34,'teste','teste',2);
 /*!40000 ALTER TABLE `processo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -370,7 +368,6 @@ CREATE TABLE `projeto` (
 
 LOCK TABLES `projeto` WRITE;
 /*!40000 ALTER TABLE `projeto` DISABLE KEYS */;
-INSERT INTO `projeto` VALUES (64,9,1,1,'Projeto 1'),(65,9,0,2,'Projeto 2'),(66,9,0,3,'Projeto 3'),(67,16,1,1,'Projeto teste');
 /*!40000 ALTER TABLE `projeto` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -403,7 +400,7 @@ CREATE TABLE `resultado_esperado_mpsbr` (
 
 LOCK TABLES `resultado_esperado_mpsbr` WRITE;
 /*!40000 ALTER TABLE `resultado_esperado_mpsbr` DISABLE KEYS */;
-INSERT INTO `resultado_esperado_mpsbr` VALUES (11,'GPR 1 O escopo do trabalho para o projeto Ã© estabelecido, mantido atualizado e utilizado.',43,52,26),(12,'GPR 2 O processo a ser utilizado para a execuÃ§Ã£o do projeto Ã© descrito, mantido atualizado e utilizado. NOTA: (item requerido) Nos  nÃ­veis G e F a descriÃ§Ã£o do processo para o projeto deve conter, pelo menos, o ciclo de vida do projeto e a lista de tarefas que serÃ£o executadas. ',49,52,26),(13,'GPR 2+ O processo definido para o projeto, derivado da estratÃ©gia para adaptaÃ§Ã£o do processo da organizaÃ§Ã£o, Ã© estabelecido, mantido atualizado e utilizado.',43,46,26),(14,'GPR 3 Estimativas de dimensÃ£o de tarefas e produtos de trabalho do projeto sÃ£o estabelecidas e mantidas atualizadas. NOTA: (item requerido) HH (Homem Hora) Ã© medida de esforÃ§o e nÃ£o pode ser considerada como dimensÃ£o.',49,52,26),(15,'GPR 3+ Estimativas de dimensÃ£o de tarefas e produtos de trabalho do projeto sÃ£o estabelecidas com a utilizaÃ§Ã£o de mÃ©todos apropriados e documentados, e sÃ£o mantidas atualizadas.',43,46,26),(16,'GPR 4 Estimativas de esforÃ§o, duraÃ§Ã£o e custo para a execuÃ§Ã£o das tarefas e dos produtos de trabalho do projeto sÃ£o estabelecidas e justificadas. NOTA: (item requerido) As estimativas de esforÃ§o, duraÃ§Ã£o e custo devem ser derivadas das estimativas de dimensÃ£o de tarefas e produtos de trabalho.  A justificativa das estimativas deve conter um racional de como foram realizadas.',49,52,26),(17,'GPR 4+ Estimativas de esforÃ§o, duraÃ§Ã£o e custo para a execuÃ§Ã£o das tarefas e dos produtos de trabalho do projeto sÃ£o estabelecidas e justificadas utilizando mÃ©todos apropriados, baseadas no repositÃ³rio organizacional de medidas e no conjunto de ativos de processo organizacional.                                                              NOTA: (item requerido) As estimativas devem ser derivadas das estimativas de dimensÃ£o de tarefas e produtos de trabalho.',43,46,26),(18,'GPR 5 O orÃ§amento e o cronograma do projeto, incluindo a definiÃ§Ã£o de marcos, sÃ£o estabelecidos e mantidos atualizados.',43,52,26),(19,'GPR 6 Os recursos humanos para o projeto sÃ£o planejados considerando as habilidades e os conhecimentos necessÃ¡rios para executÃ¡-lo.',43,52,26),(20,'GPR 7 Os recursos materiais e o ambiente de trabalho necessÃ¡rios para executar o projeto sÃ£o estabelecidos e mantidos atualizados.',49,52,26),(21,'GPR 7+ Os recursos materiais e o ambiente de trabalho necessÃ¡rios para executar o projeto sÃ£o estabelecidos a partir dos ambientes padrÃ£o de trabalho da organizaÃ§Ã£o, e sÃ£o mantidos atualizados.',43,46,26),(22,'GPR 8 A estratÃ©gia de transiÃ§Ã£o para operaÃ§Ã£o e suporte do produto, incluindo as tarefas e o cronograma, Ã© planejada.',43,52,26),(23,'GPR 9 O envolvimento das partes interessadas no projeto Ã© planejado.',43,52,26),(24,'GPR 10 Os riscos ou oportunidades do projeto sÃ£o identificados e o seu impacto, probabilidade de ocorrÃªncia e prioridade de tratamento sÃ£o determinados e documentados.',49,52,26),(25,'GPR 10+ O tratamento de riscos ou oportunidades do projeto Ã© realizado conforme a estratÃ©gia definida para a gerÃªncia de riscos e oportunidades da organizaÃ§Ã£o.',43,46,26),(26,'GPR 11 A viabilidade de atingir as metas do projeto Ã© avaliada considerando restriÃ§Ãµes e recursos disponÃ­veis. Se necessÃ¡rio, ajustes sÃ£o realizados.',43,52,26),(27,'GPR 12 Um plano geral para a execuÃ§Ã£o do projeto Ã© estabelecido com a integraÃ§Ã£o consistente dos planejamentos realizados, e Ã© mantido atualizado.',49,52,26),(28,'GPR 12+ Um plano geral para a execuÃ§Ã£o do projeto Ã© estabelecido com a integraÃ§Ã£o consistente dos planejamentos realizados, considerando o processo do projeto, os ativos de processo e o repositÃ³rio de medidas, e Ã© mantido atualizado.',43,46,26),(29,'GPR 13 O Plano do Projeto Ã© revisado com todos os interessados e o compromisso com ele Ã© obtido.',49,52,26),(30,'GPR 13+ O Plano do Projeto Ã© revisado com todos os interessados, incluindo o tratamento de dependÃªncias crÃ­ticas, e o compromisso com ele Ã© obtido.',43,46,26),(31,'GPR 14 O escopo, as tarefas, as estimativas, o orÃ§amento, o cronograma, os recursos materiais e humanos e o ambiente de trabalho sÃ£o monitorados em relaÃ§Ã£o ao planejado.',49,52,26),(32,'GPR 14+ O escopo, as tarefas, as estimativas, o orÃ§amento, o cronograma, os recursos materiais e humanos e o ambiente de trabalho sÃ£o monitorados em relaÃ§Ã£o ao planejado e ao processo do projeto, e dependÃªncias crÃ­ticas sÃ£o gerenciadas.',43,46,26),(33,'GPR 15 O envolvimento das partes interessadas no projeto Ã© monitorado e tratado em relaÃ§Ã£o ao planejado.',43,52,26),(34,'GPR 16 A transiÃ§Ã£o para a etapa de operaÃ§Ã£o e suporte do produto Ã© monitorada em relaÃ§Ã£o ao planejado.',43,52,26),(35,'GPR 17 Os riscos ou oportunidades do projeto sÃ£o monitorados e seus resultados sÃ£o comunicados Ã s partes interessadas.',49,52,26),(36,'GPR 17+ Os riscos ou oportunidades do projeto sÃ£o monitorados em relaÃ§Ã£o Ã s estratÃ©gias definidas e seus resultados sÃ£o comunicados Ã s partes interessadas.',43,46,26),(37,'GPR 18 AÃ§Ãµes para corrigir desvios em relaÃ§Ã£o ao planejado sÃ£o identificadas, implementadas e acompanhadas atÃ© o seu fechamento.',49,52,26),(38,'GPR 18+ AÃ§Ãµes para corrigir desvios em relaÃ§Ã£o ao planejado e outras questÃµes relacionadas ao projeto sÃ£o identificadas, tratadas com as partes interessadas, implementadas e acompanhadas atÃ© o seu fechamento.',43,46,26),(39,'GPR 19 Resultados positivos ou negativos significativos do projeto sÃ£o analisados e tratados em relaÃ§Ã£o Ã  causa-raiz, utilizando um procedimento organizacional e documentando os seus resultados.',43,46,26),(40,'GPR 20 TÃ©cnicas estatÃ­sticas e quantitativas sÃ£o utilizadas para definir e manter as atividades do projeto alinhadas aos objetivos de qualidade e desempenho definidos para o projeto.',43,44,26),(41,'GPR 21 AnÃ¡lises da causa-raiz dos resultados selecionados sÃ£o realizadas e o impacto das aÃ§Ãµes implementadas no desempenho do processo de projeto Ã© avaliado, utilizando tÃ©cnicas estatÃ­sticas e quantitativas.',43,44,26),(42,'GPR 22 AvaliaÃ§Ãµes de soluÃ§Ãµes sÃ£o realizadas utilizando tÃ©cnicas estatÃ­sticas e quantitativas para determinar se a soluÃ§Ã£o deve ser aplicada na organizaÃ§Ã£o.',43,43,26),(43,'REQ 1 As necessidades, expectativas e restriÃ§Ãµes das partes interessadas, tanto em relaÃ§Ã£o ao produto quanto a suas interfaces, sÃ£o identificadas.',43,52,27),(44,'REQ 2 Os requisitos sÃ£o especificados, priorizados e mantidos atualizados a partir das necessidades, expectativas e restriÃ§Ãµes identificadas para o produto e suas interfaces.',49,52,27),(45,'REQ 2+ Os requisitos sÃ£o especificados, priorizados, refinados, alocados para implementaÃ§Ã£o e mantidos atualizados a partir das necessidades, expectativas e restriÃ§Ãµes identificadas, o que inclui a especificaÃ§Ã£o de conceitos operacionais, cenÃ¡rios e interfaces internas e externas.',43,46,27),(46,'REQ 3 Os requisitos sÃ£o entendidos e analisados junto a fornecedores de requisitos.',49,52,27),(47,'REQ 3+ Os requisitos sÃ£o entendidos e analisados junto aos fornecedores de requisitos para garantir que sejam claros, necessÃ¡rios e suficientes e para balancear as necessidades das partes interessadas com as restriÃ§Ãµes existentes.',43,46,27),(48,'REQ 4 Os requisitos sÃ£o aprovados pelos fornecedores de requisitos.',49,52,27),(49,'REQ 4+ Os requisitos sÃ£o validados.',43,46,27),(50,'REQ 5 O compromisso da equipe tÃ©cnica com a implementaÃ§Ã£o dos requisitos Ã© obtido.',43,52,27),(51,'REQ 6 A rastreabilidade bidirecional entre requisitos, atividades e produtos de trabalho do projeto Ã© estabelecida e mantida.                          ',43,52,27),(52,'REQ 7 Os planos, atividades e produtos de trabalho relacionados sÃ£o revisados visando identificar e tratar inconsistÃªncia em relaÃ§Ã£o aos requisitos.',43,52,27),(57,'teste',62,62,34);
+INSERT INTO `resultado_esperado_mpsbr` VALUES (11,'GPR 1 O escopo do trabalho para o projeto é estabelecido, mantido atualizado e utilizado.',43,52,26),(12,'GPR 2 O processo a ser utilizado para a execução do projeto é descrito, mantido atualizado e utilizado. NOTA: (item requerido) Nos  níveis G e F a descrição do processo para o projeto deve conter, pelo menos, o ciclo de vida do projeto e a lista de tarefas que serão executadas. ',49,52,26),(13,'GPR 2+ O processo definido para o projeto, derivado da estratégia para adaptação do processo da organização, é estabelecido, mantido atualizado e utilizado.',43,46,26),(14,'GPR 3 Estimativas de dimensão de tarefas e produtos de trabalho do projeto são estabelecidas e mantidas atualizadas. NOTA: (item requerido) HH (Homem Hora) é medida de esforço e não pode ser considerada como dimensão.',49,52,26),(15,'GPR 3+ Estimativas de dimensão de tarefas e produtos de trabalho do projeto são estabelecidas com a utilização de métodos apropriados e documentados, e são mantidas atualizadas.',43,46,26),(16,'GPR 4 Estimativas de esforço, duração e custo para a execução das tarefas e dos produtos de trabalho do projeto são estabelecidas e justificadas. NOTA: (item requerido) As estimativas de esforço, duração e custo devem ser derivadas das estimativas de dimensão de tarefas e produtos de trabalho.  A justificativa das estimativas deve conter um racional de como foram realizadas.',49,52,26),(17,'GPR 4+ Estimativas de esforço, duração e custo para a execução das tarefas e dos produtos de trabalho do projeto são estabelecidas e justificadas utilizando métodos apropriados, baseadas no repositório organizacional de medidas e no conjunto de ativos de processo organizacional.                                                              NOTA: (item requerido) As estimativas devem ser derivadas das estimativas de dimensão de tarefas e produtos de trabalho.',43,46,26),(18,'GPR 5 O orçamento e o cronograma do projeto, incluindo a definição de marcos, são estabelecidos e mantidos atualizados.',43,52,26),(19,'GPR 6 Os recursos humanos para o projeto são planejados considerando as habilidades e os conhecimentos necessários para executá-lo.',43,52,26),(20,'GPR 7 Os recursos materiais e o ambiente de trabalho necessários para executar o projeto são estabelecidos e mantidos atualizados.',49,52,26),(21,'GPR 7+ Os recursos materiais e o ambiente de trabalho necessários para executar o projeto são estabelecidos a partir dos ambientes padrão de trabalho da organização, e são mantidos atualizados.',43,46,26),(22,'GPR 8 A estratégia de transição para operação e suporte do produto, incluindo as tarefas e o cronograma, é planejada.',43,52,26),(23,'GPR 9 O envolvimento das partes interessadas no projeto é planejado.',43,52,26),(24,'GPR 10 Os riscos ou oportunidades do projeto são identificados e o seu impacto, probabilidade de ocorrência e prioridade de tratamento são determinados e documentados.',49,52,26),(25,'GPR 10+ O tratamento de riscos ou oportunidades do projeto é realizado conforme a estratégia definida para a gerência de riscos e oportunidades da organização.',43,46,26),(26,'GPR 11 A viabilidade de atingir as metas do projeto é avaliada considerando restrições e recursos disponíveis. Se necessário, ajustes são realizados.',43,52,26),(27,'GPR 12 Um plano geral para a execução do projeto é estabelecido com a integração consistente dos planejamentos realizados, e é mantido atualizado.',49,52,26),(28,'GPR 12+ Um plano geral para a execução do projeto é estabelecido com a integração consistente dos planejamentos realizados, considerando o processo do projeto, os ativos de processo e o repositório de medidas, e é mantido atualizado.',43,46,26),(29,'GPR 13 O Plano do Projeto é revisado com todos os interessados e o compromisso com ele é obtido.',49,52,26),(30,'GPR 13+ O Plano do Projeto é revisado com todos os interessados, incluindo o tratamento de dependências críticas, e o compromisso com ele é obtido.',43,46,26),(31,'GPR 14 O escopo, as tarefas, as estimativas, o orçamento, o cronograma, os recursos materiais e humanos e o ambiente de trabalho são monitorados em relação ao planejado.',49,52,26),(32,'GPR 14+ O escopo, as tarefas, as estimativas, o orçamento, o cronograma, os recursos materiais e humanos e o ambiente de trabalho são monitorados em relação ao planejado e ao processo do projeto, e dependências críticas são gerenciadas.',43,46,26),(33,'GPR 15 O envolvimento das partes interessadas no projeto é monitorado e tratado em relação ao planejado.',43,52,26),(34,'GPR 16 A transição para a etapa de operação e suporte do produto é monitorada em relação ao planejado.',43,52,26),(35,'GPR 17 Os riscos ou oportunidades do projeto são monitorados e seus resultados são comunicados às partes interessadas.',49,52,26),(36,'GPR 17+ Os riscos ou oportunidades do projeto são monitorados em relação às estratégias definidas e seus resultados são comunicados às partes interessadas.',43,46,26),(37,'GPR 18 Ações para corrigir desvios em relação ao planejado são identificadas, implementadas e acompanhadas até o seu fechamento.',49,52,26),(38,'GPR 18+ Ações para corrigir desvios em relação ao planejado e outras questões relacionadas ao projeto são identificadas, tratadas com as partes interessadas, implementadas e acompanhadas até o seu fechamento.',43,46,26),(39,'GPR 19 Resultados positivos ou negativos significativos do projeto são analisados e tratados em relação à causa-raiz, utilizando um procedimento organizacional e documentando os seus resultados.',43,46,26),(40,'GPR 20 Técnicas estatísticas e quantitativas são utilizadas para definir e manter as atividades do projeto alinhadas aos objetivos de qualidade e desempenho definidos para o projeto.',43,44,26),(41,'GPR 21 Análises da causa-raiz dos resultados selecionados são realizadas e o impacto das ações implementadas no desempenho do processo de projeto é avaliado, utilizando técnicas estatísticas e quantitativas.',43,44,26),(42,'GPR 22 Avaliações de soluções são realizadas utilizando técnicas estatísticas e quantitativas para determinar se a solução deve ser aplicada na organização.',43,43,26),(43,'REQ 1 As necessidades, expectativas e restrições das partes interessadas, tanto em relação ao produto quanto a suas interfaces, são identificadas.',43,52,27),(44,'REQ 2 Os requisitos são especificados, priorizados e mantidos atualizados a partir das necessidades, expectativas e restrições identificadas para o produto e suas interfaces.',49,52,27),(45,'REQ 2+ Os requisitos são especificados, priorizados, refinados, alocados para implementação e mantidos atualizados a partir das necessidades, expectativas e restrições identificadas, o que inclui a especificação de conceitos operacionais, cenários e interfaces internas e externas.',43,46,27),(46,'REQ 3 Os requisitos são entendidos e analisados junto a fornecedores de requisitos.',49,52,27),(47,'REQ 3+ Os requisitos são entendidos e analisados junto aos fornecedores de requisitos para garantir que sejam claros, necessários e suficientes e para balancear as necessidades das partes interessadas com as restrições existentes.',43,46,27),(48,'REQ 4 Os requisitos são aprovados pelos fornecedores de requisitos.',49,52,27),(49,'REQ 4+ Os requisitos são validados.',43,46,27),(50,'REQ 5 O compromisso da equipe técnica com a implementação dos requisitos é obtido.',43,52,27),(51,'REQ 6 A rastreabilidade bidirecional entre requisitos, atividades e produtos de trabalho do projeto é estabelecida e mantida.                          ',43,52,27),(52,'REQ 7 Os planos, atividades e produtos de trabalho relacionados são revisados visando identificar e tratar inconsistência em relação aos requisitos.',43,52,27),(57,'teste',62,62,34);
 /*!40000 ALTER TABLE `resultado_esperado_mpsbr` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -418,7 +415,7 @@ CREATE TABLE `tipo_usuario` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `Descricao` varchar(50) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -442,12 +439,12 @@ CREATE TABLE `usuario` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `Nome` varchar(75) NOT NULL,
   `ID_Tipo` int NOT NULL,
-  `Senha` varchar(255) NOT NULL,
+  `Senha` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `Email` varchar(100) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `usuario_FK` (`ID_Tipo`),
   CONSTRAINT `usuario_FK` FOREIGN KEY (`ID_Tipo`) REFERENCES `tipo_usuario` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -456,7 +453,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'Avaliador teste',1,'teste','teste'),(21,'Arthur Prezotto Andrade',1,'scrypt:32768:8:1$stySje4TSW7B11ek$1a152e93797711e896d3af27da6a677c072376d578c4e29b446b8fe1421b6e233e732176b9b1fb973ab3c4f6b5cfe3e40e5821bde81ea2199091c0fb379760ac','arthur.pr.andrade@hotmail.com'),(22,'teste',4,'scrypt:32768:8:1$jRjLK6CyenWLjO2D$f23259066c1a809963ed52b4e8d21c3069295349863979c927c52f2a260c93508aff7e9ce3f671a7a525120841a39948db48deea4bcaacf9b0965f93e6228020','aaa@gmail.com');
+INSERT INTO `usuario` VALUES (1,'Avaliador teste',1,'teste','teste'),(20,'Arthur Prezotto Andrade',2,'scrypt:32768:8:1$JM0RCcVwTzCzv1MU$e0bc230c03efd82fc4401b642b6ced519987b5119c266c03e47e5618281c48d1a3cd7f3191a97e1eaedf8adf1d97a9868a77021b40a00309ec23194bea353aa2','arthur.pr.andrade@hotmail.com'),(48,'Usuário',2,'Senha Teste','a'),(49,'Usuário',5,'Senha Teste','b');
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -473,13 +470,13 @@ CREATE TABLE `usuarios_avaliacao` (
   `ID_Usuario` int NOT NULL,
   `ID_Funcao` int NOT NULL,
   PRIMARY KEY (`ID`),
-  KEY `usuarios_avaliacao_FK` (`ID_Usuario`),
-  KEY `usuarios_avaliacao_FK_1` (`ID_Funcao`),
-  KEY `usuarios_avaliacao_FK_2` (`ID_Avaliacao`),
-  CONSTRAINT `usuarios_avaliacao_FK` FOREIGN KEY (`ID_Usuario`) REFERENCES `usuario` (`ID`),
-  CONSTRAINT `usuarios_avaliacao_FK_1` FOREIGN KEY (`ID_Funcao`) REFERENCES `funcao_usuario` (`ID`),
-  CONSTRAINT `usuarios_avaliacao_FK_2` FOREIGN KEY (`ID_Avaliacao`) REFERENCES `avaliacao` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `usuarios_projeto_FK` (`ID_Usuario`),
+  KEY `usuarios_projeto_FK_1` (`ID_Funcao`),
+  KEY `usuarios_projeto_FK_2` (`ID_Avaliacao`),
+  CONSTRAINT `usuarios_projeto_FK` FOREIGN KEY (`ID_Usuario`) REFERENCES `usuario` (`ID`),
+  CONSTRAINT `usuarios_projeto_FK_1` FOREIGN KEY (`ID_Funcao`) REFERENCES `funcao_usuario` (`ID`),
+  CONSTRAINT `usuarios_projeto_FK_2` FOREIGN KEY (`ID_Avaliacao`) REFERENCES `avaliacao` (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -488,6 +485,7 @@ CREATE TABLE `usuarios_avaliacao` (
 
 LOCK TABLES `usuarios_avaliacao` WRITE;
 /*!40000 ALTER TABLE `usuarios_avaliacao` DISABLE KEYS */;
+INSERT INTO `usuarios_avaliacao` VALUES (12,38,20,1),(13,38,48,2),(14,38,49,5);
 /*!40000 ALTER TABLE `usuarios_avaliacao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -529,6 +527,7 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-08-26 18:47:43
+-- Dump completed on 2024-08-27 18:38:04
+
 
 SET FOREIGN_KEY_CHECKS = 1;
