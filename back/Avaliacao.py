@@ -37,7 +37,7 @@ class Avaliacao:
                 else:
                     # Usuário não existe, inserir e linkar à avaliação
                     query = "INSERT INTO usuario (Nome, Email, Senha, ID_Tipo) VALUES (%s, %s, %s, %s)"
-                    self.db.execute_query(query, ("Usuário", email, "Senha Teste", id_funcao))
+                    self.db.execute_query(query, ("Usuário", email, "senha", id_funcao))
                     novo_usuario_id = self.db.cursor.lastrowid
 
                     # Linkar o novo usuário à avaliação

@@ -17,6 +17,7 @@ function Home() {
     if (storedUserType) {
       setUserType(parseInt(storedUserType));
     }
+    console.log('Tipo de usuário carregado:', storedUserType); // Adiciona um console.log para verificar o tipo de usuário
     setIsLoading(false); // Após carregar, define isLoading como falso
     carregarAvaliacoes();
   }, [setUserType]);
@@ -76,18 +77,26 @@ function Home() {
             <div key={avaliacao.id} className="avaliacao-item">
               <p>{avaliacao.nome} - {avaliacao.status}</p>
               <div className="botoes-avaliacao">
-                <button className="button-home-avaliacao" onClick={() => navigate(`/details-evaluation`, { state: { id: avaliacao.id } })}>
-                  DETALHES
-                </button>
-                <button className="button-home-avaliacao" onClick={() => handleContinue(avaliacao.id)}>
-                  CONTINUAR
-                </button>
-                <button className="button-home-avaliacao" onClick={() => navigate(`/update-evaluation`, { state: { id: avaliacao.id } })}>
-                  ALTERAR
-                </button>
-                <button className="button-home-avaliacao" onClick={() => handleDelete(avaliacao.id)}>
-                  EXCLUIR
-                </button>
+                {(userType === 1 || userType === 2 || userType === 3 || userType === 4 || userType === 5) && (
+                  <button className="button-home-avaliacao" onClick={() => navigate(`/details-evaluation`, { state: { id: avaliacao.id } })}>
+                    DETALHES
+                  </button>
+                )}
+                {(userType === 1 || userType === 2 || userType === 3 || userType === 4 || userType === 5) && (
+                  <button className="button-home-avaliacao" onClick={() => handleContinue(avaliacao.id)}>
+                    CONTINUAR
+                  </button>
+                )}
+                {(userType === 1 || userType === 2) && (
+                  <button className="button-home-avaliacao" onClick={() => navigate(`/update-evaluation`, { state: { id: avaliacao.id } })}>
+                    ALTERAR
+                  </button>
+                )}
+                {userType === 1 && (
+                  <button className="button-home-avaliacao" onClick={() => handleDelete(avaliacao.id)}>
+                    EXCLUIR
+                  </button>
+                )}
               </div>
             </div>
           ))
