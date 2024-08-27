@@ -265,6 +265,12 @@ function Etapa3({ avaliacaoId, idVersaoModelo, onNext }) {
       </div>
       <Modal isOpen={isModalOpen} onRequestClose={closeModal} contentLabel="Gerenciar Documentos" className="modal" overlayClassName="modal-overlay">
         <div className="form-section-document">
+          <button className="button-close-form-etapa" onClick={closeModal}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
           <div className='title-document'>
             <h2>GERENCIAR DOCUMENTOS</h2>
           </div>
@@ -288,10 +294,13 @@ function Etapa3({ avaliacaoId, idVersaoModelo, onNext }) {
             />
             <label for="file">Escolha um arquivo</label>
             {fileToUpload && <p className='arquivo-adicionado'>Arquivo adicionado</p>}
-          </div>
-          <div className='logo-and-button'>
-            <button className="button" onClick={handleDocumentoUpload}>INSERIR</button>
-            <button className="button" onClick={closeModal}>FECHAR</button>
+            <button className="button-add-document" type="button" onClick={handleDocumentoUpload}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="16"></line>
+                <line x1="8" y1="12" x2="16" y2="12"></line>
+              </svg>
+            </button>
           </div>
           <h3 className='title-document'>Documentos Existentes:</h3>
           <table>
