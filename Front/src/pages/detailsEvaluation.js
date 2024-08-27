@@ -14,11 +14,11 @@ function DetailsEvaluation() {
     nome: '',
     descricao: '',
     status: '',
-    id_empresa: '',
-    id_nivel_solicitado: '',
-    id_avaliador_lider: '',
-    id_atividade: '',
-    id_versao_modelo: ''
+    nome_empresa: '',
+    nivel_solicitado: '',
+    nome_avaliador_lider: '',
+    descricao_atividade: '',
+    nome_versao_modelo: ''
   });
 
   useEffect(() => {
@@ -49,12 +49,12 @@ function DetailsEvaluation() {
                     <input
                         className="input-field"
                         type="text"
-                        name="nome"
-                        value={avaliacao.nome}
+                        name="nome_empresa"
+                        value={avaliacao.nome_empresa}
                         readOnly
                     />
-                    </div>
-                    <div className="input-wrapper">
+                </div>
+                <div className="input-wrapper">
                     <label className="label">Descrição:</label>
                     <textarea
                         className="input-field"
@@ -62,59 +62,49 @@ function DetailsEvaluation() {
                         value={avaliacao.descricao}
                         readOnly
                     />
-                    </div>
-                    <div className="input-grid">
-                    <div className="input-wrapper">
-                        <label className="label">ID da Empresa:</label>
-                        <input
-                        className="input-field"
-                        type="text"
-                        name="id_empresa"
-                        value={avaliacao.id_empresa}
-                        readOnly
-                        />
-                    </div>
-                    <div className="input-wrapper">
-                        <label className="label">ID do Nível Solicitado:</label>
-                        <input
-                        className="input-field"
-                        type="text"
-                        name="id_nivel_solicitado"
-                        value={avaliacao.id_nivel_solicitado}
-                        readOnly
-                        />
-                    </div>
-                    <div className="input-wrapper">
-                        <label className="label">ID do Avaliador Líder:</label>
-                        <input
-                        className="input-field"
-                        type="text"
-                        name="id_avaliador_lider"
-                        value={avaliacao.id_avaliador_lider}
-                        readOnly
-                        />
-                    </div>
-                    <div className="input-wrapper">
-                        <label className="label">ID da Atividade:</label>
-                        <input
-                        className="input-field"
-                        type="text"
-                        name="id_atividade"
-                        value={avaliacao.id_atividade}
-                        readOnly
-                        />
-                    </div>
-                    <div className="input-wrapper">
-                        <label className="label">ID da Versão do Modelo:</label>
-                        <input
-                        className="input-field"
-                        type="text"
-                        name="id_versao_modelo"
-                        value={avaliacao.id_versao_modelo}
-                        readOnly
-                        />
-                    </div>
-                    </div>
+                </div>
+                <div className="input-grid">
+                <div className="input-wrapper">
+                    <label className="label">Nível Solicitado:</label>
+                    <input
+                    className="input-field"
+                    type="text"
+                    name="nivel_solicitado"
+                    value={avaliacao.nivel_solicitado}
+                    readOnly
+                    />
+                </div>
+                <div className="input-wrapper">
+                    <label className="label">Avaliador Líder:</label>
+                    <input
+                    className="input-field"
+                    type="text"
+                    name="nome_avaliador_lider"
+                    value={avaliacao.nome_avaliador_lider}
+                    readOnly
+                    />
+                </div>
+                <div className="input-wrapper">
+                    <label className="label">Atividade:</label>
+                    <input
+                    className="input-field"
+                    type="text"
+                    name="descricao_atividade"
+                    value={avaliacao.descricao_atividade}
+                    readOnly
+                    />
+                </div>
+                <div className="input-wrapper">
+                    <label className="label">Versão do Modelo:</label>
+                    <input
+                    className="input-field"
+                    type="text"
+                    name="nome_versao_modelo"
+                    value={avaliacao.nome_versao_modelo}
+                    readOnly
+                    />
+                </div>
+                </div>
                 <div className="logo-and-button">
                 <img src={logo} className="logo" alt="Logo Checkfy" />
                 <button className="button-end-form" type="button" onClick={() => navigate('/')}>VOLTAR</button>
