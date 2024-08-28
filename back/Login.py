@@ -7,7 +7,7 @@ class Login:
 
     def login(self, email, senha):
         try:
-            query = "SELECT id, senha FROM usuario WHERE email = %s"
+            query = "SELECT id, senha, nome FROM usuario WHERE email = %s"
             self.db.cursor.execute(query, (email,))
             user = self.db.cursor.fetchone()
             
@@ -15,7 +15,7 @@ class Login:
             self.db.cursor.fetchall()  # Limpa qualquer resultado pendente
 
             if user and check_password_hash(user[1], senha):
-                return {"message": "Login realizado com sucesso!", "user_id": user[0], "status": 200}
+                return {"message": "Login realizado com sucesso!", "user_id": user[0], "nome": user[2], "status": 200}
             else:
                 return {"message": "Credenciais inválidas.", "status": 401}
         

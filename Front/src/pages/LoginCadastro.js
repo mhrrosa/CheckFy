@@ -10,7 +10,7 @@ import logo from '../img/logo_horizontal.png';
 
 const LoginCadastro = () => {
   const navigate = useNavigate();
-  const { setUserId, setUserType } = useContext(UserContext); // Obtenha setUserId e setUserType do contexto
+  const { setUserId, setUserType, setUserName } = useContext(UserContext); // Obtenha setUserId, setUserType e setUserName do contexto
 
   const [formData, setFormData] = useState({
     nome: '',
@@ -72,6 +72,7 @@ const LoginCadastro = () => {
       if (response.user_id) {
         setUserId(response.user_id);
         setUserType(1);
+        setUserName(response.nome);
         navigate('/home');
       }
     } catch (error) {
