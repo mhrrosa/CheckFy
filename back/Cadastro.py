@@ -28,7 +28,6 @@ class Cadastro:
             self.db.cursor.execute("SELECT LAST_INSERT_ID()")
             user_id = self.db.cursor.fetchone()[0]
 
-            print(f"Usuário cadastrado com sucesso: ID {user_id}")
             return {"message": "Usuário cadastrado com sucesso!", "user_id": user_id}, 201
         
         except Exception as e:

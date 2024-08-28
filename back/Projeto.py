@@ -3,12 +3,10 @@ class Projeto:
         self.db = db
 
     def add_projeto(self, id_avaliacao, nome_projeto, projeto_habilitado, numero_projeto):
-        print(f"Adicionando projeto: id_avaliacao={id_avaliacao}, nome_projeto={nome_projeto}, projeto_habilitado={projeto_habilitado}, numero_projeto={numero_projeto}")
         query = "INSERT INTO projeto (ID_Avaliacao, Nome_Projeto, Projeto_Habilitado, Numero_Projeto) VALUES (%s, %s, %s, %s)"
         try:
             self.db.cursor.execute(query, (id_avaliacao, nome_projeto, projeto_habilitado, numero_projeto))
             self.db.conn.commit()
-            print(f"Projeto adicionado com sucesso: {self.db.cursor.lastrowid}")
             return self.db.cursor.lastrowid
         except Exception as e:
             print(f"Erro ao adicionar projeto: {e}")
@@ -54,7 +52,6 @@ class Projeto:
         self.db.conn.commit()
 
     def get_next_numero_projeto(self, id_avaliacao):
-        print(f"Buscando próximo número de projeto para id_avaliacao={id_avaliacao}")
         query = "SELECT MAX(Numero_Projeto) FROM projeto WHERE ID_Avaliacao = %s"
         self.db.cursor.execute(query, (id_avaliacao,))
         result = self.db.cursor.fetchone()

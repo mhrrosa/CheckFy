@@ -365,8 +365,9 @@ function registerUser(data) {
     });
 }
 
-function loginUser(data) {
+function loginUser(email, password) {
   const url = '/login';
+  const data = { email, senha: password }; // Certifique-se de que a chave no objeto corresponde à esperada no backend
   return post(url, data)
     .then(response => {
       return response;

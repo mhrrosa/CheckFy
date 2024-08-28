@@ -63,32 +63,32 @@ const LoginCadastro = () => {
   };
 
   const handleLogin = async (e) => {
-    e.preventDefault();
+    e.preventDefault();  // Previne o comportamento padrão de recarregar a página
     try {
-      const response = await loginUser({
-        email: formData.email,
-        senha: formData.senha,
-      });
-      if (response.user_id) {
-        setUserId(response.user_id);
-        setUserType(1);
-        setUserName(response.nome);
-        navigate('/home');
-      }
+        const response = await loginUser(formData.email, formData.senha);  // Chama a função loginUser com os dados corretos
+        if (response.status === 200) {
+            localStorage.setItem('userType', response.user_type);
+            sessionStorage.setItem('userId', response.user_id);
+            setUserType(response.user_type);  // Atualiza o UserContext
+            setUserName(response.nome);
+            navigate('/home');  // Redireciona para a home page
+        } else {
+            console.error('Erro de login:', response.message);
+        }
     } catch (error) {
-      console.error('Erro ao fazer login:', error);
+        console.error('Erro ao realizar login:', error);
     }
-  };
+};
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await registerUser(formData);
-      if (response.user_id) {
-        handleLogin(e);
-      }
+        const response = await registerUser(formData);
+        if (response.user_id) {
+            await handleLogin(e);  // Faz login automaticamente após o registro
+        }
     } catch (error) {
-      console.error('Erro ao registrar o usuário:', error);
+        console.error('Erro ao registrar o usuário:', error);
     }
   };
 

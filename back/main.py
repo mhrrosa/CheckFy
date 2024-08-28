@@ -631,14 +631,20 @@ def instituicao_avaliacao_insert(avaliacao_id):
 
 @app.route('/login', methods=['POST'])
 def user_login():
-    data = request.json
-    email = data.get('email')
-    senha = data.get('senha')
-    if not email or not senha:
-        return jsonify({"message": "Email e senha são obrigatórios."}), 400
+    try:
+        data = request.json
+        email = data.get('email')
+        senha = data.get('senha')
 
-    response = login.login(email, senha)
-    return jsonify(response), response["status"]
+        if not email or not senha:
+            return jsonify({"message": "Email e senha são obrigatórios."}), 400
+
+        response = login.login(email, senha)
+        return jsonify(response), response["status"]
+
+    except Exception as e:
+        print(f"Erro no login: {e}")
+        return jsonify({"message": f"Erro no login: {str(e)}"}), 500
 
 @app.route('/cadastro', methods=['POST'])
 def cadastro_route():
