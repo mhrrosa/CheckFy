@@ -9,7 +9,7 @@ import { uploadAcordoConfidencialidade, getAcordoConfidencialidade } from '../se
 function EtapaAcordoConfidencialidade({ onNext, avaliacaoId, idAtividade }) {
     const [acordoConfidencialidade, setAcordoConfidencialidade] = useState(null);
     const [existingAcordo, setExistingAcordo] = useState(null);
-    const [canEdit, setCanEdit] = useState(idAtividade === 4);
+    const [canEdit, setCanEdit] = useState(idAtividade === 5);
     const [isSaved, setIsSaved] = useState(false);
 
     useEffect(() => {
@@ -18,8 +18,8 @@ function EtapaAcordoConfidencialidade({ onNext, avaliacaoId, idAtividade }) {
                 const data = await getAcordoConfidencialidade(avaliacaoId);
                 setExistingAcordo(data.filepath);
                 console.log('Acordo existente:', data.filepath);
-                // Se o usuário já passou dessa etapa, não permitir edição
-                if (idAtividade > 5) {
+                // Se o usuário já passou da atividade 6, não permitir edição
+                if (idAtividade >= 6) {
                     setCanEdit(false);
                 }
                 console.log('CanEdit:', canEdit);

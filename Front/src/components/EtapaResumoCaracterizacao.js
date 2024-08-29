@@ -6,9 +6,9 @@ import {
   getResultadosEsperadosPorProcesso,
   getGrausImplementacao
 } from '../services/Api';
-import '../components/styles/Etapa5.css';
+import '../components/styles/EtapaResumoCaracterizacao.css';
 
-function Etapa5({ avaliacaoId, idVersaoModelo, onNext }) {
+function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
   const [processos, setProcessos] = useState([]);
   const [resultadosEsperados, setResultadosEsperados] = useState({});
   const [grausImplementacao, setGrausImplementacao] = useState({});
@@ -131,4 +131,4 @@ function Etapa5({ avaliacaoId, idVersaoModelo, onNext }) {
   );
 }
 
-export default Etapa5;
+export default EtapaResumoCaracterizacao;

@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { getAvaliacaoById, inserir_planejamento } from '../services/Api';
+import { useNavigate } from 'react-router-dom';
 import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
 import '../components/styles/Button.css';
-import '../components/styles/Etapa2.css';
+import '../components/styles/EtapaAtividadesPlanejamento.css';
 
 function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
   const [avaliacaoAprovada, setAvaliacaoAprovada] = useState(false);
   const [planejamentoAtividades, setPlanejamentoAtividades] = useState('');
   const [planejamentoCronograma, setPlanejamentoCronograma] = useState('');
+  const navigate = useNavigate(); // Hook para navegação
 
   useEffect(() => {
     if (avaliacaoId) {
@@ -50,6 +52,10 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
 
   const handleCheckboxChange = (value) => {
     setAvaliacaoAprovada(value);
+  };
+
+  const finalizar = () => {
+    navigate('/home'); // Navega para a página inicial
   };
 
   return (
@@ -121,7 +127,11 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
       {/* Botão de Salvar sempre visível */}
       <button className='button-next' onClick={salvarPlanejamento}>SALVAR</button>
 
-      <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
+      {avaliacaoAprovada ? (
+        <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
+      ) : (
+        <button className='button-next' onClick={finalizar}>FINALIZAR</button>
+      )}
     </div>
   );
 }

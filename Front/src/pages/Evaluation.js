@@ -5,11 +5,11 @@ import EtapaEmpresa from '../components/EtapaEmpresa';
 import EtapaEmailSoftex from '../components/EtapaEmailSoftex';
 import EtapaInstituicao from '../components/EtapaInstituicao';
 import EtapaAcordoConfidencialidade from '../components/EtapaAcordoConfidencialidade';
-import Etapa2 from '../components/Etapa2';
-import Etapa3 from '../components/Etapa3';
-import Etapa4 from '../components/Etapa4';
-import Etapa5 from '../components/Etapa5';
-import { getAvaliacaoById, updateIdAtividade } from '../services/Api';
+import EtapaProjeto from '../components/EtapaProjeto';
+import EtapaEvidencia from '../components/EtapaEvidencia';
+import EtapaCaracterizacao from '../components/EtapaCaracterizacao';
+import EtapaResumoCaracterizacao from '../components/EtapaResumoCaracterizacao';
+import { getAvaliacaoById, updateIdAtividade, getAtividade } from '../services/Api';
 import { UserContext } from '../contexts/UserContext';
 import '../components/styles/Body.css';
 import '../components/styles/Container.css';
@@ -22,10 +22,10 @@ const etapaComponents = {
   3: EtapaEmailSoftex,
   4: EtapaAtividadesPlanejamento,
   5: EtapaAcordoConfidencialidade,
-  6: Etapa2,
-  7: Etapa3,
-  8: Etapa4,
-  9: Etapa5
+  6: EtapaProjeto,
+  7: EtapaEvidencia,
+  8: EtapaCaracterizacao,
+  9: EtapaResumoCaracterizacao
 };
 
 const etapaUsuarioMap = { 
@@ -49,27 +49,33 @@ function Evaluation() {
   const [selectedEtapa, setSelectedEtapa] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasPermission, setHasPermission] = useState(false);
+  const [atividades, setAtividades] = useState([]);
 
   useEffect(() => {
-    const avaliacaoId = location.state?.id;
-    if (avaliacaoId) {
-      fetchAvaliacaoData(avaliacaoId);
-    }
-  }, [location.state]);
+    const fetchAtividadesAndAvaliacao = async () => {
+      try {
+        // Primeiro, busca as atividades
+        const atividadesResponse = await getAtividade();
+        setAtividades(atividadesResponse);
 
-  const fetchAvaliacaoData = async (id) => {
-    try {
-      const avaliacao = await getAvaliacaoById(id);
-      setAvaliacaoId(avaliacao.id);
-      setIdAtividade(avaliacao.id_atividade);
-      setIdVersaoModelo(avaliacao.id_versao_modelo);
-      setSelectedEtapa(avaliacao.id_atividade);
-    } catch (error) {
-      console.error('Erro ao buscar avaliação:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+        // Após buscar as atividades, busca a avaliação
+        const avaliacaoId = location.state?.id;
+        if (avaliacaoId) {
+          const avaliacao = await getAvaliacaoById(avaliacaoId);
+          setAvaliacaoId(avaliacao.id);
+          setIdAtividade(avaliacao.id_atividade);
+          setIdVersaoModelo(avaliacao.id_versao_modelo);
+          setSelectedEtapa(avaliacao.id_atividade);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar dados:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAtividadesAndAvaliacao();
+  }, [location.state]);
 
   useEffect(() => {
     if (selectedEtapa !== null) {
@@ -79,14 +85,12 @@ function Evaluation() {
   }, [selectedEtapa, userType]);
 
   const handleNextStep = async () => {
-    // Verifica se está na última etapa disponível
     if (selectedEtapa === idAtividade) {
       const newIdAtividade = idAtividade + 1;
       await updateIdAtividade(avaliacaoId, newIdAtividade);
       setIdAtividade(newIdAtividade);
       setSelectedEtapa(newIdAtividade);
     } else {
-      // Se estiver em uma etapa anterior, apenas avança para a próxima
       setSelectedEtapa(selectedEtapa + 1);
     }
   };
@@ -128,17 +132,17 @@ function Evaluation() {
       </div>
       <div className="sidebar">
         <h3>Etapas:</h3>
-        {Object.keys(etapaComponents).map((etapa) => {
-          const etapaNumber = parseInt(etapa);
+        {atividades.map((atividade) => {
+          const etapaNumber = atividade.ID;
           const isDisabled = etapaNumber > idAtividade;
           return (
             <button
-              key={etapa}
+              key={atividade.ID}
               onClick={() => handleStepClick(etapaNumber)}
               className={`${etapaNumber === selectedEtapa ? 'current-step' : ''} ${isDisabled ? 'button-disabled' : ''}`}
               disabled={isDisabled}
             >
-              Etapa {etapa}
+              {atividade.Descricao}
             </button>
           );
         })}

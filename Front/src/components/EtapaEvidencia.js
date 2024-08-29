@@ -15,11 +15,11 @@ import {
 import '../components/styles/Body.css';
 import '../components/styles/Form.css';
 import '../components/styles/Button.css';
-import '../components/styles/Etapa3.css';
+import '../components/styles/EtapaEvidencia.css';
 
 Modal.setAppElement('#root');
 
-function Etapa3({ avaliacaoId, idVersaoModelo, onNext }) {
+function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
   const [processos, setProcessos] = useState([]);
   const [resultadosEsperados, setResultadosEsperados] = useState({});
   const [projetos, setProjetos] = useState([]);
@@ -338,4 +338,4 @@ function Etapa3({ avaliacaoId, idVersaoModelo, onNext }) {
   );
 }
 
-export default Etapa3;
+export default EtapaEvidencia;

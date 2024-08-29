@@ -63,7 +63,6 @@ class Avaliacao:
             raise
 
 
-
     def listar_avaliacoes(self, idAvaliador):
         try:
             query_ids = "SELECT ID_Avaliacao FROM usuarios_avaliacao WHERE ID_Usuario = %s"
@@ -104,7 +103,6 @@ class Avaliacao:
         except Exception as e:
             print(f"Erro ao executar query: {e}")
             raise
-
 
 
     def obter_avaliacao(self, projeto_id):

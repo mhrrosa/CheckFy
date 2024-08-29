@@ -411,6 +411,10 @@ function getAcordoConfidencialidade(avaliacaoId) {
       });
 }
 
+function getAtividade(){
+  return get(`/get_atividade`)
+}
+
 export {
   startNewEvaluation,
   getAllAvaliacoes,
@@ -463,5 +467,6 @@ export {
   registerUser,
   loginUser,
   uploadAcordoConfidencialidade,
-  getAcordoConfidencialidade
+  getAcordoConfidencialidade,
+  getAtividade
 };

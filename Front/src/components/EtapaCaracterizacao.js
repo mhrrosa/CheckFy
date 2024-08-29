@@ -11,11 +11,11 @@ import {
 import '../components/styles/Body.css';
 import '../components/styles/Form.css';
 import '../components/styles/Button.css';
-import '../components/styles/Etapa4.css';
+import '../components/styles/EtapaCaracterizacao.css';
 
 Modal.setAppElement('#root');
 
-function Etapa4({ onNext, avaliacaoId, idVersaoModelo }) {
+function EtapaCaracterizacao({ onNext, avaliacaoId, idVersaoModelo }) {
   const [processos, setProcessos] = useState([]);
   const [resultadosEsperados, setResultadosEsperados] = useState({});
   const [projetos, setProjetos] = useState([]);
@@ -170,4 +170,4 @@ function Etapa4({ onNext, avaliacaoId, idVersaoModelo }) {
   );
 }
 
-export default Etapa4;
+export default EtapaCaracterizacao;

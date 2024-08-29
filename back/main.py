@@ -12,6 +12,7 @@ from Empresa import Empresa
 from Instituicao import Instituicao
 from Login import Login
 from Cadastro import Cadastro
+from Atividade import Atividade
 import os
 
 app = Flask(__name__)
@@ -42,6 +43,7 @@ empresa = Empresa(db)
 instituicao = Instituicao(db)
 login = Login(db)
 cadastro = Cadastro(db)
+atividade = Atividade(db)
 
 @app.route('/add_nivel', methods=['POST'])
 def add_nivel():
@@ -540,7 +542,6 @@ def add_versao_modelo():
         print(f"Erro ao adicionar processo: {e}")
         return jsonify({"message": "Erro ao adicionar processo", "error": str(e)}), 500
 
-
 @app.route('/delete_versao_modelo/<int:versao_modelo_id>', methods=['DELETE'])
 def delete_versao_modelo(versao_modelo_id):
     try:
@@ -700,6 +701,14 @@ def get_acordo_confidencialidade(avaliacao_id):
         print(f"Erro ao obter Caminho_Acordo_Confidencialidade: {e}")
         return jsonify({"message": "Erro ao obter Caminho_Acordo_Confidencialidade", "error": str(e)}), 500
     
+@app.route('/get_atividade', methods=['GET'])
+def get_atividades():
+    try:
+        atividades = atividade.get_atividades()
+        return jsonify(atividades), 200
+    except Exception as e:
+        print(f"Erro ao buscar atividades: {e}")
+        return jsonify({"message": "Erro ao buscar atividades", "error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

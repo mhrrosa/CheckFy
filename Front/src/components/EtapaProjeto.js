@@ -4,10 +4,10 @@ import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
 import '../components/styles/Button.css';
-import '../components/styles/Etapa2.css'
+import '../components/styles/EtapaProjeto.css'
 import logo from '../img/logo_horizontal.png';
 
-function Etapa2({ onNext, avaliacaoId }) {
+function EtapaProjeto({ onNext, avaliacaoId }) {
   const [projetos, setProjetos] = useState([]);
   const [novoProjetoNome, setNovoProjetoNome] = useState('');
   const [novoProjetoHabilitado, setNovoProjetoHabilitado] = useState(false);
@@ -137,4 +137,4 @@ function Etapa2({ onNext, avaliacaoId }) {
   );
 }
 
-export default Etapa2;
+export default EtapaProjeto;
