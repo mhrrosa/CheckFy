@@ -47,7 +47,7 @@ function UpdateEvaluation() {
 
   return (
     <div className="container">
-      <form className="form-update-evaluation" onSubmit={(e) => { e.preventDefault(); handleUpdate(); }}>
+      <form className="form-create-evaluation" onSubmit={(e) => { e.preventDefault(); handleUpdate(); }}>
         <button className="button-close-form" type="button" onClick={() => navigate('/')}>
           <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -147,7 +147,7 @@ function UpdateEvaluation() {
         </div>
         <div className="logo-and-button">
           <img src={logo} className="logo" alt="Logo Checkfy" />
-          <button className="form-end-button" type="submit">ATUALIZAR</button>
+          <button className="button-end-form" type="submit">ATUALIZAR</button>
         </div>
       </form>
     </div>
