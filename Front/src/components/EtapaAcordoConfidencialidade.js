@@ -91,7 +91,7 @@ function EtapaAcordoConfidencialidade({ onNext, avaliacaoId, idAtividade }) {
                 {acordoConfidencialidade && <p className='acordo-adicionado'>Arquivo adicionado</p>}
                 {existingAcordo && (
                     <div>
-                        <p>Acordo de confidencialidade existente: <a href={`http://127.0.0.1:5000/uploads/${existingAcordo}`} target="_blank" rel="noopener noreferrer">Baixar</a></p>
+                        <p className='acordo-adicionado'>Acordo de confidencialidade existente: <a href={`http://127.0.0.1:5000/uploads/${existingAcordo}`} target="_blank" rel="noopener noreferrer">Baixar</a></p>
                     </div>
                 )}
             </div>
