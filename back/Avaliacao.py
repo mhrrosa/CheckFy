@@ -39,11 +39,9 @@ class Avaliacao:
                     query = "INSERT INTO usuario (Nome, Email, Senha, ID_Tipo) VALUES (%s, %s, %s, %s)"
                     self.db.execute_query(query, ("Usuário", email, "senha", id_funcao))
                     novo_usuario_id = self.db.cursor.lastrowid
-
                     # Linkar o novo usuário à avaliação
                     query = "INSERT INTO usuarios_avaliacao (ID_Avaliacao, ID_Usuario, ID_Funcao) VALUES (%s, %s, %s)"
                     self.db.execute_query(query, (id_avaliacao, novo_usuario_id, id_funcao))
-
                     # Simular envio de e-mail para cadastro
                     print(f"Simulação de envio de e-mail para {email} solicitando cadastro no sistema.")
 
