@@ -58,7 +58,7 @@ function CreateEvaluation() {
 
   const handleStartEvaluation = async (event) => {
     event.preventDefault();
-    console.log(userId)
+    
     const data = {
       companyName,
       descricao,
@@ -66,7 +66,7 @@ function CreateEvaluation() {
       adjuntoEmails,
       colaboradorEmails,
       idVersaoModelo,
-      idUsuario: userId // Certifique-se de incluir o idUsuario
+      idUsuario: userId
     };
 
     try {
