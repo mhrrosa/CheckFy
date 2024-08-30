@@ -415,6 +415,10 @@ function getAtividade(){
   return get(`/get_atividade`)
 }
 
+function enviarEmailAvaliacao(avaliacaoId) {
+  return post(`/enviar_email/${avaliacaoId}`);
+}
+
 export {
   startNewEvaluation,
   getAllAvaliacoes,
@@ -468,5 +472,6 @@ export {
   loginUser,
   uploadAcordoConfidencialidade,
   getAcordoConfidencialidade,
-  getAtividade
+  getAtividade,
+  enviarEmailAvaliacao
 };

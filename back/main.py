@@ -13,6 +13,7 @@ from Instituicao import Instituicao
 from Login import Login
 from Cadastro import Cadastro
 from Atividade import Atividade
+from Email import Email
 import os
 
 app = Flask(__name__)
@@ -44,6 +45,7 @@ instituicao = Instituicao(db)
 login = Login(db)
 cadastro = Cadastro(db)
 atividade = Atividade(db)
+email = Email(db)
 
 @app.route('/add_nivel', methods=['POST'])
 def add_nivel():
@@ -709,6 +711,14 @@ def get_atividades():
     except Exception as e:
         print(f"Erro ao buscar atividades: {e}")
         return jsonify({"message": "Erro ao buscar atividades", "error": str(e)}), 500
+
+@app.route('/enviar_email/<int:avaliacao_id>', methods=['POST'])
+def enviar_email(avaliacao_id):
+    try:
+        email.email_aprovar_softex(avaliacao_id)
+        return jsonify({"message": "E-mail enviado com sucesso"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
