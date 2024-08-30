@@ -58,6 +58,7 @@ function CreateEvaluation() {
 
   const handleStartEvaluation = async (event) => {
     event.preventDefault();
+    
     const data = {
       companyName,
       descricao,
