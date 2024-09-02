@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { startNewEvaluation, getNiveis, getVersaoModelo } from '../services/Api';
 import { UserContext } from '../contexts/UserContext'; // Importe o UserContext
@@ -18,12 +18,21 @@ function CreateEvaluation() {
   const [colaboradorEmails, setColaboradorEmails] = useState(['']);
   const [versoesModelo, setVersoesModelo] = useState([]);
   const [idVersaoModelo, setIdVersaoModelo] = useState('');
-  const { userId } = useContext(UserContext); // Obtenha o userId do contexto
+  const { userId, setUserId } = useContext(UserContext); // Obtenha o userId e setUserId do contexto
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!userId) {
+      const storedUserId = sessionStorage.getItem('userId');
+      if (storedUserId) {
+        setUserId(storedUserId);  // Caso o userId não esteja definido, tente definir novamente a partir do sessionStorage
+      } else {
+        console.warn("ID de usuário não encontrado no sessionStorage, redirecionando para login.");
+        navigate('/login-cadastro');  // Redireciona para login se o userId não for encontrado
+      }
+    }
     carregarDadosIniciais();
-  }, []);
+  }, [userId, setUserId, navigate]);
 
   useEffect(() => {
     if (idVersaoModelo) {
@@ -59,6 +68,11 @@ function CreateEvaluation() {
   const handleStartEvaluation = async (event) => {
     event.preventDefault();
     
+    if (!userId) {
+      alert('ID de usuário não encontrado. Por favor, faça login novamente.');
+      return;
+    }
+
     const data = {
       companyName,
       descricao,

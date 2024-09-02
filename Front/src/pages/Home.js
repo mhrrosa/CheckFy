@@ -14,9 +14,13 @@ function Home() {
 
   useEffect(() => {    
     const storedUserType = localStorage.getItem('userType');
+
     if (storedUserType) {
       setUserType(parseInt(storedUserType));
     }
+
+    const userId = sessionStorage.getItem('userId');
+
     setIsLoading(false); // Após carregar, define isLoading como falso
     carregarAvaliacoes();
   }, [setUserType]);
