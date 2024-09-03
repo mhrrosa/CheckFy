@@ -1,32 +1,73 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getApresentacaoEquipe, salvarApresentacaoEquipe } from '../services/Api';  // Importando as funções da API
 import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
 import '../components/styles/Button.css';
 
-function EtapaAuditoria({ onNext }) {
+function EtapaApresentacoesIniciais({ onNext, avaliacaoId }) {
   const [apresentacoesRealizadas, setApresentacoesRealizadas] = useState(null);
   const [equipeTreinada, setEquipeTreinada] = useState(null);
+  const [dadosSalvos, setDadosSalvos] = useState(false);
 
+  // Buscar os dados de apresentação inicial e equipe treinada ao montar o componente
+  useEffect(() => {
+    async function fetchApresentacaoEquipe() {
+      try {
+        const response = await getApresentacaoEquipe(avaliacaoId);
+        if (response) {
+          setApresentacoesRealizadas(response.apresentacao_inicial);
+          setEquipeTreinada(response.equipe_treinada);
+          setDadosSalvos(true);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar os dados de apresentação e equipe:', error);
+      }
+    }
+
+    fetchApresentacaoEquipe();
+  }, [avaliacaoId]);
+
+  // Função para salvar os dados
+  const handleSave = async () => {
+    try {
+      await salvarApresentacaoEquipe({
+        idAvaliacao: avaliacaoId,
+        apresentacaoInicial: apresentacoesRealizadas,
+        equipeTreinada: equipeTreinada
+      });
+      alert('Dados salvos com sucesso!');
+      setDadosSalvos(true);  // Indica que os dados foram salvos
+    } catch (error) {
+      console.error('Erro ao salvar dados:', error);
+    }
+  };
+
+  // Avançar para a próxima etapa
   const handleNextStep = () => {
-    if (apresentacoesRealizadas && equipeTreinada) {
-      onNext();
+    if (apresentacoesRealizadas !== null && equipeTreinada !== null && dadosSalvos) {
+      onNext();  // Avançar para a próxima etapa
+    } else {
+      alert('Por favor, salve os dados antes de avançar.');
     }
   };
 
   const handleCheckboxChangeApresentacoes = (value) => {
     setApresentacoesRealizadas(value);
+    setDadosSalvos(false);  // Marcar como não salvo quando um valor for alterado
   };
 
   const handleCheckboxChangeEquipe = (value) => {
     setEquipeTreinada(value);
+    setDadosSalvos(false);  // Marcar como não salvo quando um valor for alterado
   };
 
-  const isNextButtonEnabled = apresentacoesRealizadas === true && equipeTreinada === true;
+  const isSaveButtonEnabled = apresentacoesRealizadas !== null && equipeTreinada !== null;
+  const isNextButtonEnabled = dadosSalvos && apresentacoesRealizadas === true && equipeTreinada === true;
 
   return (
     <div className='container-etapa'>
-      <h1 className='title-form' style={{ color: 'white' }}>Planejamento de Auditoria</h1>
+      <h1 className='title-form' style={{ color: 'white' }}>Planejamento</h1>
 
       {/* Dica sobre o treinamento e apresentações */}
       <div className='dica-container'>
@@ -86,6 +127,15 @@ function EtapaAuditoria({ onNext }) {
         </div>
       </div>
 
+      {/* Botão "Salvar" */}
+      <button
+        className={`button-next ${isSaveButtonEnabled ? '' : 'button-disabled'}`}
+        onClick={handleSave}
+        disabled={!isSaveButtonEnabled}
+      >
+        SALVAR
+      </button>
+
       {/* Botão "Próxima Etapa" */}
       <button
         className={`button-next ${isNextButtonEnabled ? '' : 'button-disabled'}`}
@@ -98,4 +148,4 @@ function EtapaAuditoria({ onNext }) {
   );
 }
 
-export default EtapaAuditoria;
+export default EtapaApresentacoesIniciais;

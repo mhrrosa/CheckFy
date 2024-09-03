@@ -35,7 +35,7 @@ CREATE TABLE `atividade` (
   KEY `atividade_FK_1` (`ID_Corresponsavel`),
   CONSTRAINT `atividade_FK` FOREIGN KEY (`ID_Responsavel`) REFERENCES `funcao_usuario` (`ID`),
   CONSTRAINT `atividade_FK_1` FOREIGN KEY (`ID_Corresponsavel`) REFERENCES `funcao_usuario` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,7 +44,7 @@ CREATE TABLE `atividade` (
 
 LOCK TABLES `atividade` WRITE;
 /*!40000 ALTER TABLE `atividade` DISABLE KEYS */;
-INSERT INTO `atividade` VALUES (1,'Cadastro da empresa',1,1),(2,'Cadastro da instituição avaliadora',1,1),(3,'Email de confirmação para a Softex',1,1),(4,'Aprovação e planejamento',1,1),(5,'Acordo de confidencialidade',1,1),(6,'Cadastro de projetos',1,1),(7,'Cadastro de evidências',1,1),(8,'Caracterização do grau de implementação para cada projeto',1,1),(9,'Resumo da caracterização',1,1);
+INSERT INTO `atividade` VALUES (1,'Cadastro da empresa',1,1),(2,'Cadastro da instituição avaliadora',1,1),(3,'Email de confirmação para a Softex',1,1),(4,'Aprovação e planejamento',1,1),(5,'Acordo de confidencialidade',1,1),(6,'Cadastro do email do auditor',1,1),(7,'Apresentação iniciais',1,1),(8,'Relatório de ajuste iniciais',1,1),(9,'Cadastro de projetos',1,1),(10,'Cadastro de evidências',1,1),(11,'Caracterização do grau de implementação para cada projeto',1,1),(12,'Resumo da caracterização',1,1),(13,'COLOCAR A DESCRIÇÃO AQUI',1,1);
 /*!40000 ALTER TABLE `atividade` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -73,6 +73,8 @@ CREATE TABLE `avaliacao` (
   `Avaliacao_Aprovada_Pela_Softex` tinyint(1) DEFAULT NULL,
   `Caminho_Acordo_Confidencialidade` varchar(100) DEFAULT NULL,
   `data_avalicao_final` date DEFAULT NULL,
+  `Apresentacao_Inicial` tinyint(1) DEFAULT NULL,
+  `Equipe_Treinada` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `avaliacao_FK` (`ID_Atividade`),
   KEY `avaliacao_FK_1` (`ID_Avaliador_Lider`),
@@ -97,7 +99,7 @@ CREATE TABLE `avaliacao` (
 
 LOCK TABLES `avaliacao` WRITE;
 /*!40000 ALTER TABLE `avaliacao` DISABLE KEYS */;
-INSERT INTO `avaliacao` VALUES (42,'Teste','Avaliação de teste',58,'Em andamento',5,1,44,NULL,NULL,1,1,'aaa','bbb',1,NULL,NULL),(43,'Teste','Tesde desc',20,'Em andamento',9,NULL,45,NULL,NULL,1,NULL,NULL,NULL,NULL,'RA1 - ATIVIDADE 4.pdf',NULL),(44,'aaa','bbb',20,'Em andamento',4,NULL,45,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL),(45,'Teste','Teste2',20,'Em andamento',1,NULL,45,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `avaliacao` VALUES (42,'Teste','Avaliação de teste',58,'Em andamento',5,1,44,NULL,NULL,1,1,'aaa','bbb',1,NULL,NULL,NULL,NULL),(43,'Teste','Tesde desc',20,'Em andamento',9,NULL,45,NULL,NULL,1,NULL,NULL,NULL,NULL,'RA1 - ATIVIDADE 4.pdf',NULL,1,1),(44,'aaa','bbb',20,'Em andamento',4,NULL,45,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(45,'Teste','Teste2',20,'Em andamento',1,NULL,45,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `avaliacao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -393,7 +395,7 @@ CREATE TABLE `relatorio` (
   KEY `relatorio_FK_1` (`ID_Tipo`),
   CONSTRAINT `relatorio_FK` FOREIGN KEY (`ID_Avaliacao`) REFERENCES `avaliacao` (`ID`),
   CONSTRAINT `relatorio_FK_1` FOREIGN KEY (`ID_Tipo`) REFERENCES `tipo_relatorio` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -402,6 +404,7 @@ CREATE TABLE `relatorio` (
 
 LOCK TABLES `relatorio` WRITE;
 /*!40000 ALTER TABLE `relatorio` DISABLE KEYS */;
+INSERT INTO `relatorio` VALUES (1,'Teste',1,43);
 /*!40000 ALTER TABLE `relatorio` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -449,7 +452,7 @@ CREATE TABLE `tipo_relatorio` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `descricao` varchar(255) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -458,6 +461,7 @@ CREATE TABLE `tipo_relatorio` (
 
 LOCK TABLES `tipo_relatorio` WRITE;
 /*!40000 ALTER TABLE `tipo_relatorio` DISABLE KEYS */;
+INSERT INTO `tipo_relatorio` VALUES (1,'Ajuste da avaliação inicial');
 /*!40000 ALTER TABLE `tipo_relatorio` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -501,7 +505,7 @@ CREATE TABLE `usuario` (
   PRIMARY KEY (`ID`),
   KEY `usuario_FK` (`ID_Tipo`),
   CONSTRAINT `usuario_FK` FOREIGN KEY (`ID_Tipo`) REFERENCES `tipo_usuario` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -510,7 +514,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'Avaliador teste',1,'teste','teste'),(20,'Arthur Prezotto Andrade',1,'scrypt:32768:8:1$JM0RCcVwTzCzv1MU$e0bc230c03efd82fc4401b642b6ced519987b5119c266c03e47e5618281c48d1a3cd7f3191a97e1eaedf8adf1d97a9868a77021b40a00309ec23194bea353aa2','arthur.pr.andrade@hotmail.com'),(57,'Avaliador',2,'scrypt:32768:8:1$0nztXLUHbXTS7rm4$1cabc2cf897e0724a169b4081e91b7361f4d1bbc18bc6e6ac403f5083a9b293a9e7cc8f56b18be7e53d13c42272bed9f592c4dd1634a94df5f326ea27031ab7f','avaliador@gmail.com'),(58,'Colaborador',5,'scrypt:32768:8:1$8VLuJSDBDC23hNR3$e1ba683c62a5dccce3d001a63dbb4d1570f0490f7df2cb32ebde002a925a189d759da1fa3bbe1b72ca7545b65c75a5e72150e6b6253a9711e048c65019166c7d','colaborador@gmail.com'),(59,'Usuário',2,'senha','aaa'),(60,'Usuário',5,'senha','bbb'),(61,'Usuário',2,'senha','aa'),(62,'Usuário',5,'senha','bb');
+INSERT INTO `usuario` VALUES (1,'Avaliador teste',1,'teste','teste'),(20,'Arthur Prezotto Andrade',1,'scrypt:32768:8:1$JM0RCcVwTzCzv1MU$e0bc230c03efd82fc4401b642b6ced519987b5119c266c03e47e5618281c48d1a3cd7f3191a97e1eaedf8adf1d97a9868a77021b40a00309ec23194bea353aa2','arthur.pr.andrade@hotmail.com'),(57,'Avaliador',2,'scrypt:32768:8:1$0nztXLUHbXTS7rm4$1cabc2cf897e0724a169b4081e91b7361f4d1bbc18bc6e6ac403f5083a9b293a9e7cc8f56b18be7e53d13c42272bed9f592c4dd1634a94df5f326ea27031ab7f','avaliador@gmail.com'),(58,'Colaborador',5,'scrypt:32768:8:1$8VLuJSDBDC23hNR3$e1ba683c62a5dccce3d001a63dbb4d1570f0490f7df2cb32ebde002a925a189d759da1fa3bbe1b72ca7545b65c75a5e72150e6b6253a9711e048c65019166c7d','colaborador@gmail.com'),(67,'João Márcio Wozniack',1,'scrypt:32768:8:1$AnMppbART4dU0GTu$25a8a705ccd7554980c2c97a0b901b25aef58c0f8dffb2aca19d7a186f62eb9563ef438fa0bcfb3def168b58569eba65b444d410e4073edd07ecbcac32499f48','joao.wozniack@pucpr.edu.br');
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -533,7 +537,7 @@ CREATE TABLE `usuarios_avaliacao` (
   CONSTRAINT `usuarios_projeto_FK` FOREIGN KEY (`ID_Usuario`) REFERENCES `usuario` (`ID`),
   CONSTRAINT `usuarios_projeto_FK_1` FOREIGN KEY (`ID_Funcao`) REFERENCES `funcao_usuario` (`ID`),
   CONSTRAINT `usuarios_projeto_FK_2` FOREIGN KEY (`ID_Avaliacao`) REFERENCES `avaliacao` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -542,7 +546,7 @@ CREATE TABLE `usuarios_avaliacao` (
 
 LOCK TABLES `usuarios_avaliacao` WRITE;
 /*!40000 ALTER TABLE `usuarios_avaliacao` DISABLE KEYS */;
-INSERT INTO `usuarios_avaliacao` VALUES (24,42,58,1),(25,42,57,2),(26,42,58,5),(27,43,20,1),(28,43,57,2),(29,43,58,5),(30,44,20,1),(31,44,59,2),(32,44,60,5),(33,45,20,1),(34,45,61,2),(35,45,62,5);
+INSERT INTO `usuarios_avaliacao` VALUES (24,42,58,1),(25,42,57,2),(26,42,58,5),(27,43,20,1),(28,43,57,2),(29,43,58,5),(30,44,20,1),(33,45,20,1);
 /*!40000 ALTER TABLE `usuarios_avaliacao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -584,7 +588,7 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-02 19:03:55
+-- Dump completed on 2024-09-03 20:46:40
 
 
 SET FOREIGN_KEY_CHECKS = 1;

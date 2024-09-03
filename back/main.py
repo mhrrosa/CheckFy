@@ -14,6 +14,8 @@ from Login import Login
 from Cadastro import Cadastro
 from Atividade import Atividade
 from Email import Email
+from Auditor import Auditor
+from Relatorio import Relatorio
 import os
 
 app = Flask(__name__)
@@ -46,6 +48,8 @@ login = Login(db)
 cadastro = Cadastro(db)
 atividade = Atividade(db)
 email = Email(db)
+auditor = Auditor(db)
+relatorio = Relatorio(db)
 
 @app.route('/add_nivel', methods=['POST'])
 def add_nivel():
@@ -719,6 +723,127 @@ def enviar_email(avaliacao_id):
         return jsonify({"message": "E-mail enviado com sucesso"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route('/add_auditor', methods=['POST'])
+def add_auditor():
+    auditor_data = request.json
+    try:
+        id_avaliacao = auditor_data['idAvaliacao']
+        auditor_emails = auditor_data['auditorEmails']
+        
+        auditor.adicionar_auditor(id_avaliacao, auditor_emails)
+        
+        return jsonify({"message": "Auditores adicionados com sucesso"}), 200  # Retorne uma resposta JSON com código 200
+    except KeyError as e:
+        print(f"Erro: Campo necessário não fornecido - {str(e)}")
+        return jsonify({"message": "Campo necessário não fornecido", "error": str(e)}), 400
+    except Exception as e:
+        print(f"Erro ao adicionar auditores: {e}")
+        return jsonify({"message": "Erro ao adicionar auditores", "error": str(e)}), 500
+
+@app.route('/get_email_auditor/<int:avaliacao_id>', methods=['GET'])
+def get_email_auditor(avaliacao_id):
+    id_avaliacao = avaliacao_id # Obtém o id da avaliação dos parâmetros da URL
+
+    try:
+        email = auditor.get_email_auditor(id_avaliacao)
+        
+        if email:
+            return jsonify({"email": email}), 200
+        else:
+            return jsonify({"message": "Auditor não encontrado para esta avaliação"}), 404
+
+    except Exception as e:
+        print(f"Erro ao buscar e-mail do auditor: {e}")
+        return jsonify({"message": "Erro ao buscar e-mail do auditor", "error": str(e)}), 500
+
+
+@app.route('/salvar_apresentacao_equipe', methods=['POST'])
+def salvar_apresentacao_equipe():
+    data = request.json
+    id_avaliacao = data.get('idAvaliacao')
+    apresentacao_inicial = data.get('apresentacaoInicial')
+    equipe_treinada = data.get('equipeTreinada')
+
+    if id_avaliacao is None or apresentacao_inicial is None or equipe_treinada is None:
+        return jsonify({"message": "Dados incompletos"}), 400
+
+    try:
+        avaliacao.salvar_apresentacao_equipe(id_avaliacao, apresentacao_inicial, equipe_treinada)
+        return jsonify({"message": "Dados salvos com sucesso"}), 200
+    except Exception as e:
+        print(f"Erro ao salvar dados: {e}")
+        return jsonify({"message": "Erro ao salvar dados"}), 500
+
+@app.route('/get_apresentacao_equipe/<int:avaliacao_id>', methods=['GET'])
+def get_apresentacao_equipe(avaliacao_id):
+    id_avaliacao = avaliacao_id
+
+    if not id_avaliacao:
+        return jsonify({"message": "ID da avaliação não fornecido"}), 400
+
+    try:
+        result = avaliacao.get_apresentacao_equipe(id_avaliacao)
+        
+        if result:
+            return jsonify(result), 200
+        else:
+            return jsonify({"message": "Dados não encontrados"}), 404
+    except Exception as e:
+        print(f"Erro ao buscar dados: {e}")
+        return jsonify({"message": "Erro ao buscar dados"}), 500
+
+@app.route('/inserir_relatorio_inicial', methods=['POST'])
+def inserir_relatorio_inicial():
+    data = request.json
+    descricao = data.get('descricao')
+    id_avaliacao = data.get('idAvaliacao')
+
+    if not descricao or not id_avaliacao:
+        return jsonify({"message": "Dados incompletos"}), 400
+
+    try:
+        relatorio_id = relatorio.inserir_relatorio_inicial(descricao, id_avaliacao)
+        return jsonify({"message": "Relatório inserido com sucesso", "id": relatorio_id}), 201
+    except Exception as e:
+        print(f"Erro ao inserir relatório: {e}")
+        return jsonify({"message": "Erro ao inserir relatório"}), 500
+
+
+@app.route('/atualizar_relatorio_inicial', methods=['PUT'])
+def atualizar_relatorio_inicial():
+    data = request.json
+    descricao = data.get('descricao')
+    id_avaliacao = data.get('idAvaliacao')
+
+    if not descricao or not id_avaliacao:
+        return jsonify({"message": "Dados incompletos"}), 400
+
+    try:
+        relatorio.atualizar_relatorio_inicial(descricao, id_avaliacao)
+        return jsonify({"message": "Relatório atualizado com sucesso"}), 200
+    except Exception as e:
+        print(f"Erro ao atualizar relatório: {e}")
+        return jsonify({"message": "Erro ao atualizar relatório"}), 500
+
+
+@app.route('/get_relatorio_inicial/<int:avaliacao_id>', methods=['GET'])
+def get_relatorio_inicial(avaliacao_id):
+    id_avaliacao = avaliacao_id
+    if not id_avaliacao:
+        return jsonify({"message": "ID da avaliação não fornecido"}), 400
+
+    try:
+        result = relatorio.obter_relatorio_inicial(id_avaliacao)
+        if result:
+            return jsonify(result), 200
+        else:
+            return jsonify({"message": "Relatório não encontrado, ainda não foi criado"}), 200
+    except Exception as e:
+        print(f"Erro ao buscar relatório: {e}")
+        return jsonify({"message": "Erro ao buscar relatório"}), 500
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

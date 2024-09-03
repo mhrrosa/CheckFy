@@ -419,6 +419,49 @@ function enviarEmailAvaliacao(avaliacaoId) {
   return post(`/enviar_email/${avaliacaoId}`);
 }
 
+function addAuditor(data) {
+  const url = '/add_auditor';
+  return post(url, data)
+    .then(response => {
+      return response;
+    })
+    .catch(error => {
+      console.error('Erro ao adicionar auditor:', error);
+      throw error;
+    });
+}
+
+function getEmailAuditor(idAvaliacao) {
+  return get(`/get_email_auditor/${idAvaliacao}`)
+    .then(response => {
+      return response.email;
+    })
+    .catch(error => {
+      console.error('Erro ao buscar email do auditor:', error);
+      throw error;
+    });
+}
+function salvarApresentacaoEquipe(data) {
+  return post('/salvar_apresentacao_equipe', data);
+}
+
+function getApresentacaoEquipe(idAvaliacao) {
+  return get(`/get_apresentacao_equipe/${idAvaliacao}`);
+}
+
+function inserirRelatorioInicial(data) {
+  return post('/inserir_relatorio_inicial', data);
+}
+
+function atualizarRelatorioInicial(data) {
+  return put('/atualizar_relatorio_inicial', data);
+}
+
+function getRelatorioInicial(idAvaliacao) {
+  return get(`/get_relatorio_inicial/${idAvaliacao}`);
+}
+
+
 export {
   startNewEvaluation,
   getAllAvaliacoes,
@@ -473,5 +516,12 @@ export {
   uploadAcordoConfidencialidade,
   getAcordoConfidencialidade,
   getAtividade,
-  enviarEmailAvaliacao
+  enviarEmailAvaliacao,
+  addAuditor,
+  getEmailAuditor,
+  salvarApresentacaoEquipe,
+  getApresentacaoEquipe,
+  inserirRelatorioInicial,
+  atualizarRelatorioInicial,
+  getRelatorioInicial
 };

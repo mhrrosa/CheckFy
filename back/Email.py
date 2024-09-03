@@ -90,7 +90,7 @@ class Email:
             raise e
     
 
-    def enviar_email_auditor_avaliacao_inicial(self, id_avaliacao):
+    def enviar_email_auditor_avaliacao_inicial(self, id_avaliacao, email_auditor):
         query = """
             SELECT a.ID, a.Nome, a.Descricao, a.ID_Avaliador_Lider, u.Nome, 
                    a.Status, atv.Descricao, a.ID_Empresa, e.Nome, n.Nivel, 

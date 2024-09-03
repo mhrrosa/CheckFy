@@ -170,3 +170,39 @@ class Avaliacao:
         values = (aprovacaoSoftex, atividade_planejamento, cronograma_planejamento, projeto_id)
         self.db.cursor.execute(query, values)
         self.db.conn.commit()
+
+    def salvar_apresentacao_equipe(self, id_avaliacao, apresentacao_inicial, equipe_treinada):
+        try:
+            query = """
+                UPDATE avaliacao 
+                SET Apresentacao_Inicial = %s, Equipe_Treinada = %s
+                WHERE ID = %s
+            """
+            values = (apresentacao_inicial, equipe_treinada, id_avaliacao)
+            self.db.cursor.execute(query, values)
+            self.db.conn.commit()
+        except Exception as e:
+            print(f"Erro ao salvar apresentação inicial e equipe treinada: {e}")
+            self.db.conn.rollback()
+            raise
+
+    def get_apresentacao_equipe(self, id_avaliacao):
+        try:
+            query = """
+                SELECT Apresentacao_Inicial, Equipe_Treinada
+                FROM avaliacao
+                WHERE ID = %s
+            """
+            self.db.cursor.execute(query, (id_avaliacao,))
+            result = self.db.cursor.fetchone()
+
+            if result:
+                return {
+                    "apresentacao_inicial": bool(result[0]),
+                    "equipe_treinada": bool(result[1])
+                }
+            else:
+                return None
+        except Exception as e:
+            print(f"Erro ao buscar apresentação inicial e equipe treinada: {e}")
+            raise
