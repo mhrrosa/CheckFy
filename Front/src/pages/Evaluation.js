@@ -10,6 +10,7 @@ import EtapaEvidencia from '../components/EtapaEvidencia';
 import EtapaCaracterizacao from '../components/EtapaCaracterizacao';
 import EtapaResumoCaracterizacao from '../components/EtapaResumoCaracterizacao';
 import EtapaEmailAuditor from '../components/EtapaEmailAuditor';
+import EtapaApresentacoesIniciais from '../components/EtapaApresentacoesIniciais';
 import { getAvaliacaoById, updateIdAtividade, getAtividade } from '../services/Api';
 import { UserContext } from '../contexts/UserContext';
 import '../components/styles/Body.css';
@@ -24,10 +25,11 @@ const etapaComponents = {
   4: EtapaAtividadesPlanejamento,
   5: EtapaAcordoConfidencialidade,
   6: EtapaEmailAuditor,
-  7: EtapaProjeto,
-  8: EtapaEvidencia,
-  9: EtapaCaracterizacao,
-  10: EtapaResumoCaracterizacao
+  7: EtapaApresentacoesIniciais,
+  8: EtapaProjeto,
+  9: EtapaEvidencia,
+  10: EtapaCaracterizacao,
+  11: EtapaResumoCaracterizacao
 };
 
 const etapaUsuarioMap = { 
@@ -37,10 +39,11 @@ const etapaUsuarioMap = {
   4: [1, 2],
   5: [1, 2],
   6: [1, 2],
-  7: [1, 5],
+  7: [1, 2],
   8: [1, 5],
-  9: [1, 2],
-  10: [1, 2]
+  9: [1, 5],
+  10: [1, 2],
+  11: [1, 2]
 };
 
 function Evaluation() {
