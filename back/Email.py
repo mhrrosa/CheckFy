@@ -92,19 +92,22 @@ class Email:
 
     def enviar_email_auditor_avaliacao_inicial(self, id_avaliacao, email_auditor):
         query = """
-            SELECT a.ID, a.Nome, a.Descricao, a.ID_Avaliador_Lider, u.Nome, 
-                   a.Status, atv.Descricao, a.ID_Empresa, e.Nome, n.Nivel, 
-                   v.Nome, a.ID_Instituicao, a.Atividade_Planejamento, 
-                   a.Cronograma_Planejamento, a.Avaliacao_Aprovada_Pela_Softex,
-                   a.ID_Atividade, a.ID_Nivel_Solicitado, a.ID_Versao_Modelo
-            FROM avaliacao a
-            LEFT JOIN empresa e ON a.ID_Empresa = e.ID
-            LEFT JOIN nivel_maturidade_mpsbr n ON a.ID_Nivel_Solicitado = n.ID
-            LEFT JOIN usuario u ON a.ID_Avaliador_Lider = u.ID
-            LEFT JOIN versao_modelo v ON a.ID_Versao_Modelo = v.ID
-            LEFT JOIN atividade atv ON a.ID_Atividade = atv.ID
-            WHERE a.ID = %s
-        """
+                    SELECT a.ID, a.Nome, a.Descricao, a.ID_Avaliador_Lider, u.Nome, 
+                        a.Status, atv.Descricao, a.ID_Empresa, e.Nome, n.Nivel, 
+                        v.Nome, a.ID_Instituicao, a.Atividade_Planejamento, 
+                        a.Cronograma_Planejamento, a.Avaliacao_Aprovada_Pela_Softex,
+                        a.ID_Atividade, a.ID_Nivel_Solicitado, a.ID_Versao_Modelo,
+                        r.descricao as descricao_relatorio, tr.descricao as tipo_relatorio
+                    FROM avaliacao a
+                    LEFT JOIN empresa e ON a.ID_Empresa = e.ID
+                    LEFT JOIN nivel_maturidade_mpsbr n ON a.ID_Nivel_Solicitado = n.ID
+                    LEFT JOIN usuario u ON a.ID_Avaliador_Lider = u.ID
+                    LEFT JOIN versao_modelo v ON a.ID_Versao_Modelo = v.ID
+                    LEFT JOIN atividade atv ON a.ID_Atividade = atv.ID
+                    LEFT JOIN relatorio r ON a.ID = r.ID_Avaliacao
+                    LEFT JOIN tipo_relatorio tr ON r.ID_Tipo = tr.ID
+                    WHERE a.ID = %s
+                """
 
         try:
             self.db.cursor.execute(query, (id_avaliacao,))
@@ -114,20 +117,36 @@ class Email:
                 # Extraindo dados da avaliação
                 id = row[0]
                 nome = row[1]
+                descricao = row[2]
+                nome_avaliador_lider = row[4]
+                nome_empresa = row[8]
+                nivel_solicitado = row[9]
+                descricao_relatorio = row[17]
+                tipo_relatorio = row[18]
 
                 # Configurando o e-mail
                 remetente = "checkfy123@gmail.com"
-                destinatario = "checkfy123@gmail.com"
+                destinatario = email_auditor
                 assunto = f"Informações da Avaliação Inicial - ID {id}"
+
                 
                 corpo = f"""
                 Prezado(a) Auditor(a),
 
-                Seguem as informações da avaliação inicial da Avaliação ID {id} para a realização da auditoria:
+                Você foi designado para realizar a auditoria da avaliação inicial. Seguem as informações da avaliação:
 
-                falta relatorio de ajuste
+                - ID da Avaliação: {id}
+                - Nome da Avaliação: {nome}
+                - Descrição: {descricao}
+                - Nome do Avaliador Líder: {nome_avaliador_lider}
+                - Nome da Empresa: {nome_empresa}
+                - Nível Solicitado: {nivel_solicitado}
+
+                Solicitamos que acesse o sistema para dar início ao processo de auditoria conforme as informações apresentadas. Caso tenha alguma dúvida ou necessite de informações adicionais, 
+                por favor, entre em contato com o avaliador líder.
 
                 Atenciosamente,
+
                 Equipe de Avaliação
                 """
 
