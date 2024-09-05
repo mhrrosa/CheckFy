@@ -184,7 +184,7 @@ def update_resultado_esperado(resultado_id):
 def add_avaliacao():
     avaliacao_data = request.json
     try:
-        nome = avaliacao_data['companyName']
+        nome = avaliacao_data['evaluationName']
         descricao = avaliacao_data['descricao']
         nivel_solicitado = avaliacao_data['nivelSolicitado']
         adjunto_emails = avaliacao_data['adjuntoEmails']
