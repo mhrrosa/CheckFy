@@ -13,6 +13,8 @@ import EtapaEmailAuditor from '../components/EtapaEmailAuditor';
 import EtapaApresentacoesIniciais from '../components/EtapaApresentacoesIniciais';
 import EtapaRelatorioAjusteInicial from '../components/EtapaRelatorioAjusteInicial';
 import EtapaAuditoriaInicial from '../components/EtapaAuditoriaInicial';
+import EtapaRealizarAjusteAvaliacaoInicial from '../components/EtapaRealizarAjusteAvaliacaoInicial';
+import EtapaDataAvaliacaoFinal from  '../components/EtapaDataAvaliacaoFinal';
 import { getAvaliacaoById, updateIdAtividade, getAtividade } from '../services/Api';
 import { UserContext } from '../contexts/UserContext';
 import '../components/styles/Body.css';
@@ -29,11 +31,13 @@ const etapaComponents = {
   6: EtapaEmailAuditor,
   7: EtapaApresentacoesIniciais,
   8: EtapaRelatorioAjusteInicial,
-  9: EtapaAuditoriaInicial,
-  10: EtapaProjeto,
-  11: EtapaEvidencia,
-  12: EtapaCaracterizacao,
-  13: EtapaResumoCaracterizacao
+  11: EtapaAuditoriaInicial,
+  10: EtapaRealizarAjusteAvaliacaoInicial,
+  9: EtapaDataAvaliacaoFinal,
+  12: EtapaProjeto,
+  13: EtapaEvidencia,
+  14: EtapaCaracterizacao,
+  15: EtapaResumoCaracterizacao
 };
 
 const etapaUsuarioMap = { 
@@ -47,9 +51,11 @@ const etapaUsuarioMap = {
   8: [1, 2],
   9: [1, 3],
   10: [1, 5],
-  11: [1, 5],
-  12: [1, 2],
-  13: [1, 2]
+  11: [1, 2],
+  12: [1, 5],
+  13: [1, 5],
+  14: [1, 2],
+  15: [1, 2]
 };
 
 function Evaluation() {
