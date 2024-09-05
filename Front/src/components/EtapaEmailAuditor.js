@@ -84,7 +84,7 @@ function CadastroAuditor({ onNext, avaliacaoId }) {
         <label className="label">E-mail do Auditor:</label>
         <input
           type="email"
-          style={{ marginLeft: 10, width: 500 }}
+          className='input-field'
           value={emailAuditor}
           onChange={(e) => setEmailAuditor(e.target.value)}
           placeholder="Digite o e-mail do auditor"
