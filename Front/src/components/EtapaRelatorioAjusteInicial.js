@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { inserirRelatorioInicial, atualizarRelatorioInicial, getRelatorioInicial } from '../services/Api';
+import { inserirRelatorioInicial, atualizarRelatorioInicial, getRelatorioInicial, enviarEmailRelatorioAjusteInicial } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
 import '../components/styles/Button.css';
 
-function CadastroAuditor({ onNext, avaliacaoId }) {
+function EtapaRelatorioAjusteInicial({ onNext, avaliacaoId }) {
   const [relatorioAjuste, setRelatorioAjuste] = useState('');
   const [relatorioExiste, setRelatorioExiste] = useState(false);
 
@@ -48,14 +48,22 @@ function CadastroAuditor({ onNext, avaliacaoId }) {
     }
   };
 
-  const proximaEtapa = () => {
+  const proximaEtapa = async () => {
     if (!relatorioAjuste) {
       alert('Por favor, preencha o relatório de ajuste antes de continuar.');
       return;
     }
 
     if (window.confirm('Ao confirmar, será enviado um e-mail para o auditor realizar a auditoria. Deseja continuar?')) {
-      onNext();
+      try {
+        // Chama a API para enviar o e-mail
+        await enviarEmailRelatorioAjusteInicial(avaliacaoId);
+        alert('E-mail enviado com sucesso!');
+        onNext();  // Chama a próxima etapa após o envio do e-mail
+      } catch (error) {
+        console.error('Erro ao enviar o e-mail:', error);
+        alert('Ocorreu um erro ao enviar o e-mail.');
+      }
     }
   };
 
@@ -83,4 +91,4 @@ function CadastroAuditor({ onNext, avaliacaoId }) {
   );
 }
 
-export default CadastroAuditor;
+export default EtapaRelatorioAjusteInicial;

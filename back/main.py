@@ -35,6 +35,7 @@ db_config = {
 
 # Criando objetos
 db = Database(**db_config)
+db2 = Database(**db_config)
 nivel = Nivel(db)
 processo = Processo(db)
 resultado_esperado = ResultadoEsperado(db)
@@ -48,7 +49,7 @@ login = Login(db)
 cadastro = Cadastro(db)
 atividade = Atividade(db)
 email = Email(db)
-auditor = Auditor(db)
+auditor = Auditor(db2)
 relatorio = Relatorio(db)
 
 @app.route('/add_nivel', methods=['POST'])
@@ -743,19 +744,33 @@ def add_auditor():
 
 @app.route('/get_email_auditor/<int:avaliacao_id>', methods=['GET'])
 def get_email_auditor(avaliacao_id):
-    id_avaliacao = avaliacao_id # Obtém o id da avaliação dos parâmetros da URL
-
     try:
-        email = auditor.get_email_auditor(id_avaliacao)
+        email = auditor.get_email_auditor(avaliacao_id)
         
         if email:
             return jsonify({"email": email}), 200
         else:
-            return jsonify({"message": "Auditor não encontrado para esta avaliação"}), 404
+            # Retorna 200 com uma mensagem indicando que o auditor ainda não foi cadastrado
+            return jsonify({"message": "Nenhum auditor cadastrado para esta avaliação"}), 200
 
     except Exception as e:
         print(f"Erro ao buscar e-mail do auditor: {e}")
         return jsonify({"message": "Erro ao buscar e-mail do auditor", "error": str(e)}), 500
+
+@app.route('/update_email_auditor/<int:avaliacao_id>', methods=['PUT'])
+def update_email_auditor(avaliacao_id):
+    data = request.get_json()
+    novo_email = data.get('novo_email')
+    if not novo_email:
+        return jsonify({"message": "O novo e-mail é obrigatório."}), 400
+
+    try:
+        # Chama o método de atualização na classe Auditor
+        auditor.update_email_auditor(avaliacao_id, novo_email)
+        return jsonify({"message": "E-mail do auditor atualizado com sucesso!"}), 200
+    except Exception as e:
+        print(f"Erro ao atualizar e-mail do auditor: {e}")
+        return jsonify({"message": "Erro ao atualizar e-mail do auditor", "error": str(e)}), 500
 
 
 @app.route('/salvar_apresentacao_equipe', methods=['POST'])
@@ -843,6 +858,21 @@ def get_relatorio_inicial(avaliacao_id):
         print(f"Erro ao buscar relatório: {e}")
         return jsonify({"message": "Erro ao buscar relatório"}), 500
 
+@app.route('/enviar_email_auditor/<int:avaliacao_id>', methods=['POST'])
+def enviar_email_auditor(avaliacao_id):
+    try:
+        # Chama o método da classe Auditor para obter o e-mail
+        email_auditor = auditor.get_email_auditor(avaliacao_id)
+        if email_auditor:
+            # Chama a função para enviar o e-mail
+            email.enviar_email_auditor_avaliacao_inicial(avaliacao_id, email_auditor)
+            return jsonify({"message": "E-mail enviado com sucesso!"}), 200
+        else:
+            return jsonify({"message": "Auditor não encontrado"}), 404
+
+    except Exception as e:
+        print(f"Erro ao enviar e-mail: {e}")
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == '__main__':

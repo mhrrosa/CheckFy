@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getAvaliacaoById } from '../services/Api';
+import { getAvaliacaoById, updateAvaliacao } from '../services/Api'; // Suponho que tenha uma função para atualizar a avaliação
 import '../components/styles/Body.css';
 import logo from '../img/logo_horizontal.png';
 
-function AuditEvaluation() {
+function EtapaAuditoriaInicial() {
   const location = useLocation();
   const navigate = useNavigate();
   const [avaliacao, setAvaliacao] = useState({
@@ -18,6 +18,7 @@ function AuditEvaluation() {
     id_versao_modelo: '',
     relatorio_ajuste: ''
   });
+  const [isSaving, setIsSaving] = useState(false); // Controle para impedir múltiplas submissões
 
   useEffect(() => {
     const fetchAvaliacao = async () => {
@@ -31,14 +32,48 @@ function AuditEvaluation() {
     fetchAvaliacao();
   }, [location.state.id]);
 
-  const handleApprove = () => {
-    console.log('Avaliação aprovada');
-    // Lógica para aprovar a avaliação
+  const handleApprove = async () => {
+    if (isSaving) return; // Impede múltiplas submissões
+  
+    setIsSaving(true); // Bloqueia novas submissões
+  
+    try {
+      // Incrementa o id_atividade em +1 ao aprovar
+      const novaAvaliacao = {
+        ...avaliacao,
+        id_atividade: avaliacao.id_atividade + 1
+      };
+  
+      await updateAvaliacao(location.state.id, novaAvaliacao); // Atualiza a avaliação no backend
+      alert('Avaliação aprovada com sucesso!');
+      
+      // Navega para a próxima etapa após a aprovação
+      navigate('/proxima-etapa', { state: { id: location.state.id } });
+    } catch (error) {
+      console.error('Erro ao aprovar a avaliação:', error);
+      alert('Erro ao aprovar a avaliação.');
+    } finally {
+      setIsSaving(false); // Libera para novas submissões
+    }
   };
+  
 
-  const handleReject = () => {
-    console.log('Avaliação reprovada');
-    // Lógica para reprovar a avaliação
+  const handleReject = async () => {
+    if (isSaving) return; // Impede múltiplas submissões
+
+    setIsSaving(true); // Bloqueia novas submissões
+
+    try {
+      // Não altera o id_atividade, apenas envia os dados atuais
+      await updateAvaliacao(location.state.id, avaliacao);
+      alert('Avaliação reprovada com sucesso!');
+      navigate('/proxima-etapa', { state: { id: location.state.id } }); // Navega para a próxima etapa
+    } catch (error) {
+      console.error('Erro ao reprovar a avaliação:', error);
+      alert('Erro ao reprovar a avaliação.');
+    } finally {
+      setIsSaving(false); // Libera para novas submissões
+    }
   };
 
   return (
@@ -106,6 +141,7 @@ function AuditEvaluation() {
           }}
           onMouseOver={(e) => e.target.style.backgroundColor = '#45a049'}
           onMouseOut={(e) => e.target.style.backgroundColor = '#4CAF50'}
+          disabled={isSaving} // Desabilitar o botão enquanto salva
         >
           APROVAR
         </button>
@@ -123,6 +159,7 @@ function AuditEvaluation() {
           }}
           onMouseOver={(e) => e.target.style.backgroundColor = '#d32f2f'}
           onMouseOut={(e) => e.target.style.backgroundColor = '#f44336'}
+          disabled={isSaving} // Desabilitar o botão enquanto salva
         >
           REPROVAR
         </button>
@@ -131,4 +168,4 @@ function AuditEvaluation() {
   );
 }
 
-export default AuditEvaluation;
+export default EtapaAuditoriaInicial;

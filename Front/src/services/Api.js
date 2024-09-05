@@ -441,6 +441,11 @@ function getEmailAuditor(idAvaliacao) {
       throw error;
     });
 }
+
+function updateEmailAuditor(idAvaliacao, data) {
+  return put(`/update_email_auditor/${idAvaliacao}`, data);
+}
+
 function salvarApresentacaoEquipe(data) {
   return post('/salvar_apresentacao_equipe', data);
 }
@@ -461,6 +466,9 @@ function getRelatorioInicial(idAvaliacao) {
   return get(`/get_relatorio_inicial/${idAvaliacao}`);
 }
 
+function enviarEmailRelatorioAjusteInicial(avaliacaoId) {
+  return post(`/enviar_email_auditor/${avaliacaoId}`);
+}
 
 export {
   startNewEvaluation,
@@ -519,9 +527,11 @@ export {
   enviarEmailAvaliacao,
   addAuditor,
   getEmailAuditor,
+  updateEmailAuditor,
   salvarApresentacaoEquipe,
   getApresentacaoEquipe,
   inserirRelatorioInicial,
   atualizarRelatorioInicial,
-  getRelatorioInicial
+  getRelatorioInicial,
+  enviarEmailRelatorioAjusteInicial
 };
