@@ -127,8 +127,8 @@ function Evaluation() {
 
   const EtapaComponent = etapaComponents[selectedEtapa];
 
-  return (
-    <div className="container">
+    return (
+    <div className="container-avaliacao">
       <div className="main-content-evaluation">
         <h1 className="evaluation-title">AVALIAÇÃO</h1>
         <div className="form-section-evaluation">
