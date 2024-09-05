@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { getAvaliacaoById, updateAvaliacao } from '../services/Api'; // Suponho que tenha uma função para atualizar a avaliação
 import '../components/styles/Body.css';
 import logo from '../img/logo_horizontal.png';
 
-function EtapaAuditoriaInicial() {
+function EtapaAuditoriaInicial({ onNext, avaliacaoId }) {
   const location = useLocation();
-  const navigate = useNavigate();
   const [avaliacao, setAvaliacao] = useState({
     nome: '',
     descricao: '',
@@ -18,61 +17,34 @@ function EtapaAuditoriaInicial() {
     id_versao_modelo: '',
     relatorio_ajuste: ''
   });
-  const [isSaving, setIsSaving] = useState(false); // Controle para impedir múltiplas submissões
+  const [isLoading, setIsLoading] = useState(false); // Controle de carregamento
 
   useEffect(() => {
     const fetchAvaliacao = async () => {
+      setIsLoading(true); // Ativa o estado de carregamento
       try {
         const data = await getAvaliacaoById(location.state.id);
         setAvaliacao(data);
       } catch (error) {
         console.error('Erro ao buscar avaliação:', error);
+      } finally {
+        setIsLoading(false); // Desativa o estado de carregamento
       }
     };
     fetchAvaliacao();
   }, [location.state.id]);
 
-  const handleApprove = async () => {
-    if (isSaving) return; // Impede múltiplas submissões
-  
-    setIsSaving(true); // Bloqueia novas submissões
-  
+  const proximaEtapa = async () => {
     try {
-      // Incrementa o id_atividade em +1 ao aprovar
       const novaAvaliacao = {
         ...avaliacao,
         id_atividade: avaliacao.id_atividade + 1
       };
-  
-      await updateAvaliacao(location.state.id, novaAvaliacao); // Atualiza a avaliação no backend
-      alert('Avaliação aprovada com sucesso!');
-      
-      // Navega para a próxima etapa após a aprovação
-      navigate('/proxima-etapa', { state: { id: location.state.id } });
+      await updateAvaliacao(avaliacaoId, novaAvaliacao); // Atualiza a avaliação no backend
+      onNext(); // Navega para a próxima etapa
     } catch (error) {
-      console.error('Erro ao aprovar a avaliação:', error);
-      alert('Erro ao aprovar a avaliação.');
-    } finally {
-      setIsSaving(false); // Libera para novas submissões
-    }
-  };
-  
-
-  const handleReject = async () => {
-    if (isSaving) return; // Impede múltiplas submissões
-
-    setIsSaving(true); // Bloqueia novas submissões
-
-    try {
-      // Não altera o id_atividade, apenas envia os dados atuais
-      await updateAvaliacao(location.state.id, avaliacao);
-      alert('Avaliação reprovada com sucesso!');
-      navigate('/proxima-etapa', { state: { id: location.state.id } }); // Navega para a próxima etapa
-    } catch (error) {
-      console.error('Erro ao reprovar a avaliação:', error);
-      alert('Erro ao reprovar a avaliação.');
-    } finally {
-      setIsSaving(false); // Libera para novas submissões
+      console.error('Erro ao avançar para a próxima etapa:', error);
+      alert('Erro ao avançar para a próxima etapa.');
     }
   };
 
@@ -128,7 +100,7 @@ function EtapaAuditoriaInicial() {
       }}>
         <img src={logo} alt="Logo Checkfy" style={{ height: '50px' }} />
         <button
-          onClick={handleApprove}
+          onClick={proximaEtapa}
           style={{
             padding: '10px 20px',
             border: 'none',
@@ -141,27 +113,9 @@ function EtapaAuditoriaInicial() {
           }}
           onMouseOver={(e) => e.target.style.backgroundColor = '#45a049'}
           onMouseOut={(e) => e.target.style.backgroundColor = '#4CAF50'}
-          disabled={isSaving} // Desabilitar o botão enquanto salva
+          disabled={isLoading} // Desabilitar o botão enquanto carrega
         >
-          APROVAR
-        </button>
-        <button
-          onClick={handleReject}
-          style={{
-            padding: '10px 20px',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            color: '#fff',
-            fontWeight: 'bold',
-            backgroundColor: '#f44336',
-            transition: 'background-color 0.3s ease'
-          }}
-          onMouseOver={(e) => e.target.style.backgroundColor = '#d32f2f'}
-          onMouseOut={(e) => e.target.style.backgroundColor = '#f44336'}
-          disabled={isSaving} // Desabilitar o botão enquanto salva
-        >
-          REPROVAR
+          PRÓXIMA ETAPA
         </button>
       </div>
     </div>
