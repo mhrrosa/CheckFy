@@ -16,8 +16,10 @@ function CadastroDataAvaliacao({ onNext, avaliacaoId }) {
       setIsLoading(true);  // Ativa o estado de carregamento
       try {
         const response = await getData(avaliacaoId);
-        if (response) {
-          setDataAvaliacaoFinal(response.dataAvaliacaoFinal || '');  // Atualiza o estado da data
+        if (response && response.dataAvaliacaoFinal) {
+          // Converte a data para o formato 'YYYY-MM-DD' aceito pelo input de data
+          const dataFormatada = new Date(response.dataAvaliacaoFinal).toISOString().split('T')[0];
+          setDataAvaliacaoFinal(dataFormatada);  // Atualiza o estado da data
           setDataExiste(true);  // Data já cadastrada
         } else {
           setDataExiste(false);  // Data não cadastrada
@@ -28,7 +30,7 @@ function CadastroDataAvaliacao({ onNext, avaliacaoId }) {
         setIsLoading(false);  // Desativa o estado de carregamento
       }
     }
-
+  
     fetchData();
   }, [avaliacaoId]);
 

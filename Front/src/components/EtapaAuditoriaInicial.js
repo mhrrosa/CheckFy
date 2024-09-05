@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { getAvaliacaoById, updateAvaliacao } from '../services/Api'; // Suponho que tenha uma função para atualizar a avaliação
+import { getAvaliacaoById } from '../services/Api'; // Função para buscar a avaliação
 import '../components/styles/Body.css';
 import logo from '../img/logo_horizontal.png';
 
-function EtapaAuditoriaInicial({ onNext, avaliacaoId }) {
+function EtapaAuditoriaInicial({ onNext }) {
   const location = useLocation();
   const [avaliacao, setAvaliacao] = useState({
     nome: '',
@@ -34,18 +34,8 @@ function EtapaAuditoriaInicial({ onNext, avaliacaoId }) {
     fetchAvaliacao();
   }, [location.state.id]);
 
-  const proximaEtapa = async () => {
-    try {
-      const novaAvaliacao = {
-        ...avaliacao,
-        id_atividade: avaliacao.id_atividade + 1
-      };
-      await updateAvaliacao(avaliacaoId, novaAvaliacao); // Atualiza a avaliação no backend
-      onNext(); // Navega para a próxima etapa
-    } catch (error) {
-      console.error('Erro ao avançar para a próxima etapa:', error);
-      alert('Erro ao avançar para a próxima etapa.');
-    }
+  const handleNext = () => {
+    onNext(); // Navega para a próxima etapa ao clicar em aprovar ou reprovar
   };
 
   return (
@@ -73,7 +63,7 @@ function EtapaAuditoriaInicial({ onNext, avaliacaoId }) {
           { label: "Nível Solicitado", value: avaliacao.nivel_solicitado },
           { label: "Nome do Avaliador Líder", value: avaliacao.nome_avaliador_lider },
           { label: "Cronograma", value: avaliacao.cronograma_planejamento },
-          { label: "Atividades Planejadas", value: avaliacao.descricao_atividade },
+          { label: "Atividades Planejadas", value: avaliacao.atividade_planejamento },
           { label: "Relatório de Ajuste", value: avaliacao.descricao_relatorio_ajuste_inicial },
         ].map((item, index) => (
           <div key={index} style={{
@@ -100,7 +90,7 @@ function EtapaAuditoriaInicial({ onNext, avaliacaoId }) {
       }}>
         <img src={logo} alt="Logo Checkfy" style={{ height: '50px' }} />
         <button
-          onClick={proximaEtapa}
+          onClick={handleNext}
           style={{
             padding: '10px 20px',
             border: 'none',
@@ -115,7 +105,25 @@ function EtapaAuditoriaInicial({ onNext, avaliacaoId }) {
           onMouseOut={(e) => e.target.style.backgroundColor = '#4CAF50'}
           disabled={isLoading} // Desabilitar o botão enquanto carrega
         >
-          PRÓXIMA ETAPA
+          APROVAR
+        </button>
+        <button
+          onClick={handleNext}
+          style={{
+            padding: '10px 20px',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            color: '#fff',
+            fontWeight: 'bold',
+            backgroundColor: '#f44336',
+            transition: 'background-color 0.3s ease'
+          }}
+          onMouseOver={(e) => e.target.style.backgroundColor = '#d32f2f'}
+          onMouseOut={(e) => e.target.style.backgroundColor = '#f44336'}
+          disabled={isLoading} // Desabilitar o botão enquanto carrega
+        >
+          REPROVAR
         </button>
       </div>
     </div>

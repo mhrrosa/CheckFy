@@ -470,6 +470,33 @@ function enviarEmailRelatorioAjusteInicial(avaliacaoId) {
   return post(`/enviar_email_auditor/${avaliacaoId}`);
 }
 
+// Função para atualizar a empresa em Ajuste de Avaliação Inicial
+function updateEmpresaAjusteAvaliacaoInicial(idEmpresa, data) {
+  return put(`/update_empresa_ajuste_avaliacao_inicial/${idEmpresa}`, data);
+}
+
+// Função para atualizar a avaliação em Ajuste de Avaliação Inicial
+function updateAvaliacaoAjusteInicial(idAvaliacao, data) {
+  return put(`/update_avaliacao_ajuste_inicial/${idAvaliacao}`, data);
+}
+
+// Função para atualizar o relatório em Ajuste de Avaliação Inicial
+function updateRelatorioAjusteAvaliacaoInicial(idAvaliacao, data) {
+  return put(`/update_relatorio_ajuste_avaliacao_inicial/${idAvaliacao}`, data);
+}
+
+function addData(data) {
+  return post('/add_data_avaliacao', data);
+}
+
+function getData(avaliacaoId) {
+  return get(`/get_data_avaliacao/${avaliacaoId}`);
+}
+
+function updateData(avaliacaoId, data) {
+  return put(`/update_data_avaliacao/${avaliacaoId}`, data);
+}
+
 export {
   startNewEvaluation,
   getAllAvaliacoes,
@@ -533,5 +560,11 @@ export {
   inserirRelatorioInicial,
   atualizarRelatorioInicial,
   getRelatorioInicial,
-  enviarEmailRelatorioAjusteInicial
+  enviarEmailRelatorioAjusteInicial,
+  updateEmpresaAjusteAvaliacaoInicial,
+  updateAvaliacaoAjusteInicial,
+  updateRelatorioAjusteAvaliacaoInicial,
+  addData,
+  getData,
+  updateData
 };

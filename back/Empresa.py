@@ -49,3 +49,15 @@ class Empresa:
         except Exception as e:
             print(f"Erro ao deletar empresa do banco de dados: {e}")
             raise e
+        
+    
+    def update_empresa_ajuste_avaliacao_inicial(self, id_empresa, nome):
+        try:
+            self.db.cursor.execute(
+                "UPDATE empresa SET Nome = %s WHERE ID = %s", 
+                (nome, id_empresa)
+            )
+            self.db.conn.commit()
+        except Exception as e:
+            print(f"Erro ao atualizar empresa no banco de dados: {e}")
+            raise e

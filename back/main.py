@@ -158,7 +158,6 @@ def get_resultados_esperados_route():
         print(f"Erro ao buscar resultados esperados: {e}")
         return jsonify({"message": "Erro ao buscar resultados esperados", "error": str(e)}), 500
 
-
 @app.route('/delete_resultado_esperado/<int:resultado_id>', methods=['DELETE'])
 def delete_resultado_esperado(resultado_id):
     try:
@@ -610,7 +609,6 @@ def empresa_avaliacao_insert(avaliacao_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
 @app.route('/get_instituicoes', methods=['GET'])
 def get_instituicoes():
     try:
@@ -772,7 +770,6 @@ def update_email_auditor(avaliacao_id):
         print(f"Erro ao atualizar e-mail do auditor: {e}")
         return jsonify({"message": "Erro ao atualizar e-mail do auditor", "error": str(e)}), 500
 
-
 @app.route('/salvar_apresentacao_equipe', methods=['POST'])
 def salvar_apresentacao_equipe():
     data = request.json
@@ -824,7 +821,6 @@ def inserir_relatorio_inicial():
         print(f"Erro ao inserir relatório: {e}")
         return jsonify({"message": "Erro ao inserir relatório"}), 500
 
-
 @app.route('/atualizar_relatorio_inicial', methods=['PUT'])
 def atualizar_relatorio_inicial():
     data = request.json
@@ -840,7 +836,6 @@ def atualizar_relatorio_inicial():
     except Exception as e:
         print(f"Erro ao atualizar relatório: {e}")
         return jsonify({"message": "Erro ao atualizar relatório"}), 500
-
 
 @app.route('/get_relatorio_inicial/<int:avaliacao_id>', methods=['GET'])
 def get_relatorio_inicial(avaliacao_id):
@@ -873,6 +868,74 @@ def enviar_email_auditor(avaliacao_id):
     except Exception as e:
         print(f"Erro ao enviar e-mail: {e}")
         return jsonify({"error": str(e)}), 500
+
+@app.route('/update_empresa_ajuste_avaliacao_inicial/<int:id_empresa>', methods=['PUT'])
+def update_empresa_ajuste_avaliacao_inicial(id_empresa):
+    data = request.json
+    try:
+        empresa.update_empresa_ajuste_avaliacao_inicial(id_empresa, data['nome'])
+        return jsonify({"message": "Empresa atualizada com sucesso!"}), 200
+    except Exception as e:
+        print(f"Erro ao atualizar empresa: {e}")
+        return jsonify({"message": "Erro ao atualizar empresa", "error": str(e)}), 500
+
+@app.route('/update_avaliacao_ajuste_inicial/<int:avaliacao_id>', methods=['PUT'])
+def update_avaliacao_ajuste_inicial(avaliacao_id):
+    data = request.json
+    try:
+        avaliacao.atualizar_avaliacao_ajuste_inicial(
+            avaliacao_id,
+            descricao=data.get('descricao'),
+            cronograma_planejamento=data.get('cronograma_planejamento'),
+            atividade_planejamento=data.get('atividade_planejamento')
+        )
+        return jsonify({"message": "Avaliação atualizada com sucesso!"}), 200
+    except Exception as e:
+        print(f"Erro ao atualizar avaliação: {e}")
+        return jsonify({"message": "Erro ao atualizar avaliação", "error": str(e)}), 500
+
+@app.route('/update_relatorio_ajuste_avaliacao_inicial/<int:avaliacao_id>', methods=['PUT'])
+def update_relatorio_ajuste_avaliacao_inicial(avaliacao_id):
+    data = request.json
+    try:
+        relatorio.atualizar_relatorio_inicial(descricao=data.get('descricao'), id_avaliacao=avaliacao_id)
+        return jsonify({"message": "Relatório atualizado com sucesso!"}), 200
+    except Exception as e:
+        print(f"Erro ao atualizar relatório: {e}")
+        return jsonify({"message": "Erro ao atualizar relatório", "error": str(e)}), 500
+
+@app.route('/add_data_avaliacao', methods=['POST'])
+def add_data_avaliacao():
+    try:
+        data = request.json
+        id_avaliacao = data['idAvaliacao']
+        data_avaliacao_final = data['dataAvaliacaoFinal']
+        avaliacao.adicionar_data_avaliacao_final(id_avaliacao, data_avaliacao_final)
+        return jsonify({"message": "Data de avaliação final adicionada com sucesso"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/get_data_avaliacao/<int:id_avaliacao>', methods=['GET'])
+def get_data_avaliacao(id_avaliacao):
+    try:
+        data_avaliacao_final = avaliacao.obter_data_avaliacao_final(id_avaliacao)
+        if data_avaliacao_final:
+            return jsonify({"dataAvaliacaoFinal": data_avaliacao_final}), 200
+        else:
+            return jsonify({"message": "Data de avaliação final não encontrada"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/update_data_avaliacao/<int:id_avaliacao>', methods=['PUT'])
+def update_data_avaliacao(id_avaliacao):
+    try:
+        data = request.json
+        nova_data_avaliacao_final = data['dataAvaliacaoFinal']
+        avaliacao.atualizar_data_avaliacao_final(id_avaliacao, nova_data_avaliacao_final)
+        return jsonify({"message": "Data de avaliação final atualizada com sucesso"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 
 if __name__ == '__main__':

@@ -211,3 +211,44 @@ class Avaliacao:
         except Exception as e:
             print(f"Erro ao buscar apresentação inicial e equipe treinada: {e}")
             raise
+
+
+    def atualizar_avaliacao_ajuste_inicial(self, avaliacao_id, descricao, cronograma_planejamento, atividade_planejamento):
+        try:
+            query = "UPDATE avaliacao SET Descricao = %s, Cronograma_Planejamento = %s, Atividade_Planejamento = %s WHERE ID = %s"
+            values = (descricao, cronograma_planejamento, atividade_planejamento, avaliacao_id)
+            self.db.cursor.execute(query, values)
+            self.db.conn.commit()
+        except Exception as e:
+            print(f"Erro ao atualizar empresa no banco de dados: {e}")
+            raise e
+    
+    def adicionar_data_avaliacao_final(self, id_avaliacao, data_avaliacao_final):
+        try:
+            query = "UPDATE avaliacao SET data_avaliacao_final = %s WHERE ID = %s"
+            self.db.cursor.execute(query, (data_avaliacao_final, id_avaliacao))
+            self.db.conn.commit()
+        except Exception as e:
+            print(f"Erro ao adicionar data da avaliação final: {e}")
+            self.db.conn.rollback()
+            raise
+
+    def obter_data_avaliacao_final(self, id_avaliacao):
+        try:
+            query = "SELECT data_avaliacao_final FROM avaliacao WHERE ID = %s"
+            self.db.cursor.execute(query, (id_avaliacao,))
+            data_avaliacao_final = self.db.cursor.fetchone()
+            return data_avaliacao_final[0] if data_avaliacao_final else None
+        except Exception as e:
+            print(f"Erro ao obter data da avaliação final: {e}")
+            raise
+
+    def atualizar_data_avaliacao_final(self, id_avaliacao, nova_data_avaliacao_final):
+        try:
+            query = "UPDATE avaliacao SET data_avaliacao_final = %s WHERE ID = %s"
+            self.db.cursor.execute(query, (nova_data_avaliacao_final, id_avaliacao))
+            self.db.conn.commit()
+        except Exception as e:
+            print(f"Erro ao atualizar data da avaliação final: {e}")
+            self.db.conn.rollback()
+            raise
