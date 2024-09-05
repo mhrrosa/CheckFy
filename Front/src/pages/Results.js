@@ -16,7 +16,7 @@ function Results() {
           Object.entries(finalResponses).map(([key, value], index) => (
             <p key={index}>Resposta {key}: {value.toString()}</p>
           ))
-          : <p>Nenhuma resposta foi registrada.</p>
+          : <p className='mensagem-nao-encontrado'>Nenhuma resposta foi registrada.</p>
         }
       </div>
     </div>

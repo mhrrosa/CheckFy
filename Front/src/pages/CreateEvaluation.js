@@ -10,7 +10,7 @@ import '../pages/styles/CreateEvaluation.css';
 import logo from '../img/logo_horizontal.png';
 
 function CreateEvaluation() {
-  const [companyName, setCompanyName] = useState('');
+  const [evaluationName, setEvaluationName] = useState('');
   const [descricao, setDescricao] = useState('');
   const [nivelSolicitado, setNivelSolicitado] = useState('');
   const [niveis, setNiveis] = useState([]);
@@ -74,7 +74,7 @@ function CreateEvaluation() {
     }
 
     const data = {
-      companyName,
+      evaluationName,
       descricao,
       nivelSolicitado,
       adjuntoEmails,
@@ -119,8 +119,8 @@ function CreateEvaluation() {
             <input
               className="input-field"
               type="text"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
+              value={evaluationName}
+              onChange={(e) => setEvaluationName(e.target.value)}
               placeholder="Digite o nome da avaliação"
             />
           </div>

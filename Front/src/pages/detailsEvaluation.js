@@ -45,12 +45,12 @@ function DetailsEvaluation() {
             <h1 className="title-form">DETALHES DA AVALIAÇÃO</h1>
             <div className="lista-input">
                 <div className="input-wrapper">
-                    <label className="label">Nome da empresa:</label>
+                    <label className="label">Nome da avaliação:</label>
                     <input
                         className="input-field"
                         type="text"
-                        name="nome_empresa"
-                        value={avaliacao.nome_empresa}
+                        name="nome"
+                        value={avaliacao.nome}
                         readOnly
                     />
                 </div>
