@@ -240,7 +240,7 @@ function ResultadosEsperados() {
             </tbody>
           </table>
         ) : (
-          <p>Nenhum resultado esperado encontrado.</p>
+          <p className='mensagem-nao-encontrado'>Nenhum resultado esperado encontrado.</p>
         )}
       </div>
     </div>

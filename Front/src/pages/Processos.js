@@ -144,7 +144,7 @@ function Processos() {
             </tbody>
           </table>
         ) : (
-          <p>Nenhum processo encontrado.</p>
+          <p className='mensagem-nao-encontrado'>Nenhum processo encontrado.</p>
         )}
       </div>
     </div>

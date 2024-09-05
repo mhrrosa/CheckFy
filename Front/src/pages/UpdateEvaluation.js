@@ -57,14 +57,14 @@ function UpdateEvaluation() {
         <h1 className="title-form">ATUALIZAR AVALIAÇÃO</h1>
         <div className="lista-input">
           <div className="input-wrapper">
-            <label className="label">Nome da empresa:</label>
+            <label className="label">Nome da avaliação:</label>
             <input
               className="input-field"
               type="text"
               name="nome"
               value={avaliacao.nome}
               onChange={handleChange}
-              placeholder="Digite o nome da empresa"
+              placeholder="Digite o nome da avaliação"
             />
           </div>
           <div className="input-wrapper">

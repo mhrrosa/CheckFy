@@ -133,7 +133,7 @@ function Niveis() {
             </tbody>
           </table>
         ) : (
-          <p>Nenhum nível encontrado.</p>
+          <p className='mensagem-nao-encontrado'>Nenhum nível encontrado.</p>
         )}
       </div>
     </div>
