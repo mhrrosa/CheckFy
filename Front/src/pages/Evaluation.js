@@ -102,6 +102,12 @@ function Evaluation() {
     }
   }, [selectedEtapa, userType]);
 
+  const calcularProgresso = () => {
+    const totalAtividades = atividades.length;
+    const progresso = (idAtividade / totalAtividades) * 100;
+    return Math.round(progresso); // Arredondar para mostrar valor inteiro
+  };
+
   const handleNextStep = async () => {
     if (selectedEtapa === idAtividade) {
       const newIdAtividade = idAtividade + 1;
@@ -150,7 +156,7 @@ function Evaluation() {
 
   const EtapaComponent = etapaComponents[selectedEtapa];
 
-    return (
+  return (
     <div className="container-avaliacao">
       <div className="main-content-evaluation">
         <h1 className="evaluation-title">AVALIAÇÃO</h1>
@@ -174,7 +180,17 @@ function Evaluation() {
         </div>
       </div>
       <div className="sidebar">
-        <h3>Processos</h3>
+        <div className="sidebar-header">
+          {/* Título Processos com a porcentagem ao lado */}
+          <h3>Processos</h3>
+        </div>
+        {/* Barra de progresso */}
+        <div>
+          <span className="progresso-porcentagem">{calcularProgresso()}% Concluído</span>
+        </div>
+        <div className="barra-progresso">
+          <div className="barra-preenchida" style={{ width: `${calcularProgresso()}%` }}></div>
+        </div>
         {atividades.map((atividade) => {
           const etapaNumber = atividade.ID;
           const isDisabled = etapaNumber > idAtividade;
@@ -192,6 +208,7 @@ function Evaluation() {
       </div>
     </div>
   );
+  
 }
 
 export default Evaluation;
