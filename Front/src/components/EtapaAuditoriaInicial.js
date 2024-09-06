@@ -4,7 +4,7 @@ import { getAvaliacaoById } from '../services/Api'; // Função para buscar a av
 import '../components/styles/Body.css';
 import logo from '../img/logo_horizontal.png';
 
-function EtapaAuditoriaInicial({ onNext }) {
+function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
   const location = useLocation();
   const [avaliacao, setAvaliacao] = useState({
     nome: '',
@@ -36,6 +36,10 @@ function EtapaAuditoriaInicial({ onNext }) {
 
   const handleNext = () => {
     onNext(); // Navega para a próxima etapa ao clicar em aprovar ou reprovar
+  };
+
+  const handleDuploNext = () => {
+    onDuploNext(); // Chama a função para avançar duas etapas
   };
 
   return (
@@ -90,7 +94,7 @@ function EtapaAuditoriaInicial({ onNext }) {
       }}>
         <img src={logo} alt="Logo Checkfy" style={{ height: '50px' }} />
         <button
-          onClick={handleNext}
+          onClick={handleDuploNext}
           style={{
             padding: '10px 20px',
             border: 'none',

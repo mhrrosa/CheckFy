@@ -4,7 +4,7 @@ import { getAvaliacaoById, updateEmpresaAjusteAvaliacaoInicial, updateAvaliacaoA
 import '../components/styles/Body.css';
 import logo from '../img/logo_horizontal.png';
 
-function EtapaAuditoriaEdicao({ onNext }) {
+function EtapaAuditoriaEdicao({ onBack }) {
   const location = useLocation();
   const [avaliacao, setAvaliacao] = useState({
     nome_empresa: '',
@@ -179,7 +179,7 @@ function EtapaAuditoriaEdicao({ onNext }) {
           SALVAR
         </button>
         <button
-          onClick={onNext}
+          onClick={onBack}
           className='button-next'
         >
           PRÓXIMA ETAPA
