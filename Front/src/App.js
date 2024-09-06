@@ -3,6 +3,7 @@ import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './pages/Home';
+import Sobre from './pages/Sobre';
 import CreateEvaluation from './pages/CreateEvaluation';
 import Evaluation from './pages/Evaluation';
 import DetailsEvaluation from './pages/detailsEvaluation';
@@ -39,6 +40,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <Home />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/sobre" 
+            element={
+              <ProtectedRoute>
+                <Sobre />
               </ProtectedRoute>
             } 
           />
