@@ -104,7 +104,7 @@ function Evaluation() {
 
   const calcularProgresso = () => {
     const totalAtividades = atividades.length;
-    const progresso = (idAtividade / totalAtividades) * 100;
+    const progresso = ((idAtividade - 1) / totalAtividades) * 100;
     return Math.round(progresso); // Arredondar para mostrar valor inteiro
   };
 
