@@ -113,6 +113,29 @@ function Evaluation() {
     }
   };
 
+  const handleDuploNextStep = async () => {
+    if (selectedEtapa === idAtividade) {
+      const newIdAtividade = idAtividade + 2; // Adiciona +2
+      await updateIdAtividade(avaliacaoId, newIdAtividade);
+      setIdAtividade(newIdAtividade);
+      setSelectedEtapa(newIdAtividade);
+    } else {
+      setSelectedEtapa(selectedEtapa + 2); // Avança duas etapas
+    }
+  };
+
+  const handleBackStep = async () => {
+    if (selectedEtapa === idAtividade) {
+      const newIdAtividade = idAtividade - 1 ;
+      await updateIdAtividade(avaliacaoId, newIdAtividade);
+      setIdAtividade(newIdAtividade);
+      setSelectedEtapa(newIdAtividade);
+    } else {
+      setSelectedEtapa(selectedEtapa + 1); // Avança duas etapas
+    }
+  };
+
+
   const handleStepClick = (etapa) => {
     setSelectedEtapa(etapa);
   };
@@ -135,6 +158,8 @@ function Evaluation() {
           {hasPermission ? (
             <EtapaComponent
               onNext={handleNextStep}
+              onDuploNext={handleDuploNextStep}
+              onBack={handleBackStep}
               avaliacaoId={avaliacaoId}
               idVersaoModelo={idVersaoModelo}
               idAtividade={idAtividade}
@@ -149,7 +174,7 @@ function Evaluation() {
         </div>
       </div>
       <div className="sidebar">
-        <h3>Etapas:</h3>
+        <h3>Processos</h3>
         {atividades.map((atividade) => {
           const etapaNumber = atividade.ID;
           const isDisabled = etapaNumber > idAtividade;
