@@ -131,7 +131,7 @@ function Evaluation() {
       setIdAtividade(newIdAtividade);
       setSelectedEtapa(newIdAtividade);
     } else {
-      setSelectedEtapa(selectedEtapa + 2); // Avança duas etapas
+      setSelectedEtapa(selectedEtapa + 1); // Avança duas etapas
     }
   };
 
@@ -174,7 +174,7 @@ function Evaluation() {
         </div>
       </div>
       <div className="sidebar">
-        <h3>Etapas:</h3>
+        <h3>Processos</h3>
         {atividades.map((atividade) => {
           const etapaNumber = atividade.ID;
           const isDisabled = etapaNumber > idAtividade;
