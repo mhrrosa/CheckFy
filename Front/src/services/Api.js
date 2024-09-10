@@ -470,6 +470,14 @@ function enviarEmailRelatorioAjusteInicial(avaliacaoId) {
   return post(`/enviar_email_auditor/${avaliacaoId}`);
 }
 
+function enviarEmailDataAvaliacao(avaliacaoId) {
+  return post(`/enviar_email_auditor_data_avaliacao_final/${avaliacaoId}`);
+}
+
+function enviarEmailResultadoAvaliacaoInicial(avaliacaoId) {
+  return post(`/notificar_participantes_resultado_avaliacao_inicial/${avaliacaoId}`);
+}
+
 // Função para atualizar a empresa em Ajuste de Avaliação Inicial
 function updateEmpresaAjusteAvaliacaoInicial(idEmpresa, data) {
   return put(`/update_empresa_ajuste_avaliacao_inicial/${idEmpresa}`, data);
@@ -561,6 +569,8 @@ export {
   atualizarRelatorioInicial,
   getRelatorioInicial,
   enviarEmailRelatorioAjusteInicial,
+  enviarEmailDataAvaliacao,
+  enviarEmailResultadoAvaliacaoInicial,
   updateEmpresaAjusteAvaliacaoInicial,
   updateAvaliacaoAjusteInicial,
   updateRelatorioAjusteAvaliacaoInicial,

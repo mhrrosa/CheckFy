@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { getAvaliacaoById } from '../services/Api'; // Função para buscar a avaliação
+import { getAvaliacaoById, enviarEmailResultadoAvaliacaoInicial } from '../services/Api'; // Função para buscar a avaliação
 import '../components/styles/Body.css';
 import logo from '../img/logo_horizontal.png';
 
@@ -39,8 +39,23 @@ function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
     onNext(); // Navega para a próxima etapa ao clicar em aprovar ou reprovar
   };
 
-  const handleDuploNext = () => {
-    onDuploNext(); // Chama a função para avançar duas etapas
+  const handleDuploNext = async () => {
+    // Alerta de confirmação
+    const confirmacao = window.confirm('Um e-mail será enviado aos participantes informando o resultado da auditoria inicial. Deseja continuar?');
+  
+    if (confirmacao) {
+      try {
+        // Chama a função para enviar o e-mail
+        await enviarEmailResultadoAvaliacaoInicial(location.state.id);
+        alert('E-mail enviado com sucesso!');
+        
+        // Chama a função para avançar duas etapas após o envio do e-mail
+        onDuploNext();
+      } catch (error) {
+        console.error('Erro ao enviar o e-mail:', error);
+        alert('Houve um erro ao enviar o e-mail. Tente novamente.');
+      }
+    }
   };
 
   return (

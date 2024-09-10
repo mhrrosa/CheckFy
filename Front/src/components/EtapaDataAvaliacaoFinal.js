@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { addData, getData, updateData } from '../services/Api';
+import { addData, getData, updateData, enviarEmailDataAvaliacao } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
@@ -65,17 +65,27 @@ function CadastroDataAvaliacao({ onNext, avaliacaoId }) {
     }
   };
 
-  const proximaEtapa = () => {
+  const proximaEtapa = async () => {
     if (!dataAvaliacaoFinal) {
       alert('Por favor, selecione a data da avaliação final antes de continuar.');
       return;
     }
-
+  
     // Alerta com opções de confirmação
     const confirmacao = window.confirm('Um e-mail será enviado aos participantes informando a data da avaliação final. Deseja continuar?');
-
+  
     if (confirmacao) {
-      onNext();  // Navega para a próxima etapa se confirmado
+      try {
+        // Chama a função para enviar o e-mail
+        await enviarEmailDataAvaliacao(avaliacaoId);
+        alert('E-mail enviado com sucesso!');
+        
+        // Navega para a próxima etapa após o envio do e-mail
+        onNext();
+      } catch (error) {
+        console.error('Erro ao enviar o e-mail:', error);
+        alert('Houve um erro ao enviar o e-mail. Tente novamente.');
+      }
     }
   };
 

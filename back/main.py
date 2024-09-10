@@ -870,6 +870,32 @@ def enviar_email_auditor(avaliacao_id):
         print(f"Erro ao enviar e-mail: {e}")
         return jsonify({"error": str(e)}), 500
 
+@app.route('/enviar_email_auditor_data_avaliacao_final/<int:avaliacao_id>', methods=['POST'])
+def enviar_email_auditor_data_avaliacao_final(avaliacao_id):
+    try:
+        # Chama o método da classe Auditor para obter o e-mail
+        email_auditor = auditor.get_email_auditor(avaliacao_id)
+        if email_auditor:
+            # Chama a função para enviar o e-mail
+            email.enviar_email_auditor_data_avaliacao_final(avaliacao_id, email_auditor)
+            return jsonify({"message": "E-mail enviado com sucesso!"}), 200
+        else:
+            return jsonify({"message": "Auditor não encontrado"}), 404
+
+    except Exception as e:
+        print(f"Erro ao enviar e-mail: {e}")
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/notificar_participantes_resultado_avaliacao_inicial/<int:avaliacao_id>', methods=['POST'])
+def notificar_participantes_resultado_avaliacao_inicial(avaliacao_id):
+    try:
+        email.notificar_participantes_resultado_avaliacao_inicial(avaliacao_id)
+        return jsonify({"message": "E-mail enviado com sucesso!"}), 200
+    except Exception as e:
+        print(f"Erro ao enviar e-mail: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route('/update_empresa_ajuste_avaliacao_inicial/<int:id_empresa>', methods=['PUT'])
 def update_empresa_ajuste_avaliacao_inicial(id_empresa):
     data = request.json
