@@ -4,6 +4,7 @@
         bsvs ordr etbm oatk
 '''
 import smtplib
+from datetime import datetime
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
@@ -170,4 +171,161 @@ class Email:
                 print('Avaliação não encontrada')
         except Exception as e:
             print(f"Erro ao buscar avaliação no banco de dados: {e}")
+            raise e
+    
+    def enviar_email_auditor_data_avaliacao_final(self, id_avaliacao, email_auditor):
+        query = """
+            SELECT a.ID, a.Nome, a.data_avaliacao_final, u.Nome
+            FROM avaliacao a
+            LEFT JOIN usuario u ON a.ID_Avaliador_Lider = u.ID
+            WHERE a.ID = %s
+        """
+
+        try:
+            self.db.cursor.execute(query, (id_avaliacao,))
+            row = self.db.cursor.fetchone()
+
+            if row:
+                # Extraindo dados da avaliação
+                id = row[0]
+                nome = row[1]
+                data_avaliacao_final = row[2]
+                nome_avaliador_lider = row[3]
+
+                # Convertendo e formatando a data para o formato dia/mês/ano
+                try:
+                    data_avaliacao_final_formatada = data_avaliacao_final.strftime('%d/%m/%Y')
+                except:
+                    data_avaliacao_final_formatada = data_avaliacao_final
+
+                # Configurando o e-mail
+                remetente = "checkfy123@gmail.com"
+                destinatario = email_auditor
+                assunto = f"Data da Avaliação Final - ID {id}"
+
+                corpo = f"""
+                Prezado(a) Auditor(a),
+
+                Informamos que a data da avaliação final para a avaliação ID {id} - {nome} foi agendada para {data_avaliacao_final_formatada}.
+
+                Avaliador Líder: {nome_avaliador_lider}
+
+                Caso tenha alguma dúvida, por favor, entre em contato com o avaliador líder.
+
+                Atenciosamente,
+
+                Equipe de Avaliação
+                """
+
+                # Criando a mensagem de e-mail
+                mensagem = MIMEMultipart()
+                mensagem['From'] = remetente
+                mensagem['To'] = destinatario
+                mensagem['Subject'] = assunto
+                mensagem.attach(MIMEText(corpo, 'plain'))
+
+                # Enviando o e-mail via servidor SMTP do Gmail
+                try:
+                    with smtplib.SMTP('smtp.gmail.com', 587) as server:
+                        server.starttls()
+                        server.login(remetente, "bsvsordretbmoatk")
+                        server.send_message(mensagem)
+                    print("E-mail enviado com sucesso!")
+                except Exception as e:
+                    print(f"Erro ao enviar e-mail: {e}")
+            else:
+                print('Avaliação não encontrada')
+        except Exception as e:
+            print(f"Erro ao buscar avaliação no banco de dados: {e}")
+            raise e
+
+    def solicitar_link_formulario_feedback(self, id_avaliacao):
+        remetente = "checkfy123@gmail.com"
+        destinatario = "checkfy123@gmail.com"
+        assunto = "Solicitação de Link do Formulário de Feedback"
+
+        corpo = f"""
+        Prezado(a) Softex,
+
+        Estamos entrando em contato para solicitar o link do formulário de feedback referente a avaliação ID: {id_avaliacao}.
+
+        Agradecemos pela atenção e aguardamos o envio do link.
+
+        Atenciosamente,
+
+        Equipe de Avaliação
+        """
+
+        # Criando a mensagem de e-mail
+        mensagem = MIMEMultipart()
+        mensagem['From'] = remetente
+        mensagem['To'] = destinatario
+        mensagem['Subject'] = assunto
+        mensagem.attach(MIMEText(corpo, 'plain'))
+
+        # Enviando o e-mail via servidor SMTP do Gmail
+        try:
+            with smtplib.SMTP('smtp.gmail.com', 587) as server:
+                server.starttls()
+                server.login(remetente, "bsvsordretbmoatk")
+                server.send_message(mensagem)
+            print("E-mail de solicitação de link do formulário de feedback enviado com sucesso!")
+        except Exception as e:
+            print(f"Erro ao enviar e-mail: {e}")
+    
+    def notificar_participantes_resultado_avaliacao_inicial(self, id_avaliacao):
+        try:
+            # Consultar os participantes da avaliação na tabela usuarios_avaliacao
+            query_participantes = """
+            SELECT u.Email
+            FROM usuarios_avaliacao ua
+            JOIN usuario u ON ua.ID_Usuario = u.ID
+            WHERE ua.ID_Avaliacao = %s
+            """
+            
+            # Executando a consulta com o parâmetro
+            self.db.cursor.execute(query_participantes, (id_avaliacao,))
+            participantes = self.db.cursor.fetchall()
+
+            if participantes:
+                # Iterar sobre cada participante e enviar um e-mail de notificação
+                for participante in participantes:
+                    email_participante = participante[0]
+
+                    remetente = "checkfy123@gmail.com"
+                    destinatario = email_participante
+                    assunto = "Resultado da Avaliação Final"
+
+                    corpo = f"""
+                    Prezado(a),
+
+                    Informamos que o resultado da avaliação inicial para a avaliação de ID {id_avaliacao} foi concluído.
+
+                    Por favor, acesse o sistema para visualizar o resultado detalhado.
+
+                    Atenciosamente,
+
+                    Equipe de Avaliação
+                    """
+
+                    # Criando a mensagem de e-mail
+                    mensagem = MIMEMultipart()
+                    mensagem['From'] = remetente
+                    mensagem['To'] = destinatario
+                    mensagem['Subject'] = assunto
+                    mensagem.attach(MIMEText(corpo, 'plain'))
+
+                    # Enviando o e-mail via servidor SMTP do Gmail
+                    try:
+                        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+                            server.starttls()
+                            server.login(remetente, "bsvsordretbmoatk")
+                            server.send_message(mensagem)
+                        print(f"E-mail enviado com sucesso para {email_participante}!")
+                    except Exception as e:
+                        print(f"Erro ao enviar e-mail para {email_participante}: {e}")
+            else:
+                print("Nenhum participante encontrado para esta avaliação.")
+        except Exception as e:
+            print(f"Erro ao buscar participantes da avaliação no banco de dados: {e}")
             raise e
