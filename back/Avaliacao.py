@@ -110,7 +110,7 @@ class Avaliacao:
                         v.Nome, a.ID_Instituicao, a.Atividade_Planejamento, 
                         a.Cronograma_Planejamento, a.Avaliacao_Aprovada_Pela_Softex,
                         a.ID_Atividade, a.ID_Nivel_Solicitado, a.ID_Versao_Modelo,
-                        r.descricao as descricao_relatorio, tr.descricao as tipo_relatorio
+                        r.descricao as descricao_relatorio, r.Caminho_Arquivo as caminho_arquivo_relatorio, tr.descricao as tipo_relatorio
                     FROM avaliacao a
                     LEFT JOIN empresa e ON a.ID_Empresa = e.ID
                     LEFT JOIN nivel_maturidade_mpsbr n ON a.ID_Nivel_Solicitado = n.ID
@@ -145,7 +145,8 @@ class Avaliacao:
                     "id_nivel_solicitado": row[16],  # ID do Nível Solicitado
                     "id_versao_modelo": row[17],  # ID da Versão do Modelo
                     "descricao_relatorio_ajuste_inicial": row[18],  # Descrição do Relatório
-                    "tipo_relatorio_ajuste_inicial": row[19]  # Tipo de Relatório
+                    "caminho_arquivo_relatorio_ajuste_inicial": row[19],  # Descrição do Relatório
+                    "tipo_relatorio_ajuste_inicial": row[20]  # Tipo de Relatório
                 }
             return avaliacao_data
         else:

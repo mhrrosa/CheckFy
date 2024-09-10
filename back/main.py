@@ -810,12 +810,13 @@ def inserir_relatorio_inicial():
     data = request.json
     descricao = data.get('descricao')
     id_avaliacao = data.get('idAvaliacao')
+    caminho_arquivo = data.get('caminhoArquivo')
 
     if not descricao or not id_avaliacao:
         return jsonify({"message": "Dados incompletos"}), 400
 
     try:
-        relatorio_id = relatorio.inserir_relatorio_inicial(descricao, id_avaliacao)
+        relatorio_id = relatorio.inserir_relatorio_inicial(descricao, id_avaliacao, caminho_arquivo)
         return jsonify({"message": "Relatório inserido com sucesso", "id": relatorio_id}), 201
     except Exception as e:
         print(f"Erro ao inserir relatório: {e}")
@@ -826,12 +827,13 @@ def atualizar_relatorio_inicial():
     data = request.json
     descricao = data.get('descricao')
     id_avaliacao = data.get('idAvaliacao')
-
+    caminho_arquivo = data.get('caminhoArquivo')
+    print(data)
     if not descricao or not id_avaliacao:
         return jsonify({"message": "Dados incompletos"}), 400
 
     try:
-        relatorio.atualizar_relatorio_inicial(descricao, id_avaliacao)
+        relatorio.atualizar_relatorio_inicial(descricao, id_avaliacao, caminho_arquivo)
         return jsonify({"message": "Relatório atualizado com sucesso"}), 200
     except Exception as e:
         print(f"Erro ao atualizar relatório: {e}")
@@ -842,7 +844,6 @@ def get_relatorio_inicial(avaliacao_id):
     id_avaliacao = avaliacao_id
     if not id_avaliacao:
         return jsonify({"message": "ID da avaliação não fornecido"}), 400
-
     try:
         result = relatorio.obter_relatorio_inicial(id_avaliacao)
         if result:
@@ -897,8 +898,9 @@ def update_avaliacao_ajuste_inicial(avaliacao_id):
 @app.route('/update_relatorio_ajuste_avaliacao_inicial/<int:avaliacao_id>', methods=['PUT'])
 def update_relatorio_ajuste_avaliacao_inicial(avaliacao_id):
     data = request.json
+    print(data)
     try:
-        relatorio.atualizar_relatorio_inicial(descricao=data.get('descricao'), id_avaliacao=avaliacao_id)
+        relatorio.atualizar_relatorio_inicial(descricao=data.get('descricao'), id_avaliacao=avaliacao_id, caminho_arquivo=data.get('caminho_arquivo') )
         return jsonify({"message": "Relatório atualizado com sucesso!"}), 200
     except Exception as e:
         print(f"Erro ao atualizar relatório: {e}")

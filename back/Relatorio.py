@@ -2,13 +2,13 @@ class Relatorio:
     def __init__(self, db):
         self.db = db
 
-    def inserir_relatorio_inicial(self, descricao, id_avaliacao):
+    def inserir_relatorio_inicial(self, descricao, id_avaliacao, caminho_arquivo):
         try:
             query = """
-                INSERT INTO relatorio (Descricao, ID_Tipo, ID_Avaliacao)
-                VALUES (%s, %s, %s)
+                INSERT INTO relatorio (Descricao, ID_Tipo, ID_Avaliacao, Caminho_Arquivo)
+                VALUES (%s, %s, %s, %s)
             """
-            values = (descricao, 1, id_avaliacao)  # ID_Tipo é sempre 1
+            values = (descricao, 1, id_avaliacao, caminho_arquivo)
             self.db.cursor.execute(query, values)
             self.db.conn.commit()
             return self.db.cursor.lastrowid
@@ -17,14 +17,14 @@ class Relatorio:
             self.db.conn.rollback()
             raise
 
-    def atualizar_relatorio_inicial(self, descricao, id_avaliacao):
+    def atualizar_relatorio_inicial(self, descricao, id_avaliacao, caminho_arquivo):
         try:
             query = """
                 UPDATE relatorio
-                SET Descricao = %s
+                SET Descricao = %s, Caminho_Arquivo = %s
                 WHERE ID_Avaliacao = %s AND ID_Tipo = 1
             """
-            values = (descricao, id_avaliacao)
+            values = (descricao, caminho_arquivo, id_avaliacao)
             self.db.cursor.execute(query, values)
             self.db.conn.commit()
         except Exception as e:
@@ -35,14 +35,14 @@ class Relatorio:
     def obter_relatorio_inicial(self, id_avaliacao):
         try:
             query = """
-                SELECT Descricao
+                SELECT Descricao, Caminho_Arquivo
                 FROM relatorio
                 WHERE ID_Avaliacao = %s AND ID_Tipo = 1
             """
             self.db.cursor.execute(query, (id_avaliacao,))
             result = self.db.cursor.fetchone()
             if result:
-                return {"descricao": result[0]}
+                return {"descricao": result[0], "caminhoArquivo": result[1]}
             return None
         except Exception as e:
             print(f"Erro ao obter relatório: {e}")

@@ -15,7 +15,8 @@ function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
     id_avaliador_lider: '',
     id_atividade: '',
     id_versao_modelo: '',
-    relatorio_ajuste: ''
+    relatorio_ajuste: '',
+    caminho_arquivo_relatorio_ajuste_inicial: ''
   });
   const [isLoading, setIsLoading] = useState(false); // Controle de carregamento
 
@@ -84,6 +85,38 @@ function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
             </span>
           </div>
         ))}
+
+        {/* Adicionando o botão "Mostrar" caso o caminho do arquivo esteja disponível */}
+        {avaliacao.caminho_arquivo_relatorio_ajuste_inicial && (
+          <div style={{
+            marginBottom: '15px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}>
+            <label style={{ fontWeight: 'bold', color: '#666', width: '45%' }}>
+              Arquivo de Relatório de Ajuste:
+            </label>
+            <button
+              style={{
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                color: '#fff',
+                fontWeight: 'bold',
+                backgroundColor: '#2196F3',
+                transition: 'background-color 0.3s ease'
+              }}
+              onMouseOver={(e) => e.target.style.backgroundColor = '#1976D2'}
+              onMouseOut={(e) => e.target.style.backgroundColor = '#2196F3'}
+              onClick={() => window.open(`http://127.0.0.1:5000/uploads/${avaliacao.caminho_arquivo_relatorio_ajuste_inicial}`, '_blank')}
+              disabled={isLoading} // Desabilitar o botão enquanto carrega
+            >
+              MOSTRAR
+            </button>
+          </div>
+        )}
       </div>
 
       <div style={{
@@ -134,4 +167,4 @@ function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
   );
 }
 
-export default EtapaAuditoriaInicial;
+export default EtapaAuditoriaInicial
