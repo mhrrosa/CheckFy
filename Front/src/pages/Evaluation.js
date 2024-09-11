@@ -15,6 +15,7 @@ import EtapaRelatorioAjusteInicial from '../components/EtapaRelatorioAjusteInici
 import EtapaAuditoriaInicial from '../components/EtapaAuditoriaInicial';
 import EtapaRealizarAjusteAvaliacaoInicial from '../components/EtapaRealizarAjusteAvaliacaoInicial';
 import EtapaDataAvaliacaoFinal from  '../components/EtapaDataAvaliacaoFinal';
+import EtapaEmailFeedbackSoftex from '../components/EtapaEmailFeedbackSoftex'
 import { getAvaliacaoById, updateIdAtividade, getAtividade } from '../services/Api';
 import { UserContext } from '../contexts/UserContext';
 import '../components/styles/Body.css';
@@ -34,10 +35,11 @@ const etapaComponents = {
   9: EtapaAuditoriaInicial,
   10: EtapaRealizarAjusteAvaliacaoInicial,
   11: EtapaDataAvaliacaoFinal,
-  12: EtapaProjeto,
-  13: EtapaEvidencia,
-  14: EtapaCaracterizacao,
-  15: EtapaResumoCaracterizacao
+  12: EtapaEmailFeedbackSoftex,
+  13: EtapaProjeto,
+  14: EtapaEvidencia,
+  15: EtapaCaracterizacao,
+  16: EtapaResumoCaracterizacao
 };
 
 const etapaUsuarioMap = { 
@@ -52,10 +54,11 @@ const etapaUsuarioMap = {
   9: [1, 3],
   10: [1, 5],
   11: [1, 2],
-  12: [1, 5],
+  12: [1, 2],
   13: [1, 5],
-  14: [1, 2],
-  15: [1, 2]
+  14: [1, 5],
+  15: [1, 2],
+  16: [1, 2]
 };
 
 function Evaluation() {

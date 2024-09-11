@@ -419,6 +419,10 @@ function enviarEmailAvaliacao(avaliacaoId) {
   return post(`/enviar_email/${avaliacaoId}`);
 }
 
+function enviarEmailSolicitarFeedback(avaliacaoId) {
+  return post(`/enviar_email_solicitar_feedback/${avaliacaoId}`);
+}
+
 function addAuditor(data) {
   const url = '/add_auditor';
   return post(url, data)
@@ -560,6 +564,7 @@ export {
   getAcordoConfidencialidade,
   getAtividade,
   enviarEmailAvaliacao,
+  enviarEmailSolicitarFeedback,
   addAuditor,
   getEmailAuditor,
   updateEmailAuditor,

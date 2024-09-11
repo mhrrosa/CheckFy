@@ -723,6 +723,14 @@ def enviar_email(avaliacao_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/enviar_email_solicitar_feedback/<int:avaliacao_id>', methods=['POST'])
+def enviar_email_solicitar_feedback(avaliacao_id):
+    try:
+        email.solicitar_link_formulario_feedback(avaliacao_id)
+        return jsonify({"message": "E-mail Feedback enviado com sucesso"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/add_auditor', methods=['POST'])
 def add_auditor():
     auditor_data = request.json
