@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
+import Sidebar from '../components/SideBar';
 import EtapaAtividadesPlanejamento from '../components/EtapaAtividadesPlanejamento';
 import EtapaEmpresa from '../components/EtapaEmpresa';
 import EtapaEmailSoftex from '../components/EtapaEmailSoftex';
@@ -185,33 +186,13 @@ function Evaluation() {
           )}
         </div>
       </div>
-      <div className="sidebar">
-        <div className="sidebar-header">
-          {/* Título Processos com a porcentagem ao lado */}
-          <h3>Processos</h3>
-        </div>
-        {/* Barra de progresso */}
-        <div>
-          <span className="progresso-porcentagem">{calcularProgresso()}% Concluído</span>
-        </div>
-        <div className="barra-progresso">
-          <div className="barra-preenchida" style={{ width: `${calcularProgresso()}%` }}></div>
-        </div>
-        {atividades.map((atividade) => {
-          const etapaNumber = atividade.ID;
-          const isDisabled = etapaNumber > idAtividade;
-          return (
-            <button
-              key={atividade.ID}
-              onClick={() => handleStepClick(etapaNumber)}
-              className={`${etapaNumber === selectedEtapa ? 'current-step' : ''} ${isDisabled ? 'button-disabled' : ''}`}
-              disabled={isDisabled}
-            >
-              {atividade.Descricao}
-            </button>
-          );
-        })}
-      </div>
+      <Sidebar
+        calcularProgresso={calcularProgresso}
+        atividades={atividades}
+        idAtividade={idAtividade}
+        handleStepClick={handleStepClick}
+        selectedEtapa={selectedEtapa}
+      />
     </div>
   );
   
