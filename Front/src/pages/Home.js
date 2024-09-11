@@ -104,7 +104,7 @@ function Home() {
             </div>
           ))
         ) : (
-          <p className='mensagem-nao-encontrado'>Nenhuma avaliação encontrada</p>
+          <p className='mensagem-nao-encontrado-home'>Nenhuma avaliação encontrada</p>
         )}
       </div>
     </div>

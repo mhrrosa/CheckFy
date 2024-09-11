@@ -33,3 +33,7 @@
     margin: 0;
     padding-left: 30px;
 }
+
+.mensagem-nao-encontrado-home {
+    color: black;
+}
