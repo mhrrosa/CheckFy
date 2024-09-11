@@ -195,7 +195,6 @@ function Evaluation() {
       />
     </div>
   );
-  
 }
 
 export default Evaluation;

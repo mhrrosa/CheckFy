@@ -1,66 +1,16 @@
-.sidebar {
-  width: 200px;
-  background-color: #f8f9fa; /* Cor de fundo */
-  border-right: 1px solid #ced4da; /* Borda à direita */
-  padding: 20px 40px 20px 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.sidebar-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.sidebar h3 {
-  color: #495057; /* Cor do título */
-  font-size: 1.2em; /* Tamanho da fonte do título */
-  margin-bottom: 20px; /* Espaçamento inferior */
-}
-
-/* Estilo para os botões desabilitados */
-button.button-disabled {
-  background-color: #d3d3d3 !important; /* Cor de fundo cinza */
-  color: #6c757d !important; /* Cor do texto cinza */
-  cursor: not-allowed !important; /* Cursor que indica que não pode ser clicado */
-  border-color: #ced4da !important; /* Cor da borda */
-}
-
 .evaluation-title {
   color: #333;
   font-size: 2em;
   margin-bottom: 20px;
 }
 
-.progresso-porcentagem {
-  font-size: 1em;
-  font-weight: bold;
-  color: #333;
-}
-
-.barra-progresso {
-  width: 100%;
-  background-color: #e0e0e0;
-  border-radius: 8px;
-  height: 8px;
-  margin-bottom: 20px;
-}
-
-.barra-preenchida {
-  background-color: #4caf50;
-  height: 100%;
-  border-radius: 8px;
-  transition: width 0.4s ease;
-}
-
 .main-content-evaluation {
+  flex: 1; /* Ocupa o espaço restante */
   padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-y: auto; /* Permite rolagem se o conteúdo for maior que a tela */
 }
 
 .textarea-field {
