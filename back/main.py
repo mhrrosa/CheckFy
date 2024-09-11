@@ -862,6 +862,56 @@ def get_relatorio_inicial(avaliacao_id):
         print(f"Erro ao buscar relatório: {e}")
         return jsonify({"message": "Erro ao buscar relatório"}), 500
 
+# Rota para inserir ata de abertura
+@app.route('/inserir_ata_abertura', methods=['POST'])
+def inserir_ata_abertura():
+    data = request.json
+    descricao = data.get('descricao')
+    id_avaliacao = data.get('idAvaliacao')
+
+    if not descricao or not id_avaliacao:
+        return jsonify({"message": "Dados incompletos"}), 400
+
+    try:
+        ata_id = relatorio.inserir_ata_abertura(descricao, id_avaliacao)
+        return jsonify({"message": "Ata de abertura inserida com sucesso", "id": ata_id}), 201
+    except Exception as e:
+        print(f"Erro ao inserir ata de abertura: {e}")
+        return jsonify({"message": "Erro ao inserir ata de abertura"}), 500
+
+# Rota para atualizar ata de abertura
+@app.route('/atualizar_ata_abertura', methods=['PUT'])
+def atualizar_ata_abertura():
+    data = request.json
+    descricao = data.get('descricao')
+    id_avaliacao = data.get('idAvaliacao')
+
+    if not descricao or not id_avaliacao:
+        return jsonify({"message": "Dados incompletos"}), 400
+
+    try:
+        relatorio.atualizar_ata_abertura(descricao, id_avaliacao)
+        return jsonify({"message": "Ata de abertura atualizada com sucesso"}), 200
+    except Exception as e:
+        print(f"Erro ao atualizar ata de abertura: {e}")
+        return jsonify({"message": "Erro ao atualizar ata de abertura"}), 500
+
+# Rota para obter ata de abertura
+@app.route('/get_ata_abertura/<int:avaliacao_id>', methods=['GET'])
+def get_ata_abertura(avaliacao_id):
+    if not avaliacao_id:
+        return jsonify({"message": "ID da avaliação não fornecido"}), 400
+
+    try:
+        result = relatorio.obter_ata_abertura(avaliacao_id)
+        if result:
+            return jsonify(result), 200
+        else:
+            return jsonify({"message": "Ata de abertura não encontrada"}), 404
+    except Exception as e:
+        print(f"Erro ao buscar ata de abertura: {e}")
+        return jsonify({"message": "Erro ao buscar ata de abertura"}), 500
+
 @app.route('/enviar_email_auditor/<int:avaliacao_id>', methods=['POST'])
 def enviar_email_auditor(avaliacao_id):
     try:

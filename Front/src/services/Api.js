@@ -470,6 +470,18 @@ function getRelatorioInicial(idAvaliacao) {
   return get(`/get_relatorio_inicial/${idAvaliacao}`);
 }
 
+function inserirAtaAbertura(data) {
+  return post('/inserir_ata_abertura', data);
+}
+
+function atualizarAtaAbertura(data) {
+  return put('/atualizar_ata_abertura', data);
+}
+
+function getAtaAbertura(idAvaliacao) {
+  return get(`/get_ata_abertura/${idAvaliacao}`);
+}
+
 function enviarEmailRelatorioAjusteInicial(avaliacaoId) {
   return post(`/enviar_email_auditor/${avaliacaoId}`);
 }
@@ -581,5 +593,9 @@ export {
   updateRelatorioAjusteAvaliacaoInicial,
   addData,
   getData,
-  updateData
+  updateData,
+  inserirAtaAbertura,
+  atualizarAtaAbertura,
+  getAtaAbertura
+
 };
