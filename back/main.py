@@ -16,6 +16,7 @@ from Atividade import Atividade
 from Email import Email
 from Auditor import Auditor
 from Relatorio import Relatorio
+from GrauImplementacao import GrauImplementacao
 import os
 
 app = Flask(__name__)
@@ -51,6 +52,7 @@ atividade = Atividade(db)
 email = Email(db)
 auditor = Auditor(db2)
 relatorio = Relatorio(db)
+grau_implementacao = GrauImplementacao
 
 @app.route('/add_nivel', methods=['POST'])
 def add_nivel():
@@ -982,7 +984,42 @@ def update_data_avaliacao(id_avaliacao):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/get_graus_implementacao_empresa/<int:id_avaliacao>', methods=['GET'])
+def get_graus_implementacao_empresa(id_avaliacao):
+    try:
+        graus = grau_implementacao.get_grau_implementacao_empresa(id_avaliacao)
+        return jsonify(graus), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
+
+@app.route('/insert_graus_implementacao_empresa', methods=['POST'])
+def insert_graus_implementacao_empresa():
+    try:
+        data = request.json  # Espera um JSON com 'id_avaliacao' e 'notas' (dicionário com id_resultado_esperado como chave e nota como valor)
+        id_avaliacao = data['id_avaliacao']
+        notas = data['notas']
+
+        for id_resultado_esperado, nota in notas.items():
+            grau_implementacao.add_grau_implementacao_empresa(id_avaliacao, id_resultado_esperado, nota)
+
+        return jsonify({'message': 'Graus de implementação inseridos com sucesso!'}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/update_graus_implementacao_empresa', methods=['PUT'])
+def update_graus_implementacao_empresa():
+    try:
+        data = request.json  # Espera um JSON com 'notas' (dicionário com id_grau como chave e nota como valor)
+        notas = data['notas']
+
+        for id_grau, nota in notas.items():
+            grau_implementacao.update_grau_implementacao_empresa(id_grau, nota)
+
+        return jsonify({'message': 'Graus de implementação atualizados com sucesso!'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
