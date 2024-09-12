@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
-import Sidebar from '../components/SideBar';
 import EtapaAtividadesPlanejamento from '../components/EtapaAtividadesPlanejamento';
 import EtapaEmpresa from '../components/EtapaEmpresa';
 import EtapaEmailSoftex from '../components/EtapaEmailSoftex';
@@ -16,8 +15,8 @@ import EtapaRelatorioAjusteInicial from '../components/EtapaRelatorioAjusteInici
 import EtapaAuditoriaInicial from '../components/EtapaAuditoriaInicial';
 import EtapaRealizarAjusteAvaliacaoInicial from '../components/EtapaRealizarAjusteAvaliacaoInicial';
 import EtapaDataAvaliacaoFinal from  '../components/EtapaDataAvaliacaoFinal';
-import EtapaEmailFeedbackSoftex from '../components/EtapaEmailFeedbackSoftex'
-import EtapaAtaReuniaoAbertura from '../components/EtapaAtaReuniaoAbertura';
+import EtapaEmailFeedbackSoftex from '../components/EtapaEmailFeedbackSoftex';
+import EtapaAtaAbertura from '../components/EtapaAtaAbertura'
 import { getAvaliacaoById, updateIdAtividade, getAtividade } from '../services/Api';
 import { UserContext } from '../contexts/UserContext';
 import '../components/styles/Body.css';
@@ -38,7 +37,7 @@ const etapaComponents = {
   10: EtapaRealizarAjusteAvaliacaoInicial,
   11: EtapaDataAvaliacaoFinal,
   12: EtapaEmailFeedbackSoftex,
-  13: EtapaAtaReuniaoAbertura,
+  13: EtapaAtaAbertura,
   14: EtapaProjeto,
   15: EtapaEvidencia,
   16: EtapaCaracterizacao,
@@ -186,15 +185,36 @@ function Evaluation() {
           )}
         </div>
       </div>
-      <Sidebar
-        calcularProgresso={calcularProgresso}
-        atividades={atividades}
-        idAtividade={idAtividade}
-        handleStepClick={handleStepClick}
-        selectedEtapa={selectedEtapa}
-      />
+      <div className="sidebar">
+        <div className="sidebar-header">
+          {/* Título Processos com a porcentagem ao lado */}
+          <h3>Processos</h3>
+        </div>
+        {/* Barra de progresso */}
+        <div>
+          <span className="progresso-porcentagem">{calcularProgresso()}% Concluído</span>
+        </div>
+        <div className="barra-progresso">
+          <div className="barra-preenchida" style={{ width: `${calcularProgresso()}%` }}></div>
+        </div>
+        {atividades.map((atividade) => {
+          const etapaNumber = atividade.ID;
+          const isDisabled = etapaNumber > idAtividade;
+          return (
+            <button
+              key={atividade.ID}
+              onClick={() => handleStepClick(etapaNumber)}
+              className={`${etapaNumber === selectedEtapa ? 'current-step' : ''} ${isDisabled ? 'button-disabled' : ''}`}
+              disabled={isDisabled}
+            >
+              {atividade.Descricao}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
+  
 }
 
 export default Evaluation;
