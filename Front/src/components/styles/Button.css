@@ -153,6 +153,22 @@
     background-color: #7e0000;
 }
 
+.button-remove-avaliacao {
+    margin-top: 5px;
+    padding: 5px 10px;
+    border: 2px solid #7e0000;
+    color: #7e0000;
+    border-radius: 10px;
+    cursor: pointer;
+    align-self: flex-start;
+    transition: background-color 0.3s;
+}
+
+.button-remove-avaliacao:hover {
+    background-color: #7e0000;
+    color: white;
+}
+
 .botoes-acoes {
     width: 13em;
     display: flex;

@@ -170,7 +170,7 @@ function Evaluation() {
   return (
     <div className="container-avaliacao">
       <div className="main-content-evaluation">
-        <h1 className="evaluation-title">AVALIAÇÃO</h1>
+        <h1 className="evaluation-title">AVALIAÇÃO:</h1>
         <div className="form-section-evaluation">
           {hasPermission ? (
             <EtapaComponent

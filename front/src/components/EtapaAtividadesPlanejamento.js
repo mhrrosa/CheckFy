@@ -5,6 +5,7 @@ import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
 import '../components/styles/Button.css';
+import '../components/styles/Etapas.css';
 import '../components/styles/EtapaAtividadesPlanejamento.css';
 
 function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
@@ -90,21 +91,21 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
         <>
           <div className='textarea-wrapper'>
             <label className="label">Planejamento de atividades para a avaliação:</label>
-            <p className="dica-text" style={{ color: 'grey', marginLeft: 10, fontSize: 13 }}>
+            <p className="dica-text">
               Dica para preencher: dicas
             </p>
             <textarea
               value={planejamentoAtividades}
               onChange={(e) => setPlanejamentoAtividades(e.target.value)}
               rows="4"
-              className="textarea"
+              className="input-textarea-avaliacao"
               style={{ marginLeft: 10 , width: 500}}
             ></textarea>
           </div>
           <br></br>
           <div className='textarea-wrapper'>
             <label className="label">Planejamento de cronograma para a avaliação:</label>
-            <p className="dica-text" style={{ color: 'white', marginLeft: 10, fontSize: 13 }}>
+            <p className="dica-text">
             Dica para preencher: Uma base para estimar o tempo da avaliação inicial, da avaliação final e a composição da equipe sugerida pelo MA-MPS:
                 <ul>
                     <li><strong>Níveis A e B:</strong> 4-5 dias, com avaliador líder, adjunto(s) e representante(s) da unidade.</li>
@@ -117,7 +118,7 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
               value={planejamentoCronograma}
               onChange={(e) => setPlanejamentoCronograma(e.target.value)}
               rows="4"
-              className="textarea"
+              className="input-textarea-avaliacao"
               style={{ marginLeft: 10, width: 500 }}
             ></textarea>
           </div>

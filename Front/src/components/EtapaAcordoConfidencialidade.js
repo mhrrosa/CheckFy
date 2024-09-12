@@ -96,7 +96,7 @@ function EtapaAcordoConfidencialidade({ onNext, avaliacaoId, idAtividade }) {
                 )}
             </div>
             {canEdit && acordoConfidencialidade && (
-                <button className='button-remove' onClick={removerAcordoConfidencialidade}>REMOVER</button>
+                <button className='button-remove-avaliacao' onClick={removerAcordoConfidencialidade}>REMOVER</button>
             )}
 
             {canEdit && (
