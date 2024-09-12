@@ -353,6 +353,10 @@ function inserir_planejamento(avaliacaoId, data){
   return put(`/inserir_planejamento/${avaliacaoId}`, data);
 }
 
+function inserir_ata_reuniao(avaliacaoId, data){
+  return put(`/inserir_ata_reuniao/${avaliacaoId}`, data);
+}
+
 function registerUser(data) {
   const url = '/cadastro';
   return post(url, data)
@@ -470,18 +474,6 @@ function getRelatorioInicial(idAvaliacao) {
   return get(`/get_relatorio_inicial/${idAvaliacao}`);
 }
 
-function inserirAtaAbertura(data) {
-  return post('/inserir_ata_abertura', data);
-}
-
-function atualizarAtaAbertura(data) {
-  return put('/atualizar_ata_abertura', data);
-}
-
-function getAtaAbertura(idAvaliacao) {
-  return get(`/get_ata_abertura/${idAvaliacao}`);
-}
-
 function enviarEmailRelatorioAjusteInicial(avaliacaoId) {
   return post(`/enviar_email_auditor/${avaliacaoId}`);
 }
@@ -570,6 +562,7 @@ export {
   updateInstituicao,
   instituicaoAvaliacaoInsert,
   inserir_planejamento,
+  inserir_ata_reuniao,
   registerUser,
   loginUser,
   uploadAcordoConfidencialidade,
@@ -593,9 +586,5 @@ export {
   updateRelatorioAjusteAvaliacaoInicial,
   addData,
   getData,
-  updateData,
-  inserirAtaAbertura,
-  atualizarAtaAbertura,
-  getAtaAbertura
-
+  updateData
 };
