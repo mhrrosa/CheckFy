@@ -4,7 +4,10 @@ import 'tippy.js/dist/tippy.css';
 import {
   getProcessosPorAvaliacao,
   getResultadosEsperadosPorProcesso,
-  getGrausImplementacao
+  getGrausImplementacao,
+  getGrausImplementacaoEmpresa,
+  insertGrausImplementacaoEmpresa,
+  updateGrausImplementacaoEmpresa
 } from '../services/Api';
 import '../components/styles/EtapaResumoCaracterizacao.css';
 
@@ -13,6 +16,7 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
   const [resultadosEsperados, setResultadosEsperados] = useState({});
   const [grausImplementacao, setGrausImplementacao] = useState({});
   const [notas, setNotas] = useState({});
+  const [resumoSalvo, setResumoSalvo] = useState(false); // Estado para controlar se já existe um resumo salvo
 
   useEffect(() => {
     if (avaliacaoId && idVersaoModelo) {
@@ -22,8 +26,22 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
 
   const carregarDados = async () => {
     try {
-      await carregarProcessos();
-      await carregarGrausImplementacao();
+      const resumo = await getGrausImplementacaoEmpresa(avaliacaoId); // Verificar se há resumo salvo
+      if (resumo) {
+        setNotas(resumo.notas); // Preenche as notas com o que foi salvo
+        setResumoSalvo(true);
+      } else {
+        const graus = await getGrausImplementacao(avaliacaoId); // Se não houver resumo, carregar dados originais
+        const dadosGraus = {};
+        graus.forEach(grau => {
+          if (!dadosGraus[grau.ID_Resultado_Esperado]) {
+            dadosGraus[grau.ID_Resultado_Esperado] = [];
+          }
+          dadosGraus[grau.ID_Resultado_Esperado].push(grau.Nota);
+        });
+        setGrausImplementacao(dadosGraus);
+      }
+      await carregarProcessos(); // Carregar processos sempre, mesmo com resumo salvo ou não
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
     }
@@ -38,22 +56,6 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
       }
     } catch (error) {
       console.error('Erro ao carregar processos:', error);
-    }
-  };
-
-  const carregarGrausImplementacao = async () => {
-    try {
-      const data = await getGrausImplementacao(avaliacaoId);
-      const graus = {};
-      data.forEach(grau => {
-        if (!graus[grau.ID_Resultado_Esperado]) {
-          graus[grau.ID_Resultado_Esperado] = [];
-        }
-        graus[grau.ID_Resultado_Esperado].push(grau.Nota);
-      });
-      setGrausImplementacao(graus);
-    } catch (error) {
-      console.error('Erro ao carregar graus de implementação:', error);
     }
   };
 
@@ -74,15 +76,28 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
       ...prevNotas,
       [resultadoId]: nota
     }));
-    // Aqui você pode adicionar a lógica para salvar a alteração no banco de dados
   };
 
   const calcularCaracterizacaoUnidade = (notas) => {
     if (notas.every(nota => nota === 'Totalmente implementado (T)')) return 'T';
     if (notas.every(nota => nota === 'Totalmente implementado (T)' || nota === 'Largamente implementado (L)')) return 'L';
+    if (notas.every(nota => nota === 'Totalmente implementado (T)' || nota === 'Largamente implementado (L)' || nota === 'Não avaliado (NA)')) return 'L';
     if (notas.includes('Não implementado (N)')) return 'N';
     if (notas.includes('Parcialmente implementado (P)')) return 'P';
     return 'NA';
+  };
+
+  const salvarResumoCaracterizacao = async () => {
+    try {
+      if (resumoSalvo) {
+        await updateGrausImplementacaoEmpresa(avaliacaoId, notas); // Chamada para update se já houver resumo
+      } else {
+        await insertGrausImplementacaoEmpresa(avaliacaoId, notas); // Chamada para insert se não houver resumo
+      }
+      setResumoSalvo(true); // Após salvar, marcar como salvo
+    } catch (error) {
+      console.error('Erro ao salvar resumo:', error);
+    }
   };
 
   return (
@@ -111,7 +126,7 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
                 <td>
                   <select
                     className="nota-selector"
-                    value={notas[resultado.ID] || calcularCaracterizacaoUnidade(grausImplementacao[resultado.ID] || [])}
+                    value={notas[resultado.ID] || (grausImplementacao[resultado.ID] ? calcularCaracterizacaoUnidade(grausImplementacao[resultado.ID]) : 'NA')}
                     onChange={(e) => handleNotaChange(resultado.ID, e.target.value)}
                   >
                     <option value="T">T</option>
@@ -126,6 +141,9 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
           ))}
         </tbody>
       </table>
+      <button className='button-save' onClick={salvarResumoCaracterizacao}>
+        {resumoSalvo ? 'ATUALIZAR' : 'SALVAR'}
+      </button>
       <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
     </div>
   );

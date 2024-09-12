@@ -272,6 +272,7 @@ function getGrausImplementacao(avaliacaoId) {
     });
 }
 
+
 function getVersaoModelo(){
   return get(`/get_versao_modelo`)
 }
