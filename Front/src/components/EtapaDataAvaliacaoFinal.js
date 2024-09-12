@@ -91,7 +91,7 @@ function CadastroDataAvaliacao({ onNext, avaliacaoId }) {
 
   return (
         <div className='container-etapa'>
-        <h1 className='title-form'>Cadastro da Data de Avaliação Final</h1>
+        <h1 className='title-form'>DEFINIÇÃO DA DATA DE AVALIAÇÃO FINAL</h1>
         <p className='dica-text' style={{ color: 'grey', marginBottom: '15px', fontSize: '13px' }}>
             <strong>Dica: </strong>
             A data da avaliação final deve ser confirmada para garantir a conformidade com o cronograma,

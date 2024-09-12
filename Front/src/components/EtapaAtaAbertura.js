@@ -51,7 +51,7 @@ function AtaReuniaoAbertura({onNext, avaliacaoId }) {
       
       <div className='textarea-wrapper'>
         <label className="label">Ata de Reunião:</label>
-        <p className="dica-text" style={{ color: 'white', marginLeft: 10, fontSize: 13 }}>
+        <p className="dica-text">
           Dica para preencher: adicionar dica
         </p>
         <textarea

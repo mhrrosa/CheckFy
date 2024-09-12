@@ -59,7 +59,7 @@ function EtapaRelatorioAjusteInicial({ onNext, avaliacaoId }) {
   return (
     <div className='container-etapa'>
       <h1 className='title-form'>ATA DE REUNIÃO DE ABERTURA DA AVALIAÇÃO FINAL</h1>
-      <p className='dica-text' style={{ color: 'grey', marginBottom: '15px', fontSize: '13px' }}>
+      <p className='dica-text'>
         <strong>Dica: </strong>
         A ata da reunião deve descrever como foi o andamento da reunião de abertura da avaliação final.
       </p>

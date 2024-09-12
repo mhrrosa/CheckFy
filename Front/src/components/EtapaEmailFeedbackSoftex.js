@@ -25,7 +25,7 @@ function EtapaEmailFeedbackSoftex({ onNext, avaliacaoId }) {
 
   return (
     <div className='container-etapa'>
-      <h2 className='title-form'>SOLICITAR LINK DE FEEDBACK SOFTEX</h2>
+      <h1 className='title-form'>SOLICITAR LINK DE FEEDBACK SOFTEX</h1>
       <p className='conteudo-etapa'>
         Ao clicar no botão abaixo, um e-mail será enviado para a Softex solicitando o link do formulário de feedback.
       </p>

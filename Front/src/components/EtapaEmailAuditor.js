@@ -75,7 +75,7 @@ function CadastroAuditor({ onNext, avaliacaoId }) {
 
   return (
     <div className='container-etapa'>
-      <h1 className='title-form'>Cadastro do Auditor</h1>
+      <h1 className='title-form'>CADASTRO DO AUDITOR</h1>
       <p className='dica-text'>
         <strong>Dica: </strong>
         O auditor é responsável por garantir que todos os processos estejam em conformidade com os requisitos da avaliação.

@@ -73,7 +73,7 @@ function EtapaAcordoConfidencialidade({ onNext, avaliacaoId, idAtividade }) {
     return (
         <div className="container-etapa">
             <div>
-                <h1 className="title-form">Acordo de Confidencialidade</h1>
+                <h1 className="title-form">ACORDO DE CONFIDENCIALIDADE</h1>
             </div>
             <div className='div-input-acordo-confidencialidade'>
                 <label className="label">Acordo de Confidencialidade:</label>

@@ -68,7 +68,7 @@ function EtapaApresentacoesIniciais({ onNext, avaliacaoId }) {
 
   return (
     <div className='container-etapa'>
-      <h1 className='title-form'>Planejamento</h1>
+      <h1 className='title-form'>PLANEJAMENTO</h1>
       <p className='dica-text'>
         <strong>Dica:</strong> Na etapa inicial, é necessário realizar o treinamento da equipe de 
         avaliação e as apresentações dos processos da unidade organizacional. O treinamento pode ser conduzido por 

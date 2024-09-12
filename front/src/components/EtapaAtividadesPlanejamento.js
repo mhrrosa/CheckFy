@@ -61,7 +61,7 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
   return (
     <div className='container-etapa'>
       <div className='title-container'>
-        <h1 className='title-form'>Planejamento</h1>
+        <h1 className='title-form'>PLANEJAMENTO</h1>
       </div>
       <label className="label">Avaliação aprovada pela Softex?</label>
       <div className='checkbox-wrapper-project'>

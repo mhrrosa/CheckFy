@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { inserirRelatorioInicial, atualizarRelatorioInicial, getRelatorioInicial, enviarEmailRelatorioAjusteInicial } from '../services/Api';
 import '../components/styles/Body.css';
+import '../components/styles/Etapas.css';
 import '../components/styles/EtapaRelatorioAjusteInicial.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
@@ -94,7 +95,7 @@ function EtapaRelatorioAjusteInicial({ onNext, avaliacaoId }) {
 
   return (
     <div className='container-etapa'>
-      <h1 className='title-form'>Relatório de Ajuste</h1>
+      <h1 className='title-form'>RELATÓRIO DE AJUSTE</h1>
       <p className='dica-text'>
         <strong>Dica: </strong>
         O relatório detalha todos os pontos que precisam ser ajustados antes da avaliação final. 
@@ -103,7 +104,7 @@ function EtapaRelatorioAjusteInicial({ onNext, avaliacaoId }) {
       <div className="input-wrapper">
         <label className="label">Relatório de Ajuste:</label>
         <textarea
-          style={{ marginLeft: 10 , width: 500 }}
+          className='input-textarea-avaliacao'
           value={relatorioAjuste}
           onChange={(e) => setRelatorioAjuste(e.target.value)}
           placeholder="Descreva os ajustes necessários"
