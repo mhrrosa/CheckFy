@@ -105,49 +105,51 @@ class Avaliacao:
 
     def obter_avaliacao(self, projeto_id):
         query = """
-                    SELECT a.ID, a.Nome, a.Descricao, a.ID_Avaliador_Lider, u.Nome, 
-                        a.Status, atv.Descricao, a.ID_Empresa, e.Nome, n.Nivel, 
-                        v.Nome, a.ID_Instituicao, a.Atividade_Planejamento, 
-                        a.Cronograma_Planejamento, a.Avaliacao_Aprovada_Pela_Softex,
-                        a.ID_Atividade, a.ID_Nivel_Solicitado, a.ID_Versao_Modelo,
-                        r.descricao as descricao_relatorio, r.Caminho_Arquivo as caminho_arquivo_relatorio, tr.descricao as tipo_relatorio
-                    FROM avaliacao a
-                    LEFT JOIN empresa e ON a.ID_Empresa = e.ID
-                    LEFT JOIN nivel_maturidade_mpsbr n ON a.ID_Nivel_Solicitado = n.ID
-                    LEFT JOIN usuario u ON a.ID_Avaliador_Lider = u.ID
-                    LEFT JOIN versao_modelo v ON a.ID_Versao_Modelo = v.ID
-                    LEFT JOIN atividade atv ON a.ID_Atividade = atv.ID
-                    LEFT JOIN relatorio r ON a.ID = r.ID_Avaliacao
-                    LEFT JOIN tipo_relatorio tr ON r.ID_Tipo = tr.ID
-                    WHERE a.ID = %s
-                """
+            SELECT a.ID, a.Nome, a.Descricao, a.ID_Avaliador_Lider, u.Nome, 
+                a.Status, atv.Descricao, a.ID_Empresa, e.Nome, n.Nivel, 
+                v.Nome, a.ID_Instituicao, a.Atividade_Planejamento, 
+                a.Cronograma_Planejamento, a.Avaliacao_Aprovada_Pela_Softex,
+                a.ID_Atividade, a.ID_Nivel_Solicitado, a.ID_Versao_Modelo,
+                r.descricao as descricao_relatorio, r.Caminho_Arquivo as caminho_arquivo_relatorio, 
+                tr.descricao as tipo_relatorio, a.Ata_Reuniao_Abertura  -- Campo adicionado
+            FROM avaliacao a
+            LEFT JOIN empresa e ON a.ID_Empresa = e.ID
+            LEFT JOIN nivel_maturidade_mpsbr n ON a.ID_Nivel_Solicitado = n.ID
+            LEFT JOIN usuario u ON a.ID_Avaliador_Lider = u.ID
+            LEFT JOIN versao_modelo v ON a.ID_Versao_Modelo = v.ID
+            LEFT JOIN atividade atv ON a.ID_Atividade = atv.ID
+            LEFT JOIN relatorio r ON a.ID = r.ID_Avaliacao
+            LEFT JOIN tipo_relatorio tr ON r.ID_Tipo = tr.ID
+            WHERE a.ID = %s
+        """
         self.db.cursor.execute(query, (projeto_id,))
         row = self.db.cursor.fetchone()
 
         if row:
             avaliacao_data = {
-                    "id": row[0],  # ID da Avaliação
-                    "nome": row[1],  # Nome da Avaliação
-                    "descricao": row[2],  # Descrição da Avaliação
-                    "id_avaliador_lider": row[3],  # ID do Avaliador Líder
-                    "nome_avaliador_lider": row[4],  # Nome do Avaliador Líder
-                    "status": row[5],  # Status
-                    "descricao_atividade": row[6],  # Descrição da Atividade
-                    "id_empresa": row[7],  # ID da Empresa
-                    "nome_empresa": row[8],  # Nome da Empresa
-                    "nivel_solicitado": row[9],  # Nível Solicitado (Nome)
-                    "nome_versao_modelo": row[10],  # Nome da Versão do Modelo
-                    "id_instituicao": row[11],  # ID da Instituição
-                    "atividade_planejamento": row[12],  # Atividade Planejamento
-                    "cronograma_planejamento": row[13],  # Cronograma Planejamento
-                    "aprovacao_softex": row[14],  # Aprovação Softex
-                    "id_atividade": row[15],  # ID da Atividade
-                    "id_nivel_solicitado": row[16],  # ID do Nível Solicitado
-                    "id_versao_modelo": row[17],  # ID da Versão do Modelo
-                    "descricao_relatorio_ajuste_inicial": row[18],  # Descrição do Relatório
-                    "caminho_arquivo_relatorio_ajuste_inicial": row[19],  # Descrição do Relatório
-                    "tipo_relatorio_ajuste_inicial": row[20]  # Tipo de Relatório
-                }
+                "id": row[0],  # ID da Avaliação
+                "nome": row[1],  # Nome da Avaliação
+                "descricao": row[2],  # Descrição da Avaliação
+                "id_avaliador_lider": row[3],  # ID do Avaliador Líder
+                "nome_avaliador_lider": row[4],  # Nome do Avaliador Líder
+                "status": row[5],  # Status
+                "descricao_atividade": row[6],  # Descrição da Atividade
+                "id_empresa": row[7],  # ID da Empresa
+                "nome_empresa": row[8],  # Nome da Empresa
+                "nivel_solicitado": row[9],  # Nível Solicitado (Nome)
+                "nome_versao_modelo": row[10],  # Nome da Versão do Modelo
+                "id_instituicao": row[11],  # ID da Instituição
+                "atividade_planejamento": row[12],  # Atividade Planejamento
+                "cronograma_planejamento": row[13],  # Cronograma Planejamento
+                "aprovacao_softex": row[14],  # Aprovação Softex
+                "id_atividade": row[15],  # ID da Atividade
+                "id_nivel_solicitado": row[16],  # ID do Nível Solicitado
+                "id_versao_modelo": row[17],  # ID da Versão do Modelo
+                "descricao_relatorio_ajuste_inicial": row[18],  # Descrição do Relatório
+                "caminho_arquivo_relatorio_ajuste_inicial": row[19],  # Caminho do Arquivo do Relatório
+                "tipo_relatorio_ajuste_inicial": row[20],  # Tipo de Relatório
+                "ata_reuniao_abertura": row[21]  # Ata de Reunião de Abertura
+            }
             return avaliacao_data
         else:
             print(f"Erro: A consulta não retornou os campos esperados. Resultado da consulta: {row}")
@@ -174,6 +176,12 @@ class Avaliacao:
     def inserir_planejamento(self, projeto_id, aprovacaoSoftex, atividade_planejamento, cronograma_planejamento):
         query = "UPDATE avaliacao SET Avaliacao_Aprovada_Pela_Softex = %s, Atividade_Planejamento = %s, Cronograma_Planejamento = %s WHERE ID = %s"
         values = (aprovacaoSoftex, atividade_planejamento, cronograma_planejamento, projeto_id)
+        self.db.cursor.execute(query, values)
+        self.db.conn.commit()
+    
+    def inserir_ata_reuniao(self, projeto_id, ata_reuniao):
+        query = "UPDATE avaliacao SET Ata_Reuniao_Abertura = %s WHERE ID = %s"
+        values = (ata_reuniao, projeto_id)
         self.db.cursor.execute(query, values)
         self.db.conn.commit()
 
