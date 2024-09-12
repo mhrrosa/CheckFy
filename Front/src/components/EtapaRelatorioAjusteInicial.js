@@ -95,7 +95,7 @@ function EtapaRelatorioAjusteInicial({ onNext, avaliacaoId }) {
   return (
     <div className='container-etapa'>
       <h1 className='title-form'>Relatório de Ajuste</h1>
-      <p className='dica-text' style={{ color: 'grey', marginBottom: '15px', fontSize: '13px' }}>
+      <p className='dica-text'>
         <strong>Dica: </strong>
         O relatório detalha todos os pontos que precisam ser ajustados antes da avaliação final. 
       </p>

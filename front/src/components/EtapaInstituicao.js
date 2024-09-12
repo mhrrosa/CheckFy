@@ -76,7 +76,7 @@ function EtapaInstituicaoAvaliadora({ onNext, avaliacaoId }) {
   return (
     <div className='container-etapa'>
       <div className='title-container'>
-        <h1 className='title-form'>Cadastro de Instituição Avaliadora</h1>
+        <h1 className='title-form'>CADASTRO DE INSTITUIÇÃO AVALIADORA</h1>
       </div>
       
       <div className="input-wrapper">
@@ -96,7 +96,7 @@ function EtapaInstituicaoAvaliadora({ onNext, avaliacaoId }) {
       
       <label className="label">Instituição já cadastrada?</label>
       <div className='checkbox-wrapper'>
-        <label className="checkbox-label" style={{ color: 'white', marginLeft: 10 }}>
+        <label className="checkbox-label">
           <input
             type="checkbox"
             checked={instituicaoCadastrada === true}
@@ -104,7 +104,7 @@ function EtapaInstituicaoAvaliadora({ onNext, avaliacaoId }) {
           />
           Sim
         </label>
-        <label className="checkbox-label" style={{ color: 'white', marginLeft: 10 }}>
+        <label className="checkbox-label">
           <input
             type="checkbox"
             checked={instituicaoCadastrada === false}

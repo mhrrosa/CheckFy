@@ -66,7 +66,7 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
       <label className="label">Avaliação aprovada pela Softex?</label>
       <div className='checkbox-wrapper-project'>
         <div>
-          <label className="checkbox-label" style={{ color: 'white', marginLeft: 10 }}>
+          <label className="checkbox-label">
             <input
               type="checkbox"
               checked={avaliacaoAprovada === true}
@@ -74,7 +74,7 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
             />
             Sim
           </label>
-          <label className="checkbox-label" style={{ color: 'white', marginLeft: 10 }}>
+          <label className="checkbox-label">
             <input
               type="checkbox"
               checked={avaliacaoAprovada === false}

@@ -29,7 +29,7 @@ function GerenciamentoAnos() {
 
   return (
     <div className='container-versao-modelo centralizado'>
-      <p className='p-selecione-ano'>Selecionar Ano do Modelo MPS-BR</p>
+      <p className='p-selecione-ano'>Versão do Modelo MR-MPS-SW: </p>
       <div className='botoes-anos'>
         <select className='select-home-gerenciamento' onChange={(e) => handleAnoClick(e.target.value)}>
             <option value=''>-</option>

@@ -75,7 +75,7 @@ function EtapaEmpresa({ onNext, avaliacaoId }) {
   return (
     <div className='container-etapa'>
       <div className='title-container'>
-        <h1 className='title-form'>Cadastro de Empresa</h1>
+        <h1 className='title-form'>CADASTRO DE EMPRESA</h1>
       </div>
       
       <div className="input-wrapper">
@@ -95,7 +95,7 @@ function EtapaEmpresa({ onNext, avaliacaoId }) {
       
       <label className="label">Empresa já cadastrada?</label>
       <div className='checkbox-wrapper'>
-        <label className="checkbox-label" style={{ color: 'white', marginLeft: 10 }}>
+        <label className="checkbox-label">
           <input
             type="checkbox"
             checked={empresaCadastrada === true}
@@ -103,7 +103,7 @@ function EtapaEmpresa({ onNext, avaliacaoId }) {
           />
           Sim
         </label>
-        <label className="checkbox-label" style={{ color: 'white', marginLeft: 10 }}>
+        <label className="checkbox-label">
           <input
             type="checkbox"
             checked={empresaCadastrada === false}

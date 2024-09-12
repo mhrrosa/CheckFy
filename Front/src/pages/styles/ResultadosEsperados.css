@@ -9,24 +9,59 @@
     display: flex;
     justify-content: space-between;
     gap: 10px;
+    flex-wrap: wrap;
 }
 
-.select-wrapper, .input-wrapper {
+.input-wrapper{
     display: flex;
     flex-direction: column;
     align-items: start;
-    width: 100%;
+    margin-bottom: 10px;
+    flex: 1 1 100%;
+}
+
+.select-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
     margin-bottom: 10px;
     flex: 1;
 }
 
 .label {
     font-size: 1.1em;
-    color: #ffffff;
+    color: black;
     margin: 5px 0;
 }
 
-.input-field, .select-field {
+.select-field-nivel {
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    box-sizing: border-box;
+    max-width: 100%;
+    word-wrap: break-word;
+    resize: none;
+    height: 40px;
+}
+
+.select-field-processo {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    box-sizing: border-box;
+    max-width: 100%;
+    word-wrap: break-word;
+    resize: none;
+    height: 40px;
+}
+
+.input-field {
     width: 100%;
     padding: 10px;
     margin: 5px 0;

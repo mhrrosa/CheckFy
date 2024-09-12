@@ -73,7 +73,7 @@ function Niveis() {
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
-        <h1 className='title-form'>GERENCIAMENTO DE NÍVEIS</h1>
+        <h1 className='title-form-gerenciamento'>GERENCIAMENTO DE NÍVEIS</h1>
         <div className="input-wrapper">
           <input
             className="input-field"

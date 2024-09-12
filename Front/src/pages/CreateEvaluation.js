@@ -112,10 +112,10 @@ function CreateEvaluation() {
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
-        <h1 className="title-form">CRIAR AVALIAÇÃO</h1>
+        <h1 className="title-form-gerenciamento">CRIAR AVALIAÇÃO</h1>
         <div className="lista-input">
           <div className="input-wrapper">
-            <label className="label">Nome da avaliação:</label>
+            <label className="label-gerenciamento">Nome da avaliação:</label>
             <input
               className="input-field"
               type="text"
@@ -125,7 +125,7 @@ function CreateEvaluation() {
             />
           </div>
           <div className="input-wrapper">
-            <label className="label">Descrição:</label>
+            <label className="label-gerenciamento">Descrição:</label>
             <input
               className="input-field"
               type="text"
@@ -135,7 +135,7 @@ function CreateEvaluation() {
             />
           </div>
           <div className="input-wrapper">
-            <label className="label">Versão do Modelo:</label>
+            <label className="label-gerenciamento">Versão do Modelo:</label>
             <select
               className="input-field"
               value={idVersaoModelo}
@@ -148,7 +148,7 @@ function CreateEvaluation() {
             </select>
           </div>
           <div className="input-wrapper">
-            <label className="label">Nível Solicitado:</label>
+            <label className="label-gerenciamento">Nível Solicitado:</label>
             <select
               className="input-field"
               value={nivelSolicitado}
@@ -162,7 +162,7 @@ function CreateEvaluation() {
           </div>
           {adjuntoEmails.map((email, index) => (
             <div key={index} className="input-wrapper">
-              <label className="label">Email Avaliador Adjunto:</label>
+              <label className="label-gerenciamento">Email Avaliador Adjunto:</label>
               <div className="input-group">
                 <input
                   className="input-field-email"
@@ -186,7 +186,7 @@ function CreateEvaluation() {
           ))}
           {colaboradorEmails.map((email, index) => (
             <div key={index} className="input-wrapper">
-              <label className="label">Email Colaborador Empresarial:</label>
+              <label className="label-gerenciamento">Email Colaborador Empresarial:</label>
               <div className="input-group">
                 <input
                   className="input-field-email"

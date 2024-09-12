@@ -78,10 +78,10 @@ function Processos() {
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
-        <h1 className='title-form'>GERENCIAMENTO DE PROCESSOS</h1>
+        <h1 className='title-form-gerenciamento'>GERENCIAMENTO DE PROCESSOS</h1>
         <div className='lista-input'>
           <div className='input-wrapper'>
-            <label className="label">Nome:</label>
+            <label className="label-gerenciamento">Nome:</label>
             <input
               className="input-field"
               type="text"
@@ -91,7 +91,7 @@ function Processos() {
             />
           </div>
           <div className='input-wrapper'>
-            <label className="label">Categoria:</label>
+            <label className="label-gerenciamento">Categoria:</label>
             <input
               className="input-field"
               type="text"

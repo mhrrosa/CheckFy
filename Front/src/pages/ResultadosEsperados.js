@@ -120,11 +120,12 @@ function ResultadosEsperados() {
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
-        <h1 className='title-form'>GERENCIAMENTO DE RESULTADOS ESPERADOS</h1>
-        <div className='lista-select-input'>
+        <h1 className='title-form-gerenciamento'>GERENCIAMENTO DE RESULTADOS ESPERADOS</h1>
+                <div className='lista-select-input'>
           <div className='input-select-group'>
             <div className='select-wrapper'>
-              <select className="select-field" value={nivelInicioSelecionado} onChange={(e) => setNivelInicioSelecionado(e.target.value)}>
+              <label className="label-gerenciamento">Nível de início:</label>
+              <select className="select-field-nivel" value={nivelInicioSelecionado} onChange={(e) => setNivelInicioSelecionado(e.target.value)}>
                 <option value="">Selecione o nível de início</option>
                 {niveis.map(n => (
                   <option key={n.id} value={n.id}>{n.nivel}</option>
@@ -132,32 +133,33 @@ function ResultadosEsperados() {
               </select>
             </div>
             <div className='select-wrapper'>
-              <select className="select-field" value={nivelFimSelecionado} onChange={(e) => setNivelFimSelecionado(e.target.value)}>
+              <label className="label-gerenciamento">Nível de fim:</label>
+              <select className="select-field-nivel" value={nivelFimSelecionado} onChange={(e) => setNivelFimSelecionado(e.target.value)}>
                 <option value="">Selecione o nível de fim</option>
                 {niveis.map(n => (
                   <option key={n.id} value={n.id}>{n.nivel}</option>
                 ))}
               </select>
             </div>
-          </div>
-          <div className='input-select-group'>
             <div className='select-wrapper'>
-              <select className="select-field" value={processoSelecionado} onChange={(e) => setProcessoSelecionado(e.target.value)}>
+              <label className="label-gerenciamento">Processo:</label>
+              <select className="select-field-processo" value={processoSelecionado} onChange={(e) => setProcessoSelecionado(e.target.value)}>
                 <option value="">Selecione o processo</option>
                 {processos.map(p => (
                   <option key={p.id} value={p.id}>{p.nome}</option>
                 ))}
               </select>
             </div>
-            <div className='input-wrapper'>
-              <textarea
-                className="input-field"
-                type="text"
-                placeholder="Novo resultado esperado"
-                value={novoResultado}
-                onChange={(e) => setNovoResultado(e.target.value)}
-              ></textarea>
-            </div>
+          </div>
+          <div className='input-wrapper'>
+            <label className="label-gerenciamento">Resultado Esperado:</label>
+            <textarea
+              className="input-field"
+              type="text"
+              placeholder="Resultado Esperado conforme descrito no guia MR-MPS-SW"
+              value={novoResultado}
+              onChange={(e) => setNovoResultado(e.target.value)}
+            ></textarea>
           </div>
         </div>
         <div className='logo-and-button'>

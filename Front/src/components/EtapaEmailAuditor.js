@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { addAuditor, getEmailAuditor, updateEmailAuditor } from '../services/Api';
+import '../components/styles/Etapas.css';
 import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
@@ -75,7 +76,7 @@ function CadastroAuditor({ onNext, avaliacaoId }) {
   return (
     <div className='container-etapa'>
       <h1 className='title-form'>Cadastro do Auditor</h1>
-      <p className='dica-text' style={{ color: 'grey', marginBottom: '15px', fontSize: '13px' }}>
+      <p className='dica-text'>
         <strong>Dica: </strong>
         O auditor é responsável por garantir que todos os processos estejam em conformidade com os requisitos da avaliação.
       </p>

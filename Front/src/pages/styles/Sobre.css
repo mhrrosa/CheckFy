@@ -11,7 +11,11 @@
     width: 100%;
 }
 
-h1, h2 {
+.titulo-sobre {
+    color: black;
+}
+
+.subtitulo-sobre {
     color: #333;
 }
 

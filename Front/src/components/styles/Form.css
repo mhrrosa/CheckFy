@@ -1,5 +1,11 @@
-.title-form {
-    color: #ffffff;
+.title-form-avaliacao {
+    color: black;
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.title-form-gerenciamento {
+    color: white;
     font-size: 2em;
     margin-bottom: 20px;
     text-align: center;
@@ -54,8 +60,6 @@
 }
 
 .form-section-evaluation {
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    background: #001034;
     padding: 30px;
     border-radius: 20px;
     display: flex;
