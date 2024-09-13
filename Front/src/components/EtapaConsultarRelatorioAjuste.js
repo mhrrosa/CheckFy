@@ -47,7 +47,18 @@ function EtapaConsultarRelatorioAjuste({ onNext }) {
         marginBottom: '20px',
         textAlign: 'center'
       }}>CONSULTAR RELATÓRIO DE AJUSTE</h1>
-
+            <div style={{
+        backgroundColor: '#e0e0e0',
+        borderLeft: '4px solid #a0a0a0',
+        padding: '10px',
+        borderRadius: '4px',
+        marginBottom: '20px'
+      }}>
+        <strong style={{ color: '#555' }}>Dica:</strong>
+        <p style={{ color: '#333', margin: '5px 0' }}>
+        Visualize os ajustes necessários para a avaliação final. Acesse os relatórios detalhados para realizar as correções e garantir que tudo esteja em conformidade, antes da data da avaliação final.
+        </p>
+      </div>
       <div className="lista-input">
         {/* Relatório de Ajuste */}
         <div style={{

@@ -20,6 +20,7 @@ import EtapaEmailFeedbackSoftex from '../components/EtapaEmailFeedbackSoftex';
 import EtapaAtaAbertura from '../components/EtapaAtaAbertura';
 import EtapaConsultarRelatorioAjuste from '../components/EtapaConsultarRelatorioAjuste';
 import EtapaAtribuirNivelMaturidade from '../components/EtapaAtribuirNivelMaturidade';
+import EtapaResultadoAvaliacaoFinal from '../components/EtapaResultadoAvaliacaoFinal';
 import { getAvaliacaoById, updateIdAtividade, getAtividade } from '../services/Api';
 import { UserContext } from '../contexts/UserContext';
 import '../components/styles/Body.css';
@@ -46,7 +47,8 @@ const etapaComponents = {
   16: EtapaAtaAbertura,
   17: EtapaCaracterizacao,
   18: EtapaResumoCaracterizacao,
-  19: EtapaAtribuirNivelMaturidade
+  19: EtapaAtribuirNivelMaturidade,
+  20: EtapaResultadoAvaliacaoFinal,
 };
 
 const etapaUsuarioMap = { 
@@ -68,7 +70,8 @@ const etapaUsuarioMap = {
   16: [1, 2],
   17: [1, 2],
   18: [1, 2],
-  19: [1, 2]
+  19: [1, 2],
+  20: [1, 5], // 5 é colaborador?
   
 };
 

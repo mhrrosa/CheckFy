@@ -10,6 +10,7 @@ function EtapaAtribuirNivelMaturidade({ onNext, onDuploNext }) {
     nivel_solicitado: ''
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [buttonText, setButtonText] = useState('SATISFEITO');
 
   useEffect(() => {
     const fetchAvaliacao = async () => {
@@ -26,21 +27,23 @@ function EtapaAtribuirNivelMaturidade({ onNext, onDuploNext }) {
     fetchAvaliacao();
   }, [location.state.id]);
 
-  const handleNext = () => {
-    onNext();
-  };
-
-  const handleDuploNext = async () => {
+  const handleNext = async () => {
     const confirmacao = window.confirm('Um e-mail será enviado aos participantes informando o resultado da auditoria inicial. Deseja continuar?');
 
     if (confirmacao) {
+      setButtonText('ENVIANDO E-MAIL'); // Muda o texto do botão
+      setIsLoading(true); // Ativa o loading
+
       try {
         await enviarEmailResultadoAvaliacaoInicial(location.state.id);
         alert('E-mail enviado com sucesso!');
-        onDuploNext();
+        onNext();
       } catch (error) {
         console.error('Erro ao enviar o e-mail:', error);
         alert('Houve um erro ao enviar o e-mail. Tente novamente.');
+      } finally {
+        setIsLoading(false); // Desativa o loading
+        setButtonText('SATISFEITO'); // Restaura o texto original
       }
     }
   };
@@ -62,20 +65,20 @@ function EtapaAtribuirNivelMaturidade({ onNext, onDuploNext }) {
         textAlign: 'center'
       }}>ATRIBUIR NÍVEL DE MATURIDADE</h1>
 
-    <div style={{
-            backgroundColor: '#e0e0e0', // Fundo mais escuro para maior contraste
-            borderLeft: '4px solid #a0a0a0', // Borda levemente destacada
-            padding: '10px',
-            borderRadius: '4px',
-            marginBottom: '20px'
-        }}>
-            <strong style={{ color: '#555' }}>Dica:</strong> {/* Texto de dica mais escuro */}
-            <p style={{ color: '#333', margin: '5px 0' }}>
-            Rever a Caracterização dos Processos: Antes de iniciar a atividade, certifique-se de que todos os processos foram devidamente caracterizados. Esta revisão é fundamental para garantir que todas as informações estejam corretas e atualizadas.
-            </p>
-        </div>
+      <div style={{
+        backgroundColor: '#e0e0e0',
+        borderLeft: '4px solid #a0a0a0',
+        padding: '10px',
+        borderRadius: '4px',
+        marginBottom: '20px'
+      }}>
+        <strong style={{ color: '#555' }}>Dica:</strong>
+        <p style={{ color: '#333', margin: '5px 0' }}>
+          Rever a Caracterização dos Processos: Antes de iniciar a atividade, certifique-se de que todos os processos foram devidamente caracterizados. Esta revisão é fundamental para garantir que todas as informações estejam corretas e atualizadas.
+        </p>
+      </div>
 
-      {/* Exibindo somente o campo "Nível Solicitado" */}
+      {/* Exibindo o campo "Nome da Empresa Avaliada" */}
       <div style={{
         marginBottom: '15px',
         display: 'flex',
@@ -96,6 +99,7 @@ function EtapaAtribuirNivelMaturidade({ onNext, onDuploNext }) {
           {avaliacao.nome_empresa}
         </span>
       </div>
+
       {/* Exibindo o campo "Nível Solicitado" */}
       <div style={{
         marginBottom: '15px',
@@ -117,7 +121,7 @@ function EtapaAtribuirNivelMaturidade({ onNext, onDuploNext }) {
           {avaliacao.nivel_solicitado}
         </span>
       </div>
-      
+
       {/* Botões de ação */}
       <div style={{
         display: 'flex',
@@ -126,43 +130,62 @@ function EtapaAtribuirNivelMaturidade({ onNext, onDuploNext }) {
         marginTop: '20px'
       }}>
         <img src={logo} alt="Logo Checkfy" style={{ height: '50px' }} />
-        <button
-          onClick={handleDuploNext}
-          style={{
-            padding: '10px 20px',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            color: '#fff',
-            fontWeight: 'bold',
-            backgroundColor: '#4CAF50',
-            transition: 'background-color 0.3s ease'
-          }}
-          onMouseOver={(e) => e.target.style.backgroundColor = '#45a049'}
-          onMouseOut={(e) => e.target.style.backgroundColor = '#4CAF50'}
-          disabled={isLoading}
-        >
-          SATISFEITO
-        </button>
-        <button
-          onClick={handleNext}
-          style={{
-            padding: '10px 20px',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            color: '#fff',
-            fontWeight: 'bold',
-            backgroundColor: '#f44336',
-            transition: 'background-color 0.3s ease',
-            marginLeft:'10px'
-          }}
-          onMouseOver={(e) => e.target.style.backgroundColor = '#d32f2f'}
-          onMouseOut={(e) => e.target.style.backgroundColor = '#f44336'}
-          disabled={isLoading}
-        >
-          NÃO SATISFEITO
-        </button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button
+            onClick={handleNext}
+            style={{
+              padding: '10px 20px',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer',
+              color: '#fff',
+              fontWeight: 'bold',
+              backgroundColor: isLoading ? '#ccc' : '#4CAF50', // Desabilita a cor quando carregando
+              transition: 'background-color 0.3s ease',
+              position: 'relative', // Para alinhar o spinner
+              display: 'flex',
+              alignItems: 'center', // Centraliza verticalmente
+              justifyContent: 'center', // Centraliza horizontalmente
+              minWidth: '150px' // Garantir espaço suficiente para o texto e o spinner
+            }}
+            onMouseOver={(e) => !isLoading && (e.target.style.backgroundColor = '#45a049')}
+            onMouseOut={(e) => !isLoading && (e.target.style.backgroundColor = '#4CAF50')}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <div className="spinner" style={{
+                border: '3px solid #f3f3f3',
+                borderTop: '3px solid #3498db',
+                borderRadius: '50%',
+                width: '15px',
+                height: '15px',
+                animation: 'spin 1s linear infinite',
+                display: 'inline-block'
+              }}></div>
+            ) : (
+              buttonText
+            )}
+          </button>
+          <button
+            onClick={handleNext}
+            style={{
+              padding: '10px 20px',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer',
+              color: '#fff',
+              fontWeight: 'bold',
+              backgroundColor: '#f44336',
+              transition: 'background-color 0.3s ease',
+              minWidth: '150px' // Garantir o mesmo tamanho que o outro botão
+            }}
+            onMouseOver={(e) => e.target.style.backgroundColor = '#d32f2f'}
+            onMouseOut={(e) => e.target.style.backgroundColor = '#f44336'}
+            disabled={isLoading}
+          >
+            NÃO SATISFEITO
+          </button>
+        </div>
       </div>
     </div>
   );
