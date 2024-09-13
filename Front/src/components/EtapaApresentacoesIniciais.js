@@ -68,11 +68,17 @@ function EtapaApresentacoesIniciais({ onNext, avaliacaoId }) {
   return (
     <div className='container-etapa'>
       <h1 className='title-form' style={{ color: 'white' }}>Planejamento</h1>
-
-      {/* Dica sobre o treinamento e apresentações */}
-      <div className='dica-container'>
-        <p className='dica-text' style={{ color: 'grey', marginBottom: '15px', fontSize: '13px' }}>
-          <strong>Dica:</strong> Na etapa inicial, é necessário realizar o treinamento da equipe de 
+      {/* Dica para o usuário com cores melhoradas */}
+      <div style={{
+        backgroundColor: '#e0e0e0', // Fundo mais escuro para maior contraste
+        borderLeft: '4px solid #a0a0a0', // Borda levemente destacada
+        padding: '10px',
+        borderRadius: '4px',
+        marginBottom: '20px'
+      }}>
+        <strong style={{ color: '#555' }}>Dica:</strong> {/* Texto de dica mais escuro */}
+        <p style={{ color: '#333', margin: '5px 0' }}>
+          Na etapa inicial, é necessário realizar o treinamento da equipe de 
           avaliação e as apresentações dos processos da unidade organizacional. O treinamento pode ser conduzido por 
           um avaliador adjunto, com a presença obrigatória do avaliador líder, e tem uma duração recomendada de cerca de 
           30 minutos. A apresentação dos processos da unidade organizacional, apoiada pelo implementador MPS, deve durar 

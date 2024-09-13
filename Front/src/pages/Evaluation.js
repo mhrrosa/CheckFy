@@ -17,8 +17,9 @@ import EtapaAuditoriaInicial from '../components/EtapaAuditoriaInicial';
 import EtapaRealizarAjusteAvaliacaoInicial from '../components/EtapaRealizarAjusteAvaliacaoInicial';
 import EtapaDataAvaliacaoFinal from  '../components/EtapaDataAvaliacaoFinal';
 import EtapaEmailFeedbackSoftex from '../components/EtapaEmailFeedbackSoftex';
-import EtapaAtaAbertura from '../components/EtapaAtaAbertura'
-import EtapaConsultarRelatorioAjuste from '../components/EtapaConsultarRelatorioAjuste'
+import EtapaAtaAbertura from '../components/EtapaAtaAbertura';
+import EtapaConsultarRelatorioAjuste from '../components/EtapaConsultarRelatorioAjuste';
+import EtapaAtribuirNivelMaturidade from '../components/EtapaAtribuirNivelMaturidade';
 import { getAvaliacaoById, updateIdAtividade, getAtividade } from '../services/Api';
 import { UserContext } from '../contexts/UserContext';
 import '../components/styles/Body.css';
@@ -33,9 +34,9 @@ const etapaComponents = {
   4: EtapaAtividadesPlanejamento,
   5: EtapaAcordoConfidencialidade,
   6: EtapaEmailAuditor,
-  7: EtapaProjeto,// esse
-  8: EtapaEvidencia,// esse
-  9: EtapaApresentacoesIniciais,//no
+  7: EtapaProjeto,
+  8: EtapaEvidencia,
+  9: EtapaApresentacoesIniciais,
   10: EtapaRelatorioAjusteInicial,
   11: EtapaAuditoriaInicial,
   12: EtapaRealizarAjusteAvaliacaoInicial,
@@ -44,7 +45,8 @@ const etapaComponents = {
   15: EtapaConsultarRelatorioAjuste,
   16: EtapaAtaAbertura,
   17: EtapaCaracterizacao,
-  18: EtapaResumoCaracterizacao
+  18: EtapaResumoCaracterizacao,
+  19: EtapaAtribuirNivelMaturidade
 };
 
 const etapaUsuarioMap = { 
@@ -54,9 +56,9 @@ const etapaUsuarioMap = {
   4: [1, 2],
   5: [1, 2],
   6: [1, 2],
-  7: [1, 5],// esse
-  8: [1, 2],// esse
-  9: [1, 2],// no
+  7: [1, 5],
+  8: [1, 2],
+  9: [1, 2],
   10: [1, 2],
   11: [1, 3],
   12: [1, 5],
@@ -65,7 +67,8 @@ const etapaUsuarioMap = {
   15: [1, 5],
   16: [1, 2],
   17: [1, 2],
-  18: [1, 2]
+  18: [1, 2],
+  19: [1, 2]
   
 };
 

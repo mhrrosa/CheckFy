@@ -95,10 +95,19 @@ function EtapaRelatorioAjusteInicial({ onNext, avaliacaoId }) {
   return (
     <div className='container-etapa'>
       <h1 className='title-form'>Relatório de Ajuste</h1>
-      <p className='dica-text' style={{ color: 'grey', marginBottom: '15px', fontSize: '13px' }}>
-        <strong>Dica: </strong>
-        O relatório detalha todos os pontos que precisam ser ajustados antes da avaliação final. 
-      </p>
+      <div style={{
+            backgroundColor: '#e0e0e0', // Fundo mais escuro para maior contraste
+            borderLeft: '4px solid #a0a0a0', // Borda levemente destacada
+            padding: '10px',
+            borderRadius: '4px',
+            marginBottom: '20px'
+        }}>
+            <strong style={{ color: '#555' }}>Dica:</strong> {/* Texto de dica mais escuro */}
+            <p style={{ color: '#333', margin: '5px 0' }}>
+            O relatório detalha todos os pontos que precisam ser ajustados antes da avaliação final. 
+            </p>
+        </div>
+      
       
       <div className="input-wrapper">
         <label className="label">Relatório de Ajuste:</label>

@@ -92,11 +92,20 @@ function CadastroDataAvaliacao({ onNext, avaliacaoId }) {
   return (
         <div className='container-etapa'>
         <h1 className='title-form'>Cadastro da Data de Avaliação Final</h1>
-        <p className='dica-text' style={{ color: 'grey', marginBottom: '15px', fontSize: '13px' }}>
-            <strong>Dica: </strong>
+        <div style={{
+            backgroundColor: '#e0e0e0', // Fundo mais escuro para maior contraste
+            borderLeft: '4px solid #a0a0a0', // Borda levemente destacada
+            padding: '10px',
+            borderRadius: '4px',
+            marginBottom: '20px'
+        }}>
+            <strong style={{ color: '#555' }}>Dica:</strong> {/* Texto de dica mais escuro */}
+            <p style={{ color: '#333', margin: '5px 0' }}>
             A data da avaliação final deve ser confirmada para garantir a conformidade com o cronograma,
             participantes da avaliação serão notificados caso houver atualização da data.
-        </p>
+            </p>
+        </div>
+        
         <br></br>
         <div className="input-container">
             <label
