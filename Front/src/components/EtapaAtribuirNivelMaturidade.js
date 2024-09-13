@@ -4,7 +4,7 @@ import { getAvaliacaoById, enviarEmailResultadoAvaliacaoInicial } from '../servi
 import '../components/styles/Body.css';
 import logo from '../img/logo_horizontal.png';
 
-function EtapaAtribuirNivelMaturidade({ onNext, onDuploNext }) {
+function EtapaAtribuirNivelMaturidade({ onNext }) {
   const location = useLocation();
   const [avaliacao, setAvaliacao] = useState({
     nivel_solicitado: ''
