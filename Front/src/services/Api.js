@@ -120,6 +120,10 @@ function getNiveis(idVersaoModelo) {
   return get(`/get_niveis/${idVersaoModelo}`);
 }
 
+function getNiveisLimitado(idVersaoModelo, idNivelSolicitado) {
+  return get(`/get_niveis_limitado/${idVersaoModelo}/${idNivelSolicitado}`);
+}
+
 function updateNivel(id, data) {
   return put(`/update_nivel/${id}`, data);
 }
@@ -550,6 +554,25 @@ function updateGrausImplementacaoEmpresa(data) {
 }
 
 
+function getResultadoFinal(avaliacaoId) {
+  return get(`/get_resultado_final/${avaliacaoId}`);
+}
+
+function addResultadoFinal(data) {
+  return post('/add_resultado_final', data);
+}
+
+function updateResultadoFinal(avaliacaoId, data) {
+  return put(`/update_resultado_final/${avaliacaoId}`, data);
+}
+
+
+
+ 
+
+
+
+
 export {
   startNewEvaluation,
   getAllAvaliacoes,
@@ -558,6 +581,7 @@ export {
   updateAvaliacao,
   updateIdAtividade,
   getNiveis,
+  getNiveisLimitado,
   createNivel,
   updateNivel,
   deleteNivel,
