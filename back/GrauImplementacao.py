@@ -31,9 +31,9 @@ class GrauImplementacao:
             for grau in graus:
                 grau_dict = {
                     'ID': grau[0],
-                    'ID_Avaliacao': grau[1],
-                    'ID_Resultado_Esperado': grau[2],
-                    'Nota': grau[3],
+                    'ID_Resultado_Esperado': grau[1],
+                    'Nota': grau[2],
+                    'ID_Avaliacao': grau[3],
                 }
                 graus_implementacao.append(grau_dict)
 
@@ -43,7 +43,17 @@ class GrauImplementacao:
             print(f"Erro ao buscar graus de implementação: {e}")
             raise
 
-    def update_grau_implementacao_empresa(self, id_grau, nota):
-        query = "UPDATE grau_implementacao_processo_unidade_organizacional SET Nota = %s WHERE ID = %s"
-        self.db.cursor.execute(query, (nota, id_grau))
-        self.db.conn.commit()
+    def update_graus_implementacao_empresa_batch(self, update_data):
+        query = """
+            UPDATE grau_implementacao_processo_unidade_organizacional
+            SET Nota = %s
+            WHERE ID_Avaliacao = %s AND ID_Resultado_Esperado = %s
+        """
+        try:
+            # Executa o update para cada item no batch
+            self.db.cursor.executemany(query, update_data)
+            self.db.conn.commit()
+        except Exception as e:
+            print(f"Erro ao atualizar grau de implementação: {e}")
+            self.db.conn.rollback()
+            raise

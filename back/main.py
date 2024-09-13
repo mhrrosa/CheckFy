@@ -30,7 +30,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 db_config = {
     "host": "127.0.0.1",
     "user": "root",
-    "password": "root",
+    "password": "I#p4Zp&zS!Zv",
     "database": "checkfy"
 }
 
@@ -1011,12 +1011,10 @@ def insert_graus_implementacao_empresa():
 @app.route('/update_graus_implementacao_empresa', methods=['PUT'])
 def update_graus_implementacao_empresa():
     try:
-        data = request.json  # Espera um JSON com 'notas' (dicionário com id_grau como chave e nota como valor)
-        notas = data['notas']
+        data = request.json
+        update_data = [(item['nota'], item['id_avaliacao'], item['id_resultado_esperado']) for item in data]
 
-        for id_grau, nota in notas.items():
-            grau_implementacao.update_grau_implementacao_empresa(id_grau, nota)
-
+        grau_implementacao.update_graus_implementacao_empresa_batch(update_data)
         return jsonify({'message': 'Graus de implementação atualizados com sucesso!'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
