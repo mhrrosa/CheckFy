@@ -46,7 +46,7 @@ function EtapaConsultarRelatorioAjuste({ onNext }) {
         color: '#333',
         marginBottom: '20px',
         textAlign: 'center'
-      }}>RELATÓRIO DE AJUSTE</h1>
+      }}>CONSULTAR RELATÓRIO DE AJUSTE</h1>
 
       <div className="lista-input">
         {/* Relatório de Ajuste */}
