@@ -54,9 +54,14 @@
     transform: translate(-50%, -50%) rotate(-45deg); /* Ajuste a rotação aqui */
 }
 
+.table {
+    width: 100%; /* Faz a tabela ocupar 100% da largura do contêiner */
+    border-collapse: collapse;
+}
+
 .tr-projeto {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
 }
 
 .projeto-inserido-td {

@@ -260,14 +260,28 @@
     font-size: 1em;
     font-weight: bolder;
     color: white;
-    border: 4px solid #00437e;
-    border-radius: 18px;
+    border-radius: 4px;
     cursor: pointer;
-    background-color: #001034;
+    background-color: #007bff;
     transition: background-color 0.3s;
 }
 
 .button-add-project:hover {
+    background-color: #00437e;
+}
+
+.button-update-project {
+    padding: 10px 10px;
+    font-size: 1em;
+    font-weight: bolder;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #007bff;
+    transition: background-color 0.3s;
+}
+
+.button-update-project:hover {
     background-color: #00437e;
 }
 

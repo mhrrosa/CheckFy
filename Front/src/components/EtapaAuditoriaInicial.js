@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getAvaliacaoById, enviarEmailResultadoAvaliacaoInicial } from '../services/Api';
 import '../components/styles/Body.css';
-import logo_preto from '../img/logo_horizontal_preto.png';
 
 function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
   const location = useLocation();
@@ -142,7 +141,6 @@ function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
         alignItems: 'center',
         marginTop: '20px'
       }}>
-        <img src={logo_preto} alt="Logo Checkfy" style={{ height: '50px' }} />
         <div style={{ display: 'flex', gap: '10px' }}>
           <button
             onClick={handleDuploNext}

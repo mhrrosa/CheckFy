@@ -23,18 +23,15 @@
 }
 
 .checkbox-project {
-    width: 20px;
-    height: 20px;
-    background: #f4f4f4;
+    width: 18px;
+    height: 18px;
     border-radius: 3px;
     vertical-align: middle;
-    border: 1px solid #dcdcdc;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
+    border: 1px solid black;
     outline: none;
     cursor: pointer;
     position: relative;
+    margin-bottom: 5px;
 }
 
 .checkbox-project:checked {

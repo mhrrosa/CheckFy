@@ -86,14 +86,13 @@ function EtapaProjeto({ onNext, avaliacaoId }) {
         </div>
       </div>
       <div className='logo-and-button'>
-        <img src={logo} className="logo" alt="Logo Checkfy" />
         <button className="button-add-project" onClick={salvarProjeto}>
           {editandoProjeto ? 'ATUALIZAR' : 'ADICIONAR'}
         </button>
       </div>
       <p className="processos-cadastrados-title">PROJETOS CADASTRADOS:</p>
       {projetos.length > 0 ? (
-        <table>
+        <table className='table'>
           <tbody>
             {projetos.map((projeto) => (
               <tr className='tr-projeto' key={projeto.ID}>
@@ -109,7 +108,7 @@ function EtapaProjeto({ onNext, avaliacaoId }) {
                   />
                 </td>
                 <td className='projeto-checkbox-inserido-td'>
-                  <label>
+                  <label className='label'>
                     Habilitado:
                     <input
                       className='checkbox-projeto-status'
@@ -123,7 +122,7 @@ function EtapaProjeto({ onNext, avaliacaoId }) {
                   </label>
                 </td>
                 <td className='acoes-td-projetos'>
-                  <button className='button-acao-projeto' onClick={() => atualizarProjeto(projeto.ID, projeto.Nome_Projeto, projeto.Projeto_Habilitado)}>ATUALIZAR</button>
+                  <button className='button-update-project' onClick={() => atualizarProjeto(projeto.ID, projeto.Nome_Projeto, projeto.Projeto_Habilitado)}>ATUALIZAR</button>
                 </td>
               </tr>
             ))}

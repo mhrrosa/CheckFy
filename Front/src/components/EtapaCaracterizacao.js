@@ -153,7 +153,7 @@ function EtapaCaracterizacao({ onNext, avaliacaoId, idVersaoModelo }) {
                       {evidencias[`${resultado.ID}-${projeto.ID}`] && evidencias[`${resultado.ID}-${projeto.ID}`]
                         .map(evidencia => (
                           <div key={evidencia.id}>
-                            <p className='title-evidencia'>Evidencia: {evidencia.nomeArquivo}</p>
+                            <p className='title-evidencia-caracterizacao'>Evidencia: {evidencia.nomeArquivo}</p>
                             <button className='button-acao' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
                           </div>
                         ))}

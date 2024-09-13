@@ -237,14 +237,14 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
       <div>
         {processos.map(processo => (
           <div key={processo.ID}>
-            <h2 className='title-process'>Processo: {processo.Descricao}</h2>
+            <h2 className='title-processo-evidencia'>Processo: {processo.Descricao}</h2>
             <button className='button-acao' onClick={() => carregarResultadosEsperados(processo.ID)}>Ver Resultados Esperados</button>
             {resultadosEsperados[processo.ID] && resultadosEsperados[processo.ID].map(resultado => (
               <div key={resultado.ID}>
-                <h3 className='title-result'>Resultado Esperado: {resultado.Descricao}</h3>
+                <h3 className='title-resultado-evidencia'>Resultado Esperado: {resultado.Descricao}</h3>
                 {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
                   <div key={projeto.ID}>
-                    <h4 className='title-project'>Projeto: {projeto.Nome_Projeto}</h4>
+                    <h4 className='title-projeto-evidencia'>Projeto: {projeto.Nome_Projeto}</h4>
                     <button className='button-acao' onClick={() => openModal(processo.ID, resultado.ID, projeto.ID)}>Gerenciar Documentos</button>
                     <div>
                       {evidencias[`${resultado.ID}-${projeto.ID}`] && evidencias[`${resultado.ID}-${projeto.ID}`]

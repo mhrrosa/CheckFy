@@ -175,6 +175,13 @@ function Evaluation() {
 
   return (
     <div className="container-avaliacao">
+      <Sidebar
+        calcularProgresso={calcularProgresso}
+        atividades={atividades}
+        idAtividade={idAtividade}
+        handleStepClick={handleStepClick}
+        selectedEtapa={selectedEtapa}
+      />
       <div className="main-content-evaluation">
         <h1 className="evaluation-title">AVALIAÇÃO:</h1>
         <div className="form-section-evaluation">
@@ -196,13 +203,6 @@ function Evaluation() {
           )}
         </div>
       </div>
-      <Sidebar
-        calcularProgresso={calcularProgresso}
-        atividades={atividades}
-        idAtividade={idAtividade}
-        handleStepClick={handleStepClick}
-        selectedEtapa={selectedEtapa}
-      />
     </div>
   );
 }
