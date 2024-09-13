@@ -514,6 +514,42 @@ function updateData(avaliacaoId, data) {
   return put(`/update_data_avaliacao/${avaliacaoId}`, data);
 }
 
+// Rota para obter graus de implementação
+function getGrausImplementacaoEmpresa(avaliacaoId) {
+  return get(`/get_graus_implementacao_empresa/${avaliacaoId}`)
+    .then(response => {
+      return response;
+    })
+    .catch(error => {
+      console.error('Erro ao buscar graus de implementação:', error);
+      throw error;
+    });
+}
+
+// Rota para adicionar ou atualizar graus de implementação
+function addGrauImplementacaoEmpresa(data) {
+  return post('/insert_graus_implementacao_empresa', data)
+    .then(response => {
+      return response;
+    })
+    .catch(error => {
+      console.error('Erro ao adicionar/atualizar grau de implementação:', error);
+      throw error;
+    });
+}
+
+function updateGrausImplementacaoEmpresa(data) {
+  return put('/update_graus_implementacao_empresa', data)
+    .then(response => {
+      return response;
+    })
+    .catch(error => {
+      console.error('Erro ao atualizar grau de implementação:', error);
+      throw error;
+    });
+}
+
+
 export {
   startNewEvaluation,
   getAllAvaliacoes,
@@ -587,5 +623,8 @@ export {
   updateRelatorioAjusteAvaliacaoInicial,
   addData,
   getData,
-  updateData
+  updateData,
+  getGrausImplementacaoEmpresa,
+  addGrauImplementacaoEmpresa,
+  updateGrausImplementacaoEmpresa
 };

@@ -52,7 +52,7 @@ atividade = Atividade(db)
 email = Email(db)
 auditor = Auditor(db2)
 relatorio = Relatorio(db)
-grau_implementacao = GrauImplementacao
+grau_implementacao = GrauImplementacao(db)
 
 @app.route('/add_nivel', methods=['POST'])
 def add_nivel():
@@ -986,25 +986,25 @@ def update_data_avaliacao(id_avaliacao):
 
 @app.route('/get_graus_implementacao_empresa/<int:id_avaliacao>', methods=['GET'])
 def get_graus_implementacao_empresa(id_avaliacao):
-    try:
-        graus = grau_implementacao.get_grau_implementacao_empresa(id_avaliacao)
-        return jsonify(graus), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    graus = grau_implementacao.get_grau_implementacao_empresa(id_avaliacao)
+    return jsonify(graus), 200
 
 
 @app.route('/insert_graus_implementacao_empresa', methods=['POST'])
 def insert_graus_implementacao_empresa():
     try:
-        data = request.json  # Espera um JSON com 'id_avaliacao' e 'notas' (dicionário com id_resultado_esperado como chave e nota como valor)
-        id_avaliacao = data['id_avaliacao']
-        notas = data['notas']
+        # O 'data' agora é um array de objetos, onde cada objeto tem 'id_avaliacao', 'id_resultado_esperado' e 'nota'
+        data = request.json
 
-        for id_resultado_esperado, nota in notas.items():
-            grau_implementacao.add_grau_implementacao_empresa(id_avaliacao, id_resultado_esperado, nota)
+        # Montar os valores para o insert múltiplo
+        valores = [(item['id_avaliacao'], item['id_resultado_esperado'], item['nota']) for item in data]
+
+        # Realizar o insert múltiplo
+        grau_implementacao.add_graus_implementacao_empresa(valores)
 
         return jsonify({'message': 'Graus de implementação inseridos com sucesso!'}), 201
     except Exception as e:
+        print(f"Erro ao inserir graus de implementação: {e}")
         return jsonify({'error': str(e)}), 500
 
 
