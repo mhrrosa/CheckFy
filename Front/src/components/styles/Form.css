@@ -60,10 +60,10 @@
 }
 
 .form-section-evaluation {
+    background-color: #f9f9f9;
     padding: 30px;
-    border-radius: 20px;
-    display: flex;
-    flex-direction: column;
+    border-radius: 8px;
+    align-items: center;
     position: relative;
     flex-wrap: wrap;
   }

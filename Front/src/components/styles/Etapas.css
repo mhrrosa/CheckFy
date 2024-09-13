@@ -1,7 +1,18 @@
-.dica-text {
-    font-size: 13px;
-    color: black;
-    margin-bottom: 15px;
+.dica-div {
+    background-color: #fff6d6;
+    border-left: 4px solid #ffdd36;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.dica-titulo {
+    color: #161616;
+}
+
+.dica-texto {
+    color: #353535;
+    margin: 5px 0;
 }
 
 .input-textarea-avaliacao {

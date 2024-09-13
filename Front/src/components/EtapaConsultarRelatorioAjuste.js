@@ -40,23 +40,11 @@ function EtapaConsultarRelatorioAjuste({ onNext }) {
       maxWidth: '800px',
       margin: 'auto'
     }}>
-      <h1 style={{
-        fontSize: '24px',
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: '20px',
-        textAlign: 'center'
-      }}>CONSULTAR RELATÓRIO DE AJUSTE</h1>
-            <div style={{
-        backgroundColor: '#e0e0e0',
-        borderLeft: '4px solid #a0a0a0',
-        padding: '10px',
-        borderRadius: '4px',
-        marginBottom: '20px'
-      }}>
-        <strong style={{ color: '#555' }}>Dica:</strong>
-        <p style={{ color: '#333', margin: '5px 0' }}>
-        Visualize os ajustes necessários para a avaliação final. Acesse os relatórios detalhados para realizar as correções e garantir que tudo esteja em conformidade, antes da data da avaliação final.
+      <h1 className='title-form'>CONSULTAR RELATÓRIO DE AJUSTE</h1>
+      <div className='dica-div'>
+        <strong className='dica-titulo'>Dica:</strong>
+        <p className='dica-text'>
+          Visualize os ajustes necessários para a avaliação final. Acesse os relatórios detalhados para realizar as correções e garantir que tudo esteja em conformidade, antes da data da avaliação final.
         </p>
       </div>
       <div className="lista-input">

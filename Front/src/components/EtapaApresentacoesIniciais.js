@@ -69,14 +69,17 @@ function EtapaApresentacoesIniciais({ onNext, avaliacaoId }) {
   return (
     <div className='container-etapa'>
       <h1 className='title-form'>PLANEJAMENTO</h1>
-      <p className='dica-text'>
-        <strong>Dica:</strong> Na etapa inicial, é necessário realizar o treinamento da equipe de 
-        avaliação e as apresentações dos processos da unidade organizacional. O treinamento pode ser conduzido por 
-        um avaliador adjunto, com a presença obrigatória do avaliador líder, e tem uma duração recomendada de cerca de 
-        30 minutos. A apresentação dos processos da unidade organizacional, apoiada pelo implementador MPS, deve durar 
-        entre 30 a 60 minutos e focar exclusivamente nos processos da unidade. Em certos casos, a critério do avaliador líder, o treinamento pode ser reduzido ou omitido se todos os representantes da 
-        empresa já tiverem participado de avaliações MPS ou de cursos oficiais equivalentes.
-      </p>
+      <div className='dica-div'>
+        <strong className='diva-titulo'>Dica:</strong>
+        <p className='dica-texto'>
+          Na etapa inicial, é necessário realizar o treinamento da equipe de 
+          avaliação e as apresentações dos processos da unidade organizacional. O treinamento pode ser conduzido por 
+          um avaliador adjunto, com a presença obrigatória do avaliador líder, e tem uma duração recomendada de cerca de 
+          30 minutos. A apresentação dos processos da unidade organizacional, apoiada pelo implementador MPS, deve durar 
+          entre 30 a 60 minutos e focar exclusivamente nos processos da unidade. Em certos casos, a critério do avaliador líder, o treinamento pode ser reduzido ou omitido se todos os representantes da 
+          empresa já tiverem participado de avaliações MPS ou de cursos oficiais equivalentes.
+        </p>
+      </div>
       {/* Seção para "As apresentações iniciais foram realizadas?" */}
       <label className="label">As apresentações iniciais foram realizadas?</label>
       <div className='checkbox-wrapper-project'>

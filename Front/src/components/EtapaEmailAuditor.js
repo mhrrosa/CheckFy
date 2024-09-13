@@ -76,10 +76,12 @@ function CadastroAuditor({ onNext, avaliacaoId }) {
   return (
     <div className='container-etapa'>
       <h1 className='title-form'>CADASTRO DO AUDITOR</h1>
-      <p className='dica-text'>
-        <strong>Dica: </strong>
-        O auditor é responsável por garantir que todos os processos estejam em conformidade com os requisitos da avaliação.
-      </p>
+      <div className='dica-div'>
+        <strong className='dica-titulo'>Dica: </strong>
+        <p className='dica-texto'>
+          O auditor é responsável por garantir que todos os processos estejam em conformidade com os requisitos da avaliação.
+        </p>
+      </div>
 
       <div className="input-wrapper">
         <label className="label">E-mail do Auditor:</label>
