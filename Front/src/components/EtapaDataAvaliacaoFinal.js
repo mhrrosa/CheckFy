@@ -90,7 +90,7 @@ function CadastroDataAvaliacao({ onNext, avaliacaoId }) {
   };
 
   return (
-        <div className='container-etapa'>
+      <div className='container-etapa'>
         <h1 className='title-form'>DEFINIÇÃO DA DATA DE AVALIAÇÃO FINAL</h1>
         <p className='dica-text' style={{ color: 'grey', marginBottom: '15px', fontSize: '13px' }}>
             <strong>Dica: </strong>

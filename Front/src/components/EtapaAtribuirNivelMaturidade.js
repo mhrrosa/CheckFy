@@ -4,23 +4,13 @@ import { getAvaliacaoById, enviarEmailResultadoAvaliacaoInicial } from '../servi
 import '../components/styles/Body.css';
 import logo from '../img/logo_horizontal.png';
 
-function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
+function EtapaAtribuirNivelMaturidade({ onNext, onDuploNext }) {
   const location = useLocation();
   const [avaliacao, setAvaliacao] = useState({
-    nome: '',
-    descricao: '',
-    status: '',
-    id_empresa: '',
-    id_nivel_solicitado: '',
-    id_avaliador_lider: '',
-    id_atividade: '',
-    id_versao_modelo: '',
-    relatorio_ajuste: '',
-    caminho_arquivo_relatorio_ajuste_inicial: ''
+    nivel_solicitado: ''
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [buttonText, setButtonText] = useState('APROVAR');
-  const [intervalId, setIntervalId] = useState(null);
+  const [buttonText, setButtonText] = useState('SATISFEITO');
 
   useEffect(() => {
     const fetchAvaliacao = async () => {
@@ -37,27 +27,23 @@ function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
     fetchAvaliacao();
   }, [location.state.id]);
 
-  const handleNext = () => {
-    onNext();
-  };
-
-  const handleDuploNext = async () => {
+  const handleNext = async () => {
     const confirmacao = window.confirm('Um e-mail será enviado aos participantes informando o resultado da auditoria inicial. Deseja continuar?');
-  
+
     if (confirmacao) {
-      setButtonText('ENVIANDO E-MAIL');
-      setIsLoading(true);
+      setButtonText('ENVIANDO E-MAIL'); // Muda o texto do botão
+      setIsLoading(true); // Ativa o loading
 
       try {
         await enviarEmailResultadoAvaliacaoInicial(location.state.id);
         alert('E-mail enviado com sucesso!');
-        onDuploNext();
+        onNext();
       } catch (error) {
         console.error('Erro ao enviar o e-mail:', error);
         alert('Houve um erro ao enviar o e-mail. Tente novamente.');
       } finally {
-        setIsLoading(false);
-        setButtonText('APROVAR');
+        setIsLoading(false); // Desativa o loading
+        setButtonText('SATISFEITO'); // Restaura o texto original
       }
     }
   };
@@ -77,65 +63,66 @@ function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
         color: '#333',
         marginBottom: '20px',
         textAlign: 'center'
-      }}>AUDITORIA DA AVALIAÇÃO INICIAL</h1>
+      }}>ATRIBUIR NÍVEL DE MATURIDADE</h1>
 
-      <div className="lista-input">
-        {[{ label: "Nome da empresa", value: avaliacao.nome_empresa },
-          { label: "Descrição", value: avaliacao.descricao },
-          { label: "Status", value: avaliacao.status },
-          { label: "Nível Solicitado", value: avaliacao.nivel_solicitado },
-          { label: "Nome do Avaliador Líder", value: avaliacao.nome_avaliador_lider },
-          { label: "Cronograma", value: avaliacao.cronograma_planejamento },
-          { label: "Atividades Planejadas", value: avaliacao.atividade_planejamento },
-          { label: "Relatório de Ajuste", value: avaliacao.descricao_relatorio_ajuste_inicial }]
-          .map((item, index) => (
-            <div key={index} style={{
-              marginBottom: '15px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              <label style={{ fontWeight: 'bold', color: '#666', width: '45%' }}>
-                {item.label}:
-              </label>
-              <span style={{ color: '#333', width: '55%', textAlign: 'left' }}>
-                {item.value}
-              </span>
-            </div>
-          ))}
-        
-        {avaliacao.caminho_arquivo_relatorio_ajuste_inicial && (
-          <div style={{
-            marginBottom: '15px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}>
-            <label style={{ fontWeight: 'bold', color: '#666', width: '45%' }}>
-              Arquivo de Relatório de Ajuste:
-            </label>
-            <button
-              style={{
-                padding: '10px 20px',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                color: '#fff',
-                fontWeight: 'bold',
-                backgroundColor: '#2196F3',
-                transition: 'background-color 0.3s ease'
-              }}
-              onMouseOver={(e) => e.target.style.backgroundColor = '#1976D2'}
-              onMouseOut={(e) => e.target.style.backgroundColor = '#2196F3'}
-              onClick={() => window.open(`http://127.0.0.1:5000/uploads/${avaliacao.caminho_arquivo_relatorio_ajuste_inicial}`, '_blank')}
-              disabled={isLoading}
-            >
-              MOSTRAR
-            </button>
-          </div>
-        )}
+      <div style={{
+        backgroundColor: '#e0e0e0',
+        borderLeft: '4px solid #a0a0a0',
+        padding: '10px',
+        borderRadius: '4px',
+        marginBottom: '20px'
+      }}>
+        <strong style={{ color: '#555' }}>Dica:</strong>
+        <p style={{ color: '#333', margin: '5px 0' }}>
+          Rever a Caracterização dos Processos: Antes de iniciar a atividade, certifique-se de que todos os processos foram devidamente caracterizados. Esta revisão é fundamental para garantir que todas as informações estejam corretas e atualizadas.
+        </p>
       </div>
 
+      {/* Exibindo o campo "Nome da Empresa Avaliada" */}
+      <div style={{
+        marginBottom: '15px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
+        <label style={{ fontWeight: 'bold', color: '#666', width: '45%' }}>
+          Nome da Empresa Avaliada:
+        </label>
+        <span style={{
+          color: '#333',
+          width: '55%',
+          textAlign: 'left',
+          border: '1px solid black',
+          padding: '5px',
+          borderRadius: '4px'
+        }}>
+          {avaliacao.nome_empresa}
+        </span>
+      </div>
+
+      {/* Exibindo o campo "Nível Solicitado" */}
+      <div style={{
+        marginBottom: '15px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
+        <label style={{ fontWeight: 'bold', color: '#666', width: '45%' }}>
+          Nível Solicitado:
+        </label>
+        <span style={{
+          color: '#333',
+          width: '55%',
+          textAlign: 'left',
+          border: '1px solid black',
+          padding: '5px',
+          borderRadius: '4px'
+        }}>
+          {avaliacao.nivel_solicitado}
+        </span>
+      </div>
+
+      {/* Botões de ação */}
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -145,7 +132,7 @@ function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
         <img src={logo} alt="Logo Checkfy" style={{ height: '50px' }} />
         <div style={{ display: 'flex', gap: '10px' }}>
           <button
-            onClick={handleDuploNext}
+            onClick={handleNext}
             style={{
               padding: '10px 20px',
               border: 'none',
@@ -153,13 +140,13 @@ function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
               cursor: 'pointer',
               color: '#fff',
               fontWeight: 'bold',
-              backgroundColor: isLoading ? '#ccc' : '#4CAF50',
+              backgroundColor: isLoading ? '#ccc' : '#4CAF50', // Desabilita a cor quando carregando
               transition: 'background-color 0.3s ease',
-              position: 'relative',
+              position: 'relative', // Para alinhar o spinner
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              minWidth: '150px'
+              alignItems: 'center', // Centraliza verticalmente
+              justifyContent: 'center', // Centraliza horizontalmente
+              minWidth: '150px' // Garantir espaço suficiente para o texto e o spinner
             }}
             onMouseOver={(e) => !isLoading && (e.target.style.backgroundColor = '#45a049')}
             onMouseOut={(e) => !isLoading && (e.target.style.backgroundColor = '#4CAF50')}
@@ -190,13 +177,13 @@ function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
               fontWeight: 'bold',
               backgroundColor: '#f44336',
               transition: 'background-color 0.3s ease',
-              minWidth: '150px'
+              minWidth: '150px' // Garantir o mesmo tamanho que o outro botão
             }}
             onMouseOver={(e) => e.target.style.backgroundColor = '#d32f2f'}
             onMouseOut={(e) => e.target.style.backgroundColor = '#f44336'}
             disabled={isLoading}
           >
-            REPROVAR
+            NÃO SATISFEITO
           </button>
         </div>
       </div>
@@ -204,4 +191,4 @@ function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
   );
 }
 
-export default EtapaAuditoriaInicial;
+export default EtapaAtribuirNivelMaturidade;

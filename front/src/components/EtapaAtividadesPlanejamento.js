@@ -64,6 +64,26 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
       <div className='title-container'>
         <h1 className='title-form'>PLANEJAMENTO</h1>
       </div>
+      <div style={{
+            backgroundColor: '#e0e0e0', // Fundo mais escuro para maior contraste
+            borderLeft: '4px solid #a0a0a0', // Borda levemente destacada
+            padding: '10px',
+            borderRadius: '4px',
+            marginBottom: '20px'
+        }}>
+            <strong style={{ color: '#555' }}>Dica:</strong> {/* Texto de dica mais escuro */}
+            <p style={{ color: '#333', margin: '5px 0' }}>
+            Uma base para estimar o tempo da avaliação inicial, da avaliação final e a composição da equipe sugerida pelo MA-MPS:
+            </p>
+            <p style={{ color: '#333', margin: '5px 0' }}>
+            <ul>
+                    <li><strong>Níveis A e B:</strong> 4-5 dias, com avaliador líder, adjunto(s) e representante(s) da unidade.</li>
+                    <li><strong>Níveis C e D:</strong> 2-4 dias, com avaliador líder, adjunto(s) e opcionalmente representante(s).</li>
+                    <li><strong>Níveis E e F:</strong> 2-3 dias, com avaliador líder, adjunto(s) e opcionalmente representante(s).</li>
+                    <li><strong>Nível G:</strong> 1-2 dias, com avaliador líder e opcionalmente adjunto(s) e representante(s).</li>
+                </ul>
+            </p>
+        </div>
       <label className="label">Avaliação aprovada pela Softex?</label>
       <div className='checkbox-wrapper-project'>
         <div>
@@ -89,6 +109,9 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
       {/* Exibe os campos de planejamento apenas se a avaliação estiver aprovada */}
       {avaliacaoAprovada && (
         <>
+
+          <label className="label">Atividades para a avaliação:</label>
+          <br></br>
           <div className='textarea-wrapper'>
             <label className="label">Planejamento de atividades para a avaliação:</label>
             <p className="dica-text">
@@ -102,6 +125,9 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
               style={{ marginLeft: 10 , width: 500}}
             ></textarea>
           </div>
+          <br></br>
+
+          <label className="label">Cronograma para a avaliação:</label>
           <br></br>
           <div className='textarea-wrapper'>
             <label className="label">Planejamento de cronograma para a avaliação:</label>

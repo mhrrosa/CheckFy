@@ -49,11 +49,34 @@ function AtaReuniaoAbertura({onNext, avaliacaoId }) {
         <h1 className='title-form'>ATA DE REUNIÃO DE ABERTURA DA AVALIAÇÃO FINAL</h1>
       </div>
       
-      <div className='textarea-wrapper'>
+      <br></br>
+        <div style={{
+            backgroundColor: '#e0e0e0', // Fundo mais escuro para maior contraste
+            borderLeft: '4px solid #a0a0a0', // Borda levemente destacada
+            padding: '10px',
+            borderRadius: '4px',
+            marginBottom: '20px'
+        }}>
+            <strong style={{ color: '#555' }}>Dica:</strong> {/* Texto de dica mais escuro */}
+            <p style={{ color: '#333', margin: '5px 0' }}>
+            1 - Avaliador Líder: Apresentou os níveis MR-MPS e o processo de avaliação. Explicou o Acordo de Confidencialidade, escopo e nível de maturidade pleiteado.
+            </p>
+            <p style={{ color: '#333', margin: '5px 0' }}>
+            2 - Patrocinador: Reforçou o motivo da avaliação e a importância do apoio dos colaboradores. Destacou a prioridade de respeitar horários e ser sincero nas entrevistas.
+            </p>
+            <p style={{ color: '#333', margin: '5px 0' }}>
+            3 - Cronograma: O cronograma da avaliação foi apresentado e todos os participantes foram informados dos momentos de suas contribuições.
+            </p>
+            <p style={{ color: '#333', margin: '5px 0' }}>
+            4 - Presença: Todos os colaboradores entrevistados devem estar presentes. Ausentes por força maior serão informados no início de suas entrevistas.
+            </p>
+        </div>
         <label className="label">Ata de Reunião:</label>
         <p className="dica-text">
           Dica para preencher: adicionar dica
         </p>
+        <br></br>
+        <div className='textarea-wrapper'>
         <textarea
           value={ataReuniao}
           onChange={(e) => setAtaReuniao(e.target.value)}

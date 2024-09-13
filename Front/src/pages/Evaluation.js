@@ -17,8 +17,10 @@ import EtapaAuditoriaInicial from '../components/EtapaAuditoriaInicial';
 import EtapaRealizarAjusteAvaliacaoInicial from '../components/EtapaRealizarAjusteAvaliacaoInicial';
 import EtapaDataAvaliacaoFinal from  '../components/EtapaDataAvaliacaoFinal';
 import EtapaEmailFeedbackSoftex from '../components/EtapaEmailFeedbackSoftex';
-import EtapaAtaAbertura from '../components/EtapaAtaAbertura'
-import EtapaConsultarRelatorioAjuste from '../components/EtapaConsultarRelatorioAjuste'
+import EtapaAtaAbertura from '../components/EtapaAtaAbertura';
+import EtapaConsultarRelatorioAjuste from '../components/EtapaConsultarRelatorioAjuste';
+import EtapaAtribuirNivelMaturidade from '../components/EtapaAtribuirNivelMaturidade';
+import EtapaResultadoAvaliacaoFinal from '../components/EtapaResultadoAvaliacaoFinal';
 import { getAvaliacaoById, updateIdAtividade, getAtividade } from '../services/Api';
 import { UserContext } from '../contexts/UserContext';
 import '../components/styles/Body.css';
@@ -33,18 +35,20 @@ const etapaComponents = {
   4: EtapaAtividadesPlanejamento,
   5: EtapaAcordoConfidencialidade,
   6: EtapaEmailAuditor,
-  7: EtapaApresentacoesIniciais,
-  8: EtapaRelatorioAjusteInicial,
-  9: EtapaAuditoriaInicial,
-  10: EtapaRealizarAjusteAvaliacaoInicial,
-  11: EtapaDataAvaliacaoFinal,
-  12: EtapaEmailFeedbackSoftex,
-  13: EtapaConsultarRelatorioAjuste,
-  14: EtapaAtaAbertura,
-  15: EtapaProjeto,
-  16: EtapaEvidencia,
+  7: EtapaProjeto,
+  8: EtapaEvidencia,
+  9: EtapaApresentacoesIniciais,
+  10: EtapaRelatorioAjusteInicial,
+  11: EtapaAuditoriaInicial,
+  12: EtapaRealizarAjusteAvaliacaoInicial,
+  13: EtapaDataAvaliacaoFinal,
+  14: EtapaEmailFeedbackSoftex,
+  15: EtapaConsultarRelatorioAjuste,
+  16: EtapaAtaAbertura,
   17: EtapaCaracterizacao,
-  18: EtapaResumoCaracterizacao
+  18: EtapaResumoCaracterizacao,
+  19: EtapaAtribuirNivelMaturidade,
+  20: EtapaResultadoAvaliacaoFinal,
 };
 
 const etapaUsuarioMap = { 
@@ -54,18 +58,20 @@ const etapaUsuarioMap = {
   4: [1, 2],
   5: [1, 2],
   6: [1, 2],
-  7: [1, 2],
+  7: [1, 5],
   8: [1, 2],
-  9: [1, 3],
-  10: [1, 5],
-  11: [1, 2],
-  12: [1, 2],
-  13: [1, 5],
+  9: [1, 2],
+  10: [1, 2],
+  11: [1, 3],
+  12: [1, 5],
+  13: [1, 2],
   14: [1, 2],
   15: [1, 5],
   16: [1, 2],
   17: [1, 2],
-  18: [1, 2]
+  18: [1, 2],
+  19: [1, 2],
+  20: [1, 5], // 5 é colaborador?
   
 };
 
