@@ -1050,8 +1050,8 @@ def add_resultado_final():
         print(f"Erro ao adicionar auditores: {e}")
         return jsonify({"message": "Erro ao adicionar auditores", "error": str(e)}), 500
 
-@app.route('/update_graus_implementacao_empresa', methods=['PUT'])
-def update_graus_implementacao_empresa():
+@app.route('/update_resultado_final', methods=['PUT'])
+def update_resultado_final():
     data = request.json
     try:
         id_avaliacao = data['idAvaliacao']
