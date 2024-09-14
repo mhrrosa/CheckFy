@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getAvaliacaoById, getNiveisLimitado, enviarEmailResultadoAvaliacaoInicial, updateResultadoFinal } from '../services/Api'; 
+import '../components/styles/Button.css';
 import '../components/styles/EtapaAtribuirNivelMaturidade.css'; // Importa o CSS externo
 
 function EtapaAtribuirNivelMaturidade({ onNext }) {
@@ -86,7 +87,6 @@ function EtapaAtribuirNivelMaturidade({ onNext }) {
         };
         await updateResultadoFinal(location.state.id, data);
         alert('Resultado final atualizado com sucesso!');
-        onNext();
       } catch (error) {
         console.error('Erro ao processar a ação:', error);
         alert('Houve um erro ao enviar o e-mail ou ao atualizar o resultado. Tente novamente.');
@@ -147,7 +147,7 @@ function EtapaAtribuirNivelMaturidade({ onNext }) {
         </div>
       )}
 
-      {/* Botão de salvar */}
+      {/* Botões de salvar e próximo */}
       <div className="buttonContainer">
         <button
           onClick={handleNext}
@@ -155,6 +155,13 @@ function EtapaAtribuirNivelMaturidade({ onNext }) {
           disabled={isLoading}
         >
           {isLoading ? 'Enviando...' : 'Salvar e Enviar E-mail'}
+        </button>
+        <button
+          onClick={onNext}
+          className="button-next"
+          disabled={isLoading}
+        >
+          Próximo
         </button>
       </div>
     </div>
