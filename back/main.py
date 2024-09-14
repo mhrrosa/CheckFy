@@ -1026,30 +1026,6 @@ def update_graus_implementacao_empresa():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
-@app.route('/get_resultado_final/<int:id_avaliacao>', methods=['GET'])
-def get_resultado_final(id_avaliacao):
-    resultado_final = avaliacao.get_resultado_final(id_avaliacao)
-    return jsonify(resultado_final), 200
-
-@app.route('/add_resultado_final', methods=['POST'])
-def add_resultado_final():
-    data = request.json
-    try:
-        id_avaliacao = data['idAvaliacao']
-        parecer_final = data['parecerFinal']
-        id_nivel_atribuido = data['idNivelAtribuido']
-        
-        avaliacao.add_resultado_final(id_avaliacao, parecer_final, id_nivel_atribuido)
-        
-        return jsonify({"message": "Resultado final adicionado com sucesso"}), 200  # Retorne uma resposta JSON com código 200
-    except KeyError as e:
-        print(f"Erro: Campo necessário não fornecido - {str(e)}")
-        return jsonify({"message": "Campo necessário não fornecido", "error": str(e)}), 400
-    except Exception as e:
-        print(f"Erro ao adicionar auditores: {e}")
-        return jsonify({"message": "Erro ao adicionar auditores", "error": str(e)}), 500
-
 @app.route('/update_resultado_final', methods=['PUT'])
 def update_resultado_final():
     data = request.json

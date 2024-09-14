@@ -553,24 +553,9 @@ function updateGrausImplementacaoEmpresa(data) {
     });
 }
 
-
-function getResultadoFinal(avaliacaoId) {
-  return get(`/get_resultado_final/${avaliacaoId}`);
-}
-
-function addResultadoFinal(data) {
-  return post('/add_resultado_final', data);
-}
-
 function updateResultadoFinal(avaliacaoId, data) {
   return put(`/update_resultado_final/${avaliacaoId}`, data);
 }
-
-
-
- 
-
-
 
 
 export {
@@ -650,5 +635,6 @@ export {
   updateData,
   getGrausImplementacaoEmpresa,
   addGrauImplementacaoEmpresa,
-  updateGrausImplementacaoEmpresa
+  updateGrausImplementacaoEmpresa,
+  updateResultadoFinal
 };
