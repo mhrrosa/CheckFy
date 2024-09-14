@@ -72,15 +72,6 @@ def get_niveis(id_versao_modelo):
     except Exception as e:
         print(f"Erro ao buscar níveis: {e}")
         return jsonify({"message": "Erro ao buscar níveis", "error": str(e)}), 500
-    
-@app.route('/get_niveis_limitado/<int:id_versao_modelo>/<int:id_nivel_solicitado>', methods=['GET'])
-def get_niveis_limitado(id_versao_modelo, id_nivel_solicitado):
-    try:
-        niveis = nivel.get_niveis_limitado(id_versao_modelo, id_nivel_solicitado)
-        return jsonify(niveis), 200
-    except Exception as e:
-        print(f"Erro ao buscar níveis: {e}")
-        return jsonify({"message": "Erro ao buscar níveis", "error": str(e)}), 500
 
 @app.route('/delete_nivel/<int:nivel_id>', methods=['DELETE'])
 def delete_nivel(nivel_id):
@@ -998,6 +989,7 @@ def get_graus_implementacao_empresa(id_avaliacao):
     graus = grau_implementacao.get_grau_implementacao_empresa(id_avaliacao)
     return jsonify(graus), 200
 
+
 @app.route('/insert_graus_implementacao_empresa', methods=['POST'])
 def insert_graus_implementacao_empresa():
     try:
@@ -1015,6 +1007,7 @@ def insert_graus_implementacao_empresa():
         print(f"Erro ao inserir graus de implementação: {e}")
         return jsonify({'error': str(e)}), 500
 
+
 @app.route('/update_graus_implementacao_empresa', methods=['PUT'])
 def update_graus_implementacao_empresa():
     try:
@@ -1025,46 +1018,6 @@ def update_graus_implementacao_empresa():
         return jsonify({'message': 'Graus de implementação atualizados com sucesso!'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-
-@app.route('/get_resultado_final/<int:id_avaliacao>', methods=['GET'])
-def get_resultado_final(id_avaliacao):
-    resultado_final = avaliacao.get_resultado_final(id_avaliacao)
-    return jsonify(resultado_final), 200
-
-@app.route('/add_resultado_final', methods=['POST'])
-def add_resultado_final():
-    data = request.json
-    try:
-        id_avaliacao = data['idAvaliacao']
-        parecer_final = data['parecerFinal']
-        id_nivel_atribuido = data['idNivelAtribuido']
-        
-        avaliacao.add_resultado_final(id_avaliacao, parecer_final, id_nivel_atribuido)
-        
-        return jsonify({"message": "Resultado final adicionado com sucesso"}), 200  # Retorne uma resposta JSON com código 200
-    except KeyError as e:
-        print(f"Erro: Campo necessário não fornecido - {str(e)}")
-        return jsonify({"message": "Campo necessário não fornecido", "error": str(e)}), 400
-    except Exception as e:
-        print(f"Erro ao adicionar auditores: {e}")
-        return jsonify({"message": "Erro ao adicionar auditores", "error": str(e)}), 500
-
-@app.route('/update_graus_implementacao_empresa', methods=['PUT'])
-def update_graus_implementacao_empresa():
-    data = request.json
-    try:
-        id_avaliacao = data['idAvaliacao']
-        parecer_final = data['parecerFinal']
-        id_nivel_atribuido = data['idNivelAtribuido']
-        
-        avaliacao.update_resultado_final(id_avaliacao, parecer_final, id_nivel_atribuido)
-
-        return jsonify({"message": "Resultado final atualizado com sucesso"}), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)
