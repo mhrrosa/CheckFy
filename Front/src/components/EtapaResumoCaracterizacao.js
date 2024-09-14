@@ -16,6 +16,7 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
   const [resultadosEsperados, setResultadosEsperados] = useState({});
   const [arrayResumo, setArrayResumo] = useState([]); // Array para salvar os dados de avaliação
   const [resumoSalvo, setResumoSalvo] = useState(false); // Estado para determinar se será "SALVAR" ou "ATUALIZAR"
+  const [dropdownVisible, setDropdownVisible] = useState(null); // Controlar qual dropdown está visível
 
   useEffect(() => {
     if (avaliacaoId && idVersaoModelo) {
@@ -58,7 +59,7 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
 
         // Para cada resultado esperado, buscamos a nota no resumo
         resultados.forEach(resultado => {
-          const notaResumo = resumo.find(item => item.ID_Resultado_Esperado === resultado.ID)?.Nota || 'NA';
+          const notaResumo = resumo.find(item => item.ID_Resultado_Esperado === resultado.ID)?.Nota || 'Não avaliado (NA)';
 
           arrayInicial.push({
             id_avaliacao: avaliacaoId,
@@ -119,11 +120,11 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
           : item
       )
     );
+    setDropdownVisible(null); // Fechar o dropdown após a seleção
   };
 
   const salvarResumoCaracterizacao = async () => {
     try {
-
       if (resumoSalvo) {
         await updateGrausImplementacaoEmpresa(arrayResumo);
       } else {
@@ -138,15 +139,43 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
     }
   };
 
+  // Função atualizada com a nova lógica
   const calcularCaracterizacaoUnidade = (notas) => {
-    if (notas.length === 0) return 'NA';
-    if (notas.every(nota => nota === 'Totalmente implementado (T)')) return 'T';
-    if (notas.every(nota => nota === 'Totalmente implementado (T)' || nota === 'Largamente implementado (L)')) return 'L';
-    if (notas.every(nota => nota === 'Totalmente implementado (T)' || nota === 'Largamente implementado (L)' || nota === 'Não avaliado (NA)')) return 'L';
-    if (notas.includes('Não implementado (N)')) return 'N';
-    if (notas.includes('Parcialmente implementado (P)')) return 'P';
-    return 'NA';
+    if (notas.length === 0) return 'Não avaliado (NA)'; // Sem notas
+
+    // Regra 4: Se houver pelo menos um 'F', retorna 'Fora do escopo (F)'
+    if (notas.includes('Fora do escopo (F)')) return 'Fora do escopo (F)';
+
+    // Verificações básicas para o caso em que todas as notas são iguais
+    if (notas.every(nota => nota === 'Totalmente implementado (T)')) return 'Totalmente implementado (T)';
+    if (notas.every(nota => nota === 'Largamente implementado (L)')) return 'Largamente implementado (L)';
+    if (notas.every(nota => nota === 'Parcialmente implementado (P)')) return 'Parcialmente implementado (P)';
+    if (notas.every(nota => nota === 'Não implementado (N)')) return 'Não implementado (N)';
+    if (notas.every(nota => nota === 'Fora do escopo (F)')) return 'Fora do escopo (F)';
+
+    const temT = notas.includes('Totalmente implementado (T)');
+    const temL = notas.includes('Largamente implementado (L)');
+    const temP = notas.includes('Parcialmente implementado (P)');
+    const temN = notas.includes('Não implementado (N)');
+    const temNA = notas.includes('Não avaliado (NA)');
+
+    // Regra 3: Se houver pelo menos um 'N', retorna 'Escolher L, N ou P'
+    if (temN) return 'Escolher L, N ou P';
+
+    // Regra 2: Se houver pelo menos um 'P' e não houver 'N', retorna 'Escolher L ou P'
+    if (temP && !temN) return 'Escolher L ou P';
+
+    // Regra 1: Se houver 'T' e 'L', ou 'T', 'L' e 'NA', retorna 'Largamente implementado (L)'
+    if ((temT && temL) || (temT && temL && temNA)) return 'Largamente implementado (L)';
+
+    // Se nada se aplicar, retorna 'Não avaliado (NA)'
+    return 'Não avaliado (NA)';
   };
+
+  // Verificar se algum item tem as notas que exigem escolha
+  const desabilitarBotao = arrayResumo.some(item => 
+    item.nota === 'Escolher L ou P' || item.nota === 'Escolher L, N ou P'
+  );
 
   return (
     <div className="management-etapa5-container">
@@ -175,17 +204,50 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
                     </Tippy>
                   </td>
                   <td>
-                    <select
-                      className="nota-selector"
-                      value={itemResumo?.nota || 'NA'}
-                      onChange={(e) => handleNotaChange(resultado.ID, e.target.value)}
-                    >
-                      <option value="T">T</option>
-                      <option value="L">L</option>
-                      <option value="P">P</option>
-                      <option value="N">N</option>
-                      <option value="NA">NA</option>
-                    </select>
+                    {/* Se a nota exigir escolha, mostra o botão */}
+                    {itemResumo?.nota === 'Escolher L ou P' || itemResumo?.nota === 'Escolher L, N ou P' ? (
+                      <>
+                        <button onClick={() => setDropdownVisible(resultado.ID)}>
+                          {itemResumo?.nota}
+                        </button>
+                        {/* Dropdown para selecionar as opções */}
+                        {dropdownVisible === resultado.ID && (
+                          <select
+                            className="nota-selector"
+                            onChange={(e) => handleNotaChange(resultado.ID, e.target.value)}
+                            value=""
+                          >
+                            <option value="" disabled>Selecione</option>
+                            {itemResumo?.nota === 'Escolher L ou P' ? (
+                              <>
+                                <option value="Largamente implementado (L)">Largamente implementado (L)</option>
+                                <option value="Parcialmente implementado (P)">Parcialmente implementado (P)</option>
+                              </>
+                            ) : (
+                              <>
+                                <option value="Largamente implementado (L)">Largamente implementado (L)</option>
+                                <option value="Parcialmente implementado (P)">Parcialmente implementado (P)</option>
+                                <option value="Não implementado (N)">Não implementado (N)</option>
+                              </>
+                            )}
+                          </select>
+                        )}
+                      </>
+                    ) : (
+                      // Caso contrário, mostra o dropdown normal
+                      <select
+                        className="nota-selector"
+                        value={itemResumo?.nota || 'Não avaliado (NA)'}
+                        onChange={(e) => handleNotaChange(resultado.ID, e.target.value)}
+                      >
+                        <option value="Totalmente implementado (T)">Totalmente implementado (T)</option>
+                        <option value="Largamente implementado (L)">Largamente implementado (L)</option>
+                        <option value="Parcialmente implementado (P)">Parcialmente implementado (P)</option>
+                        <option value="Não implementado (N)">Não implementado (N)</option>
+                        <option value="Não avaliado (NA)">Não avaliado (NA)</option>
+                        <option value="Fora do escopo (F)">Fora do escopo (F)</option>
+                      </select>
+                    )}
                   </td>
                 </tr>
               );
@@ -193,7 +255,7 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
           ))}
         </tbody>
       </table>
-      <button className='button-save' onClick={salvarResumoCaracterizacao}>
+      <button className='button-save' onClick={salvarResumoCaracterizacao} disabled={desabilitarBotao}>
         {resumoSalvo ? 'ATUALIZAR' : 'SALVAR'}
       </button>
       <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
