@@ -30,7 +30,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 db_config = {
     "host": "127.0.0.1",
     "user": "root",
-    "password": "root",
+    "password": "I#p4Zp&zS!Zv",
     "database": "checkfy"
 }
 
@@ -1026,11 +1026,10 @@ def update_graus_implementacao_empresa():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/update_resultado_final', methods=['PUT'])
-def update_resultado_final():
+@app.route('/update_resultado_final/<int:id_avaliacao>', methods=['PUT'])
+def update_resultado_final(id_avaliacao):
     data = request.json
     try:
-        id_avaliacao = data['idAvaliacao']
         parecer_final = data['parecerFinal']
         id_nivel_atribuido = data['idNivelAtribuido']
         

@@ -24,7 +24,6 @@ class Nivel:
             ORDER BY Nivel ASC
         """, (id_versao_modelo, id_nivel_solicitado))
         result = self.db.cursor.fetchall()
-        print(result)
         return result
     
     def delete_nivel(self, nivel_id):

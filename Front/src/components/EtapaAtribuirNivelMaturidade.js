@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { getAvaliacaoById, getNiveisLimitado, enviarEmailResultadoAvaliacaoInicial } from '../services/Api'; 
+import { getAvaliacaoById, getNiveisLimitado, enviarEmailResultadoAvaliacaoInicial, updateResultadoFinal } from '../services/Api'; 
 import '../components/styles/EtapaAtribuirNivelMaturidade.css'; // Importa o CSS externo
 
 function EtapaAtribuirNivelMaturidade({ onNext }) {
@@ -22,6 +22,18 @@ function EtapaAtribuirNivelMaturidade({ onNext }) {
         // Carrega os níveis limitados até o nível solicitado
         const niveisData = await getNiveisLimitado(data.id_versao_modelo, data.id_nivel_solicitado);
         setNiveis(niveisData);
+
+        // Se o Parecer Final e o Nível Atribuído já vierem da API, preenche os seletores
+        if (data.parecer_final) {
+          setSatisfacao(data.parecer_final);
+          if (data.parecer_final === 'Satisfeito') {
+            setSelectedNivel(data.id_nivel_atribuido || data.id_nivel_solicitado);
+            setNivelDisabled(true);
+          } else if (data.parecer_final === 'Não Satisfeito') {
+            setSelectedNivel(data.id_nivel_atribuido || '');
+            setNivelDisabled(false);
+          }
+        }
       } catch (error) {
         console.error('Erro ao buscar avaliação ou níveis:', error);
       } finally {
@@ -51,17 +63,33 @@ function EtapaAtribuirNivelMaturidade({ onNext }) {
   };
 
   const handleNext = async () => {
+    // Verifica se os seletores foram preenchidos
+    if (!satisfacao || !selectedNivel) {
+      alert('Por favor, selecione o resultado final e o nível final.');
+      return;
+    }
+
     const confirmacao = window.confirm('Um e-mail será enviado aos participantes informando o resultado da auditoria inicial. Deseja continuar?');
 
     if (confirmacao) {
       setIsLoading(true);
       try {
+        // Envia o e-mail
         await enviarEmailResultadoAvaliacaoInicial(location.state.id);
         alert('E-mail enviado com sucesso!');
+
+        // Após o sucesso do envio do e-mail, envia o resultado final e o nível selecionado
+        const data = {
+          idAvaliacao: location.state.id,
+          parecerFinal: satisfacao,
+          idNivelAtribuido: selectedNivel
+        };
+        await updateResultadoFinal(location.state.id, data);
+        alert('Resultado final atualizado com sucesso!');
         onNext();
       } catch (error) {
-        console.error('Erro ao enviar o e-mail:', error);
-        alert('Houve um erro ao enviar o e-mail. Tente novamente.');
+        console.error('Erro ao processar a ação:', error);
+        alert('Houve um erro ao enviar o e-mail ou ao atualizar o resultado. Tente novamente.');
       } finally {
         setIsLoading(false);
       }
