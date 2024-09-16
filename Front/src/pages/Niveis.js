@@ -73,19 +73,21 @@ function Niveis() {
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
-        <h1 className='title-form-gerenciamento'>GERENCIAMENTO DE NÍVEIS</h1>
+        <h1 className='title-form-gerenciamento'>CADASTRO DE NÍVEIS</h1>
         <div className="input-wrapper">
+          <label className="label-gerenciamento">Nível:</label>
           <input
             className="input-field"
             type="text"
-            placeholder="Novo Nível"
+            placeholder="Digite a letra do novo nível de maturidade"
             value={novoNivel}
             onChange={(e) => setNovoNivel(e.target.value)}
           />
+          <label className="label-gerenciamento">Nome:</label>
           <input
             className="input-field"
             type="text"
-            placeholder="Nome do nível"
+            placeholder="Digite o nome do novo nível de maturidade"
             value={nomeNovoNivel}
             onChange={(e) => setNomeNovoNivel(e.target.value)}
           />
@@ -94,7 +96,7 @@ function Niveis() {
           <img src={logo} className="logo" alt="Logo Checkfy" />
           <button className="button-end-form" onClick={adicionarNivel}>ADICIONAR</button>
         </div>
-        <p className="processos-cadastrados-title">NÍVEIS CADASTRADOS:</p>
+        <p className="niveis-cadastrados-title">GERENCIAMENTO DOS NÍVEIS CADASTRADOS:</p>
         {niveis.length > 0 ? (
           <table>
             <tbody>

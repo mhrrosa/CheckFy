@@ -77,22 +77,6 @@ function EtapaEmpresa({ onNext, avaliacaoId }) {
       <div className='title-container'>
         <h1 className='title-form'>CADASTRO DE EMPRESA</h1>
       </div>
-      
-      <div className="input-wrapper">
-        <label className="label">Empresas cadastradas:</label>
-        <select
-          className="input-field"
-          value={empresaSelecionada}
-          onChange={(e) => setEmpresaSelecionada(e.target.value)}
-          disabled={!empresaCadastrada}
-        >
-          <option value="">Selecione a Empresa</option>
-          {empresas.map(e => (
-            <option key={e.id} value={e.id}>{e.nome}</option>
-          ))}
-        </select>
-      </div>
-      
       <label className="label">Empresa já cadastrada?</label>
       <div className='checkbox-wrapper'>
         <label className="checkbox-label">
@@ -112,7 +96,24 @@ function EtapaEmpresa({ onNext, avaliacaoId }) {
           Não
         </label>
       </div>
-
+      {empresaCadastrada && (
+        <>
+          <div className="input-wrapper">
+            <label className="label">Empresas cadastradas:</label>
+            <select
+              className="input-field"
+              value={empresaSelecionada}
+              onChange={(e) => setEmpresaSelecionada(e.target.value)}
+              disabled={!empresaCadastrada}
+            >
+              <option value="">Selecione a Empresa</option>
+              {empresas.map(e => (
+                <option key={e.id} value={e.id}>{e.nome}</option>
+              ))}
+            </select>
+          </div>
+        </>
+      )}
       {!empresaCadastrada && (
         <>
           <div className="input-wrapper">

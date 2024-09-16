@@ -120,7 +120,7 @@ function ResultadosEsperados() {
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
-        <h1 className='title-form-gerenciamento'>GERENCIAMENTO DE RESULTADOS ESPERADOS</h1>
+        <h1 className='title-form-gerenciamento'>CADASTRO DE RESULTADOS ESPERADOS</h1>
                 <div className='lista-select-input'>
           <div className='input-select-group'>
             <div className='select-wrapper'>
@@ -156,7 +156,7 @@ function ResultadosEsperados() {
             <textarea
               className="input-field"
               type="text"
-              placeholder="Resultado Esperado conforme descrito no guia MR-MPS-SW"
+              placeholder="Digite o Resultado Esperado conforme descrito no guia MR-MPS-SW"
               value={novoResultado}
               onChange={(e) => setNovoResultado(e.target.value)}
             ></textarea>
@@ -166,7 +166,7 @@ function ResultadosEsperados() {
           <img src={logo} className="logo" alt="Logo Checkfy" />
           <button className="button-end-form" onClick={adicionarResultadoEsperado}>ADICIONAR</button>
         </div>
-        <p className="resultados-esperados-cadastrados-title">RESULTADOS ESPERADOS CADASTRADOS:</p>
+        <p className="resultados-esperados-cadastrados-title">GERENCIAMENTO DOS RESULTADOS ESPERADOS CADASTRADOS:</p>
         {resultados.length > 0 ? (
           <table>
             <tbody>
