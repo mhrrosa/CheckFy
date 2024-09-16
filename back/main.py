@@ -1019,5 +1019,20 @@ def update_graus_implementacao_empresa():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/update_resultado_final/<int:id_avaliacao>', methods=['PUT'])
+def update_resultado_final(id_avaliacao):
+    data = request.json
+    try:
+        parecer_final = data['parecerFinal']
+        id_nivel_atribuido = data['idNivelAtribuido']
+        
+        avaliacao.update_resultado_final(id_avaliacao, parecer_final, id_nivel_atribuido)
+
+        return jsonify({"message": "Resultado final atualizado com sucesso"}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)

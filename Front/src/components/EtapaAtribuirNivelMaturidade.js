@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { getAvaliacaoById, enviarEmailResultadoAvaliacaoInicial } from '../services/Api';
-import '../components/styles/Body.css';
-import logo from '../img/logo_horizontal.png';
+import { getAvaliacaoById, getNiveisLimitado, enviarEmailResultadoAvaliacaoInicial, updateResultadoFinal } from '../services/Api'; 
+import '../components/styles/Button.css';
+import '../components/styles/EtapaAtribuirNivelMaturidade.css'; // Importa o CSS externo
 
-function EtapaAtribuirNivelMaturidade({ onNext, onDuploNext }) {
+function EtapaAtribuirNivelMaturidade({ onNext }) {
   const location = useLocation();
-  const [avaliacao, setAvaliacao] = useState({
-    nivel_solicitado: ''
-  });
+  const [avaliacao, setAvaliacao] = useState({});
+  const [niveis, setNiveis] = useState([]);
+  const [selectedNivel, setSelectedNivel] = useState('');
+  const [satisfacao, setSatisfacao] = useState(''); // Estado para o seletor de satisfação
   const [isLoading, setIsLoading] = useState(false);
-  const [buttonText, setButtonText] = useState('SATISFEITO');
+  const [nivelDisabled, setNivelDisabled] = useState(false); // Controla se o seletor de nível está desabilitado
 
   useEffect(() => {
     const fetchAvaliacao = async () => {
@@ -18,8 +19,24 @@ function EtapaAtribuirNivelMaturidade({ onNext, onDuploNext }) {
       try {
         const data = await getAvaliacaoById(location.state.id);
         setAvaliacao(data);
+
+        // Carrega os níveis limitados até o nível solicitado
+        const niveisData = await getNiveisLimitado(data.id_versao_modelo, data.id_nivel_solicitado);
+        setNiveis(niveisData);
+
+        // Se o Parecer Final e o Nível Atribuído já vierem da API, preenche os seletores
+        if (data.parecer_final) {
+          setSatisfacao(data.parecer_final);
+          if (data.parecer_final === 'Satisfeito') {
+            setSelectedNivel(data.id_nivel_atribuido || data.id_nivel_solicitado);
+            setNivelDisabled(true);
+          } else if (data.parecer_final === 'Não Satisfeito') {
+            setSelectedNivel(data.id_nivel_atribuido || '');
+            setNivelDisabled(false);
+          }
+        }
       } catch (error) {
-        console.error('Erro ao buscar avaliação:', error);
+        console.error('Erro ao buscar avaliação ou níveis:', error);
       } finally {
         setIsLoading(false);
       }
@@ -27,165 +44,125 @@ function EtapaAtribuirNivelMaturidade({ onNext, onDuploNext }) {
     fetchAvaliacao();
   }, [location.state.id]);
 
+  // Lida com a mudança no seletor de satisfação
+  const handleSatisfacaoChange = (e) => {
+    const valor = e.target.value;
+    setSatisfacao(valor);
+
+    if (valor === 'Satisfeito') {
+      // Quando satisfeito, definir o nível final como o nível solicitado e desabilitar o seletor
+      setSelectedNivel(avaliacao.id_nivel_solicitado);
+      setNivelDisabled(true);
+    } else if (valor === 'Não Satisfeito') {
+      // Quando não satisfeito, habilitar o seletor e permitir a escolha
+      setSelectedNivel('');
+      setNivelDisabled(false);
+    } else {
+      setSelectedNivel('');
+      setNivelDisabled(true);
+    }
+  };
+
   const handleNext = async () => {
+    // Verifica se os seletores foram preenchidos
+    if (!satisfacao || !selectedNivel) {
+      alert('Por favor, selecione o resultado final e o nível final.');
+      return;
+    }
+
     const confirmacao = window.confirm('Um e-mail será enviado aos participantes informando o resultado da auditoria inicial. Deseja continuar?');
 
     if (confirmacao) {
-      setButtonText('ENVIANDO E-MAIL'); // Muda o texto do botão
-      setIsLoading(true); // Ativa o loading
-
+      setIsLoading(true);
       try {
+        // Envia o e-mail
         await enviarEmailResultadoAvaliacaoInicial(location.state.id);
         alert('E-mail enviado com sucesso!');
-        onNext();
+
+        // Após o sucesso do envio do e-mail, envia o resultado final e o nível selecionado
+        const data = {
+          idAvaliacao: location.state.id,
+          parecerFinal: satisfacao,
+          idNivelAtribuido: selectedNivel
+        };
+        await updateResultadoFinal(location.state.id, data);
+        alert('Resultado final atualizado com sucesso!');
       } catch (error) {
-        console.error('Erro ao enviar o e-mail:', error);
-        alert('Houve um erro ao enviar o e-mail. Tente novamente.');
+        console.error('Erro ao processar a ação:', error);
+        alert('Houve um erro ao enviar o e-mail ou ao atualizar o resultado. Tente novamente.');
       } finally {
-        setIsLoading(false); // Desativa o loading
-        setButtonText('SATISFEITO'); // Restaura o texto original
+        setIsLoading(false);
       }
     }
   };
 
   return (
-    <div style={{
-      padding: '20px',
-      backgroundColor: '#f9f9f9',
-      borderRadius: '8px',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-      maxWidth: '800px',
-      margin: 'auto'
-    }}>
-      <h1 style={{
-        fontSize: '24px',
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: '20px',
-        textAlign: 'center'
-      }}>ATRIBUIR NÍVEL DE MATURIDADE</h1>
+    <div className="container-etapa">
+      <h1 className="title">ATRIBUIR NÍVEL DE MATURIDADE</h1>
 
-      <div style={{
-        backgroundColor: '#e0e0e0',
-        borderLeft: '4px solid #a0a0a0',
-        padding: '10px',
-        borderRadius: '4px',
-        marginBottom: '20px'
-      }}>
-        <strong style={{ color: '#555' }}>Dica:</strong>
-        <p style={{ color: '#333', margin: '5px 0' }}>
-          Rever a Caracterização dos Processos: Antes de iniciar a atividade, certifique-se de que todos os processos foram devidamente caracterizados. Esta revisão é fundamental para garantir que todas as informações estejam corretas e atualizadas.
-        </p>
+      <div className="tip">
+        <strong>Dica:</strong>
+        <p>Rever a Caracterização dos Processos: Antes de iniciar a atividade, certifique-se de que todos os processos foram devidamente caracterizados.</p>
       </div>
 
-      {/* Exibindo o campo "Nome da Empresa Avaliada" */}
-      <div style={{
-        marginBottom: '15px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-      }}>
-        <label style={{ fontWeight: 'bold', color: '#666', width: '45%' }}>
-          Nome da Empresa Avaliada:
-        </label>
-        <span style={{
-          color: '#333',
-          width: '55%',
-          textAlign: 'left',
-          border: '1px solid black',
-          padding: '5px',
-          borderRadius: '4px'
-        }}>
-          {avaliacao.nome_empresa}
-        </span>
+      <div className="row">
+        <label className="label">Nome da Empresa Avaliada:</label>
+        <span className="value">{avaliacao.nome_empresa}</span>
       </div>
 
-      {/* Exibindo o campo "Nível Solicitado" */}
-      <div style={{
-        marginBottom: '15px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-      }}>
-        <label style={{ fontWeight: 'bold', color: '#666', width: '45%' }}>
-          Nível Solicitado:
-        </label>
-        <span style={{
-          color: '#333',
-          width: '55%',
-          textAlign: 'left',
-          border: '1px solid black',
-          padding: '5px',
-          borderRadius: '4px'
-        }}>
-          {avaliacao.nivel_solicitado}
-        </span>
+      <div className="row">
+        <label className="label">Nível Solicitado:</label>
+        <span className="value">{avaliacao.nivel_solicitado}</span>
       </div>
 
-      {/* Botões de ação */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: '20px'
-      }}>
-        <img src={logo} alt="Logo Checkfy" style={{ height: '50px' }} />
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <button
-            onClick={handleNext}
-            style={{
-              padding: '10px 20px',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              color: '#fff',
-              fontWeight: 'bold',
-              backgroundColor: isLoading ? '#ccc' : '#4CAF50', // Desabilita a cor quando carregando
-              transition: 'background-color 0.3s ease',
-              position: 'relative', // Para alinhar o spinner
-              display: 'flex',
-              alignItems: 'center', // Centraliza verticalmente
-              justifyContent: 'center', // Centraliza horizontalmente
-              minWidth: '150px' // Garantir espaço suficiente para o texto e o spinner
-            }}
-            onMouseOver={(e) => !isLoading && (e.target.style.backgroundColor = '#45a049')}
-            onMouseOut={(e) => !isLoading && (e.target.style.backgroundColor = '#4CAF50')}
-            disabled={isLoading}
+      {/* Seletor de Satisfação */}
+      <div className="row">
+        <label className="label">Resultado Final:</label>
+        <select 
+          value={satisfacao} 
+          onChange={handleSatisfacaoChange}
+          className="select"
+        >
+          <option value="">Selecione um resultado</option>
+          <option value="Satisfeito">Satisfeito</option>
+          <option value="Não Satisfeito">Não Satisfeito</option>
+        </select>
+      </div>
+
+      {/* Seletor de Níveis - Só aparece se um resultado final estiver selecionado */}
+      {satisfacao && (
+        <div className="row">
+          <label className="label">Selecione o Nível Final:</label>
+          <select 
+            value={selectedNivel} 
+            onChange={(e) => setSelectedNivel(e.target.value)} 
+            className="select"
+            disabled={nivelDisabled} // Desabilita o seletor se for "Satisfeito"
           >
-            {isLoading ? (
-              <div className="spinner" style={{
-                border: '3px solid #f3f3f3',
-                borderTop: '3px solid #3498db',
-                borderRadius: '50%',
-                width: '15px',
-                height: '15px',
-                animation: 'spin 1s linear infinite',
-                display: 'inline-block'
-              }}></div>
-            ) : (
-              buttonText
-            )}
-          </button>
-          <button
-            onClick={handleNext}
-            style={{
-              padding: '10px 20px',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              color: '#fff',
-              fontWeight: 'bold',
-              backgroundColor: '#f44336',
-              transition: 'background-color 0.3s ease',
-              minWidth: '150px' // Garantir o mesmo tamanho que o outro botão
-            }}
-            onMouseOver={(e) => e.target.style.backgroundColor = '#d32f2f'}
-            onMouseOut={(e) => e.target.style.backgroundColor = '#f44336'}
-            disabled={isLoading}
-          >
-            NÃO SATISFEITO
-          </button>
+            <option value="">Selecione um nível</option>
+            {niveis.length > 0 && niveis.map(nivel => (
+              <option key={nivel[0]} value={nivel[0]}>{nivel[1]} - {nivel[2]}</option>
+            ))}
+          </select>
         </div>
+      )}
+
+      {/* Botões de salvar e próximo */}
+      <div className="buttonContainer">
+        <button
+          onClick={handleNext}
+          className="saveButton"
+          disabled={isLoading}
+        >
+          {isLoading ? 'Enviando...' : 'Salvar e Enviar E-mail'}
+        </button>
+        <button
+          onClick={onNext}
+          className="button-next"
+          disabled={isLoading}
+        >
+          Próximo
+        </button>
       </div>
     </div>
   );
