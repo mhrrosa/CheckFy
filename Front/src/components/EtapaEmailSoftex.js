@@ -34,7 +34,7 @@ function EtapaEmailSoftex({ onNext, avaliacaoId }) {
         onClick={handleSendEmail}
         disabled={loading || emailSent} // O botão será desabilitado se estiver carregando ou se o e-mail já foi enviado
         style={{
-          backgroundColor: emailSent ? 'gray' : '',
+          backgroundColor: emailSent ? '#28a745' : '',
           cursor: emailSent ? 'not-allowed' : 'pointer'
         }}
       >

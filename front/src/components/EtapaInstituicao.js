@@ -76,24 +76,8 @@ function EtapaInstituicaoAvaliadora({ onNext, avaliacaoId }) {
   return (
     <div className='container-etapa'>
       <div className='title-container'>
-        <h1 className='title-form'>CADASTRO DE INSTITUIÇÃO AVALIADORA</h1>
+        <h1 className='title-form'>CADASTRO DA INSTITUIÇÃO AVALIADORA</h1>
       </div>
-      
-      <div className="input-wrapper">
-        <label className="label">Instituições cadastradas:</label>
-        <select
-          className="input-field"
-          value={instituicaoSelecionada}
-          onChange={(e) => setInstituicaoSelecionada(e.target.value)}
-          disabled={!instituicaoCadastrada}
-        >
-          <option value="">Selecione a Instituição</option>
-          {instituicoes.map(i => (
-            <option key={i.id} value={i.id}>{i.nome}</option>
-          ))}
-        </select>
-      </div>
-      
       <label className="label">Instituição já cadastrada?</label>
       <div className='checkbox-wrapper'>
         <label className="checkbox-label">
@@ -113,7 +97,24 @@ function EtapaInstituicaoAvaliadora({ onNext, avaliacaoId }) {
           Não
         </label>
       </div>
-
+      {instituicaoCadastrada && (
+        <>
+          <div className="input-wrapper">
+          <label className="label">Instituições cadastradas:</label>
+          <select
+            className="input-field"
+            value={instituicaoSelecionada}
+            onChange={(e) => setInstituicaoSelecionada(e.target.value)}
+            disabled={!instituicaoCadastrada}
+          >
+            <option value="">Selecione a Instituição</option>
+            {instituicoes.map(i => (
+              <option key={i.id} value={i.id}>{i.nome}</option>
+            ))}
+          </select>
+        </div>
+        </>
+      )}
       {!instituicaoCadastrada && (
         <>
           <div className="input-wrapper">

@@ -62,22 +62,14 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
   return (
     <div className='container-etapa'>
       <div className='title-container'>
-        <h1 className='title-form'>PLANEJAMENTO</h1>
+        <h1 className='title-form'>APROVAÇÃO PELA SOFTEX</h1>
       </div>
       <div className='dica-div'>
-            <strong className='dica-titulo'>Dica:</strong> {/* Texto de dica mais escuro */}
-            <p className='dica-texto'>
-            Uma base para estimar o tempo da avaliação inicial, da avaliação final e a composição da equipe sugerida pelo MA-MPS:
-            </p>
-            <p className='dica-texto'>
-            <ul>
-                    <li><strong>Níveis A e B:</strong> 4-5 dias, com avaliador líder, adjunto(s) e representante(s) da unidade.</li>
-                    <li><strong>Níveis C e D:</strong> 2-4 dias, com avaliador líder, adjunto(s) e opcionalmente representante(s).</li>
-                    <li><strong>Níveis E e F:</strong> 2-3 dias, com avaliador líder, adjunto(s) e opcionalmente representante(s).</li>
-                    <li><strong>Nível G:</strong> 1-2 dias, com avaliador líder e opcionalmente adjunto(s) e representante(s).</li>
-                </ul>
-            </p>
-        </div>
+        <strong className='dica-titulo'>Dica:</strong> {/* Texto de dica mais escuro */}
+        <p className='dica-texto'>
+          A Softex responderá o email encaminhado com a aprovação ou não da avaliação.
+        </p>
+      </div>
       <label className="label">Avaliação aprovada pela Softex?</label>
       <div className='checkbox-wrapper-project'>
         <div>
@@ -104,42 +96,42 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
       {avaliacaoAprovada && (
         <>
 
-          <label className="label">Atividades para a avaliação:</label>
+          <h1 className="title-form">PLANEJAMENTO DE ATIVIDADES E CRONOGRAMA</h1>
           <br></br>
           <div className='textarea-wrapper'>
             <label className="label">Planejamento de atividades para a avaliação:</label>
-            <p className="dica-text">
-              Dica para preencher: dicas
-            </p>
+            <div className='dica-div'>
+              <strong className="dica-titulo">Dica:</strong>
+              <p className='dica-texto'>
+                Dica para preencher: dicas
+              </p>
+            </div>
             <textarea
               value={planejamentoAtividades}
               onChange={(e) => setPlanejamentoAtividades(e.target.value)}
               rows="4"
               className="input-textarea-avaliacao"
-              style={{ marginLeft: 10 , width: 500}}
             ></textarea>
           </div>
-          <br></br>
-
-          <label className="label">Cronograma para a avaliação:</label>
-          <br></br>
           <div className='textarea-wrapper'>
             <label className="label">Planejamento de cronograma para a avaliação:</label>
-            <p className="dica-text">
-            Dica para preencher: Uma base para estimar o tempo da avaliação inicial, da avaliação final e a composição da equipe sugerida pelo MA-MPS:
+            <div className='dica-div'>
+              <strong className='dica-titulo'>Dica:</strong>
+              <p className="dica-texto">
+                Uma base para estimar o tempo da avaliação inicial, da avaliação final e a composição da equipe sugerida pelo MA-MPS:
                 <ul>
                     <li><strong>Níveis A e B:</strong> 4-5 dias, com avaliador líder, adjunto(s) e representante(s) da unidade.</li>
                     <li><strong>Níveis C e D:</strong> 2-4 dias, com avaliador líder, adjunto(s) e opcionalmente representante(s).</li>
                     <li><strong>Níveis E e F:</strong> 2-3 dias, com avaliador líder, adjunto(s) e opcionalmente representante(s).</li>
                     <li><strong>Nível G:</strong> 1-2 dias, com avaliador líder e opcionalmente adjunto(s) e representante(s).</li>
                 </ul>
-            </p>
+              </p>
+            </div>
             <textarea
               value={planejamentoCronograma}
               onChange={(e) => setPlanejamentoCronograma(e.target.value)}
               rows="4"
               className="input-textarea-avaliacao"
-              style={{ marginLeft: 10, width: 500 }}
             ></textarea>
           </div>
         </>
