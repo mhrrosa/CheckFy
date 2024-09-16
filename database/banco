@@ -88,7 +88,7 @@ CREATE TABLE `avaliacao` (
   CONSTRAINT `avaliacao_FK_4` FOREIGN KEY (`ID_Instituicao`) REFERENCES `instituicao` (`ID`),
   CONSTRAINT `projeto_empresa_FK` FOREIGN KEY (`ID_Empresa`) REFERENCES `empresa` (`ID`),
   CONSTRAINT `projeto_nivel_FK` FOREIGN KEY (`ID_Nivel_Solicitado`) REFERENCES `nivel_maturidade_mpsbr` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -97,7 +97,7 @@ CREATE TABLE `avaliacao` (
 
 LOCK TABLES `avaliacao` WRITE;
 /*!40000 ALTER TABLE `avaliacao` DISABLE KEYS */;
-INSERT INTO `avaliacao` VALUES (52,'Avaliação de teste 1','a',20,'Em andamento',14,NULL,62,NULL,NULL,2,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(53,'Testando','a',20,'Em andamento',21,2,51,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'dfdiughdfogali'),(54,'Teste 2','Teste 2',20,'Em andamento',14,2,52,NULL,NULL,1,1,'aa','bb',1,'A Startup Enxuta - Eric Ries.pdf','2024-09-10',1,1,NULL);
+INSERT INTO `avaliacao` VALUES (52,'Avaliação de teste 1','a',20,'Em andamento',21,NULL,62,NULL,NULL,2,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(53,'Testando','a',20,'Em andamento',21,2,51,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'dfdiughdfogali'),(54,'Teste 2','Teste 2',20,'Em andamento',22,2,52,52,'Satisfeito',1,1,'aa','bb',1,'A Startup Enxuta - Eric Ries.pdf','2024-09-10',1,1,'SFASDF'),(55,'Avaliação de teste do erro de back end','Avaliação de teste do erro de back end',20,'Em andamento',3,13,62,NULL,NULL,2,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `avaliacao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -254,7 +254,7 @@ CREATE TABLE `grau_implementacao_processo_unidade_organizacional` (
   KEY `grau_implementacao_processo_unidade_organizacional_FK` (`ID_Avaliacao`),
   CONSTRAINT `grau_implementacao_processo_unidade_organizacional_FK` FOREIGN KEY (`ID_Avaliacao`) REFERENCES `avaliacao` (`ID`),
   CONSTRAINT `grau_implementacao_unidade_organizacional_FK_1` FOREIGN KEY (`ID_Resultado_Esperado`) REFERENCES `resultado_esperado_mpsbr` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -263,7 +263,7 @@ CREATE TABLE `grau_implementacao_processo_unidade_organizacional` (
 
 LOCK TABLES `grau_implementacao_processo_unidade_organizacional` WRITE;
 /*!40000 ALTER TABLE `grau_implementacao_processo_unidade_organizacional` DISABLE KEYS */;
-INSERT INTO `grau_implementacao_processo_unidade_organizacional` VALUES (51,11,'Parcialmente implementado (P)',53),(52,12,'Largamente implementado (L)',53),(53,14,'Parcialmente implementado (P)',53),(54,16,'Não implementado (N)',53),(55,18,'Fora do escopo (F)',53),(56,19,'Não avaliado (NA)',53),(57,20,'Não avaliado (NA)',53),(58,22,'Não avaliado (NA)',53),(59,23,'Não avaliado (NA)',53),(60,24,'Não avaliado (NA)',53),(61,26,'Não avaliado (NA)',53),(62,27,'Não avaliado (NA)',53),(63,29,'Não avaliado (NA)',53),(64,31,'Não avaliado (NA)',53),(65,33,'Não avaliado (NA)',53),(66,34,'Não avaliado (NA)',53),(67,35,'Não avaliado (NA)',53),(68,37,'Não avaliado (NA)',53),(69,43,'Não avaliado (NA)',53),(70,44,'Não avaliado (NA)',53),(71,46,'Não avaliado (NA)',53),(72,48,'Não avaliado (NA)',53),(73,50,'Não avaliado (NA)',53),(74,51,'Não avaliado (NA)',53),(75,52,'Não avaliado (NA)',53);
+INSERT INTO `grau_implementacao_processo_unidade_organizacional` VALUES (51,11,'Parcialmente implementado (P)',53),(52,12,'Largamente implementado (L)',53),(53,14,'Parcialmente implementado (P)',53),(54,16,'Não implementado (N)',53),(55,18,'Fora do escopo (F)',53),(56,19,'Não avaliado (NA)',53),(57,20,'Não avaliado (NA)',53),(58,22,'Não avaliado (NA)',53),(59,23,'Não avaliado (NA)',53),(60,24,'Não avaliado (NA)',53),(61,26,'Não avaliado (NA)',53),(62,27,'Não avaliado (NA)',53),(63,29,'Não avaliado (NA)',53),(64,31,'Não avaliado (NA)',53),(65,33,'Não avaliado (NA)',53),(66,34,'Não avaliado (NA)',53),(67,35,'Não avaliado (NA)',53),(68,37,'Não avaliado (NA)',53),(69,43,'Não avaliado (NA)',53),(70,44,'Não avaliado (NA)',53),(71,46,'Não avaliado (NA)',53),(72,48,'Não avaliado (NA)',53),(73,50,'Não avaliado (NA)',53),(74,51,'Não avaliado (NA)',53),(75,52,'Não avaliado (NA)',53),(76,11,'Largamente implementado (L)',54),(77,12,'Não avaliado (NA)',54),(78,14,'Não avaliado (NA)',54),(79,16,'Não avaliado (NA)',54),(80,18,'Não avaliado (NA)',54),(81,19,'Não avaliado (NA)',54),(82,20,'Não avaliado (NA)',54),(83,22,'Não avaliado (NA)',54),(84,23,'Não avaliado (NA)',54),(85,24,'Não avaliado (NA)',54),(86,26,'Não avaliado (NA)',54),(87,27,'Não avaliado (NA)',54),(88,29,'Não avaliado (NA)',54),(89,31,'Não avaliado (NA)',54),(90,33,'Não avaliado (NA)',54),(91,34,'Não avaliado (NA)',54),(92,35,'Não avaliado (NA)',54),(93,37,'Não avaliado (NA)',54),(94,43,'Não avaliado (NA)',54),(95,44,'Parcialmente implementado (P)',54),(96,46,'Não avaliado (NA)',54),(97,48,'Não avaliado (NA)',54),(98,50,'Não avaliado (NA)',54),(99,51,'Não avaliado (NA)',54),(100,52,'Não avaliado (NA)',54);
 /*!40000 ALTER TABLE `grau_implementacao_processo_unidade_organizacional` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -395,7 +395,7 @@ CREATE TABLE `relatorio` (
   KEY `relatorio_FK_1` (`ID_Tipo`),
   CONSTRAINT `relatorio_FK` FOREIGN KEY (`ID_Avaliacao`) REFERENCES `avaliacao` (`ID`),
   CONSTRAINT `relatorio_FK_1` FOREIGN KEY (`ID_Tipo`) REFERENCES `tipo_relatorio` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -404,7 +404,6 @@ CREATE TABLE `relatorio` (
 
 LOCK TABLES `relatorio` WRITE;
 /*!40000 ALTER TABLE `relatorio` DISABLE KEYS */;
-INSERT INTO `relatorio` VALUES (14,'aa',2,52,'não existe'),(15,'aaa',2,53,'não existe'),(16,'Ajuste a',1,54,''),(17,'Teste',2,54,'não existe');
 /*!40000 ALTER TABLE `relatorio` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -461,7 +460,7 @@ CREATE TABLE `tipo_relatorio` (
 
 LOCK TABLES `tipo_relatorio` WRITE;
 /*!40000 ALTER TABLE `tipo_relatorio` DISABLE KEYS */;
-INSERT INTO `tipo_relatorio` VALUES (1,'Ajuste da avaliação inicial'),(2,'Ata da reunião final');
+INSERT INTO `tipo_relatorio` VALUES (1,'Ajuste da avaliação inicial');
 /*!40000 ALTER TABLE `tipo_relatorio` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -537,7 +536,7 @@ CREATE TABLE `usuarios_avaliacao` (
   CONSTRAINT `usuarios_projeto_FK` FOREIGN KEY (`ID_Usuario`) REFERENCES `usuario` (`ID`),
   CONSTRAINT `usuarios_projeto_FK_1` FOREIGN KEY (`ID_Funcao`) REFERENCES `funcao_usuario` (`ID`),
   CONSTRAINT `usuarios_projeto_FK_2` FOREIGN KEY (`ID_Avaliacao`) REFERENCES `avaliacao` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=79 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=82 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -546,7 +545,7 @@ CREATE TABLE `usuarios_avaliacao` (
 
 LOCK TABLES `usuarios_avaliacao` WRITE;
 /*!40000 ALTER TABLE `usuarios_avaliacao` DISABLE KEYS */;
-INSERT INTO `usuarios_avaliacao` VALUES (68,52,20,1),(69,52,75,2),(70,52,76,5),(71,53,20,1),(72,53,75,2),(73,53,76,5),(74,54,20,1),(75,54,57,2),(76,54,58,5),(77,54,77,3),(78,53,79,3);
+INSERT INTO `usuarios_avaliacao` VALUES (68,52,20,1),(69,52,75,2),(70,52,76,5),(71,53,20,1),(72,53,75,2),(73,53,76,5),(74,54,20,1),(75,54,57,2),(76,54,58,5),(77,54,77,3),(78,53,79,3),(79,55,20,1),(80,55,77,2),(81,55,77,5);
 /*!40000 ALTER TABLE `usuarios_avaliacao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -588,4 +587,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-13 20:57:12
+-- Dump completed on 2024-09-16 19:39:35

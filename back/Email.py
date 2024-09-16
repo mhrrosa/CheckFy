@@ -330,7 +330,7 @@ class Email:
             print(f"Erro ao buscar participantes da avaliação no banco de dados: {e}")
             raise e
 
-    def enviar_email_auditor_avaliacao_final(self, id_avaliacao, email_auditor):
+    def enviar_email_auditor_avaliacao_final(self, id_avaliacao):
         query = """
                     SELECT a.ID, a.Nome, a.Descricao, a.ID_Avaliador_Lider, u.Nome, 
                         a.Status, atv.Descricao, a.ID_Empresa, e.Nome, n.Nivel, 
@@ -366,7 +366,7 @@ class Email:
 
                 # Configurando o e-mail
                 remetente = "checkfy123@gmail.com"
-                destinatario = email_auditor
+                destinatario = ""
                 assunto = f"Informações da Avaliação Inicial - ID {id}"
 
                 
