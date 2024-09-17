@@ -6,7 +6,7 @@ import '../components/styles/Container.css';
 import '../components/styles/Form.css';
 import '../components/styles/Button.css';
 import '../components/styles/Etapas.css';
-import '../components/styles/AuditoriaAvaliacaoInicial.css';
+import '../components/styles/EtapaAuditoriaAvaliacaoInicial.css';
 
 function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
   const location = useLocation();
