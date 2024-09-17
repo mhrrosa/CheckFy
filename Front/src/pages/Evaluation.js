@@ -21,6 +21,7 @@ import EtapaAtaAbertura from '../components/EtapaAtaAbertura';
 import EtapaConsultarRelatorioAjuste from '../components/EtapaConsultarRelatorioAjuste';
 import EtapaAtribuirNivelMaturidade from '../components/EtapaAtribuirNivelMaturidade';
 import EtapaResultadoAvaliacaoFinal from '../components/EtapaResultadoAvaliacaoFinal';
+import EtapaConfirmarAvaliacaoFinal from '../components/EtapaConfirmarAvaliacaoFinal';
 import { getAvaliacaoById, updateIdAtividade, getAtividade } from '../services/Api';
 import { UserContext } from '../contexts/UserContext';
 import '../components/styles/Body.css';
@@ -49,6 +50,7 @@ const etapaComponents = {
   18: EtapaResumoCaracterizacao,
   19: EtapaAtribuirNivelMaturidade,
   20: EtapaResultadoAvaliacaoFinal,
+  21: EtapaConfirmarAvaliacaoFinal
 };
 
 const etapaUsuarioMap = { 
@@ -71,7 +73,8 @@ const etapaUsuarioMap = {
   17: [1, 2],
   18: [1, 2],
   19: [1, 2],
-  20: [1, 5], // 5 é colaborador?
+  20: [1, 5], 
+  21: [1, 2 ]
   
 };
 

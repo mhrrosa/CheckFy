@@ -428,6 +428,10 @@ function enviarEmailSolicitarFeedback(avaliacaoId) {
   return post(`/enviar_email_solicitar_feedback/${avaliacaoId}`);
 }
 
+function enviarEmailAuditorAvaliacaoFinal(avaliacaoId) {
+  return post(`/enviar_email_auditor_avaliacao_final/${avaliacaoId}`);
+}
+
 function addAuditor(data) {
   const url = '/add_auditor';
   return post(url, data)
@@ -607,6 +611,7 @@ export {
   getAtividade,
   enviarEmailAvaliacao,
   enviarEmailSolicitarFeedback,
+  enviarEmailAuditorAvaliacaoFinal,
   addAuditor,
   getEmailAuditor,
   updateEmailAuditor,
