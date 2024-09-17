@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { inserirAtaAbertura, atualizarAtaAbertura, getAtaAbertura } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/EtapaRelatorioAjusteInicial.css';
+import '../components/styles/Etapas.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
 import '../components/styles/Button.css';
@@ -59,10 +60,12 @@ function EtapaRelatorioAjusteInicial({ onNext, avaliacaoId }) {
   return (
     <div className='container-etapa'>
       <h1 className='title-form'>ATA DE REUNIÃO DE ABERTURA DA AVALIAÇÃO FINAL</h1>
-      <p className='dica-text'>
-        <strong>Dica: </strong>
-        A ata da reunião deve descrever como foi o andamento da reunião de abertura da avaliação final.
-      </p>
+      <div className='dica-div'>
+        <strong className='dica-titulo'>Dica: </strong>
+        <p className='dica-texto'>
+          A ata da reunião deve descrever como foi o andamento da reunião de abertura da avaliação final.
+        </p>
+      </div>
       
       <div className="input-wrapper">
         <label className="label">ATA DE REUNIÃO DE ABERTURA:</label>

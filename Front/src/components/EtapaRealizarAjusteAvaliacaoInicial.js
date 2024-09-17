@@ -7,6 +7,11 @@ import {
   atualizarRelatorioInicial
 } from '../services/Api'; // Funções de atualização do backend
 import '../components/styles/Body.css';
+import '../components/styles/Container.css';
+import '../components/styles/Form.css';
+import '../components/styles/Button.css';
+import '../components/styles/Etapas.css';
+import '../components/styles/EtapaRealizarAjusteAvaliacaoInicial.css';
 import logo from '../img/logo_horizontal.png';
 
 function EtapaRealizarAjusteAvaliacaoInicial({ onBack }) {
@@ -133,21 +138,8 @@ function EtapaRealizarAjusteAvaliacaoInicial({ onBack }) {
   
 
   return (
-    <div style={{
-      padding: '20px',
-      backgroundColor: '#f9f9f9',
-      borderRadius: '8px',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-      maxWidth: '800px',
-      margin: 'auto'
-    }}>
-      <h1 style={{
-        fontSize: '24px',
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: '20px',
-        textAlign: 'center'
-      }}>EDIÇÃO DA AVALIAÇÃO</h1>
+    <div className='container-etapa'>
+      <h1 className='title-fomr'>EDIÇÃO DA AVALIAÇÃO</h1>
 
       <div className="lista-input">
         {/* Nome da Empresa */}
@@ -218,7 +210,6 @@ function EtapaRealizarAjusteAvaliacaoInicial({ onBack }) {
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px' }}>
-        <img src={logo} alt="Logo Checkfy" style={{ height: '50px' }} />
         <button
           onClick={handleSalvar}
           className='button-next'

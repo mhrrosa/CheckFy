@@ -9,6 +9,10 @@ import {
   addGrauImplementacaoEmpresa,
   updateGrausImplementacaoEmpresa
 } from '../services/Api';
+import '../components/styles/Container.css';
+import '../components/styles/Button.css';
+import '../components/styles/Etapas.css';
+import '../components/styles/Form.css';
 import '../components/styles/EtapaResumoCaracterizacao.css';
 
 function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
@@ -149,8 +153,8 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
   };
 
   return (
-    <div className="management-etapa5-container">
-      <h1 className='management-etapa5-title'>RESUMO DA AVALIAÇÃO</h1>
+    <div className="container-etapa">
+      <h1 className='title-form'>RESUMO DA AVALIAÇÃO</h1>
       <table className='resumo-tabela'>
         <thead>
           <tr>
@@ -193,7 +197,7 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
           ))}
         </tbody>
       </table>
-      <button className='button-save' onClick={salvarResumoCaracterizacao}>
+      <button className='button-next' onClick={salvarResumoCaracterizacao}>
         {resumoSalvo ? 'ATUALIZAR' : 'SALVAR'}
       </button>
       <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>

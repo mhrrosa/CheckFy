@@ -275,7 +275,7 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
             <h2>GERENCIAR DOCUMENTOS</h2>
           </div>
           <div className='input-wrapper'>
-            <label className="label">Nome do Novo Documento:</label>
+            <label className="label-documento-evidencia">Nome do Novo Documento:</label>
             <input
               className="input-field"
               type="text"
@@ -285,7 +285,7 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
             />
           </div>
           <div className='input-wrapper-file-document'>
-            <label className="label">Upload de Novo Arquivo:</label>
+            <label className="label-arquivo-evidencia">Upload de Novo Arquivo:</label>
             <input
               className="input-field-file-document"
               type="file"

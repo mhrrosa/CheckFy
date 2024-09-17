@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getAvaliacaoById, enviarEmailResultadoAvaliacaoInicial } from '../services/Api';
 import '../components/styles/Body.css';
+import '../components/styles/Container.css';
+import '../components/styles/Form.css';
+import '../components/styles/Button.css';
+import '../components/styles/Etapas.css';
+import '../components/styles/AuditoriaAvaliacaoInicial.css';
 
 function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
   const location = useLocation();
@@ -62,22 +67,8 @@ function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
   };
 
   return (
-    <div style={{
-      padding: '20px',
-      backgroundColor: '#f9f9f9',
-      borderRadius: '8px',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-      maxWidth: '800px',
-      margin: 'auto'
-    }}>
-      <h1 style={{
-        fontSize: '24px',
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: '20px',
-        textAlign: 'center'
-      }}>AUDITORIA DA AVALIAÇÃO INICIAL</h1>
-
+    <div className='container-etapa'>
+      <h1 className='title-form'>AUDITORIA DA AVALIAÇÃO INICIAL</h1>
       <div className="lista-input">
         {[{ label: "Nome da empresa", value: avaliacao.nome_empresa },
           { label: "Descrição", value: avaliacao.descricao },

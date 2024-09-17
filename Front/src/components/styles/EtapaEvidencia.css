@@ -21,6 +21,18 @@
   z-index: 999;
 }
 
+.label-documento-evidencia {
+  font-size: 1.1em;
+  color: white;
+  margin: 5px 0;
+}
+
+.label-arquivo-evidencia {
+  font-size: 1.1em;
+  color: white;
+  margin: 5px 0;
+}
+
 .management-project-container {
   display: flex;
   flex-direction: column;

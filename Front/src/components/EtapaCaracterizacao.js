@@ -132,14 +132,14 @@ function EtapaCaracterizacao({ onNext, avaliacaoId, idVersaoModelo }) {
       <div>
         {processos.map(processo => (
           <div key={processo.ID}>
-            <h2 className='title-process'>Processo: {processo.Descricao}</h2>
+            <h2 className='title-proceso-caracterizacao'>Processo: {processo.Descricao}</h2>
             <button className='button-acao' onClick={() => carregarResultadosEsperados(processo.ID)}>Ver Resultados Esperados</button>
             {resultadosEsperados[processo.ID] && resultadosEsperados[processo.ID].map(resultado => (
               <div key={resultado.ID}>
-                <h3 className='title-result'>Resultado Esperado: {resultado.Descricao}</h3>
+                <h3 className='title-resultado-caracterizacao'>Resultado Esperado: {resultado.Descricao}</h3>
                 {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
                   <div key={projeto.ID}>
-                    <h4 className='title-project'>Projeto: {projeto.Nome_Projeto}</h4>
+                    <h4 className='title-projeto-caracterizacao'>Projeto: {projeto.Nome_Projeto}</h4>
                     <select
                       className='select-grau'
                       value={grausImplementacao[`${resultado.ID}-${projeto.ID}`] || "Não avaliado (NA)"}

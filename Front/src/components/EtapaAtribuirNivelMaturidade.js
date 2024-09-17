@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getAvaliacaoById, enviarEmailResultadoAvaliacaoInicial } from '../services/Api';
 import '../components/styles/Body.css';
+import '../components/styles/Button.css';
+import '../components/styles/Etapas.css';
+import '../components/styles/Container.css';
+import '../components/styles/Form.css';
+import '../components/styles/EtapaAtribuirNivelMaturidade.css';
 import logo from '../img/logo_horizontal.png';
 
 function EtapaAtribuirNivelMaturidade({ onNext, onDuploNext }) {
@@ -49,31 +54,12 @@ function EtapaAtribuirNivelMaturidade({ onNext, onDuploNext }) {
   };
 
   return (
-    <div style={{
-      padding: '20px',
-      backgroundColor: '#f9f9f9',
-      borderRadius: '8px',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-      maxWidth: '800px',
-      margin: 'auto'
-    }}>
-      <h1 style={{
-        fontSize: '24px',
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: '20px',
-        textAlign: 'center'
-      }}>ATRIBUIR NÍVEL DE MATURIDADE</h1>
+    <div className='cotainer-etapa'>
+      <h1 className='title-form'>ATRIBUIR NÍVEL DE MATURIDADE</h1>
 
-      <div style={{
-        backgroundColor: '#e0e0e0',
-        borderLeft: '4px solid #a0a0a0',
-        padding: '10px',
-        borderRadius: '4px',
-        marginBottom: '20px'
-      }}>
-        <strong style={{ color: '#555' }}>Dica:</strong>
-        <p style={{ color: '#333', margin: '5px 0' }}>
+      <div className='dica-div'>
+        <strong className='dica-titulo'>Dica:</strong>
+        <p className='dica-texto'>
           Rever a Caracterização dos Processos: Antes de iniciar a atividade, certifique-se de que todos os processos foram devidamente caracterizados. Esta revisão é fundamental para garantir que todas as informações estejam corretas e atualizadas.
         </p>
       </div>
@@ -85,7 +71,7 @@ function EtapaAtribuirNivelMaturidade({ onNext, onDuploNext }) {
         justifyContent: 'space-between',
         alignItems: 'center'
       }}>
-        <label style={{ fontWeight: 'bold', color: '#666', width: '45%' }}>
+        <label className='label-etapas'>
           Nome da Empresa Avaliada:
         </label>
         <span style={{
@@ -107,7 +93,7 @@ function EtapaAtribuirNivelMaturidade({ onNext, onDuploNext }) {
         justifyContent: 'space-between',
         alignItems: 'center'
       }}>
-        <label style={{ fontWeight: 'bold', color: '#666', width: '45%' }}>
+        <label className='label-etapas'>
           Nível Solicitado:
         </label>
         <span style={{
@@ -129,7 +115,6 @@ function EtapaAtribuirNivelMaturidade({ onNext, onDuploNext }) {
         alignItems: 'center',
         marginTop: '20px'
       }}>
-        <img src={logo} alt="Logo Checkfy" style={{ height: '50px' }} />
         <div style={{ display: 'flex', gap: '10px' }}>
           <button
             onClick={handleNext}

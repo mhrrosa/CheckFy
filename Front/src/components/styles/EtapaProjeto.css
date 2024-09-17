@@ -120,6 +120,16 @@
     transform: translate(-50%, -50%) rotate(-45deg); /* Ajuste a rotação aqui */
 }
 
+.projetos-cadastrados-title {
+    color: black;
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    margin-left: 3px;
+    text-align: left;
+}
+
+
 .acoes-td-projetos {
     margin-left: 10px;
     text-align: right;

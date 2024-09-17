@@ -90,7 +90,7 @@ function EtapaProjeto({ onNext, avaliacaoId }) {
           {editandoProjeto ? 'ATUALIZAR' : 'ADICIONAR'}
         </button>
       </div>
-      <p className="processos-cadastrados-title">PROJETOS CADASTRADOS:</p>
+      <p className="projetos-cadastrados-title">PROJETOS CADASTRADOS:</p>
       {projetos.length > 0 ? (
         <table className='table'>
           <tbody>

@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getAvaliacaoById } from '../services/Api'; // Função para buscar a avaliação
 import '../components/styles/Body.css';
+import '../components/styles/Container.css';
+import '../components/styles/Form.css';
+import '../components/styles/Button.css';
+import '../components/styles/Etapas.css';
+import '../components/styles/EtapaConsultarRelatorioAjuste.css';
 import logo from '../img/logo_horizontal.png';
 
 function EtapaConsultarRelatorioAjuste({ onNext }) {
@@ -32,18 +37,11 @@ function EtapaConsultarRelatorioAjuste({ onNext }) {
   };
 
   return (
-    <div style={{
-      padding: '20px',
-      backgroundColor: '#f9f9f9',
-      borderRadius: '8px',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-      maxWidth: '800px',
-      margin: 'auto'
-    }}>
+    <div className='container-etapa'>
       <h1 className='title-form'>CONSULTAR RELATÓRIO DE AJUSTE</h1>
       <div className='dica-div'>
         <strong className='dica-titulo'>Dica:</strong>
-        <p className='dica-text'>
+        <p className='dica-texto'>
           Visualize os ajustes necessários para a avaliação final. Acesse os relatórios detalhados para realizar as correções e garantir que tudo esteja em conformidade, antes da data da avaliação final.
         </p>
       </div>
@@ -102,7 +100,6 @@ function EtapaConsultarRelatorioAjuste({ onNext }) {
         alignItems: 'center',
         marginTop: '20px'
       }}>
-        <img src={logo} alt="Logo Checkfy" style={{ height: '50px' }} />
         <button
           onClick={handleNext}
           style={{

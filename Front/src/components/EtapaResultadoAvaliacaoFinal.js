@@ -31,31 +31,12 @@ function EtapaResultadoAvaliacaoFinal({ onNext }) {
   }, [location.state.id]);
 
   return (
-    <div style={{
-      padding: '20px',
-      backgroundColor: '#f9f9f9',
-      borderRadius: '8px',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-      maxWidth: '800px',
-      margin: 'auto'
-    }}>
-      <h1 style={{
-        fontSize: '24px',
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: '20px',
-        textAlign: 'center'
-      }}>RESULTADO DA AVALIAÇÃO FINAL</h1>
+    <div className='container-etapa'>
+      <h1 className='title-form'>RESULTADO DA AVALIAÇÃO FINAL</h1>
 
-      <div style={{
-        backgroundColor: '#e0e0e0',
-        borderLeft: '4px solid #a0a0a0',
-        padding: '10px',
-        borderRadius: '4px',
-        marginBottom: '20px'
-      }}>
-        <strong style={{ color: '#555' }}>Dica:</strong>
-        <p style={{ color: '#333', margin: '5px 0' }}>
+      <div className='dica-div'>
+        <strong className='dica-titulo'>Dica:</strong>
+        <p className='dica-texto'>
         Por favor, confirme a visualização do resultado final da avaliação para que a equipe possa prosseguir com os próximos passos do processo.
         </p>
       </div>
@@ -131,7 +112,6 @@ function EtapaResultadoAvaliacaoFinal({ onNext }) {
         alignItems: 'center',
         marginTop: '20px'
       }}>
-        <img src={logo} alt="Logo Checkfy" style={{ height: '50px' }} />
         <button
           onClick={onNext}
           style={{
