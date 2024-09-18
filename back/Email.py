@@ -331,26 +331,34 @@ class Email:
             raise e
 
     def enviar_email_auditor_avaliacao_final(self, id_avaliacao):
-        query = """
-                    SELECT a.ID, a.Nome, a.Descricao, a.ID_Avaliador_Lider, u.Nome, 
-                        a.Status, atv.Descricao, a.ID_Empresa, e.Nome, n.Nivel, 
-                        v.Nome, a.ID_Instituicao, a.Atividade_Planejamento, 
-                        a.Cronograma_Planejamento, a.Avaliacao_Aprovada_Pela_Softex,
-                        a.ID_Atividade, a.ID_Nivel_Solicitado, a.ID_Versao_Modelo,
-                        r.descricao as descricao_relatorio, tr.descricao as tipo_relatorio
-                    FROM avaliacao a
-                    LEFT JOIN empresa e ON a.ID_Empresa = e.ID
-                    LEFT JOIN nivel_maturidade_mpsbr n ON a.ID_Nivel_Solicitado = n.ID
-                    LEFT JOIN usuario u ON a.ID_Avaliador_Lider = u.ID
-                    LEFT JOIN versao_modelo v ON a.ID_Versao_Modelo = v.ID
-                    LEFT JOIN atividade atv ON a.ID_Atividade = atv.ID
-                    LEFT JOIN relatorio r ON a.ID = r.ID_Avaliacao
-                    LEFT JOIN tipo_relatorio tr ON r.ID_Tipo = tr.ID
-                    WHERE a.ID = %s
-                """
-
+        query_avaliacao = """
+            SELECT a.ID, a.Nome, a.Descricao, a.ID_Avaliador_Lider, u.Nome, 
+                a.Status, atv.Descricao, a.ID_Empresa, e.Nome, n.Nivel, 
+                v.Nome, a.ID_Instituicao, a.Atividade_Planejamento, 
+                a.Cronograma_Planejamento, a.Avaliacao_Aprovada_Pela_Softex,
+                a.ID_Atividade, a.ID_Nivel_Solicitado, a.ID_Versao_Modelo,
+                r.descricao as descricao_relatorio, tr.descricao as tipo_relatorio
+            FROM avaliacao a
+            LEFT JOIN empresa e ON a.ID_Empresa = e.ID
+            LEFT JOIN nivel_maturidade_mpsbr n ON a.ID_Nivel_Solicitado = n.ID
+            LEFT JOIN usuario u ON a.ID_Avaliador_Lider = u.ID
+            LEFT JOIN versao_modelo v ON a.ID_Versao_Modelo = v.ID
+            LEFT JOIN atividade atv ON a.ID_Atividade = atv.ID
+            LEFT JOIN relatorio r ON a.ID = r.ID_Avaliacao
+            LEFT JOIN tipo_relatorio tr ON r.ID_Tipo = tr.ID
+            WHERE a.ID = %s
+        """
+        
+        query_auditor = """
+            SELECT u.Email
+            FROM usuarios_avaliacao ua
+            JOIN usuario u ON ua.ID_Usuario = u.ID
+            WHERE ua.ID_Avaliacao = %s AND ua.ID_Funcao = 3
+        """
+        
         try:
-            self.db.cursor.execute(query, (id_avaliacao,))
+            # Buscar dados da avaliação
+            self.db.cursor.execute(query_avaliacao, (id_avaliacao,))
             row = self.db.cursor.fetchone()
 
             if row:
@@ -364,12 +372,23 @@ class Email:
                 descricao_relatorio = row[17]
                 tipo_relatorio = row[18]
 
+                # Buscar o e-mail do auditor (ID_Funcao = 3)
+                self.db.cursor.execute(query_auditor, (id_avaliacao,))
+                email_auditor_row = self.db.cursor.fetchone()
+
+                if email_auditor_row:
+                    email_auditor = email_auditor_row[0]
+                else:
+                    print("E-mail do auditor não encontrado.")
+                    return
+                
+                print(email_auditor)
+
                 # Configurando o e-mail
                 remetente = "checkfy123@gmail.com"
-                destinatario = ""
-                assunto = f"Informações da Avaliação Inicial - ID {id}"
+                destinatario = email_auditor
+                assunto = f"Informações da Avaliação Final - ID {id}"
 
-                
                 corpo = f"""
                 Prezado(a) Auditor(a),
 
@@ -411,7 +430,7 @@ class Email:
         except Exception as e:
             print(f"Erro ao buscar avaliação no banco de dados: {e}")
             raise e
-    
+        
     def notificar_participantes_resultado_avaliacao_final(self, id_avaliacao):
         try:
             # Consultar os participantes da avaliação na tabela usuarios_avaliacao
