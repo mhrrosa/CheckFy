@@ -97,7 +97,6 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
         <>
 
           <h1 className="title-form">PLANEJAMENTO DE ATIVIDADES E CRONOGRAMA</h1>
-          <br></br>
           <div className='textarea-wrapper'>
             <label className="label">Planejamento de atividades para a avaliação:</label>
             <div className='dica-div'>

@@ -15,6 +15,8 @@ import {
 import '../components/styles/Body.css';
 import '../components/styles/Form.css';
 import '../components/styles/Button.css';
+import '../components/styles/Container.css';
+import '../components/styles/Etapas.css';
 import '../components/styles/EtapaEvidencia.css';
 
 Modal.setAppElement('#root');
@@ -31,12 +33,19 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
   const [novoDocumentoNome, setNovoDocumentoNome] = useState('');
   const [fileToUpload, setFileToUpload] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState(null); // Estado para a aba ativa
 
   useEffect(() => {
     if (avaliacaoId && idVersaoModelo) {
       carregarDados();
     }
   }, [avaliacaoId, idVersaoModelo]);
+
+  useEffect(() => {
+    if (activeTab) {
+      carregarResultadosEsperados(activeTab);
+    }
+  }, [activeTab]);
 
   const carregarDados = async () => {
     await carregarProcessos();
@@ -47,6 +56,9 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
     try {
       const data = await getProcessosPorAvaliacao(avaliacaoId, idVersaoModelo);
       setProcessos(data.processos);
+      if (data.processos.length > 0) {
+        setActiveTab(data.processos[0].ID); // Defina a primeira aba como ativa
+      }
     } catch (error) {
       console.error('Erro ao carregar processos:', error);
     }
@@ -118,13 +130,6 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
       for (const resultado of resultadosEsperados[processoId]) {
         for (const projeto of projetos) {
           const data = await getEvidenciasPorResultado(resultado.ID, projeto.ID);
-          const evidenciasFormatadas = data.map(doc => ({
-            id: doc[0],
-            caminhoArquivo: doc[1],
-            nomeArquivo: doc[2],
-            idProjeto: doc[3]
-          }));
-          newEvidencias[`${resultado.ID}-${projeto.ID}`] = evidenciasFormatadas;
         }
       }
     }
@@ -234,33 +239,68 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
   return (
     <div className="container-etapa">
       <h1 className='title-form'>ADICIONAR EVIDÊNCIAS</h1>
-      <div>
+      <div className='dica-div'>
+        <strong className="dica-titulo">Dica:</strong>
+        <p className='dica-texto'>
+          Evidências são indicadores que comprovam a implementação dos processos e o nível de capacidade de processo.
+        </p>
+        <p className='dica-texto'>
+          Para cada processo, adicione as evidências para cada resultado esperado.
+        </p>
+      </div>
+      <div className="tabs">
+        {processos.map((processo, index) => (
+          <button
+            key={processo.ID}
+            className={`tab-button ${activeTab === processo.ID ? 'active' : ''}`}
+            onClick={() => setActiveTab(processo.ID)}
+          >
+            {processo.Descricao === "Gerência de Projetos" ? "GPR" :
+             processo.Descricao === "Engenharia de Requisitos" ? "REQ" : 
+             processo.Descricao === "Projeto e Construção do Produto" ? "PCP" :
+             processo.Descricao === "Integração do Produto" ? "ITP" :
+             processo.Descricao === "Verificação e Validação" ? "VV" :
+             processo.Descricao === "Gerência de Configuração" ? "GCO" :
+             processo.Descricao === "Aquisição" ? "AQU" :
+             processo.Descricao === "Medição" ? "MED" :
+             processo.Descricao === "Gerência de Decisões" ? "GDE" :
+             processo.Descricao === "Gerência de Recursos Humanos" ? "GRH" :
+             processo.Descricao === "Gerência de Processos" ? "GPC" :
+             processo.Descricao === "Gerência Organizacional" ? "ORG" :
+             processo.Descricao}
+          </button>
+        ))}
+      </div>
+      <div className="tab-content">
         {processos.map(processo => (
-          <div key={processo.ID}>
-            <h2 className='title-processo-evidencia'>Processo: {processo.Descricao}</h2>
-            <button className='button-acao' onClick={() => carregarResultadosEsperados(processo.ID)}>Ver Resultados Esperados</button>
-            {resultadosEsperados[processo.ID] && resultadosEsperados[processo.ID].map(resultado => (
-              <div key={resultado.ID}>
-                <h3 className='title-resultado-evidencia'>Resultado Esperado: {resultado.Descricao}</h3>
-                {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
-                  <div key={projeto.ID}>
-                    <h4 className='title-projeto-evidencia'>Projeto: {projeto.Nome_Projeto}</h4>
-                    <button className='button-acao' onClick={() => openModal(processo.ID, resultado.ID, projeto.ID)}>Gerenciar Documentos</button>
-                    <div>
-                      {evidencias[`${resultado.ID}-${projeto.ID}`] && evidencias[`${resultado.ID}-${projeto.ID}`]
-                        .map(evidencia => (
-                          <div key={evidencia.id}>
-                            <p className='title-evidencia'>Evidencia: {evidencia.nomeArquivo}</p>
-                            <button className='button-acao' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
-                            <button className='button-acao' onClick={() => handleExcluirEvidencia(resultado.ID, evidencia.id)}>Excluir</button>
-                          </div>
-                        ))}
+          activeTab === processo.ID && (
+            <div key={processo.ID}>
+              <label className='label-etapas'>Processo: </label>
+              <h2 className='title-processo-evidencia'>{processo.Descricao}</h2>
+              {resultadosEsperados[processo.ID] && resultadosEsperados[processo.ID].map(resultado => (
+                <div className='div-resultado-esperado-evidencia' key={resultado.ID}>
+                  <label className='label-etapas'>Resultado Esperado: </label>
+                  <h3 className='title-resultado-evidencia'>{resultado.Descricao}</h3>
+                  {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
+                    <div key={projeto.ID}>
+                      <h4 className='title-projeto-evidencia'>Projeto: {projeto.Nome_Projeto}</h4>
+                      <button className='button-documentos-etapa-evidencia' onClick={() => openModal(processo.ID, resultado.ID, projeto.ID)}>Gerenciar Documentos</button>
+                      <div>
+                        {evidencias[`${resultado.ID}-${projeto.ID}`] && evidencias[`${resultado.ID}-${projeto.ID}`]
+                          .map(evidencia => (
+                            <div key={evidencia.id}>
+                              <p className='title-evidencia'>Evidência: {evidencia.nomeArquivo}</p>
+                              <button className='button-mostrar-documento-etapa-evidencia' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
+                              <button className='button-excluir-documento-etapa-evidencia' onClick={() => handleExcluirEvidencia(resultado.ID, evidencia.id)}>Excluir</button>
+                            </div>
+                          ))}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          )
         ))}
       </div>
       <Modal isOpen={isModalOpen} onRequestClose={closeModal} contentLabel="Gerenciar Documentos" className="modal" overlayClassName="modal-overlay">
@@ -292,7 +332,7 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
               id="file"
               onChange={(e) => setFileToUpload(e.target.files[0])}
             />
-            <label for="file">Escolha um arquivo</label>
+            <label htmlFor="file">Escolha um arquivo</label>
             {fileToUpload && <p className='arquivo-adicionado'>Arquivo adicionado</p>}
             <button className="button-add-document" type="button" onClick={handleDocumentoUpload}>
               <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -314,9 +354,6 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
                       value={doc.nomeArquivo}
                       onChange={(e) => setDocumentos(documentos.map(d => d.id === doc.id ? { ...d, nomeArquivo: e.target.value } : d))}
                     />
-                  </td>
-                  <td>
-                    <button className='acoes-botao-document' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${doc.caminhoArquivo}`, '_blank')}>MOSTRAR</button>
                   </td>
                   <td>
                     <button className='acoes-botao-document' onClick={() => handleAtualizarDocumento(doc.id, doc.nomeArquivo, doc.caminhoArquivo)}>ATUALIZAR</button>

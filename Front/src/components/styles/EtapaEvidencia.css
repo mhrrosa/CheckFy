@@ -42,12 +42,44 @@
   font-size: 20px;
 }
 
-.title-processo-evidencia {
-  color: black;
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 20px;
 }
 
-.title-resultado-evidenci {
+.tab-button {
+  padding: 10px 20px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  transition: border-bottom 0.3s;
+}
+
+.tab-button.active {
+  border-bottom: 2px solid #00437e;
+  font-weight: bold;
+}
+
+.tab-content {
+  padding-top: 5px;
+  padding-left: 10px;
+  background: #f9f9f9;
+  border-radius: 4px;
+}
+
+.title-processo-evidencia {
   color: black;
+  font-size: 1.8em;
+  margin: 0 0 20px 0;
+  text-decoration: underline;
+}
+
+.title-resultado-evidencia {
+  color: black;
+  font-size: 1.3em;
+  margin: 0;
 }
 
 .title-projeto-evidencia {
@@ -56,6 +88,12 @@
 
 .title-evidencia {
   color: black;
+}
+
+.div-resultado-esperado-evidencia {
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
 }
 
 .form-section-document {

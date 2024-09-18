@@ -193,6 +193,55 @@
     background-color: #00437e;
 }
 
+.button-documentos-etapa-evidencia {
+    padding: 10px 10px;
+    font-size: 1em;
+    font-weight: bolder;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #007BFF;
+    transition: background-color 0.3s;
+}
+
+.button-documentos-etapa-evidencia:hover {
+    background-color: #0056b3;
+}
+
+.button-mostrar-documento-etapa-evidencia {
+    padding: 10px 10px;
+    font-size: 1em;
+    font-weight: bolder;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #009f1d;
+    transition: background-color 0.3s;
+}
+
+.button-mostrar-documento-etapa-evidencia:hover {
+    background-color: #007c17;
+}
+
+.button-excluir-documento-etapa-evidencia {
+    padding: 10px 10px;
+    margin-left: 20px;
+    font-size: 1em;
+    font-weight: bolder;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #9f0000;
+    transition: background-color 0.3s;
+}
+
+.button-excluir-documento-etapa-evidencia:hover {
+    background-color: #7c0000;
+}
+
 .sidebar button {
     width: 100%; /* Botão ocupa a largura inteira do bloco */
     background-color: #007bff;
