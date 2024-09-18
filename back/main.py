@@ -18,6 +18,7 @@ from Auditor import Auditor
 from Relatorio import Relatorio
 from GrauImplementacao import GrauImplementacao
 import os
+from gevent.pywsgi import WSGIServer
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
@@ -1031,4 +1032,5 @@ def update_graus_implementacao_empresa():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    http_server = WSGIServer(("127.0.0.1", 5000), app)
+    http_server.serve_forever()
