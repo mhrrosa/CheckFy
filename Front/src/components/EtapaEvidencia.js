@@ -130,6 +130,12 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
       for (const resultado of resultadosEsperados[processoId]) {
         for (const projeto of projetos) {
           const data = await getEvidenciasPorResultado(resultado.ID, projeto.ID);
+          newEvidencias[`${resultado.ID}-${projeto.ID}`] = data.map(doc => ({
+            id: doc[0],
+            caminhoArquivo: doc[1],
+            nomeArquivo: doc[2],
+            idProjeto: doc[3]
+          }));
         }
       }
     }
@@ -277,28 +283,34 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
             <div key={processo.ID}>
               <label className='label-etapas'>Processo: </label>
               <h2 className='title-processo-evidencia'>{processo.Descricao}</h2>
-              {resultadosEsperados[processo.ID] && resultadosEsperados[processo.ID].map(resultado => (
-                <div className='div-resultado-esperado-evidencia' key={resultado.ID}>
-                  <label className='label-etapas'>Resultado Esperado: </label>
-                  <h3 className='title-resultado-evidencia'>{resultado.Descricao}</h3>
-                  {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
-                    <div key={projeto.ID}>
-                      <h4 className='title-projeto-evidencia'>Projeto: {projeto.Nome_Projeto}</h4>
-                      <button className='button-documentos-etapa-evidencia' onClick={() => openModal(processo.ID, resultado.ID, projeto.ID)}>Gerenciar Documentos</button>
-                      <div>
-                        {evidencias[`${resultado.ID}-${projeto.ID}`] && evidencias[`${resultado.ID}-${projeto.ID}`]
-                          .map(evidencia => (
-                            <div key={evidencia.id}>
-                              <p className='title-evidencia'>Evidência: {evidencia.nomeArquivo}</p>
-                              <button className='button-mostrar-documento-etapa-evidencia' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
-                              <button className='button-excluir-documento-etapa-evidencia' onClick={() => handleExcluirEvidencia(resultado.ID, evidencia.id)}>Excluir</button>
-                            </div>
-                          ))}
+              {resultadosEsperados[processo.ID] && resultadosEsperados[processo.ID].map(resultado => {
+                const notaIndex = resultado.Descricao.indexOf('NOTA');
+                const descricao = notaIndex !== -1 ? resultado.Descricao.substring(0, notaIndex).trim() : resultado.Descricao;
+                const nota = notaIndex !== -1 ? resultado.Descricao.substring(notaIndex).trim() : '';
+                return (
+                  <div className='div-resultado-esperado-evidencia' key={resultado.ID}>
+                    <label className='label-etapas'>Resultado Esperado: </label>
+                    <h3 className='title-resultado-evidencia'>{descricao}</h3>
+                    {nota && <p className='nota-adicional-resultado'>{nota}</p>}
+                    {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
+                      <div key={projeto.ID}>
+                        <h4 className='title-projeto-evidencia'>Projeto: {projeto.Nome_Projeto}</h4>
+                        <button className='button-documentos-etapa-evidencia' onClick={() => openModal(processo.ID, resultado.ID, projeto.ID)}>Gerenciar Documentos</button>
+                        <div>
+                          {evidencias[`${resultado.ID}-${projeto.ID}`] && evidencias[`${resultado.ID}-${projeto.ID}`]
+                            .map(evidencia => (
+                              <div key={evidencia.id}>
+                                <p className='title-evidencia'>Evidência: {evidencia.nomeArquivo}</p>
+                                <button className='button-mostrar-documento-etapa-evidencia' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
+                                <button className='button-excluir-documento-etapa-evidencia' onClick={() => handleExcluirEvidencia(resultado.ID, evidencia.id)}>Excluir</button>
+                              </div>
+                            ))}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              ))}
+                    ))}
+                  </div>
+                );
+              })}
             </div>
           )
         ))}

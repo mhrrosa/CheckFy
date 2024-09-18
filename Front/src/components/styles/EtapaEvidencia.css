@@ -79,7 +79,12 @@
 .title-resultado-evidencia {
   color: black;
   font-size: 1.3em;
-  margin: 0;
+  margin: 0 0 0 10px;
+}
+
+.nota-adicional-resultado {
+  margin: 0 0 0 10px;
+  font-size: 1em;
 }
 
 .title-projeto-evidencia {
