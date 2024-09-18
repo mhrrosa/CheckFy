@@ -48,8 +48,13 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
   }, [activeTab]);
 
   const carregarDados = async () => {
-    await carregarProcessos();
     await carregarProjetos();
+    await carregarProcessos();
+    if (activeTab) {
+      await carregarResultadosEsperados(activeTab);
+    } else if (processos.length > 0) {
+      setActiveTab(processos[0].ID);
+    }
   };
 
   const carregarProcessos = async () => {
@@ -58,6 +63,7 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
       setProcessos(data.processos);
       if (data.processos.length > 0) {
         setActiveTab(data.processos[0].ID); // Defina a primeira aba como ativa
+        await carregarResultadosEsperados(data.processos[0].ID); // Carregar resultados e evidências para o primeiro processo
       }
     } catch (error) {
       console.error('Erro ao carregar processos:', error);
@@ -80,16 +86,20 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
         ...prevResultados,
         [processoId]: data
       }));
-
-      for (const resultado of data) {
-        for (const projeto of projetos) {
-          await carregarEvidencias(resultado.ID, projeto.ID);
+  
+      // Aguarde o carregamento dos projetos antes de carregar as evidências
+      if (projetos.length > 0) {
+        for (const resultado of data) {
+          for (const projeto of projetos) {
+            await carregarEvidencias(resultado.ID, projeto.ID);
+          }
         }
       }
     } catch (error) {
       console.error('Erro ao carregar resultados esperados:', error);
     }
   };
+  
 
   const carregarDocumentos = async (projetoId) => {
     try {
