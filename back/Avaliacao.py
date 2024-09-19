@@ -111,7 +111,7 @@ class Avaliacao:
                 a.Cronograma_Planejamento, a.Avaliacao_Aprovada_Pela_Softex,
                 a.ID_Atividade, a.ID_Nivel_Solicitado, a.ID_Versao_Modelo,
                 r.descricao as descricao_relatorio, r.Caminho_Arquivo as caminho_arquivo_relatorio, 
-                tr.descricao as tipo_relatorio, a.Ata_Reuniao_Abertura  -- Campo adicionado
+                tr.descricao as tipo_relatorio, a.Ata_Reuniao_Abertura, a.ID_Nivel_Atribuido, a.Parecer_Final
             FROM avaliacao a
             LEFT JOIN empresa e ON a.ID_Empresa = e.ID
             LEFT JOIN nivel_maturidade_mpsbr n ON a.ID_Nivel_Solicitado = n.ID
@@ -148,7 +148,9 @@ class Avaliacao:
                 "descricao_relatorio_ajuste_inicial": row[18],  # Descrição do Relatório
                 "caminho_arquivo_relatorio_ajuste_inicial": row[19],  # Caminho do Arquivo do Relatório
                 "tipo_relatorio_ajuste_inicial": row[20],  # Tipo de Relatório
-                "ata_reuniao_abertura": row[21]  # Ata de Reunião de Abertura
+                "ata_reuniao_abertura": row[21],  # Ata de Reunião de Abertura
+                "id_nivel_atribuido": row[22], # Id do nivel atribuido
+                "parecer_final": row[23] # Parecer final
             }
             return avaliacao_data
         else:
@@ -261,3 +263,9 @@ class Avaliacao:
             print(f"Erro ao atualizar data da avaliação final: {e}")
             self.db.conn.rollback()
             raise
+
+    def update_resultado_final(self, id_avaliacao, parecer_final, id_nivel_atribuido):
+        query = "UPDATE avaliacao SET Parecer_Final = %s, ID_Nivel_Atribuido = %s WHERE ID = %s"
+        values = ( parecer_final, id_nivel_atribuido, id_avaliacao)
+        self.db.cursor.execute(query, values)
+        self.db.conn.commit()

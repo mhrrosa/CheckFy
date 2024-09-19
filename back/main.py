@@ -17,8 +17,8 @@ from Email import Email
 from Auditor import Auditor
 from Relatorio import Relatorio
 from GrauImplementacao import GrauImplementacao
-import os
 from gevent.pywsgi import WSGIServer
+import os
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
@@ -69,6 +69,15 @@ def add_nivel():
 def get_niveis(id_versao_modelo):
     try:
         niveis = nivel.get_niveis(id_versao_modelo)
+        return jsonify(niveis), 200
+    except Exception as e:
+        print(f"Erro ao buscar níveis: {e}")
+        return jsonify({"message": "Erro ao buscar níveis", "error": str(e)}), 500
+    
+@app.route('/get_niveis_limitado/<int:id_versao_modelo>/<int:id_nivel_solicitado>', methods=['GET'])
+def get_niveis_limitado(id_versao_modelo, id_nivel_solicitado):
+    try:
+        niveis = nivel.get_niveis_limitado(id_versao_modelo, id_nivel_solicitado)
         return jsonify(niveis), 200
     except Exception as e:
         print(f"Erro ao buscar níveis: {e}")
@@ -1001,7 +1010,6 @@ def get_graus_implementacao_empresa(id_avaliacao):
     graus = grau_implementacao.get_grau_implementacao_empresa(id_avaliacao)
     return jsonify(graus), 200
 
-
 @app.route('/insert_graus_implementacao_empresa', methods=['POST'])
 def insert_graus_implementacao_empresa():
     try:
@@ -1019,7 +1027,6 @@ def insert_graus_implementacao_empresa():
         print(f"Erro ao inserir graus de implementação: {e}")
         return jsonify({'error': str(e)}), 500
 
-
 @app.route('/update_graus_implementacao_empresa', methods=['PUT'])
 def update_graus_implementacao_empresa():
     try:
@@ -1030,6 +1037,21 @@ def update_graus_implementacao_empresa():
         return jsonify({'message': 'Graus de implementação atualizados com sucesso!'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/update_resultado_final/<int:id_avaliacao>', methods=['PUT'])
+def update_resultado_final(id_avaliacao):
+    data = request.json
+    try:
+        parecer_final = data['parecerFinal']
+        id_nivel_atribuido = data['idNivelAtribuido']
+        
+        avaliacao.update_resultado_final(id_avaliacao, parecer_final, id_nivel_atribuido)
+
+        return jsonify({"message": "Resultado final atualizado com sucesso"}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 
 if __name__ == '__main__':
     http_server = WSGIServer(("127.0.0.1", 5000), app)

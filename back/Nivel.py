@@ -14,6 +14,17 @@ class Nivel:
         self.db.cursor.execute("SELECT * FROM nivel_maturidade_mpsbr where ID_Versao_Modelo = %s ORDER BY Nivel", (id_versao_modelo,))
         result = self.db.cursor.fetchall()
         return result
+    
+    def get_niveis_limitado(self, id_versao_modelo, id_nivel_solicitado):
+        # Busca os níveis da versão do modelo limitados até o ID do nível solicitado
+        self.db.cursor.execute("""
+            SELECT * FROM nivel_maturidade_mpsbr 
+            WHERE ID_Versao_Modelo = %s AND Nivel >= 
+                (SELECT Nivel FROM nivel_maturidade_mpsbr WHERE ID = %s)
+            ORDER BY Nivel ASC
+        """, (id_versao_modelo, id_nivel_solicitado))
+        result = self.db.cursor.fetchall()
+        return result
 
     def delete_nivel(self, nivel_id):
         self.db.cursor.execute("DELETE FROM nivel_maturidade_mpsbr WHERE ID = %s", (nivel_id,))
