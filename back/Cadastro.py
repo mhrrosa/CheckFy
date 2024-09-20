@@ -6,14 +6,16 @@ class Cadastro:
         self.db = db
 
     def cadastrar_usuario(self, nome, email, senha, cargo):
+        cursor = self.db.conn.cursor(dictionary=True)
         try:
             # Buscar o ID_Tipo baseado na descrição do cargo
             query_tipo = "SELECT ID FROM tipo_usuario WHERE Descricao = %s"
-            self.db.cursor.execute(query_tipo, (cargo,))
-            tipo_result = self.db.cursor.fetchone()
+            cursor.execute(query_tipo, (cargo,))
+            tipo_result = cursor.fetchone()
             
             if not tipo_result:
                 print(f"Cargo '{cargo}' não encontrado no banco de dados.")
+                cursor.close()
                 return {"message": f"Cargo '{cargo}' não encontrado."}, 400
             
             id_tipo = tipo_result[0]

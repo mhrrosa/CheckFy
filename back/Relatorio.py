@@ -94,3 +94,56 @@ class Relatorio:
         except Exception as e:
             print(f"Erro ao obter ata de abertura: {e}")
             raise
+
+    def inserir_relatorio_auditoria_final(self, descricao, id_avaliacao):
+        try:
+            query = """
+                INSERT INTO relatorio (Descricao, ID_Tipo, ID_Avaliacao, Caminho_Arquivo)
+                VALUES (%s, %s, %s, %s)
+            """
+            values = (descricao, 2, id_avaliacao, 'Não existe')
+            cursor = self.db.conn.cursor()
+            cursor.execute(query, values)
+            self.db.conn.commit()
+            relatorio_id = cursor.lastrowid
+            cursor.close()
+            return relatorio_id
+        except Exception as e:
+            print(f"Erro ao inserir relatório: {e}")
+            self.db.conn.rollback()
+            raise
+
+    def atualizar_relatorio_auditoria_final(self, descricao, id_avaliacao):
+        try:
+            query = """
+                UPDATE relatorio
+                SET Descricao = %s
+                WHERE ID_Avaliacao = %s AND ID_Tipo = 2
+            """
+            values = (descricao, id_avaliacao)
+            cursor = self.db.conn.cursor()
+            cursor.execute(query, values)
+            self.db.conn.commit()
+            cursor.close()
+        except Exception as e:
+            print(f"Erro ao atualizar relatório: {e}")
+            self.db.conn.rollback()
+            raise
+
+    def get_relatorio_auditoria_final(self, id_avaliacao):
+        try:
+            query = """
+                SELECT Descricao
+                FROM relatorio
+                WHERE ID_Avaliacao = %s AND ID_Tipo = 2
+            """
+            cursor = self.db.conn.cursor()
+            cursor.execute(query, (id_avaliacao,))
+            result = cursor.fetchone()
+            cursor.close()
+            if result:
+                return {"descricao": result[0]}
+            return None
+        except Exception as e:
+            print(f"Erro ao obter relatório: {e}")
+            raise

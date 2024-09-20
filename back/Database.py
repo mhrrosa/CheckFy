@@ -7,7 +7,6 @@ class Database:
         self.password = password
         self.database = database
         self.conn = None
-        self.cursor = None
         self.connect()
 
     def connect(self):
@@ -43,3 +42,7 @@ class Database:
         else:
             self.cursor.execute(query)
         return self.cursor.fetchall()
+    
+    def close(self):
+        if self.conn:
+            self.conn.close()

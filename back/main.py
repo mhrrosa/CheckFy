@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, g
 from flask_cors import CORS
 from Database import Database
 from Nivel import Nivel
@@ -17,8 +17,12 @@ from Email import Email
 from Auditor import Auditor
 from Relatorio import Relatorio
 from GrauImplementacao import GrauImplementacao
-from gevent.pywsgi import WSGIServer
+import eventlet
+import eventlet.wsgi
 import os
+from eventlet import GreenPool
+eventlet.monkey_patch()
+pool = GreenPool(size=1000)
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
@@ -35,28 +39,41 @@ db_config = {
     "database": "checkfy"
 }
 
+def get_db():
+    if 'db' not in g:
+        g.db = Database(**db_config)
+    return g.db
+
+@app.teardown_appcontext
+def teardown_db(exception):
+    db = g.pop('db', None)
+    if db is not None:
+        db.close()
+
 # Criando objetos
-db = Database(**db_config)
-db2 = Database(**db_config)
-nivel = Nivel(db)
-processo = Processo(db)
-resultado_esperado = ResultadoEsperado(db)
-avaliacao = Avaliacao(db)
-projeto = Projeto(db)
-documento = Documento(db)
-versao_modelo = Versao_Modelo(db)
-empresa = Empresa(db)
-instituicao = Instituicao(db)
-login = Login(db)
-cadastro = Cadastro(db)
-atividade = Atividade(db)
-email = Email(db)
-auditor = Auditor(db2)
-relatorio = Relatorio(db)
-grau_implementacao = GrauImplementacao(db)
+# db = Database(**db_config)
+# db2 = Database(**db_config)
+# nivel = Nivel(db)
+# processo = Processo(db)
+# resultado_esperado = ResultadoEsperado(db)
+# avaliacao = Avaliacao(db)
+# projeto = Projeto(db)
+# documento = Documento(db)
+# versao_modelo = Versao_Modelo(db)
+# empresa = Empresa(db)
+# instituicao = Instituicao(db)
+# login = Login(db)
+# cadastro = Cadastro(db)
+# atividade = Atividade(db)
+# email = Email(db)
+# auditor = Auditor(db2)
+# relatorio = Relatorio(db)
+# grau_implementacao = GrauImplementacao(db)
 
 @app.route('/add_nivel', methods=['POST'])
 def add_nivel():
+    db = get_db()
+    nivel = Nivel(db)
     nivel_data = request.json
     try:
         nivel.add_nivel(nivel_data['nivel'], nivel_data['nome_nivel'], nivel_data['id_versao_modelo'])
@@ -67,6 +84,8 @@ def add_nivel():
 
 @app.route('/get_niveis/<int:id_versao_modelo>', methods=['GET'])
 def get_niveis(id_versao_modelo):
+    db = get_db()
+    nivel = Nivel(db)
     try:
         niveis = nivel.get_niveis(id_versao_modelo)
         return jsonify(niveis), 200
@@ -76,6 +95,8 @@ def get_niveis(id_versao_modelo):
     
 @app.route('/get_niveis_limitado/<int:id_versao_modelo>/<int:id_nivel_solicitado>', methods=['GET'])
 def get_niveis_limitado(id_versao_modelo, id_nivel_solicitado):
+    db = get_db()
+    nivel = Nivel(db)
     try:
         niveis = nivel.get_niveis_limitado(id_versao_modelo, id_nivel_solicitado)
         return jsonify(niveis), 200
@@ -85,6 +106,8 @@ def get_niveis_limitado(id_versao_modelo, id_nivel_solicitado):
 
 @app.route('/delete_nivel/<int:nivel_id>', methods=['DELETE'])
 def delete_nivel(nivel_id):
+    db = get_db()
+    nivel = Nivel(db)
     try:
         nivel.delete_nivel(nivel_id)
         return jsonify({"message": "Nível deletado com sucesso"}), 200
@@ -93,6 +116,8 @@ def delete_nivel(nivel_id):
 
 @app.route('/update_nivel/<int:nivel_id>', methods=['PUT'])
 def update_nivel(nivel_id):
+    db = get_db()
+    nivel = Nivel(db)
     nivel_data = request.json
     try:
         nivel.update_nivel(nivel_id, nivel_data['nivel'], nivel_data['nome_nivel'])
@@ -103,6 +128,8 @@ def update_nivel(nivel_id):
 
 @app.route('/add_processo', methods=['POST'])
 def add_processo():
+    db = get_db()
+    processo = Processo(db)
     try:
         descricao = request.json['descricao']
         tipo = request.json['tipo']
@@ -115,6 +142,8 @@ def add_processo():
 
 @app.route('/get_processos/<int:id_versao_modelo>', methods=['GET'])
 def get_processos(id_versao_modelo):
+    db = get_db()
+    processo = Processo(db)
     try:
         processos = processo.get_processos(id_versao_modelo)
         return jsonify(processos), 200  
@@ -124,6 +153,8 @@ def get_processos(id_versao_modelo):
 
 @app.route('/delete_processo/<int:processo_id>', methods=['DELETE'])
 def delete_processo(processo_id):
+    db = get_db()
+    processo = Processo(db)
     try:
         processo.delete_processo(processo_id)
         return jsonify({"message": "Processo deletado com sucesso"}), 200
@@ -132,6 +163,8 @@ def delete_processo(processo_id):
 
 @app.route('/update_processo/<int:processo_id>', methods=['PUT'])
 def update_processo(processo_id):
+    db = get_db()
+    processo = Processo(db)
     try:
         data = request.json
         nova_descricao = data['nova_descricao']
@@ -144,6 +177,8 @@ def update_processo(processo_id):
 
 @app.route('/add_resultado_esperado', methods=['POST'])
 def add_resultado_esperado():
+    db = get_db()
+    resultado_esperado = ResultadoEsperado(db)
     try:
         data = request.json
         descricao = data['descricao']
@@ -158,6 +193,8 @@ def add_resultado_esperado():
 
 @app.route('/get_resultados_esperados', methods=['GET'])
 def get_resultados_esperados_route():
+    db = get_db()
+    resultado_esperado = ResultadoEsperado(db)
     try:
         processos_ids = request.args.get('processosId')
         if not processos_ids:
@@ -172,6 +209,8 @@ def get_resultados_esperados_route():
 
 @app.route('/delete_resultado_esperado/<int:resultado_id>', methods=['DELETE'])
 def delete_resultado_esperado(resultado_id):
+    db = get_db()
+    resultado_esperado = ResultadoEsperado(db)
     try:
         resultado_esperado.delete_resultado_esperado(resultado_id)
         return jsonify({"message": "Resultado esperado deletado com sucesso"}), 200
@@ -180,6 +219,8 @@ def delete_resultado_esperado(resultado_id):
 
 @app.route('/update_resultado_esperado/<int:resultado_id>', methods=['PUT'])
 def update_resultado_esperado(resultado_id):
+    db = get_db()
+    resultado_esperado = ResultadoEsperado(db)
     try:
         data = request.json
         nova_descricao = data['nova_descricao']
@@ -194,6 +235,8 @@ def update_resultado_esperado(resultado_id):
 
 @app.route('/add_avaliacao', methods=['POST'])
 def add_avaliacao():
+    db = get_db()
+    avaliacao = Avaliacao(db)
     avaliacao_data = request.json
     try:
         nome = avaliacao_data['evaluationName']
@@ -214,6 +257,8 @@ def add_avaliacao():
 
 @app.route('/listar_avaliacoes/<int:id_usuario>', methods=['GET'])
 def listar_avaliacoes(id_usuario):
+    db = get_db()
+    avaliacao = Avaliacao(db)
     try:
         projetos = avaliacao.listar_avaliacoes(id_usuario)
         return jsonify(projetos), 200
@@ -223,6 +268,8 @@ def listar_avaliacoes(id_usuario):
 
 @app.route('/deletar_avaliacao/<int:projeto_id>', methods=['DELETE'])
 def deletar_avaliacao(projeto_id):
+    db = get_db()
+    avaliacao = Avaliacao(db)
     try:
         avaliacao.deletar_avaliacao(projeto_id)
         return jsonify({"message": "Avaliação deletada com sucesso"}), 200
@@ -231,6 +278,8 @@ def deletar_avaliacao(projeto_id):
 
 @app.route('/atualizar_avaliacao/<int:projeto_id>', methods=['PUT'])
 def atualizar_avaliacao(projeto_id):
+    db = get_db()
+    avaliacao = Avaliacao(db)
     projeto_data = request.json
     try:
         avaliacao.atualizar_avaliacao(projeto_id, **projeto_data)
@@ -241,6 +290,8 @@ def atualizar_avaliacao(projeto_id):
 
 @app.route('/atualizar_atividade/<int:projeto_id>', methods=['PUT'])
 def atualizar_atividade(projeto_id):
+    db = get_db()
+    avaliacao = Avaliacao(db)
     projeto_data = request.json
     try:
         nova_id_atividade = projeto_data.get('id_atividade')
@@ -255,6 +306,8 @@ def atualizar_atividade(projeto_id):
     
 @app.route('/inserir_planejamento/<int:projeto_id>', methods=['PUT'])
 def inserir_planejamento(projeto_id):
+    db = get_db()
+    avaliacao = Avaliacao(db)
     try:
         data = request.json
         avaliacao.inserir_planejamento(projeto_id, data['aprovacaoSoftex'], data['atividadePlanejamento'], data['cronogramaPlanejamento'])
@@ -265,6 +318,8 @@ def inserir_planejamento(projeto_id):
     
 @app.route('/inserir_ata_reuniao/<int:projeto_id>', methods=['PUT'])
 def inserir_ata_reuniao(projeto_id):
+    db = get_db()
+    avaliacao = Avaliacao(db)
     try:
         data = request.json
         avaliacao.inserir_ata_reuniao(projeto_id, data['ataReuniao'])
@@ -275,6 +330,8 @@ def inserir_ata_reuniao(projeto_id):
 
 @app.route('/avaliacao/<int:projeto_id>', methods=['GET'])
 def obter_avaliacao(projeto_id):
+    db = get_db()
+    avaliacao = Avaliacao(db)
     try:
         avaliacao_data = avaliacao.obter_avaliacao(projeto_id)
         if avaliacao_data:
@@ -287,6 +344,8 @@ def obter_avaliacao(projeto_id):
 
 @app.route('/add_projeto', methods=['POST'])
 def add_projeto():
+    db = get_db()
+    projeto = Projeto(db)
     projeto_data = request.json
     try:
         avaliacao_id = projeto_data['avaliacaoId']
@@ -304,6 +363,8 @@ def add_projeto():
 
 @app.route('/update_projeto/<int:projeto_id>', methods=['PUT'])
 def update_projeto(projeto_id):
+    db = get_db()
+    projeto = Projeto(db)
     projeto_data = request.json
     try:
         nome_projeto = projeto_data['nome']
@@ -316,6 +377,8 @@ def update_projeto(projeto_id):
 
 @app.route('/get_projetos_by_avaliacao/<int:avaliacao_id>', methods=['GET'])
 def get_projetos_by_avaliacao(avaliacao_id):
+    db = get_db()
+    projeto = Projeto(db)
     try:
         projetos = projeto.get_projetos_by_id_avaliacao(avaliacao_id)
         return jsonify(projetos), 200
@@ -342,6 +405,8 @@ def uploaded_file(filename):
 
 @app.route('/add_documento', methods=['POST'])
 def add_documento():
+    db = get_db()
+    documento = Documento(db)
     documento_data = request.json
     try:
         id_projeto = documento_data['id_projeto']
@@ -355,6 +420,8 @@ def add_documento():
 
 @app.route('/update_documento/<int:documento_id>', methods=['PUT'])
 def update_documento(documento_id):
+    db = get_db()
+    documento = Documento(db)
     documento_data = request.json
     try:
         nome_arquivo = documento_data.get('nome_arquivo')
@@ -367,6 +434,8 @@ def update_documento(documento_id):
 
 @app.route('/documentos_por_projeto/<int:id_projeto>', methods=['GET'])
 def documentos_por_projeto(id_projeto):
+    db = get_db()
+    documento = Documento(db)
     try:
         documentos = documento.get_documentos_by_projeto(id_projeto)
         return jsonify(documentos), 200
@@ -376,6 +445,8 @@ def documentos_por_projeto(id_projeto):
 
 @app.route('/delete_documento/<int:documento_id>', methods=['DELETE'])
 def delete_documento(documento_id):
+    db = get_db()
+    documento = Documento(db)
     try:
         documento.delete_documento(documento_id)
         return jsonify({"message": "Documento removido com sucesso"}), 200
@@ -385,6 +456,7 @@ def delete_documento(documento_id):
 
 @app.route('/get_processos_por_avaliacao/<int:avaliacao_id>/<int:id_versao_modelo>', methods=['GET'])
 def get_processos_por_avaliacao(avaliacao_id, id_versao_modelo):
+    db = get_db()
     try:
         nivel_solicitado_query = "SELECT ID_Nivel_Solicitado FROM avaliacao WHERE ID = %s"
         db.cursor.execute(nivel_solicitado_query, (avaliacao_id,))
@@ -409,6 +481,7 @@ def get_processos_por_avaliacao(avaliacao_id, id_versao_modelo):
 
 @app.route('/get_resultados_esperados_por_processo/<int:processo_id>/<int:avaliacao_id>', methods=['GET'])
 def get_resultados_esperados_por_processo(processo_id, avaliacao_id):
+    db = get_db()
     try:
         # Obtemos o nível solicitado da avaliação
         nivel_solicitado_query = "SELECT ID_Nivel_Solicitado FROM avaliacao WHERE ID = %s"
@@ -435,6 +508,7 @@ def get_resultados_esperados_por_processo(processo_id, avaliacao_id):
 
 @app.route('/add_evidencia', methods=['POST'])
 def add_evidencia():
+    db = get_db()
     evidencia_data = request.json
     try:
         id_resultado_esperado = evidencia_data['id_resultado_esperado']
@@ -453,6 +527,7 @@ def add_evidencia():
 
 @app.route('/get_evidencias_por_resultado/<int:resultado_id>/<int:projeto_id>', methods=['GET'])
 def get_evidencias_por_resultado(resultado_id, projeto_id):
+    db = get_db()
     try:
         query = """
             SELECT d.ID, d.Caminho_Arquivo, d.Nome_Arquivo, d.ID_Projeto
@@ -469,6 +544,8 @@ def get_evidencias_por_resultado(resultado_id, projeto_id):
 
 @app.route('/update_evidencia/<int:evidencia_id>', methods=['PUT'])
 def update_evidencia(evidencia_id):
+    db = get_db()
+    projeto = Projeto(db)
     evidencia_data = request.json
     try:
         id_resultado_esperado = evidencia_data['id_resultado_esperado']
@@ -484,6 +561,7 @@ def update_evidencia(evidencia_id):
     
 @app.route('/delete_evidencia/<int:id_resultado_esperado>/<int:id_documento>', methods=['DELETE'])
 def delete_evidencia(id_resultado_esperado, id_documento):
+    db = get_db()
     try:
         query = "DELETE FROM evidencia WHERE ID_Resultado_Esperado = %s AND ID_Documento = %s"
         db.cursor.execute(query, (id_resultado_esperado, id_documento))
@@ -495,45 +573,47 @@ def delete_evidencia(id_resultado_esperado, id_documento):
 
 @app.route('/add_or_update_grau_implementacao', methods=['POST'])
 def add_or_update_grau_implementacao():
-  try:
-      data = request.json
-      nota = data.get('nota')
-      id_resultado_esperado = data.get('resultadoId')
-      id_projeto = data.get('projetoId')
+    db = get_db()
+    try:
+        data = request.json
+        nota = data.get('nota')
+        id_resultado_esperado = data.get('resultadoId')
+        id_projeto = data.get('projetoId')
 
-      # Verificar se já existe uma entrada para o resultado e projeto especificados
-      query = """
-          SELECT ID FROM grau_implementacao_processo_projeto 
-          WHERE ID_Resultado_Esperado = %s AND ID_Projeto = %s
-      """
-      db.cursor.execute(query, (id_resultado_esperado, id_projeto))
-      result = db.cursor.fetchone()
+        # Verificar se já existe uma entrada para o resultado e projeto especificados
+        query = """
+            SELECT ID FROM grau_implementacao_processo_projeto 
+            WHERE ID_Resultado_Esperado = %s AND ID_Projeto = %s
+        """
+        db.cursor.execute(query, (id_resultado_esperado, id_projeto))
+        result = db.cursor.fetchone()
 
-      if result:
-          # Atualizar a entrada existente
-          update_query = """
-              UPDATE grau_implementacao_processo_projeto
-              SET Nota = %s
-              WHERE ID_Resultado_Esperado = %s AND ID_Projeto = %s
-          """
-          db.cursor.execute(update_query, (nota, id_resultado_esperado, id_projeto))
-      else:
-          # Inserir nova entrada
-          insert_query = """
-              INSERT INTO grau_implementacao_processo_projeto (Nota, ID_Resultado_Esperado, ID_Projeto)
-              VALUES (%s, %s, %s)
-          """
-          db.cursor.execute(insert_query, (nota, id_resultado_esperado, id_projeto))
+        if result:
+            # Atualizar a entrada existente
+            update_query = """
+                UPDATE grau_implementacao_processo_projeto
+                SET Nota = %s
+                WHERE ID_Resultado_Esperado = %s AND ID_Projeto = %s
+            """
+            db.cursor.execute(update_query, (nota, id_resultado_esperado, id_projeto))
+        else:
+            # Inserir nova entrada
+            insert_query = """
+                INSERT INTO grau_implementacao_processo_projeto (Nota, ID_Resultado_Esperado, ID_Projeto)
+                VALUES (%s, %s, %s)
+            """
+            db.cursor.execute(insert_query, (nota, id_resultado_esperado, id_projeto))
 
-      db.conn.commit()
-      return jsonify({"message": "Grau de implementação adicionado/atualizado com sucesso"}), 200
-  except Exception as e:
-      print(f"Erro ao adicionar/atualizar grau de implementação: {e}")
-      db.conn.rollback()
-      return jsonify({"message": "Erro ao adicionar/atualizar grau de implementação", "error": str(e)}), 500
+        db.conn.commit()
+        return jsonify({"message": "Grau de implementação adicionado/atualizado com sucesso"}), 200
+    except Exception as e:
+        print(f"Erro ao adicionar/atualizar grau de implementação: {e}")
+        db.conn.rollback()
+        return jsonify({"message": "Erro ao adicionar/atualizar grau de implementação", "error": str(e)}), 500
 
 @app.route('/get_graus_implementacao/<int:avaliacao_id>', methods=['GET'])
 def get_graus_implementacao(avaliacao_id):
+    db = get_db()
     try:
         query = """
             SELECT gip.ID, gip.Nota, gip.ID_Resultado_Esperado, gip.ID_Projeto
@@ -554,6 +634,8 @@ def get_graus_implementacao(avaliacao_id):
 
 @app.route('/get_versao_modelo', methods=['GET'])
 def get_versao_modelo():
+    db = get_db()
+    versao_modelo = Versao_Modelo(db)
     try:
         return jsonify(versao_modelo.get_versao_modelo()), 200  
     except Exception as e:
@@ -562,6 +644,8 @@ def get_versao_modelo():
     
 @app.route('/add_versao_modelo', methods=['POST'])
 def add_versao_modelo():
+    db = get_db()
+    versao_modelo = Versao_Modelo(db)
     try:
         data = request.json
         versao_modelo.add_versao_modelo(nome=data['nome'], status=data['status'])
@@ -572,6 +656,8 @@ def add_versao_modelo():
 
 @app.route('/delete_versao_modelo/<int:versao_modelo_id>', methods=['DELETE'])
 def delete_versao_modelo(versao_modelo_id):
+    db = get_db()
+    versao_modelo = Versao_Modelo(db)
     try:
         versao_modelo.delete_versao_modelo(versao_modelo_id)
         return jsonify({"message": "versao_modelo deletado com sucesso"}), 200
@@ -580,9 +666,11 @@ def delete_versao_modelo(versao_modelo_id):
 
 @app.route('/update_versao_modelo/<int:versao_modelo_id>', methods=['PUT'])
 def update_versao_modelo(versao_modelo_id):
+    db = get_db()
+    versao_modelo = Versao_Modelo(db)
     try:
         data = request.json
-        versao_modelo_id.update_versao_modelo(nome=data['nome'], status=data['status'], id=versao_modelo_id)
+        versao_modelo.update_versao_modelo(nome=data['nome'], status=data['status'], id=versao_modelo_id)
         return jsonify({"message": "Processo atualizado com sucesso"}), 200
     except Exception as e:
         print(f"Erro ao atualizar processo: {e}")
@@ -590,6 +678,8 @@ def update_versao_modelo(versao_modelo_id):
 
 @app.route('/get_empresas', methods=['GET'])
 def get_empresas():
+    db = get_db()
+    empresa = Empresa(db)
     try:
         empresas = empresa.get_empresas()
         return jsonify(empresas)
@@ -598,6 +688,8 @@ def get_empresas():
 
 @app.route('/add_empresa', methods=['POST'])
 def add_empresa():
+    db = get_db()
+    empresa = Empresa(db)
     data = request.json
     try:
         empresa_id = empresa.add_empresa(data['nome'], data['cnpj'])
@@ -607,6 +699,8 @@ def add_empresa():
 
 @app.route('/update_empresa/<int:id>', methods=['PUT'])
 def update_empresa(id):
+    db = get_db()
+    empresa = Empresa(db)
     data = request.json
     try:
         empresa.update_empresa(id, data['nome'], data['cnpj'])
@@ -616,6 +710,8 @@ def update_empresa(id):
 
 @app.route('/delete_empresa/<int:id>', methods=['DELETE'])
 def delete_empresa(id):
+    db = get_db()
+    empresa = Empresa(db)
     try:
         empresa.delete_empresa(id)
         return jsonify({'message': 'Empresa deletada com sucesso!'})
@@ -624,6 +720,8 @@ def delete_empresa(id):
 
 @app.route('/empresa_avaliacao_insert/<int:avaliacao_id>', methods=['PUT'])
 def empresa_avaliacao_insert(avaliacao_id):
+    db = get_db()
+    empresa = Empresa(db)
     data = request.json
     try:
         empresa.empresa_avaliacao_insert(avaliacao_id, data['idEmpresa'])
@@ -633,6 +731,8 @@ def empresa_avaliacao_insert(avaliacao_id):
 
 @app.route('/get_instituicoes', methods=['GET'])
 def get_instituicoes():
+    db = get_db()
+    instituicao = Instituicao(db)
     try:
         instituicoes = instituicao.get_instituicoes()
         return jsonify(instituicoes)
@@ -641,6 +741,8 @@ def get_instituicoes():
 
 @app.route('/add_instituicao', methods=['POST'])
 def add_instituicao():
+    db = get_db()
+    instituicao = Instituicao(db)
     data = request.json
     try:
         instituicao_id = instituicao.add_instituicao(data['nome'], data['cnpj'])
@@ -650,6 +752,8 @@ def add_instituicao():
 
 @app.route('/instituicao_avaliacao_insert/<int:avaliacao_id>', methods=['PUT'])
 def instituicao_avaliacao_insert(avaliacao_id):
+    db = get_db()
+    instituicao = Instituicao(db)
     data = request.json
     try:
         instituicao.instituicao_avaliacao_insert(avaliacao_id, data['idInstituicao'])
@@ -659,6 +763,8 @@ def instituicao_avaliacao_insert(avaliacao_id):
 
 @app.route('/login', methods=['POST'])
 def user_login():
+    db = get_db()
+    login = Login(db)
     try:
         data = request.json
         email = data.get('email')
@@ -676,6 +782,8 @@ def user_login():
 
 @app.route('/cadastro', methods=['POST'])
 def cadastro_route():
+    db = get_db()
+    cadastro = Cadastro(db)
     data = request.json
     print(f"Dados recebidos: {data}")
     
@@ -689,6 +797,7 @@ def cadastro_route():
 
 @app.route('/upload_acordo_confidencialidade/<int:avaliacao_id>', methods=['POST'])
 def upload_acordo_confidencialidade(avaliacao_id):
+    db = get_db()
     if 'file' not in request.files:
         return jsonify({"message": "No file part"}), 400
 
@@ -714,6 +823,7 @@ def upload_acordo_confidencialidade(avaliacao_id):
 
 @app.route('/get_acordo_confidencialidade/<int:avaliacao_id>', methods=['GET'])
 def get_acordo_confidencialidade(avaliacao_id):
+    db = get_db()
     try:
         query = "SELECT Caminho_Acordo_Confidencialidade FROM avaliacao WHERE ID = %s"
         db.cursor.execute(query, (avaliacao_id,))
@@ -730,6 +840,8 @@ def get_acordo_confidencialidade(avaliacao_id):
     
 @app.route('/get_atividade', methods=['GET'])
 def get_atividades():
+    db = get_db()
+    atividade = Atividade(db)
     try:
         atividades = atividade.get_atividades()
         return jsonify(atividades), 200
@@ -739,6 +851,8 @@ def get_atividades():
 
 @app.route('/enviar_email/<int:avaliacao_id>', methods=['POST'])
 def enviar_email(avaliacao_id):
+    db = get_db()
+    email = Email(db)
     try:
         email.email_aprovar_softex(avaliacao_id)
         return jsonify({"message": "E-mail enviado com sucesso"}), 200
@@ -747,6 +861,8 @@ def enviar_email(avaliacao_id):
 
 @app.route('/enviar_email_solicitar_feedback/<int:avaliacao_id>', methods=['POST'])
 def enviar_email_solicitar_feedback(avaliacao_id):
+    db = get_db()
+    email = Email(db)
     try:
         email.solicitar_link_formulario_feedback(avaliacao_id)
         return jsonify({"message": "E-mail Feedback enviado com sucesso"}), 200
@@ -756,6 +872,8 @@ def enviar_email_solicitar_feedback(avaliacao_id):
 
 @app.route('/enviar_email_auditor_avaliacao_final/<int:avaliacao_id>', methods=['POST'])
 def enviar_email_auditor_avaliacao_final(avaliacao_id):
+    db = get_db()
+    email = Email(db)
     try:
         email.enviar_email_auditor_avaliacao_final(avaliacao_id)
         return jsonify({"message": "E-mail de avaliação final enviado com sucesso"}), 200
@@ -766,6 +884,8 @@ def enviar_email_auditor_avaliacao_final(avaliacao_id):
 
 @app.route('/add_auditor', methods=['POST'])
 def add_auditor():
+    db = get_db()
+    auditor = Auditor(db)
     auditor_data = request.json
     try:
         id_avaliacao = auditor_data['idAvaliacao']
@@ -783,6 +903,8 @@ def add_auditor():
 
 @app.route('/get_email_auditor/<int:avaliacao_id>', methods=['GET'])
 def get_email_auditor(avaliacao_id):
+    db = get_db()
+    auditor = Auditor(db)
     try:
         email = auditor.get_email_auditor(avaliacao_id)
         
@@ -798,6 +920,8 @@ def get_email_auditor(avaliacao_id):
 
 @app.route('/update_email_auditor/<int:avaliacao_id>', methods=['PUT'])
 def update_email_auditor(avaliacao_id):
+    db = get_db()
+    auditor = Auditor(db)
     data = request.get_json()
     novo_email = data.get('novo_email')
     if not novo_email:
@@ -813,6 +937,8 @@ def update_email_auditor(avaliacao_id):
 
 @app.route('/salvar_apresentacao_equipe', methods=['POST'])
 def salvar_apresentacao_equipe():
+    db = get_db()
+    avaliacao = Avaliacao(db)
     data = request.json
     id_avaliacao = data.get('idAvaliacao')
     apresentacao_inicial = data.get('apresentacaoInicial')
@@ -830,6 +956,8 @@ def salvar_apresentacao_equipe():
 
 @app.route('/get_apresentacao_equipe/<int:avaliacao_id>', methods=['GET'])
 def get_apresentacao_equipe(avaliacao_id):
+    db = get_db()
+    avaliacao = Avaliacao(db)
     id_avaliacao = avaliacao_id
 
     if not id_avaliacao:
@@ -848,6 +976,8 @@ def get_apresentacao_equipe(avaliacao_id):
 
 @app.route('/inserir_relatorio_inicial', methods=['POST'])
 def inserir_relatorio_inicial():
+    db = get_db()
+    relatorio = Relatorio(db)
     data = request.json
     descricao = data.get('descricao')
     id_avaliacao = data.get('idAvaliacao')
@@ -865,6 +995,8 @@ def inserir_relatorio_inicial():
 
 @app.route('/atualizar_relatorio_inicial', methods=['PUT'])
 def atualizar_relatorio_inicial():
+    db = get_db()
+    relatorio = Relatorio(db)
     data = request.json
     descricao = data.get('descricao')
     id_avaliacao = data.get('idAvaliacao')
@@ -882,6 +1014,8 @@ def atualizar_relatorio_inicial():
 
 @app.route('/get_relatorio_inicial/<int:avaliacao_id>', methods=['GET'])
 def get_relatorio_inicial(avaliacao_id):
+    db = get_db()
+    relatorio = Relatorio(db)
     id_avaliacao = avaliacao_id
     if not id_avaliacao:
         return jsonify({"message": "ID da avaliação não fornecido"}), 400
@@ -894,9 +1028,63 @@ def get_relatorio_inicial(avaliacao_id):
     except Exception as e:
         print(f"Erro ao buscar relatório: {e}")
         return jsonify({"message": "Erro ao buscar relatório"}), 500
+    
+@app.route('/inserir_relatorio_auditoria_final', methods=['POST'])
+def inserir_relatorio_auditoria_final():
+    db = get_db()
+    relatorio = Relatorio(db)
+    data = request.json
+    descricao = data.get('descricao')
+    id_avaliacao = data.get('idAvaliacao')
+
+    if not descricao or not id_avaliacao:
+        return jsonify({"message": "Dados incompletos"}), 400
+
+    try:
+        relatorio_id = relatorio.inserir_relatorio_auditoria_final(descricao, id_avaliacao)
+        return jsonify({"message": "Relatório inserido com sucesso", "id": relatorio_id}), 201
+    except Exception as e:
+        print(f"Erro ao inserir relatório: {e}")
+        return jsonify({"message": "Erro ao inserir relatório"}), 500
+
+@app.route('/atualizar_relatorio_auditoria_final', methods=['PUT'])
+def atualizar_relatorio_auditoria_final():
+    db = get_db()
+    relatorio = Relatorio(db)
+    data = request.json
+    descricao = data.get('descricao')
+    id_avaliacao = data.get('idAvaliacao')
+    print(data)
+    if not descricao or not id_avaliacao:
+        return jsonify({"message": "Dados incompletos"}), 400
+    try:
+        relatorio.atualizar_relatorio_auditoria_final(descricao, id_avaliacao)
+        return jsonify({"message": "Relatório atualizado com sucesso"}), 200
+    except Exception as e:
+        print(f"Erro ao atualizar relatório: {e}")
+        return jsonify({"message": "Erro ao atualizar relatório"}), 500
+
+@app.route('/get_relatorio_auditoria_final/<int:avaliacao_id>', methods=['GET'])
+def get_relatorio_auditoria_final(avaliacao_id):
+    db = get_db()
+    relatorio = Relatorio(db)
+    id_avaliacao = avaliacao_id
+    if not id_avaliacao:
+        return jsonify({"message": "ID da avaliação não fornecido"}), 400
+    try:
+        result = relatorio.get_relatorio_auditoria_final(id_avaliacao)
+        if result:
+            return jsonify(result), 200
+        else:
+            return jsonify({"message": "Relatório não encontrado, ainda não foi criado"}), 200
+    except Exception as e:
+        print(f"Erro ao buscar relatório: {e}")
+        return jsonify({"message": "Erro ao buscar relatório"}), 500
 
 @app.route('/enviar_email_auditor/<int:avaliacao_id>', methods=['POST'])
 def enviar_email_auditor(avaliacao_id):
+    db = get_db()
+    auditor = Auditor(db)
     try:
         # Chama o método da classe Auditor para obter o e-mail
         email_auditor = auditor.get_email_auditor(avaliacao_id)
@@ -913,6 +1101,9 @@ def enviar_email_auditor(avaliacao_id):
 
 @app.route('/enviar_email_auditor_data_avaliacao_final/<int:avaliacao_id>', methods=['POST'])
 def enviar_email_auditor_data_avaliacao_final(avaliacao_id):
+    db = get_db()
+    auditor = Auditor(db)
+    email = Email(db)
     try:
         # Chama o método da classe Auditor para obter o e-mail
         email_auditor = auditor.get_email_auditor(avaliacao_id)
@@ -929,6 +1120,8 @@ def enviar_email_auditor_data_avaliacao_final(avaliacao_id):
     
 @app.route('/notificar_participantes_resultado_avaliacao_inicial/<int:avaliacao_id>', methods=['POST'])
 def notificar_participantes_resultado_avaliacao_inicial(avaliacao_id):
+    db = get_db()
+    email = Email(db)
     try:
         email.notificar_participantes_resultado_avaliacao_inicial(avaliacao_id)
         return jsonify({"message": "E-mail enviado com sucesso!"}), 200
@@ -939,6 +1132,8 @@ def notificar_participantes_resultado_avaliacao_inicial(avaliacao_id):
 
 @app.route('/update_empresa_ajuste_avaliacao_inicial/<int:id_empresa>', methods=['PUT'])
 def update_empresa_ajuste_avaliacao_inicial(id_empresa):
+    db = get_db()
+    empresa = Empresa(db)
     data = request.json
     try:
         empresa.update_empresa_ajuste_avaliacao_inicial(id_empresa, data['nome'])
@@ -949,6 +1144,8 @@ def update_empresa_ajuste_avaliacao_inicial(id_empresa):
 
 @app.route('/update_avaliacao_ajuste_inicial/<int:avaliacao_id>', methods=['PUT'])
 def update_avaliacao_ajuste_inicial(avaliacao_id):
+    db = get_db()
+    avaliacao = Avaliacao(db)
     data = request.json
     try:
         avaliacao.atualizar_avaliacao_ajuste_inicial(
@@ -964,6 +1161,8 @@ def update_avaliacao_ajuste_inicial(avaliacao_id):
 
 @app.route('/update_relatorio_ajuste_avaliacao_inicial/<int:avaliacao_id>', methods=['PUT'])
 def update_relatorio_ajuste_avaliacao_inicial(avaliacao_id):
+    db = get_db()
+    relatorio = Relatorio(db)
     data = request.json
     print(data)
     try:
@@ -975,6 +1174,8 @@ def update_relatorio_ajuste_avaliacao_inicial(avaliacao_id):
 
 @app.route('/add_data_avaliacao', methods=['POST'])
 def add_data_avaliacao():
+    db = get_db()
+    avaliacao = Avaliacao(db)
     try:
         data = request.json
         id_avaliacao = data['idAvaliacao']
@@ -986,6 +1187,8 @@ def add_data_avaliacao():
 
 @app.route('/get_data_avaliacao/<int:id_avaliacao>', methods=['GET'])
 def get_data_avaliacao(id_avaliacao):
+    db = get_db()
+    avaliacao = Avaliacao(db)
     try:
         data_avaliacao_final = avaliacao.obter_data_avaliacao_final(id_avaliacao)
         if data_avaliacao_final:
@@ -997,6 +1200,8 @@ def get_data_avaliacao(id_avaliacao):
 
 @app.route('/update_data_avaliacao/<int:id_avaliacao>', methods=['PUT'])
 def update_data_avaliacao(id_avaliacao):
+    db = get_db()
+    avaliacao = Avaliacao(db)
     try:
         data = request.json
         nova_data_avaliacao_final = data['dataAvaliacaoFinal']
@@ -1007,11 +1212,15 @@ def update_data_avaliacao(id_avaliacao):
 
 @app.route('/get_graus_implementacao_empresa/<int:id_avaliacao>', methods=['GET'])
 def get_graus_implementacao_empresa(id_avaliacao):
+    db = get_db()
+    grau_implementacao = GrauImplementacao(db)
     graus = grau_implementacao.get_grau_implementacao_empresa(id_avaliacao)
     return jsonify(graus), 200
 
 @app.route('/insert_graus_implementacao_empresa', methods=['POST'])
 def insert_graus_implementacao_empresa():
+    db = get_db()
+    grau_implementacao = GrauImplementacao(db)
     try:
         # O 'data' agora é um array de objetos, onde cada objeto tem 'id_avaliacao', 'id_resultado_esperado' e 'nota'
         data = request.json
@@ -1029,6 +1238,8 @@ def insert_graus_implementacao_empresa():
 
 @app.route('/update_graus_implementacao_empresa', methods=['PUT'])
 def update_graus_implementacao_empresa():
+    db = get_db()
+    grau_implementacao = GrauImplementacao(db)
     try:
         data = request.json
         update_data = [(item['nota'], item['id_avaliacao'], item['id_resultado_esperado']) for item in data]
@@ -1040,6 +1251,8 @@ def update_graus_implementacao_empresa():
 
 @app.route('/update_resultado_final/<int:id_avaliacao>', methods=['PUT'])
 def update_resultado_final(id_avaliacao):
+    db = get_db()
+    avaliacao = Avaliacao(db)
     data = request.json
     try:
         parecer_final = data['parecerFinal']
@@ -1054,5 +1267,6 @@ def update_resultado_final(id_avaliacao):
 
 
 if __name__ == '__main__':
-    http_server = WSGIServer(("127.0.0.1", 5000), app)
-    http_server.serve_forever()
+    # eventlet.wsgi.server(eventlet.listen(('127.0.0.1', 5000)), app)
+    listener = eventlet.listen(('127.0.0.1', 5000))
+    eventlet.wsgi.server(listener, app, custom_pool=pool)
