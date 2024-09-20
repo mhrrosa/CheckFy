@@ -13,6 +13,7 @@ class Email:
         self.db = db
 
     def email_aprovar_softex(self, id_avaliacao):
+        cursor = self.db.conn.cursor(dictionary=True)
         query = """
             SELECT a.ID, a.Nome, a.Descricao, a.ID_Avaliador_Lider, u.Nome, 
                    a.Status, atv.Descricao, a.ID_Empresa, e.Nome, n.Nivel, 
@@ -29,9 +30,9 @@ class Email:
         """
 
         try:
-            self.db.cursor.execute(query, (id_avaliacao,))
-            row = self.db.cursor.fetchone()
-
+            cursor.execute(query, (id_avaliacao,))
+            row = cursor.fetchone()
+            cursor.close()
             if row:
                 # Extraindo dados da avaliação
                 id = row[0]
@@ -92,6 +93,7 @@ class Email:
     
 
     def enviar_email_auditor_avaliacao_inicial(self, id_avaliacao, email_auditor):
+        cursor = self.db.conn.cursor(dictionary=True)
         query = """
                     SELECT a.ID, a.Nome, a.Descricao, a.ID_Avaliador_Lider, u.Nome, 
                         a.Status, atv.Descricao, a.ID_Empresa, e.Nome, n.Nivel, 
@@ -111,9 +113,9 @@ class Email:
                 """
 
         try:
-            self.db.cursor.execute(query, (id_avaliacao,))
-            row = self.db.cursor.fetchone()
-
+            cursor.execute(query, (id_avaliacao,))
+            row = cursor.fetchone()
+            cursor.close()
             if row:
                 # Extraindo dados da avaliação
                 id = row[0]
@@ -174,6 +176,7 @@ class Email:
             raise e
     
     def enviar_email_auditor_data_avaliacao_final(self, id_avaliacao, email_auditor):
+        cursor = self.db.conn.cursor(dictionary=True)
         query = """
             SELECT a.ID, a.Nome, a.data_avaliacao_final, u.Nome
             FROM avaliacao a
@@ -182,9 +185,9 @@ class Email:
         """
 
         try:
-            self.db.cursor.execute(query, (id_avaliacao,))
-            row = self.db.cursor.fetchone()
-
+            cursor.execute(query, (id_avaliacao,))
+            row = cursor.fetchone()
+            cursor.close()
             if row:
                 # Extraindo dados da avaliação
                 id = row[0]
@@ -240,6 +243,7 @@ class Email:
             raise e
 
     def solicitar_link_formulario_feedback(self, id_avaliacao):
+
         remetente = "checkfy123@gmail.com"
         destinatario = "checkfy123@gmail.com"
         assunto = "Solicitação de Link do Formulário de Feedback"
@@ -274,6 +278,7 @@ class Email:
             print(f"Erro ao enviar e-mail: {e}")
     
     def notificar_participantes_resultado_avaliacao_inicial(self, id_avaliacao):
+        cursor = self.db.conn.cursor(dictionary=True)
         try:
             # Consultar os participantes da avaliação na tabela usuarios_avaliacao
             query_participantes = """
@@ -284,9 +289,9 @@ class Email:
             """
             
             # Executando a consulta com o parâmetro
-            self.db.cursor.execute(query_participantes, (id_avaliacao,))
-            participantes = self.db.cursor.fetchall()
-
+            cursor.execute(query_participantes, (id_avaliacao,))
+            participantes = cursor.fetchall()
+            cursor.close()
             if participantes:
                 # Iterar sobre cada participante e enviar um e-mail de notificação
                 for participante in participantes:
@@ -331,6 +336,7 @@ class Email:
             raise e
 
     def enviar_email_auditor_avaliacao_final(self, id_avaliacao):
+        cursor = self.db.conn.cursor(dictionary=True)
         query_avaliacao = """
             SELECT a.ID, a.Nome, a.Descricao, a.ID_Avaliador_Lider, u.Nome, 
                 a.Status, atv.Descricao, a.ID_Empresa, e.Nome, n.Nivel, 
@@ -358,8 +364,8 @@ class Email:
         
         try:
             # Buscar dados da avaliação
-            self.db.cursor.execute(query_avaliacao, (id_avaliacao,))
-            row = self.db.cursor.fetchone()
+            cursor.execute(query_avaliacao, (id_avaliacao,))
+            row = cursor.fetchone()
 
             if row:
                 # Extraindo dados da avaliação
@@ -373,9 +379,9 @@ class Email:
                 tipo_relatorio = row[18]
 
                 # Buscar o e-mail do auditor (ID_Funcao = 3)
-                self.db.cursor.execute(query_auditor, (id_avaliacao,))
-                email_auditor_row = self.db.cursor.fetchone()
-
+                cursor.execute(query_auditor, (id_avaliacao,))
+                email_auditor_row = cursor.fetchone()
+                cursor.close()
                 if email_auditor_row:
                     email_auditor = email_auditor_row[0]
                 else:
@@ -432,6 +438,7 @@ class Email:
             raise e
         
     def notificar_participantes_resultado_avaliacao_final(self, id_avaliacao):
+        cursor = self.db.conn.cursor(dictionary=True)
         try:
             # Consultar os participantes da avaliação na tabela usuarios_avaliacao
             query_participantes = """
@@ -442,8 +449,8 @@ class Email:
             """
             
             # Executando a consulta com o parâmetro
-            self.db.cursor.execute(query_participantes, (id_avaliacao,))
-            participantes = self.db.cursor.fetchall()
+            cursor.execute(query_participantes, (id_avaliacao,))
+            participantes = cursor.fetchall()
 
             if participantes:
                 # Iterar sobre cada participante e enviar um e-mail de notificação

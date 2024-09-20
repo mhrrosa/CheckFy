@@ -13,7 +13,6 @@ class Avaliacao:
             cursor.execute(query, values)
             id_avaliacao = cursor.lastrowid
 
-            # Inserir o criador da avaliação na tabela usuarios_avaliacao
             query = """
                 INSERT INTO usuarios_avaliacao (ID_Avaliacao, ID_Usuario, ID_Funcao) 
                 VALUES (%s, %s, %s)
@@ -21,36 +20,28 @@ class Avaliacao:
             values = (id_avaliacao, id_usuario, 1)
             cursor.execute(query, values)
 
-            # Função auxiliar para inserir ou linkar usuário à avaliação
             def inserir_ou_linkar_usuario(email, id_funcao):
-                # Verificar se o usuário já existe
                 query = "SELECT ID FROM usuario WHERE Email = %s"
                 cursor.execute(query, (email,))
                 usuario = cursor.fetchone()
-                
+
                 # Consumir quaisquer resultados pendentes
                 cursor.fetchall()
 
                 if usuario:
-                    # Usuário já existe, linkar à avaliação
                     query = "INSERT INTO usuarios_avaliacao (ID_Avaliacao, ID_Usuario, ID_Funcao) VALUES (%s, %s, %s)"
                     cursor.execute(query, (id_avaliacao, usuario[0], id_funcao))
                 else:
-                    # Usuário não existe, inserir e linkar à avaliação
                     query = "INSERT INTO usuario (Nome, Email, Senha, ID_Tipo) VALUES (%s, %s, %s, %s)"
                     cursor.execute(query, ("Usuário", email, "senha", id_funcao))
                     novo_usuario_id = self.db.cursor.lastrowid
-                    # Linkar o novo usuário à avaliação
                     query = "INSERT INTO usuarios_avaliacao (ID_Avaliacao, ID_Usuario, ID_Funcao) VALUES (%s, %s, %s)"
                     cursor.execute(query, (id_avaliacao, novo_usuario_id, id_funcao))
-                    # Simular envio de e-mail para cadastro
                     print(f"Simulação de envio de e-mail para {email} solicitando cadastro no sistema.")
 
-            # Processar os e-mails dos avaliadores adjuntos
             for email in adjunto_emails:
                 inserir_ou_linkar_usuario(email, 2)
 
-            # Processar os e-mails dos colaboradores empresariais
             for email in colaborador_emails:
                 inserir_ou_linkar_usuario(email, 5)
 
@@ -62,10 +53,9 @@ class Avaliacao:
             cursor.close()
             raise
 
-
     def listar_avaliacoes(self, idAvaliador):
+        cursor = self.db.conn.cursor(dictionary=True)
         try:
-            cursor = self.db.conn.cursor(dictionary=True)
             query_ids = "SELECT ID_Avaliacao FROM usuarios_avaliacao WHERE ID_Usuario = %s"
             values = (idAvaliador,)
             cursor.execute(query_ids, values)
@@ -76,26 +66,24 @@ class Avaliacao:
                 cursor.close()
                 return []
 
-            avaliacao_ids = [row[0] for row in avaliacao_ids]
+            avaliacao_ids = [row['ID_Avaliacao'] for row in avaliacao_ids]
 
             placeholders = ','.join(['%s'] * len(avaliacao_ids))
             query = f"SELECT * FROM avaliacao WHERE ID IN ({placeholders})"
-
-            # Executar a query para buscar as avaliações
             cursor.execute(query, tuple(avaliacao_ids))
             result = cursor.fetchall()
 
             avaliacoes = [
                 {
-                    "id": row[0],
-                    "nome": row[1],
-                    "descricao": row[2],
-                    "id_avaliador_lider": row[3],
-                    "status": row[4],
-                    "id_atividade": row[5],
-                    "id_empresa": row[6],
-                    "id_nivel_solicitado": row[7],
-                    "id_versao_modelo": row[10],
+                    "id": row['ID'],
+                    "nome": row['Nome'],
+                    "descricao": row['Descricao'],
+                    "id_avaliador_lider": row['ID_Avaliador_Lider'],
+                    "status": row['Status'],
+                    "id_atividade": row['ID_Atividade'],
+                    "id_empresa": row['ID_Empresa'],
+                    "id_nivel_solicitado": row['ID_Nivel_Solicitado'],
+                    "id_versao_modelo": row['ID_Versao_Modelo'],
                 }
                 for row in result
             ]
@@ -107,36 +95,16 @@ class Avaliacao:
             cursor.close()
             raise
 
-
     def obter_avaliacao(self, projeto_id):
         cursor = self.db.conn.cursor(dictionary=True)
         query = """
-            SELECT 
-                a.ID, 
-                a.Nome, 
-                a.Descricao, 
-                a.ID_Avaliador_Lider, 
-                u.Nome, 
-                a.`Status`, 
-                atv.Descricao, 
-                a.ID_Empresa, 
-                e.Nome, 
-                n.Nivel as Nivel_Solicitado, 
-                v.Nome, 
-                a.ID_Instituicao, 
-                a.Atividade_Planejamento, 
-                a.Cronograma_Planejamento, 
-                a.Avaliacao_Aprovada_Pela_Softex,
-                a.ID_Atividade, 
-                a.ID_Nivel_Solicitado, 
-                a.ID_Versao_Modelo,
-                r.descricao as descricao_relatorio, 
-                r.Caminho_Arquivo as caminho_arquivo_relatorio, 
-                tr.descricao as tipo_relatorio, 
-                a.Ata_Reuniao_Abertura, 
-                a.ID_Nivel_Atribuido, 
-                n2.Nivel as Nivel_Atribuido, 
-                a.Parecer_Final
+            SELECT a.ID, a.Nome, a.Descricao, a.ID_Avaliador_Lider, u.Nome AS Nome_Avaliador_Lider, a.`Status`, 
+            atv.Descricao AS Descricao_Atividade, a.ID_Empresa, e.Nome AS Nome_Empresa, n.Nivel AS Nivel_Solicitado, 
+            v.Nome AS Nome_Versao_Modelo, a.ID_Instituicao, a.Atividade_Planejamento, a.Cronograma_Planejamento, 
+            a.Avaliacao_Aprovada_Pela_Softex, a.ID_Atividade, a.ID_Nivel_Solicitado, a.ID_Versao_Modelo, 
+            r.descricao AS Descricao_Relatorio_Ajuste_Inicial, r.Caminho_Arquivo AS Caminho_Arquivo_Relatorio_Ajuste_Inicial, 
+            tr.descricao AS Tipo_Relatorio_Ajuste_Inicial, a.Ata_Reuniao_Abertura, a.ID_Nivel_Atribuido, 
+            n2.Nivel AS Nivel_Atribuido, a.Parecer_Final
             FROM avaliacao a
             LEFT JOIN empresa e ON a.ID_Empresa = e.ID
             LEFT JOIN nivel_maturidade_mpsbr n ON a.ID_Nivel_Solicitado = n.ID
@@ -148,79 +116,130 @@ class Avaliacao:
             LEFT JOIN tipo_relatorio tr ON r.ID_Tipo = tr.ID
             WHERE a.ID = %s
         """
-
         cursor.execute(query, (projeto_id,))
         row = cursor.fetchone()
+        # Consumir resultados pendentes
+        cursor.fetchall()
 
         if row:
             avaliacao_data = {
-                "id": row[0],  # ID da Avaliação
-                "nome": row[1],  # Nome da Avaliação
-                "descricao": row[2],  # Descrição da Avaliação
-                "id_avaliador_lider": row[3],  # ID do Avaliador Líder
-                "nome_avaliador_lider": row[4],  # Nome do Avaliador Líder
-                "status": row[5],  # Status
-                "descricao_atividade": row[6],  # Descrição da Atividade
-                "id_empresa": row[7],  # ID da Empresa
-                "nome_empresa": row[8],  # Nome da Empresa
-                "nivel_solicitado": row[9],  # Nível Solicitado (Nome)
-                "nome_versao_modelo": row[10],  # Nome da Versão do Modelo
-                "id_instituicao": row[11],  # ID da Instituição
-                "atividade_planejamento": row[12],  # Atividade Planejamento
-                "cronograma_planejamento": row[13],  # Cronograma Planejamento
-                "aprovacao_softex": row[14],  # Aprovação Softex
-                "id_atividade": row[15],  # ID da Atividade
-                "id_nivel_solicitado": row[16],  # ID do Nível Solicitado
-                "id_versao_modelo": row[17],  # ID da Versão do Modelo
-                "descricao_relatorio_ajuste_inicial": row[18],  # Descrição do Relatório
-                "caminho_arquivo_relatorio_ajuste_inicial": row[19],  # Caminho do Arquivo do Relatório
-                "tipo_relatorio_ajuste_inicial": row[20],  # Tipo de Relatório
-                "ata_reuniao_abertura": row[21],  # Ata de Reunião de Abertura
-                "id_nivel_atribuido": row[22], # Id do nivel atribuido
-                "nivel_atribuido": row[23], # Nome do nivel atribuido
-                "parecer_final": row[24], # Parecer final
+                "id": row['ID'],
+                "nome": row['Nome'],
+                "descricao": row['Descricao'],
+                "id_avaliador_lider": row['ID_Avaliador_Lider'],
+                "nome_avaliador_lider": row['Nome_Avaliador_Lider'],
+                "status": row['Status'],
+                "descricao_atividade": row['Descricao_Atividade'],
+                "id_empresa": row['ID_Empresa'],
+                "nome_empresa": row['Nome_Empresa'],
+                "nivel_solicitado": row['Nivel_Solicitado'],
+                "nome_versao_modelo": row['Nome_Versao_Modelo'],
+                "id_instituicao": row['ID_Instituicao'],
+                "atividade_planejamento": row['Atividade_Planejamento'],
+                "cronograma_planejamento": row['Cronograma_Planejamento'],
+                "aprovacao_softex": row['Avaliacao_Aprovada_Pela_Softex'],
+                "id_atividade": row['ID_Atividade'],
+                "id_nivel_solicitado": row['ID_Nivel_Solicitado'],
+                "id_versao_modelo": row['ID_Versao_Modelo'],
+                "descricao_relatorio_ajuste_inicial": row['Descricao_Relatorio_Ajuste_Inicial'],
+                "caminho_arquivo_relatorio_ajuste_inicial": row['Caminho_Arquivo_Relatorio_Ajuste_Inicial'],
+                "tipo_relatorio_ajuste_inicial": row['Tipo_Relatorio_Ajuste_Inicial'],
+                "ata_reuniao_abertura": row['Ata_Reuniao_Abertura'],
+                "id_nivel_atribuido": row['ID_Nivel_Atribuido'],
+                "nivel_atribuido": row['Nivel_Atribuido'],
+                "parecer_final": row['Parecer_Final'],
             }
             cursor.close()
             return avaliacao_data
         else:
             print(f"Erro: A consulta não retornou os campos esperados. Resultado da consulta: {row}")
             cursor.close()
-        return None
-
+            return None
 
     def deletar_avaliacao(self, projeto_id):
         cursor = self.db.conn.cursor(dictionary=True)
-        query = "DELETE FROM avaliacao WHERE ID = %s"
-        cursor.execute(query, (projeto_id,))
-        cursor.close()
+        try:
+            query = "DELETE FROM avaliacao WHERE ID = %s"
+            cursor.execute(query, (projeto_id,))
+            
+            # Confirmar a exclusão
+            self.db.conn.commit()
+        except Exception as e:
+            # Desfazer mudanças se houver erro
+            self.db.conn.rollback()
+            print(f"Erro ao deletar avaliação: {e}")
+        finally:
+            cursor.close()
 
     def atualizar_avaliacao(self, projeto_id, novo_nome, nova_descricao, novo_id_avaliador_lider, novo_status, novo_modelo, novo_id_atividade, novo_id_empresa, novo_id_nivel_solicitado, novo_id_nivel_atribuido, novo_parece_nivel_final):
         cursor = self.db.conn.cursor(dictionary=True)
-        query = "UPDATE avaliacao SET Nome = %s, Descricao = %s, ID_Avaliador_Lider = %s, Status = %s, Modelo = %s, ID_Atividade = %s, ID_Empresa = %s, ID_Nivel_Solicitado = %s, ID_Nivel_Atribuido = %s, Parece_Nivel_Final = %s WHERE ID = %s"
-        values = (novo_nome, nova_descricao, novo_id_avaliador_lider, novo_status, novo_modelo, novo_id_atividade, novo_id_empresa, novo_id_nivel_solicitado, novo_id_nivel_atribuido, novo_parece_nivel_final, projeto_id)
-        cursor.execute(query, values)
-        cursor.close()
-
+        try:
+            query = """
+                UPDATE avaliacao SET Nome = %s, Descricao = %s, ID_Avaliador_Lider = %s, Status = %s, 
+                Modelo = %s, ID_Atividade = %s, ID_Empresa = %s, ID_Nivel_Solicitado = %s, 
+                ID_Nivel_Atribuido = %s, Parece_Nivel_Final = %s WHERE ID = %s
+            """
+            values = (novo_nome, nova_descricao, novo_id_avaliador_lider, novo_status, novo_modelo, novo_id_atividade, novo_id_empresa, novo_id_nivel_solicitado, novo_id_nivel_atribuido, novo_parece_nivel_final, projeto_id)
+            cursor.execute(query, values)
+            
+            # Confirmar a atualização
+            self.db.conn.commit()
+        except Exception as e:
+            # Desfazer mudanças em caso de erro
+            self.db.conn.rollback()
+            print(f"Erro ao atualizar avaliação: {e}")
+        finally:
+            cursor.close()
     def atualizar_id_atividade(self, projeto_id, nova_id_atividade):
         cursor = self.db.conn.cursor(dictionary=True)
-        query = "UPDATE avaliacao SET ID_Atividade = %s WHERE ID = %s"
-        values = (nova_id_atividade, projeto_id)
-        cursor.execute(query, values)
-        cursor.close()
+        try:
+            query = "UPDATE avaliacao SET ID_Atividade = %s WHERE ID = %s"
+            cursor.execute(query, (nova_id_atividade, projeto_id))
+            
+            # Confirmar a atualização
+            self.db.conn.commit()
+        except Exception as e:
+            # Desfazer mudanças se houver erro
+            self.db.conn.rollback()
+            print(f"Erro ao atualizar ID da atividade: {e}")
+        finally:
+            cursor.close()
+
 
     def inserir_planejamento(self, projeto_id, aprovacaoSoftex, atividade_planejamento, cronograma_planejamento):
         cursor = self.db.conn.cursor(dictionary=True)
-        query = "UPDATE avaliacao SET Avaliacao_Aprovada_Pela_Softex = %s, Atividade_Planejamento = %s, Cronograma_Planejamento = %s WHERE ID = %s"
-        values = (aprovacaoSoftex, atividade_planejamento, cronograma_planejamento, projeto_id)
-        cursor.execute(query, values)
-        cursor.close()
-    
+        try:
+            query = """
+                UPDATE avaliacao SET Avaliacao_Aprovada_Pela_Softex = %s, 
+                Atividade_Planejamento = %s, Cronograma_Planejamento = %s WHERE ID = %s
+            """
+            values = (aprovacaoSoftex, atividade_planejamento, cronograma_planejamento, projeto_id)
+            cursor.execute(query, values)
+            
+            # Confirmar a inserção
+            self.db.conn.commit()
+        except Exception as e:
+            # Desfazer mudanças se houver erro
+            self.db.conn.rollback()
+            print(f"Erro ao inserir planejamento: {e}")
+        finally:
+            cursor.close()
+
     def inserir_ata_reuniao(self, projeto_id, ata_reuniao):
         cursor = self.db.conn.cursor(dictionary=True)
-        query = "UPDATE avaliacao SET Ata_Reuniao_Abertura = %s WHERE ID = %s"
-        values = (ata_reuniao, projeto_id)
-        cursor.execute(query, values)
-        cursor.close()
+        try:
+            query = "UPDATE avaliacao SET Ata_Reuniao_Abertura = %s WHERE ID = %s"
+            values = (ata_reuniao, projeto_id)
+            cursor.execute(query, values)
+            
+            # Confirmar as mudanças no banco de dados
+            self.db.conn.commit()
+        except Exception as e:
+            # Se ocorrer um erro, desfaz as alterações
+            self.db.conn.rollback()
+            print(f"Erro ao inserir ata de reunião: {e}")
+        finally:
+            cursor.close()
 
     def salvar_apresentacao_equipe(self, id_avaliacao, apresentacao_inicial, equipe_treinada):
         cursor = self.db.conn.cursor(dictionary=True)
@@ -232,11 +251,16 @@ class Avaliacao:
             """
             values = (apresentacao_inicial, equipe_treinada, id_avaliacao)
             cursor.execute(query, values)
-            cursor.close()
+            
+            # Confirmar a operação
+            self.db.conn.commit()
         except Exception as e:
+            # Desfazer alterações em caso de erro
+            self.db.conn.rollback()
             print(f"Erro ao salvar apresentação inicial e equipe treinada: {e}")
+            raise e
+        finally:
             cursor.close()
-            raise
 
     def get_apresentacao_equipe(self, id_avaliacao):
         cursor = self.db.conn.cursor(dictionary=True)
@@ -248,6 +272,7 @@ class Avaliacao:
             """
             cursor.execute(query, (id_avaliacao,))
             result = cursor.fetchone()
+            cursor.fetchall()  # Consumir quaisquer resultados pendentes
 
             if result:
                 cursor.close()
@@ -263,30 +288,42 @@ class Avaliacao:
             cursor.close()
             raise
 
-
     def atualizar_avaliacao_ajuste_inicial(self, avaliacao_id, descricao, cronograma_planejamento, atividade_planejamento):
         cursor = self.db.conn.cursor(dictionary=True)
         try:
-            query = "UPDATE avaliacao SET Descricao = %s, Cronograma_Planejamento = %s, Atividade_Planejamento = %s WHERE ID = %s"
+            query = """
+                UPDATE avaliacao 
+                SET Descricao = %s, Cronograma_Planejamento = %s, Atividade_Planejamento = %s 
+                WHERE ID = %s
+            """
             values = (descricao, cronograma_planejamento, atividade_planejamento, avaliacao_id)
             cursor.execute(query, values)
-            cursor.close()
+            
+            # Confirmar a operação
+            self.db.conn.commit()
         except Exception as e:
-            print(f"Erro ao atualizar empresa no banco de dados: {e}")
-            cursor.close()
+            # Desfazer alterações em caso de erro
+            self.db.conn.rollback()
+            print(f"Erro ao atualizar avaliação: {e}")
             raise e
-    
+        finally:
+            cursor.close()
+
     def adicionar_data_avaliacao_final(self, id_avaliacao, data_avaliacao_final):
         cursor = self.db.conn.cursor(dictionary=True)
         try:
             query = "UPDATE avaliacao SET data_avaliacao_final = %s WHERE ID = %s"
             cursor.execute(query, (data_avaliacao_final, id_avaliacao))
-            cursor.close()
+            
+            # Confirmar a operação
+            self.db.conn.commit()
         except Exception as e:
-            print(f"Erro ao adicionar data da avaliação final: {e}")
+            # Desfazer alterações em caso de erro
             self.db.conn.rollback()
+            print(f"Erro ao adicionar data da avaliação final: {e}")
+            raise e
+        finally:
             cursor.close()
-            raise
 
     def obter_data_avaliacao_final(self, id_avaliacao):
         cursor = self.db.conn.cursor(dictionary=True)
@@ -294,6 +331,7 @@ class Avaliacao:
             query = "SELECT data_avaliacao_final FROM avaliacao WHERE ID = %s"
             cursor.execute(query, (id_avaliacao,))
             data_avaliacao_final = cursor.fetchone()
+            cursor.fetchall()  # Consumir quaisquer resultados pendentes
             cursor.close()
             return data_avaliacao_final[0] if data_avaliacao_final else None
         except Exception as e:
@@ -306,15 +344,30 @@ class Avaliacao:
         try:
             query = "UPDATE avaliacao SET data_avaliacao_final = %s WHERE ID = %s"
             cursor.execute(query, (nova_data_avaliacao_final, id_avaliacao))
-            cursor.close()
+            
+            # Confirmar a operação
+            self.db.conn.commit()
         except Exception as e:
+            # Desfazer alterações em caso de erro
+            self.db.conn.rollback()
             print(f"Erro ao atualizar data da avaliação final: {e}")
+            raise e
+        finally:
             cursor.close()
-            raise
 
     def update_resultado_final(self, id_avaliacao, parecer_final, id_nivel_atribuido):
         cursor = self.db.conn.cursor(dictionary=True)
-        query = "UPDATE avaliacao SET Parecer_Final = %s, ID_Nivel_Atribuido = %s WHERE ID = %s"
-        values = ( parecer_final, id_nivel_atribuido, id_avaliacao)
-        cursor.execute(query, values)
-        cursor.close()
+        try:
+            query = "UPDATE avaliacao SET Parecer_Final = %s, ID_Nivel_Atribuido = %s WHERE ID = %s"
+            values = (parecer_final, id_nivel_atribuido, id_avaliacao)
+            cursor.execute(query, values)
+            
+            # Confirmar a operação
+            self.db.conn.commit()
+        except Exception as e:
+            # Desfazer alterações em caso de erro
+            self.db.conn.rollback()
+            print(f"Erro ao atualizar resultado final: {e}")
+            raise e
+        finally:
+            cursor.close()

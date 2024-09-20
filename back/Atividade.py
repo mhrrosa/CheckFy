@@ -8,7 +8,7 @@ class Atividade:
             cursor.execute("SELECT ID, Descricao FROM atividade")
             result = cursor.fetchall()
             atividades_list = [
-                {"ID": atividade[0], "Descricao": atividade[1]} for atividade in result
+                {"ID": atividade["ID"], "Descricao": atividade[ "Descricao"]} for atividade in result
             ]
             cursor.close()
             return atividades_list

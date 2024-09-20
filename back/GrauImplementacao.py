@@ -3,25 +3,29 @@ class GrauImplementacao:
         self.db = db
 
     def add_graus_implementacao_empresa(self, valores):
+        cursor = self.db.conn.cursor(dictionary=True)
         query = """
         INSERT INTO grau_implementacao_processo_unidade_organizacional 
         (ID_Avaliacao, ID_Resultado_Esperado, Nota) 
         VALUES (%s, %s, %s)
         """
         try:
-            # Execute muitos valores ao mesmo tempo
-            self.db.cursor.executemany(query, valores)
-            self.db.conn.commit()
+            # Executa a inserção de múltiplos valores ao mesmo tempo
+            cursor.executemany(query, valores)
+            self.db.conn.commit()  # Confirma a operação no banco de dados
         except Exception as e:
+            self.db.conn.rollback()  # Desfaz a transação em caso de erro
             print(f"Erro ao adicionar os graus de implementação: {e}")
-            self.db.conn.rollback()
             raise
+        finally:
+            cursor.close()  # Garante que o cursor será fechado
 
     def get_grau_implementacao_empresa(self, id_avaliacao):
+        cursor = self.db.conn.cursor(dictionary=True)
         try:
             query_graus = "SELECT * FROM grau_implementacao_processo_unidade_organizacional WHERE ID_Avaliacao = %s"
-            self.db.cursor.execute(query_graus, (id_avaliacao,))
-            graus = self.db.cursor.fetchall()
+            cursor.execute(query_graus, (id_avaliacao,))
+            graus = cursor.fetchall()
 
             # Verificar se a consulta retornou algo
             if not graus:
@@ -30,13 +34,13 @@ class GrauImplementacao:
             graus_implementacao = []
             for grau in graus:
                 grau_dict = {
-                    'ID': grau[0],
-                    'ID_Resultado_Esperado': grau[1],
-                    'Nota': grau[2],
-                    'ID_Avaliacao': grau[3],
+                    'ID': grau['ID'],
+                    'ID_Resultado_Esperado': grau['ID_Resultado_Esperado'],
+                    'Nota': grau['Nota'],
+                    'ID_Avaliacao': grau['ID_Avaliacao'],
                 }
                 graus_implementacao.append(grau_dict)
-
+            cursor.close()
             return graus_implementacao
 
         except Exception as e:
@@ -44,16 +48,19 @@ class GrauImplementacao:
             raise
 
     def update_graus_implementacao_empresa_batch(self, update_data):
+        cursor = self.db.conn.cursor(dictionary=True)
         query = """
             UPDATE grau_implementacao_processo_unidade_organizacional
             SET Nota = %s
             WHERE ID_Avaliacao = %s AND ID_Resultado_Esperado = %s
         """
         try:
-            # Executa o update para cada item no batch
-            self.db.cursor.executemany(query, update_data)
-            self.db.conn.commit()
+            # Executa a atualização para cada item no batch de dados
+            cursor.executemany(query, update_data)
+            self.db.conn.commit()  # Confirma a operação no banco de dados
         except Exception as e:
+            self.db.conn.rollback()  # Desfaz a transação em caso de erro
             print(f"Erro ao atualizar grau de implementação: {e}")
-            self.db.conn.rollback()
             raise
+        finally:
+            cursor.close()  # Garante que o cursor será fechado
