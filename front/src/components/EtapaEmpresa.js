@@ -20,8 +20,8 @@ function EtapaEmpresa({ onNext, avaliacaoId }) {
     try {
       const empresasData = await getEmpresas();
       const empresasFormatadas = empresasData.map(item => ({
-        id: item[0],
-        nome: item[1],
+        id: item['ID'],
+        nome: item['Nome'],
         cnpj: item[2],
       }));
       setEmpresas(empresasFormatadas);

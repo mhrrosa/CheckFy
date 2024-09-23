@@ -23,7 +23,7 @@ function Niveis() {
   const carregarNiveis = () => {
     getNiveis(anoSelecionado)
       .then(data => {
-        const niveisFormatados = data.map(n => ({ id: n[0], nivel: n[1], nome: n[2] }));
+        const niveisFormatados = data.map(n => ({ id: n['ID'], nivel: n['Nivel'], nome: n['Nome_Nivel'] }));
         setNiveis(niveisFormatados);
       })
       .catch(error => {

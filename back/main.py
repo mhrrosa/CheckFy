@@ -17,12 +17,8 @@ from Email import Email
 from Auditor import Auditor
 from Relatorio import Relatorio
 from GrauImplementacao import GrauImplementacao
-import eventlet
-import eventlet.wsgi
 import os
-from eventlet import GreenPool
-eventlet.monkey_patch()
-pool = GreenPool(size=1000)
+from gevent.pywsgi import WSGIServer
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
@@ -1268,5 +1264,4 @@ def update_resultado_final(id_avaliacao):
 
 if __name__ == '__main__':
     # eventlet.wsgi.server(eventlet.listen(('127.0.0.1', 5000)), app)
-    listener = eventlet.listen(('127.0.0.1', 5000))
-    eventlet.wsgi.server(listener, app, custom_pool=pool)
+    WSGIServer(('127.0.0.1', 5000),app).serve_forever()

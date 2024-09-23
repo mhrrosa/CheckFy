@@ -34,11 +34,11 @@ function ResultadosEsperados() {
   const carregarDadosIniciais = async () => {
     try {
       const niveisData = await getNiveis(anoSelecionado);
-      const niveisFormatados = niveisData.map(n => ({ id: n[0], nivel: n[1] }));
+      const niveisFormatados = niveisData.map(n => ({ id: n['ID'], nivel: n['Nivel'] }));
       setNiveis(niveisFormatados);
   
       const processosData = await getProcessos(anoSelecionado);
-      const processosFormatados = processosData.map(p => ({ id: p[0], nome: p[1], tipo: p[2] }));
+      const processosFormatados = processosData.map(p => ({ id: p['ID'], nome: p['Descricao'], tipo: p['Tipo'] }));
       setProcessos(processosFormatados);
   
       const processosId = processosFormatados.map(p => p.id);

@@ -24,7 +24,7 @@ function Processos() {
     if (!anoSelecionado) return;
     getProcessos(anoSelecionado)
       .then(data => {
-        const processosFormatados = data.map(p => ({ id: p[0], descricao: p[1], tipo: p[2] }));
+        const processosFormatados = data.map(p => ({ id: p['ID'], descricao: p['Descricao'], tipo: p['Tipo'] }));
         setProcessos(processosFormatados);
       })
       .catch(error => {

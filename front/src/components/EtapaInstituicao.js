@@ -20,8 +20,8 @@ function EtapaInstituicaoAvaliadora({ onNext, avaliacaoId }) {
     try {
       const instituicoesData = await getInstituicoes();
       const instituicoesFormatadas = instituicoesData.map(item => ({
-        id: item[0],
-        nome: item[1],
+        id: item['ID'],
+        nome: item['Nome'],
         cnpj: item[2],
       }));
       setInstituicoes(instituicoesFormatadas);

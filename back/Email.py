@@ -35,15 +35,15 @@ class Email:
             cursor.close()
             if row:
                 # Extraindo dados da avaliação
-                id = row[0]
-                nome = row[1]
-                descricao = row[2]
-                nome_avaliador_lider = row[4]
-                status = row[5]
-                descricao_atividade = row[6]
-                nome_empresa = row[8]
-                nivel_solicitado = row[9]
-                nome_versao_modelo = row[10]
+                id = row['ID']
+                nome = row['Nome']
+                descricao = row['Descricao']
+                nome_avaliador_lider = row['Nome_Avaliador_Lider']
+                status = row['Status']
+                descricao_atividade =  row['Descricao_Atividade']
+                nome_empresa = row['Nome_Empresa']
+                nivel_solicitado =row['Nivel_Solicitado']
+                nome_versao_modelo = row['Nome_Versao_Modelo']
 
                 # Configurando o e-mail
                 remetente = "checkfy123@gmail.com"
@@ -118,14 +118,15 @@ class Email:
             cursor.close()
             if row:
                 # Extraindo dados da avaliação
-                id = row[0]
-                nome = row[1]
-                descricao = row[2]
-                nome_avaliador_lider = row[4]
-                nome_empresa = row[8]
-                nivel_solicitado = row[9]
-                descricao_relatorio = row[17]
-                tipo_relatorio = row[18]
+                id = row['ID']
+                nome = row['Nome']
+                descricao = row['Descricao']
+                nome_avaliador_lider = row['Nome_Avaliador_Lider']
+                status = row['Status']
+                descricao_atividade =  row['Descricao_Atividade']
+                nome_empresa = row['Nome_Empresa']
+                nivel_solicitado =row['Nivel_Solicitado']
+                nome_versao_modelo = row['Nome_Versao_Modelo']
 
                 # Configurando o e-mail
                 remetente = "checkfy123@gmail.com"
@@ -190,9 +191,9 @@ class Email:
             cursor.close()
             if row:
                 # Extraindo dados da avaliação
-                id = row[0]
-                nome = row[1]
-                data_avaliacao_final = row[2]
+                id = row['ID']
+                nome = row['Nome']
+                data_avaliacao_final = row['data_avaliacao_final']
                 nome_avaliador_lider = row[3]
 
                 # Convertendo e formatando a data para o formato dia/mês/ano
@@ -369,14 +370,15 @@ class Email:
 
             if row:
                 # Extraindo dados da avaliação
-                id = row[0]
-                nome = row[1]
-                descricao = row[2]
-                nome_avaliador_lider = row[4]
-                nome_empresa = row[8]
-                nivel_solicitado = row[9]
-                descricao_relatorio = row[17]
-                tipo_relatorio = row[18]
+                id = row['ID']
+                nome = row['Nome']
+                descricao = row['Descricao']
+                nome_avaliador_lider = row['Nome_Avaliador_Lider']
+                status = row['Status']
+                descricao_atividade =  row['Descricao_Atividade']
+                nome_empresa = row['Nome_Empresa']
+                nivel_solicitado =row['Nivel_Solicitado']
+                nome_versao_modelo = row['Nome_Versao_Modelo']
 
                 # Buscar o e-mail do auditor (ID_Funcao = 3)
                 cursor.execute(query_auditor, (id_avaliacao,))

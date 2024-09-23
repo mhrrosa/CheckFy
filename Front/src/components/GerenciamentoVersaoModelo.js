@@ -34,8 +34,8 @@ function GerenciamentoAnos() {
         <select className='select-home-gerenciamento' onChange={(e) => handleAnoClick(e.target.value)}>
             <option value=''>-</option>
           {anos.map((ano) => (
-            <option key={ano[0]} value={ano[0]}>
-              {ano[1]}
+            <option key={ano['ID']} value={ano['ID']}>
+              {ano['Nome']}
             </option>
           ))}
         </select>
