@@ -49,7 +49,6 @@ class Auditor:
             """
             cursor.execute(query, (avaliacao_id,))
             id_usuario = cursor.fetchone()
-            
             # Garantir que todos os resultados anteriores sejam lidos ou descartados
             cursor.fetchall()  # Descarta qualquer resultado não processado
 
@@ -60,11 +59,11 @@ class Auditor:
                     FROM usuario 
                     WHERE ID = %s
                 """
-                cursor.execute(query_email, (id_usuario[0],))
+                cursor.execute(query_email, (id_usuario['ID_Usuario'],))
                 email = cursor.fetchone()
                 cursor.close()
                 if email:
-                    return email[0]
+                    return email['Email']
                 else:
                     return None
             else:

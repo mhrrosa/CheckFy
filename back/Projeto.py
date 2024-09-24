@@ -72,10 +72,22 @@ class Projeto:
             cursor.close()  # Garante que o cursor será fechado
 
     def get_next_numero_projeto(self, id_avaliacao):
-        cursor = self.db.conn.cursor(dictionary=True)
-        query = "SELECT MAX(Numero_Projeto) FROM projeto WHERE ID_Avaliacao = %s"
-        cursor.execute(query, (id_avaliacao,))
-        result = cursor.fetchone()
-        cursor.close()
-        print(f"Próximo número de projeto: {result[0]}")
-        return (result[0] or 0) + 1
+        try:
+            cursor = self.db.conn.cursor(dictionary=True)
+            query = "SELECT MAX(Numero_Projeto) as Numero_Projeto FROM projeto WHERE ID_Avaliacao = %s"
+            cursor.execute(query, (id_avaliacao,))
+            row = cursor.fetchone()
+            
+            # Consumir resultados pendentes
+            cursor.fetchall()
+            cursor.close()
+
+            # Tratamento para valores None
+            next_numero_projeto = (row['Numero_Projeto'] or 0) + 1 if row and row['Numero_Projeto'] is not None else 1
+           
+            
+            return next_numero_projeto
+
+        except Exception as e:
+            print(f"Ocorreu um erro: {e}")
+            return None

@@ -55,7 +55,7 @@ function EtapaProjeto({ onNext, avaliacaoId }) {
     try {
       const projetoData = { nome, habilitado };
       await updateProjeto(projetoId, projetoData);
-      setProjetos(prevProjetos => prevProjetos.map(proj => (proj.ID === projetoId ? { ...proj, Nome_Projeto: nome, Projeto_Habilitado: habilitado } : proj)));
+      setProjetos(prevProjetos => prevProjetos.map(proj => (proj['ID'] === projetoId ? { ...proj, Nome_Projeto: nome, Projeto_Habilitado: habilitado } : proj)));
     } catch (error) {
       console.error('Erro ao atualizar projeto:', error);
     }
