@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css';
 import {
   getAvaliacaoById,
   getProcessosPorAvaliacao,
@@ -8,6 +10,7 @@ import {
   getRelatorioAuditoriaFinal,
   inserirRelatorioAuditoriaFinal,
   atualizarRelatorioAuditoriaFinal,
+  getGrausImplementacaoEmpresa,
 } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/Form.css';
@@ -15,20 +18,22 @@ import '../components/styles/Button.css';
 import '../components/styles/Container.css';
 import '../components/styles/Etapas.css';
 import '../components/styles/EtapaEvidencia.css';
+import '../components/styles/EtapaResumoCaracterizacao.css';
 
 function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext }) {
   const [processos, setProcessos] = useState([]);
   const [resultadosEsperados, setResultadosEsperados] = useState({});
   const [projetos, setProjetos] = useState([]);
   const [evidencias, setEvidencias] = useState({});
-  const [activeParentTab, setActiveParentTab] = useState('Processos');
+  const [activeParentTab, setActiveParentTab] = useState('Informações Gerais');
   const [activeChildTab, setActiveChildTab] = useState(null);
   const [avaliacao, setAvaliacao] = useState(null);
   const [aprovacao, setAprovacao] = useState('');
   const [justificativa, setJustificativa] = useState('');
   const [relatorioExiste, setRelatorioExiste] = useState(false);
+  const [arrayResumo, setArrayResumo] = useState([]);
 
-  const parentTabs = ['Processos', 'Informações Gerais', 'Resultado Auditoria'];
+  const parentTabs = ['Informações Gerais', 'Processos', 'Resumo da Caracterização da Avaliação', 'Resultado Auditoria'];
 
   useEffect(() => {
     if (avaliacaoId && idVersaoModelo) {
@@ -44,41 +49,49 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
 
   const handleNextStep = () => {
     if (aprovacao === 'Aprovar') {
-      onDuploNext(); // Chama a função para avançar duas etapas.
+      onDuploNext(); // Avançar duas etapas
     } else {
-      onNext(); // Chama a função para avançar uma etapa.
+      onNext(); // Avançar uma etapa
     }
   };
 
   const carregarDados = async () => {
     try {
-      const avaliacao = await getAvaliacaoById(avaliacaoId);
-      setAvaliacao(avaliacao);
-  
+      const avaliacaoData = await getAvaliacaoById(avaliacaoId);
+      setAvaliacao(avaliacaoData);
+
       await carregarRelatorioAuditoriaFinal();
-  
+
       await carregarProjetos();
-      await carregarProcessos();
-  
+
+      const processosLoaded = await carregarProcessos();
+
+      // Carregar resultados esperados para todos os processos
+      for (const processo of processosLoaded) {
+        await carregarResultadosEsperados(processo.ID);
+      }
+
+      // Carregar resumo da caracterização da avaliação
+      await carregarResumoAvaliacao(processosLoaded);
+
       if (activeParentTab === 'Processos') {
-        if (processos.length > 0) {
-          setActiveChildTab(processos[0].ID);
-          await carregarResultadosEsperados(processos[0].ID);
+        if (processosLoaded.length > 0) {
+          setActiveChildTab(processosLoaded[0].ID);
         }
       }
     } catch (error) {
       console.error('Erro ao carregar dados da avaliação:', error);
     }
   };
-  
-  
 
   const carregarProcessos = async () => {
     try {
       const data = await getProcessosPorAvaliacao(avaliacaoId, idVersaoModelo);
       setProcessos(data.processos);
+      return data.processos;
     } catch (error) {
       console.error('Erro ao carregar processos:', error);
+      return [];
     }
   };
 
@@ -128,7 +141,7 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
       console.error('Erro ao carregar evidencias:', error);
     }
   };
-  
+
   const carregarRelatorioAuditoriaFinal = async () => {
     try {
       const data = await getRelatorioAuditoriaFinal(avaliacaoId);
@@ -151,6 +164,52 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
     }
   };
 
+  const carregarResumoAvaliacao = async (processosLoaded) => {
+    try {
+      const resumo = await getGrausImplementacaoEmpresa(avaliacaoId);
+      if (resumo && resumo.length > 0) {
+        await montarArrayComResumo(resumo, processosLoaded);
+      } else {
+        console.log('Nenhum resumo encontrado.');
+      }
+    } catch (error) {
+      console.error('Erro ao carregar resumo da caracterização da avaliação:', error);
+    }
+  };
+
+  const montarArrayComResumo = async (resumo, processosLoaded) => {
+    try {
+      const arrayInicial = [];
+
+      for (const processo of processosLoaded) {
+        let resultados = resultadosEsperados[processo.ID];
+        if (!resultados) {
+          resultados = await getResultadosEsperadosPorProcesso(processo.ID, avaliacaoId);
+          setResultadosEsperados(prevResultados => ({
+            ...prevResultados,
+            [processo.ID]: resultados
+          }));
+        }
+
+        resultados.forEach(resultado => {
+          const notaResumo = resumo.find(item => item.ID_Resultado_Esperado === resultado.ID)?.Nota || 'Não avaliado (NA)';
+
+          arrayInicial.push({
+            id_processo: processo.ID,
+            processo_descricao: processo.Descricao,
+            id_resultado_esperado: resultado.ID,
+            resultado_descricao: resultado.Descricao,
+            nota: notaResumo
+          });
+        });
+      }
+
+      setArrayResumo(arrayInicial);
+    } catch (error) {
+      console.error('Erro ao montar array com resumo:', error);
+    }
+  };
+
   const renderProcessosContent = () => {
     return (
       <>
@@ -162,18 +221,18 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
               onClick={() => setActiveChildTab(processo.ID)}
             >
               {processo.Descricao === "Gerência de Projetos" ? "GPR" :
-               processo.Descricao === "Engenharia de Requisitos" ? "REQ" : 
-               processo.Descricao === "Projeto e Construção do Produto" ? "PCP" :
-               processo.Descricao === "Integração do Produto" ? "ITP" :
-               processo.Descricao === "Verificação e Validação" ? "VV" :
-               processo.Descricao === "Gerência de Configuração" ? "GCO" :
-               processo.Descricao === "Aquisição" ? "AQU" :
-               processo.Descricao === "Medição" ? "MED" :
-               processo.Descricao === "Gerência de Decisões" ? "GDE" :
-               processo.Descricao === "Gerência de Recursos Humanos" ? "GRH" :
-               processo.Descricao === "Gerência de Processos" ? "GPC" :
-               processo.Descricao === "Gerência Organizacional" ? "ORG" :
-               processo.Descricao}
+                processo.Descricao === "Engenharia de Requisitos" ? "REQ" :
+                  processo.Descricao === "Projeto e Construção do Produto" ? "PCP" :
+                    processo.Descricao === "Integração do Produto" ? "ITP" :
+                      processo.Descricao === "Verificação e Validação" ? "VV" :
+                        processo.Descricao === "Gerência de Configuração" ? "GCO" :
+                          processo.Descricao === "Aquisição" ? "AQU" :
+                            processo.Descricao === "Medição" ? "MED" :
+                              processo.Descricao === "Gerência de Decisões" ? "GDE" :
+                                processo.Descricao === "Gerência de Recursos Humanos" ? "GRH" :
+                                  processo.Descricao === "Gerência de Processos" ? "GPC" :
+                                    processo.Descricao === "Gerência Organizacional" ? "ORG" :
+                                      processo.Descricao}
             </button>
           ))}
         </div>
@@ -231,7 +290,7 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
           <option value="Aprovar">Aprovar</option>
           <option value="Reprovar">Reprovar</option>
         </select>
-  
+
         {aprovacao === 'Reprovar' && (
           <>
             <textarea
@@ -242,31 +301,30 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
             />
           </>
         )}
-  
-        <button className="button-save" onClick={salvarDecisao}>Salvar</button>
+
+        <button className="button-next" onClick={salvarDecisao}>SALVAR</button>
         <button className='button-next' onClick={handleNextStep}>PRÓXIMA ETAPA</button>
       </div>
     );
   };
-  
-  
+
   const salvarDecisao = async () => {
     if (aprovacao === '') {
       alert('Por favor, selecione uma opção.');
       return;
     }
-    
+
     if (aprovacao === 'Reprovar' && justificativa.trim() === '') {
       alert('Por favor, forneça uma justificativa para a reprovação.');
       return;
     }
-  
+
     try {
       const data = {
         descricao: aprovacao === 'Reprovar' ? justificativa : 'Aprovado',
         idAvaliacao: avaliacaoId,
       };
-  
+
       if (relatorioExiste) {
         await atualizarRelatorioAuditoriaFinal(data);
         alert('Decisão atualizada com sucesso!');
@@ -281,15 +339,48 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
     }
   };
 
+  const renderResumoAvaliacaoContent = () => {
+    return (
+      <div className="management-etapa5-container">
+        <h1 className='management-etapa5-title'>RESUMO DA CARACTERIZAÇÃO DA AVALIAÇÃO</h1>
+        <table className='resumo-tabela'>
+          <thead>
+            <tr>
+              <th>Processo</th>
+              <th>Resultado Esperado</th>
+              <th>Nota</th>
+            </tr>
+          </thead>
+          <tbody>
+            {arrayResumo.map(item => (
+              <tr key={item.id_resultado_esperado}>
+                <td>{item.processo_descricao}</td>
+                <td className='tooltip-container'>
+                  <Tippy content={item.resultado_descricao} placement="top" animation="fade">
+                    <span className='resultado-esperado'>
+                      {item.resultado_descricao.substring(0, 50)}{item.resultado_descricao.length > 50 ? '...' : ''}
+                    </span>
+                  </Tippy>
+                </td>
+                <td>{item.nota}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
 
   const renderContent = () => {
     switch (activeParentTab) {
-      case 'Processos':
-        return renderProcessosContent();
       case 'Informações Gerais':
         return renderInformacoesGeraisContent();
+      case 'Processos':
+        return renderProcessosContent();
       case 'Resultado Auditoria':
         return renderResultadoAuditoriaContent();
+      case 'Resumo da Caracterização da Avaliação':
+        return renderResumoAvaliacaoContent();
       default:
         return null;
     }
@@ -299,7 +390,7 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
     if (!avaliacao) {
       return <p>Carregando dados...</p>;
     }
-  
+
     return (
       <div className="conteudo-informacoes-gerais">
         <h2>Informações Gerais</h2>
@@ -328,7 +419,7 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
 
   return (
     <div className="container-etapa">
-      <h1 className='title-form'>VISUALIZAR EVIDÊNCIAS</h1>
+      <h1 className='title-form'>AUDITORIA FINAL</h1>
       <div className='dica-div'>
         <strong className="dica-titulo">Dica:</strong>
         <p className='dica-texto'>

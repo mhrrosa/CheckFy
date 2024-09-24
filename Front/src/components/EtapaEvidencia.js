@@ -105,10 +105,10 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
     try {
       const data = await getDocumentosPorProjeto(projetoId);
       const documentosFormatados = data.map(doc => ({
-        id: doc[0],
-        caminhoArquivo: doc[1],
-        nomeArquivo: doc[2],
-        idProjeto: doc[3]
+        id: doc['ID'],
+        caminhoArquivo: doc['Caminho_Arquivo'],
+        nomeArquivo: doc['Nome_Arquivo'],
+        idProjeto: doc['ID_Projeto']
       }));
       setDocumentos(documentosFormatados);
     } catch (error) {
