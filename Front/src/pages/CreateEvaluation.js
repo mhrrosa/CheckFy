@@ -43,7 +43,7 @@ function CreateEvaluation() {
   const carregarDadosIniciais = async () => {
     try {
       const versoesData = await getVersaoModelo();
-      const versoesFormatadas = versoesData.map(v => ({ id: v[0], nome: v[1] }));
+      const versoesFormatadas = versoesData.map(v => ({ id: v['ID'], nome: v['Nome'] }));
       setVersoesModelo(versoesFormatadas);
 
       if (versoesFormatadas.length > 0) {
@@ -58,7 +58,7 @@ function CreateEvaluation() {
   const carregarNiveis = async (versaoId) => {
     try {
       const niveisData = await getNiveis(versaoId);
-      const niveisFormatados = niveisData.map(n => ({ id: n[0], nivel: n[1] }));
+      const niveisFormatados = niveisData.map(n => ({ id: n['ID'], nivel: n['Nivel'] }));
       setNiveis(niveisFormatados);
     } catch (error) {
       console.error('Erro ao buscar níveis:', error);

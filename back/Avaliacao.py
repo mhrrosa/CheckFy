@@ -34,7 +34,7 @@ class Avaliacao:
                 else:
                     query = "INSERT INTO usuario (Nome, Email, Senha, ID_Tipo) VALUES (%s, %s, %s, %s)"
                     cursor.execute(query, ("Usuário", email, "senha", id_funcao))
-                    novo_usuario_id = self.db.cursor.lastrowid
+                    novo_usuario_id = cursor.lastrowid
                     query = "INSERT INTO usuarios_avaliacao (ID_Avaliacao, ID_Usuario, ID_Funcao) VALUES (%s, %s, %s)"
                     cursor.execute(query, (id_avaliacao, novo_usuario_id, id_funcao))
                     print(f"Simulação de envio de e-mail para {email} solicitando cadastro no sistema.")
