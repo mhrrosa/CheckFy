@@ -82,13 +82,10 @@
   margin: 0 0 0 10px;
 }
 
-.nota-adicional-resultado {
-  margin: 0 0 0 10px;
-  font-size: 1em;
-}
-
 .title-projeto-evidencia {
   color: black;
+  margin-left: 10px;
+  margin-bottom: 5px;
 }
 
 .title-evidencia {
@@ -143,6 +140,10 @@
 
 .arquivo-adicionado {
   color: #ffff;
+}
+
+.evidencia-e-botoes {
+  margin-left: 10px;
 }
 
 .acoes-botao {

@@ -31,3 +31,17 @@
     background: #f0f0f0;
     color: black;
 }
+
+.nota-adicional-div{
+    background-color: #d6efff;
+    border-left: 4px solid #36abff;
+    margin-left: 10px;
+    padding: 5px 0 5px 3px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.nota-adicional-resultado {
+    font-size: 1em;
+    margin: 0;
+}
