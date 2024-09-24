@@ -141,7 +141,7 @@ function EtapaAtribuirNivelMaturidade({ onNext }) {
           >
             <option value="">Selecione um nível</option>
             {niveis.length > 0 && niveis.map(nivel => (
-              <option key={nivel[0]} value={nivel[0]}>{nivel[1]} - {nivel[2]}</option>
+              <option key={nivel['ID']} value={nivel['ID']}>{nivel['Nivel']} - {nivel['Nome_Nivel']}</option>
             ))}
           </select>
         </div>

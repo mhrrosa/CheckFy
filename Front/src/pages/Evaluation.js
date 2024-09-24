@@ -109,6 +109,7 @@ function Evaluation() {
         const avaliacaoId = location.state?.id;
         if (avaliacaoId) {
           const avaliacao = await getAvaliacaoById(avaliacaoId);
+          console.log(avaliacao)
           setAvaliacaoId(avaliacao.id);
           setIdAtividade(avaliacao.id_atividade);
           setIdVersaoModelo(avaliacao.id_versao_modelo);

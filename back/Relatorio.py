@@ -53,7 +53,7 @@ class Relatorio:
             cursor.fetchall()
             cursor.close()
             if result:
-                return {"descricao": result[0], "caminhoArquivo": result[1]}
+                return {"descricao": result['Descricao'], "caminhoArquivo": result['Caminho_Arquivo']}
             return None
         except Exception as e:
             cursor.close()
@@ -112,7 +112,7 @@ class Relatorio:
             cursor.fetchall()
             cursor.close()
             if result:
-                return {"descricao": result[0], "caminhoArquivo": result[1]}
+                return {"descricao": result['Descricao'], "caminhoArquivo": result['Caminho_Arquivo']}
             return None
         except Exception as e:
             cursor.close()
@@ -170,7 +170,7 @@ class Relatorio:
             cursor.fetchall()
             cursor.close()
             if result:
-                return {"descricao": result[0]}
+                return {"descricao": result['Descricao']}
             return None
         except Exception as e:
             print(f"Erro ao obter relatório: {e}")

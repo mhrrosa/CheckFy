@@ -273,12 +273,12 @@ class Avaliacao:
             cursor.execute(query, (id_avaliacao,))
             result = cursor.fetchone()
             cursor.fetchall()  # Consumir quaisquer resultados pendentes
-
+            print(result)
             if result:
                 cursor.close()
                 return {
-                    "apresentacao_inicial": bool(result[0]),
-                    "equipe_treinada": bool(result[1])
+                    "apresentacao_inicial": bool(result['Apresentacao_Inicial']),
+                    "equipe_treinada": bool(result['Equipe_Treinada'])
                 }
             else:
                 cursor.close()
@@ -333,7 +333,7 @@ class Avaliacao:
             data_avaliacao_final = cursor.fetchone()
             cursor.fetchall()  # Consumir quaisquer resultados pendentes
             cursor.close()
-            return data_avaliacao_final[0] if data_avaliacao_final else None
+            return data_avaliacao_final['data_avaliacao_final'] if data_avaliacao_final else None
         except Exception as e:
             print(f"Erro ao obter data da avaliação final: {e}")
             cursor.close()

@@ -457,7 +457,7 @@ class Email:
             if participantes:
                 # Iterar sobre cada participante e enviar um e-mail de notificação
                 for participante in participantes:
-                    email_participante = participante[0]
+                    email_participante = participante['Email']
 
                     remetente = "checkfy123@gmail.com"
                     destinatario = email_participante
