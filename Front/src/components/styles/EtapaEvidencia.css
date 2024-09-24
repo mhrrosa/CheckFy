@@ -79,7 +79,7 @@
 .title-resultado-evidencia {
   color: black;
   font-size: 1.3em;
-  margin: 0 0 0 10px;
+  margin: 0 10px 0 10px;
 }
 
 .title-projeto-evidencia {
@@ -90,6 +90,7 @@
 
 .title-evidencia {
   color: black;
+  margin-bottom: 5px;
 }
 
 .div-resultado-esperado-evidencia {

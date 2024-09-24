@@ -49,8 +49,8 @@ function EtapaCaracterizacao({ onNext, avaliacaoId, idVersaoModelo }) {
   }, [activeTab]);
 
   const carregarDados = async () => {
-    await carregarProcessos();
     await carregarProjetos();
+    await carregarProcessos();
     await carregarGrausImplementacao();
     if (activeTab) {
       await carregarResultadosEsperados(activeTab);
@@ -88,10 +88,13 @@ function EtapaCaracterizacao({ onNext, avaliacaoId, idVersaoModelo }) {
         ...prevResultados,
         [processoId]: data
       }));
-
-      for (const resultado of data) {
-        for (const projeto of projetos) {
-          await carregarEvidencias(resultado.ID, projeto.ID);
+  
+      // Agora, carrega as evidências para cada resultado esperado e cada projeto
+      if (projetos.length > 0) {
+        for (const resultado of data) {
+          for (const projeto of projetos) {
+            await carregarEvidencias(resultado.ID, projeto.ID);
+          }
         }
       }
     } catch (error) {
@@ -192,7 +195,7 @@ function EtapaCaracterizacao({ onNext, avaliacaoId, idVersaoModelo }) {
                   <div className='div-resultado-esperado-caracterizacao' key={resultado.ID}>
                     <label className='label-etapas'>Resultado Esperado: </label>
                     <h3 className='title-resultado-caracterizacao'>{descricao}</h3>
-                    {nota && <p className='nota-adicional-resultado'>{nota}</p>}
+                    {nota && <div className='nota-adicional-div'><p className='nota-adicional-resultado'>{nota}</p></div>}
                     {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
                       <div key={projeto.ID}>
                         <h4 className='title-projeto-caracterizacao'>Projeto: {projeto.Nome_Projeto}</h4>
