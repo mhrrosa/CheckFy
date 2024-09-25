@@ -101,7 +101,7 @@ function Niveis() {
           <table>
             <tbody>
               {niveis.map(nivel => (
-                <tr key={nivel.id}>
+                <tr className='tr-nivel' key={nivel.id}>
                   <td className='nivel-inserido-td'>
                     <input
                       className='input-nivel-preenchido'

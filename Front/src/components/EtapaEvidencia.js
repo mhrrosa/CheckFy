@@ -299,7 +299,6 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
                 const nota = notaIndex !== -1 ? resultado.Descricao.substring(notaIndex).trim() : '';
                 return (
                   <div className='div-resultado-esperado-evidencia' key={resultado.ID}>
-                    <label className='label-etapas'>Resultado Esperado: </label>
                     <h3 className='title-resultado-evidencia'>{descricao}</h3>
                     {nota && <div className='nota-adicional-div'><p className='nota-adicional-resultado'>{nota}</p></div>}
                     {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (

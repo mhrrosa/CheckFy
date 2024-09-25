@@ -110,7 +110,7 @@ function Processos() {
           <table>
             <tbody>
               {processos.map(processo => (
-                <tr key={processo.id}>
+                <tr className='tr-processo' key={processo.id}>
                   <td className='nome-inserido-td'>
                     <input
                       className='input-preenchido'
