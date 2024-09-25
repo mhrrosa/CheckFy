@@ -252,35 +252,29 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
                       </td>
                       <td className='nota-body'>
                         {itemResumo?.nota === 'Escolher L ou P' || itemResumo?.nota === 'Escolher L, N ou P' ? (
-                          <>
-                            <button onClick={() => setDropdownVisible(resultado.ID)}>
-                              {itemResumo?.nota}
-                            </button>
-                            {dropdownVisible === resultado.ID && (
-                              <select
-                                className="nota-selector"
-                                onChange={(e) => handleNotaChange(resultado.ID, e.target.value)}
-                                value=""
-                              >
-                                <option value="" disabled>Selecione</option>
-                                {itemResumo?.nota === 'Escolher L ou P' ? (
-                                  <>
-                                    <option value="Largamente implementado (L)">Largamente implementado (L)</option>
-                                    <option value="Parcialmente implementado (P)">Parcialmente implementado (P)</option>
-                                  </>
-                                ) : (
-                                  <>
-                                    <option value="Largamente implementado (L)">Largamente implementado (L)</option>
-                                    <option value="Parcialmente implementado (P)">Parcialmente implementado (P)</option>
-                                    <option value="Não implementado (N)">Não implementado (N)</option>
-                                  </>
-                                )}
-                              </select>
+                          <select
+                            className="select-grau-resumo-caracterizacao-invalido"
+                            onChange={(e) => handleNotaChange(resultado.ID, e.target.value)}
+                            value=""
+                          >
+                            {itemResumo?.nota === 'Escolher L ou P' ? (
+                              <>
+                                <option value="" disabled>Selecione L ou P</option>
+                                <option value="Largamente implementado (L)">Largamente implementado (L)</option>
+                                <option value="Parcialmente implementado (P)">Parcialmente implementado (P)</option>
+                              </>
+                            ) : (
+                              <>
+                                <option value="" disabled>Selecione L, N ou P</option>
+                                <option value="Largamente implementado (L)">Largamente implementado (L)</option>
+                                <option value="Não implementado (N)">Não implementado (N)</option>
+                                <option value="Parcialmente implementado (P)">Parcialmente implementado (P)</option>
+                              </>
                             )}
-                          </>
+                          </select>
                         ) : (
                           <select
-                            className="nota-selector"
+                            className="select-grau-resumo-caracterizacao"
                             value={itemResumo?.nota || 'Não avaliado (NA)'}
                             onChange={(e) => handleNotaChange(resultado.ID, e.target.value)}
                           >

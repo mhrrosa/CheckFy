@@ -199,7 +199,7 @@ function EtapaCaracterizacao({ onNext, avaliacaoId, idVersaoModelo }) {
                       <div key={projeto.ID}>
                         <h4 className='title-projeto-caracterizacao'>Projeto: {projeto.Nome_Projeto}</h4>
                         <select
-                          className='select-grau'
+                          className='select-grau-caracterizacao'
                           value={grausImplementacao[`${resultado.ID}-${projeto.ID}`] || "Não avaliado (NA)"}
                           onChange={(e) => handleSelectChange(e, resultado.ID, projeto.ID)}
                         >
