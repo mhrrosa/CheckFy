@@ -11,6 +11,7 @@ import {
   inserirRelatorioAuditoriaFinal,
   atualizarRelatorioAuditoriaFinal,
   getGrausImplementacaoEmpresa,
+  getGrausImplementacao
 } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/Form.css';
@@ -32,6 +33,7 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
   const [justificativa, setJustificativa] = useState('');
   const [relatorioExiste, setRelatorioExiste] = useState(false);
   const [arrayResumo, setArrayResumo] = useState([]);
+  const [grausImplementacao, setGrausImplementacao] = useState({});
 
   const parentTabs = ['Informações Gerais', 'Processos', 'Resumo da Caracterização da Avaliação', 'Resultado Auditoria'];
 
@@ -65,6 +67,8 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
       await carregarProjetos();
 
       const processosLoaded = await carregarProcessos();
+
+      await carregarGrausImplementacao();
 
       // Carregar resultados esperados para todos os processos
       for (const processo of processosLoaded) {
@@ -139,6 +143,19 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
       }));
     } catch (error) {
       console.error('Erro ao carregar evidencias:', error);
+    }
+  };
+
+  const carregarGrausImplementacao = async () => {
+    try {
+      const data = await getGrausImplementacao(avaliacaoId);
+      const graus = {};
+      data.forEach(grau => {
+        graus[`${grau.ID_Resultado_Esperado}-${grau.ID_Projeto}`] = grau.Nota;
+      });
+      setGrausImplementacao(graus);
+    } catch (error) {
+      console.error('Erro ao carregar graus de implementação:', error);
     }
   };
 
@@ -254,6 +271,7 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
                       {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
                         <div key={projeto.ID}>
                           <h4 className='title-projeto-evidencia'>Projeto: {projeto.Nome_Projeto}</h4>
+                          <p className='nota-grau'>Nota: {grausImplementacao[`${resultado.ID}-${projeto.ID}`] || "Não avaliado (NA)"}</p>
                           <div>
                             {evidencias[`${resultado.ID}-${projeto.ID}`] && evidencias[`${resultado.ID}-${projeto.ID}`]
                               .map(evidencia => (
@@ -275,6 +293,7 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
       </>
     );
   };
+
 
   const renderResultadoAuditoriaContent = () => {
     return (

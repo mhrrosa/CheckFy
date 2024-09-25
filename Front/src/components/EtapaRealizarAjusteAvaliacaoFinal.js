@@ -8,12 +8,11 @@ import {
   getProjetosByAvaliacao,
   getEvidenciasPorResultado,
   getRelatorioAuditoriaFinal,
-  inserirRelatorioAuditoriaFinal,
-  atualizarRelatorioAuditoriaFinal,
   getGrausImplementacaoEmpresa,
   addGrauImplementacaoEmpresa,
   updateGrausImplementacaoEmpresa,
   addOrUpdateGrauImplementacao,
+  getGrausImplementacao
 } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/Form.css';
@@ -38,6 +37,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
   const [arrayResumo, setArrayResumo] = useState([]);
   const [resumoSalvo, setResumoSalvo] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(null);
+  const [grausImplementacao, setGrausImplementacao] = useState({});
 
   const parentTabs = ['Resultado Auditoria', 'Informações Gerais', 'Processos', 'Resumo da Caracterização da Avaliação', 'Concluir Ajustes e Solicitar a Auditoria'];
 
@@ -62,6 +62,24 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     }
   }, [activeChildTab]);
 
+  const salvarNotas = async () => {
+    try {
+      const entries = Object.entries(grausImplementacao);
+      for (const [key, nota] of entries) {
+        const [resultadoId, projetoId] = key.split('-');
+        await addOrUpdateGrauImplementacao({
+          nota,
+          resultadoId: parseInt(resultadoId),
+          projetoId: parseInt(projetoId)
+        });
+      }
+      alert('Notas salvas com sucesso!');
+    } catch (error) {
+      console.error('Erro ao salvar notas:', error);
+      alert('Erro ao salvar notas.');
+    }
+  };
+
   const carregarDados = async () => {
     try {
       const avaliacaoData = await getAvaliacaoById(avaliacaoId);
@@ -72,6 +90,8 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
       await carregarProjetos();
 
       const processosLoaded = await carregarProcessos();
+
+      await carregarGrausImplementacao();
 
       // Carregar resultados esperados para todos os processos
       for (const processo of processosLoaded) {
@@ -99,6 +119,19 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     } catch (error) {
       console.error('Erro ao carregar processos:', error);
       return [];
+    }
+  };
+
+  const carregarGrausImplementacao = async () => {
+    try {
+      const data = await getGrausImplementacao(avaliacaoId);
+      const graus = {};
+      data.forEach(grau => {
+        graus[`${grau.ID_Resultado_Esperado}-${grau.ID_Projeto}`] = grau.Nota;
+      });
+      setGrausImplementacao(graus);
+    } catch (error) {
+      console.error('Erro ao carregar graus de implementação:', error);
     }
   };
 
@@ -221,6 +254,14 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     }
   };
 
+  const handleSelectChange = (evento, resultadoId, projetoId) => {
+    const nota = evento.target.value;
+    setGrausImplementacao(prevGraus => ({
+      ...prevGraus,
+      [`${resultadoId}-${projetoId}`]: nota
+    }));
+  };
+
   const handleNotaChange = (resultadoId, nota) => {
     setArrayResumo(prevArray => 
       prevArray.map(item => 
@@ -250,117 +291,96 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     }
   };
 
-  const renderProcessosContent = () => {
+    const renderProcessosContent = () => {
     return (
-      <>
+        <>
         <div className="tabs">
-          {processos.map((processo) => (
+            {processos.map((processo) => (
             <button
-              key={processo.ID}
-              className={`tab-button ${activeChildTab === processo.ID ? 'active' : ''}`}
-              onClick={() => setActiveChildTab(processo.ID)}
+                key={processo.ID}
+                className={`tab-button ${activeChildTab === processo.ID ? 'active' : ''}`}
+                onClick={() => setActiveChildTab(processo.ID)}
             >
-              {processo.Descricao === "Gerência de Projetos" ? "GPR" :
+                {processo.Descricao === "Gerência de Projetos" ? "GPR" :
                 processo.Descricao === "Engenharia de Requisitos" ? "REQ" :
-                  processo.Descricao === "Projeto e Construção do Produto" ? "PCP" :
+                    processo.Descricao === "Projeto e Construção do Produto" ? "PCP" :
                     processo.Descricao === "Integração do Produto" ? "ITP" :
-                      processo.Descricao === "Verificação e Validação" ? "VV" :
+                        processo.Descricao === "Verificação e Validação" ? "VV" :
                         processo.Descricao === "Gerência de Configuração" ? "GCO" :
-                          processo.Descricao === "Aquisição" ? "AQU" :
+                            processo.Descricao === "Aquisição" ? "AQU" :
                             processo.Descricao === "Medição" ? "MED" :
-                              processo.Descricao === "Gerência de Decisões" ? "GDE" :
+                                processo.Descricao === "Gerência de Decisões" ? "GDE" :
                                 processo.Descricao === "Gerência de Recursos Humanos" ? "GRH" :
-                                  processo.Descricao === "Gerência de Processos" ? "GPC" :
+                                    processo.Descricao === "Gerência de Processos" ? "GPC" :
                                     processo.Descricao === "Gerência Organizacional" ? "ORG" :
-                                      processo.Descricao}
+                                        processo.Descricao}
             </button>
-          ))}
+            ))}
         </div>
         <div className="tab-content">
-          {processos.map(processo => (
+            {processos.map(processo => (
             activeChildTab === processo.ID && (
-              <div key={processo.ID}>
+                <div key={processo.ID}>
                 <label className='label-etapas'>Processo: </label>
-                <h2 className='title-processo-evidencia'>{processo.Descricao}</h2>
+                <h2 className='title-processo-caracterizacao'>{processo.Descricao}</h2>
                 {resultadosEsperados[processo.ID] && resultadosEsperados[processo.ID].map(resultado => {
-                  const notaIndex = resultado.Descricao.indexOf('NOTA');
-                  const descricao = notaIndex !== -1 ? resultado.Descricao.substring(0, notaIndex).trim() : resultado.Descricao;
-                  const nota = notaIndex !== -1 ? resultado.Descricao.substring(notaIndex).trim() : '';
-                  return (
-                    <div className='div-resultado-esperado-evidencia' key={resultado.ID}>
-                      <label className='label-etapas'>Resultado Esperado: </label>
-                      <h3 className='title-resultado-evidencia'>{descricao}</h3>
-                      {nota && <p className='nota-adicional-resultado'>{nota}</p>}
-                      {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
+                    const notaIndex = resultado.Descricao.indexOf('NOTA');
+                    const descricao = notaIndex !== -1 ? resultado.Descricao.substring(0, notaIndex).trim() : resultado.Descricao;
+                    const nota = notaIndex !== -1 ? resultado.Descricao.substring(notaIndex).trim() : '';
+                    return (
+                    <div className='div-resultado-esperado-caracterizacao' key={resultado.ID}>
+                        <label className='label-etapas'>Resultado Esperado: </label>
+                        <h3 className='title-resultado-caracterizacao'>{descricao}</h3>
+                        {nota && <div className='nota-adicional-div'><p className='nota-adicional-resultado'>{nota}</p></div>}
+                        {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
                         <div key={projeto.ID}>
-                          <h4 className='title-projeto-evidencia'>Projeto: {projeto.Nome_Projeto}</h4>
-                          <div>
+                            <h4 className='title-projeto-caracterizacao'>Projeto: {projeto.Nome_Projeto}</h4>
+                            <select
+                            className='select-grau'
+                            value={grausImplementacao[`${resultado.ID}-${projeto.ID}`] || "Não avaliado (NA)"}
+                            onChange={(e) => handleSelectChange(e, resultado.ID, projeto.ID)}
+                            >
+                            {options.map((option, index) => (
+                                <option key={index} value={option}>{option}</option>
+                            ))}
+                            </select>
+                            <div>
                             {evidencias[`${resultado.ID}-${projeto.ID}`] && evidencias[`${resultado.ID}-${projeto.ID}`]
-                              .map(evidencia => (
-                                <div key={evidencia.id}>
-                                  <p className='title-evidencia'>Evidência: {evidencia.nomeArquivo}</p>
-                                  <button className='button-mostrar-documento-etapa-evidencia' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
+                                .map(evidencia => (
+                                <div className='evidencia-e-botao' key={evidencia.id}>
+                                    <p className='title-evidencia-caracterizacao'>Evidencia: {evidencia.nomeArquivo}</p>
+                                    <button className='button-mostrar-documento-etapa-evidencia' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
                                 </div>
-                              ))}
-                          </div>
+                                ))}
+                            </div>
                         </div>
-                      ))}
+                        ))}
                     </div>
-                  );
+                    );
                 })}
-              </div>
+                </div>
             )
-          ))}
+            ))}
         </div>
-      </>
+        <button className='button-save' onClick={salvarNotas}>SALVAR NOTAS</button>
+        </>
     );
-  };
+    };
 
-  const renderResultadoAuditoriaContent = () => {
-    return (
-      <div className="conteudo-resultado">
-        <h2>Resultado da auditoria</h2>
-        {aprovacao === 'Aprovar' && <p>Auditoria Aprovada</p>}
-        {aprovacao === 'Reprovar' && (
-          <>
-            <p>Auditoria Reprovada</p>
-            <p>Justificativa: {justificativa}</p>
-          </>
-        )}
-      </div>
-    );
-  };
-
-  const salvarDecisao = async () => {
-    if (aprovacao === '') {
-      alert('Por favor, selecione uma opção.');
-      return;
-    }
-
-    if (aprovacao === 'Reprovar' && justificativa.trim() === '') {
-      alert('Por favor, forneça uma justificativa para a reprovação.');
-      return;
-    }
-
-    try {
-      const data = {
-        descricao: aprovacao === 'Reprovar' ? justificativa : 'Aprovado',
-        idAvaliacao: avaliacaoId,
-      };
-
-      if (relatorioExiste) {
-        await atualizarRelatorioAuditoriaFinal(data);
-        alert('Decisão atualizada com sucesso!');
-      } else {
-        await inserirRelatorioAuditoriaFinal(data);
-        alert('Decisão salva com sucesso!');
-        setRelatorioExiste(true);
-      }
-    } catch (error) {
-      console.error('Erro ao salvar decisão:', error);
-      alert('Erro ao salvar decisão.');
-    }
-  };
+    const renderResultadoAuditoriaContent = () => {
+        return (
+        <div className="conteudo-resultado">
+            <h2>Resultado da auditoria</h2>
+            {aprovacao === 'Aprovar' && <p>Auditoria Aprovada</p>}
+            {aprovacao === 'Reprovar' && (
+            <>
+                <p>Auditoria Reprovada</p>
+                <p>Justificativa: {justificativa}</p>
+            </>
+            )}
+        </div>
+        );
+    };
 
   const renderResumoAvaliacaoContent = () => {
     return (
