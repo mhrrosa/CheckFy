@@ -36,8 +36,8 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
   const [relatorioExiste, setRelatorioExiste] = useState(false);
   const [arrayResumo, setArrayResumo] = useState([]);
   const [resumoSalvo, setResumoSalvo] = useState(false);
-  const [dropdownVisible, setDropdownVisible] = useState(null);
   const [grausImplementacao, setGrausImplementacao] = useState({});
+  const [activeTab, setActiveTab] = useState(null); // Added for tabs in Resumo da Caracterização
 
   const parentTabs = ['Resultado Auditoria', 'Informações Gerais', 'Processos', 'Resumo da Caracterização da Avaliação', 'Concluir Ajustes e Solicitar a Auditoria'];
 
@@ -61,6 +61,12 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
       carregarResultadosEsperados(activeChildTab);
     }
   }, [activeChildTab]);
+
+  useEffect(() => {
+    if (processos.length > 0 && activeParentTab === 'Resumo da Caracterização da Avaliação') {
+      setActiveTab(processos[0].ID);
+    }
+  }, [processos, activeParentTab]);
 
   const salvarNotas = async () => {
     try {
@@ -270,7 +276,6 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
           : item
       )
     );
-    setDropdownVisible(null); // Fechar o dropdown após a seleção
   };
 
   const salvarResumoCaracterizacao = async () => {
@@ -382,50 +387,83 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
         );
     };
 
-  const renderResumoAvaliacaoContent = () => {
-    return (
-      <div className="management-etapa5-container">
-        <h1 className='management-etapa5-title'>RESUMO DA CARACTERIZAÇÃO DA AVALIAÇÃO</h1>
-        <table className='resumo-tabela'>
-          <thead>
-            <tr>
-              <th>Processo</th>
-              <th>Resultado Esperado</th>
-              <th>Nota</th>
-            </tr>
-          </thead>
-          <tbody>
-            {arrayResumo.map(item => (
-              <tr key={item.id_resultado_esperado}>
-                <td>{item.processo_descricao}</td>
-                <td className='tooltip-container'>
-                  <Tippy content={item.resultado_descricao} placement="top" animation="fade">
-                    <span className='resultado-esperado'>
-                      {item.resultado_descricao.substring(0, 50)}{item.resultado_descricao.length > 50 ? '...' : ''}
-                    </span>
-                  </Tippy>
-                </td>
-                <td>
-                  <select
-                    className="nota-selector"
-                    value={item.nota || 'Não avaliado (NA)'}
-                    onChange={(e) => handleNotaChange(item.id_resultado_esperado, e.target.value)}
-                  >
-                    {options.map((option, index) => (
-                      <option key={index} value={option}>{option}</option>
-                    ))}
-                  </select>
-                </td>
-              </tr>
+    const renderResumoAvaliacaoContent = () => {
+      return (
+        <div className="container-etapa">
+          <h1 className='title-form'>RESUMO DA CARACTERIZAÇÃO DA AVALIAÇÃO</h1>
+          <div className="tabs">
+            {processos.map((processo, index) => (
+              <button
+                key={processo.ID}
+                className={`tab-button ${activeTab === processo.ID ? 'active' : ''}`}
+                onClick={() => setActiveTab(processo.ID)}
+              >
+                {processo.Descricao === "Gerência de Projetos" ? "GPR" :
+                 processo.Descricao === "Engenharia de Requisitos" ? "REQ" : 
+                 processo.Descricao === "Projeto e Construção do Produto" ? "PCP" :
+                 processo.Descricao === "Integração do Produto" ? "ITP" :
+                 processo.Descricao === "Verificação e Validação" ? "VV" :
+                 processo.Descricao === "Gerência de Configuração" ? "GCO" :
+                 processo.Descricao === "Aquisição" ? "AQU" :
+                 processo.Descricao === "Medição" ? "MED" :
+                 processo.Descricao === "Gerência de Decisões" ? "GDE" :
+                 processo.Descricao === "Gerência de Recursos Humanos" ? "GRH" :
+                 processo.Descricao === "Gerência de Processos" ? "GPC" :
+                 processo.Descricao === "Gerência Organizacional" ? "ORG" :
+                 processo.Descricao}
+              </button>
             ))}
-          </tbody>
-        </table>
-        <button className='button-save' onClick={salvarResumoCaracterizacao}>
-          {resumoSalvo ? 'ATUALIZAR' : 'SALVAR'}
-        </button>
-      </div>
-    );
-  };
+          </div>
+          <div className="tab-content">
+            <table className='resumo-tabela'>
+              <thead>
+                <tr className='tr-table-resumo-caracterizacao'>
+                  <th className='resultado-esperado-head'>Resultado Esperado</th>
+                  <th className='nota-head'>Nota</th>
+                </tr>
+              </thead>
+              <tbody>
+                {processos.map(processo => (
+                  activeTab === processo.ID && (
+                    (resultadosEsperados[processo.ID] || []).map(resultado => {
+                      const itemResumo = arrayResumo.find(item => item.id_resultado_esperado === resultado.ID);
+                      return (
+                        <tr className='tr-table-resumo-caracterizacao' key={resultado.ID}>
+                          <td className='resultado-esperado-body'>
+                            <Tippy content={resultado.Descricao} placement="top" animation="fade">
+                              <span className='resultado-esperado'>
+                                {resultado.Descricao.substring(0, 50)}{resultado.Descricao.length > 50 ? '...' : ''}
+                              </span>
+                            </Tippy>
+                          </td>
+                          <td className='nota-body'>
+                            <select
+                              className="select-grau-resumo-caracterizacao"
+                              value={itemResumo?.nota || 'Não avaliado (NA)'}
+                              onChange={(e) => handleNotaChange(resultado.ID, e.target.value)}
+                            >
+                              <option value="Totalmente implementado (T)">Totalmente implementado (T)</option>
+                              <option value="Largamente implementado (L)">Largamente implementado (L)</option>
+                              <option value="Parcialmente implementado (P)">Parcialmente implementado (P)</option>
+                              <option value="Não implementado (N)">Não implementado (N)</option>
+                              <option value="Não avaliado (NA)">Não avaliado (NA)</option>
+                              <option value="Fora do escopo (F)">Fora do escopo (F)</option>
+                            </select>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <button className='button-save' onClick={salvarResumoCaracterizacao}>
+            {resumoSalvo ? 'ATUALIZAR' : 'SALVAR'}
+          </button>
+        </div>
+      );
+    };
 
   const renderContent = () => {
     switch (activeParentTab) {
