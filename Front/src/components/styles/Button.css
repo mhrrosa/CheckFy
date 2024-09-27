@@ -67,6 +67,7 @@
 .botoes-avaliacao {
     display: flex;
     gap: 10px;
+    margin-left: auto;
 }
 
 .button-home-avaliacao {
@@ -337,7 +338,7 @@
 
 .button-save {
     margin-top: 20px;
-    width: 10em;
+    width: 1em;
     padding: 10px 20px;
     background-color: #007bff;
     color: white;

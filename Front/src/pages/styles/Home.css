@@ -2,15 +2,12 @@
     font-size: 20px;
     margin-top: 40px;
     width: 80%;
+    display: flex;
+    flex-direction: column;
 }
 
 .title-avaliacoes-criadas {
     font-size: 25px;
-}
-
-.avaliacoes-lista p {
-    padding-left: 20px;
-    margin-bottom: 10px;
 }
 
 .avaliacao-item {
@@ -21,19 +18,28 @@
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     transition: box-shadow 0.3s ease;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
 }
 
 .avaliacao-item:hover {
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-.avaliacao-item p {
+.nome-avaliacao {
     margin: 0;
     padding-left: 30px;
 }
 
 .mensagem-nao-encontrado-home {
     color: black;
+}
+
+.status-avaliacao {
+    font-size: 15px;
+    color: #000;
+    background-color: #26bf00;
+    margin-left: 20px;
+    border-radius: 5px;
+    padding: 2px 4px;
 }
