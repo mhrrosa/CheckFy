@@ -6,10 +6,10 @@ class Avaliacao:
         try:
             cursor = self.db.conn.cursor(dictionary=True)
             query = """
-                INSERT INTO avaliacao (Nome, Descricao, Status, ID_Nivel_Solicitado, ID_Avaliador_Lider, ID_Atividade, ID_Versao_Modelo, ID_Status_Avaliacao) 
+                INSERT INTO avaliacao (Nome, Descricao, ID_Nivel_Solicitado, ID_Avaliador_Lider, ID_Atividade, ID_Versao_Modelo, ID_Status_Avaliacao) 
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             """
-            values = (nome, descricao, "Em andamento", id_nivel_solicitado, id_usuario, 1, id_versao_modelo, 1)
+            values = (nome, descricao, id_nivel_solicitado, id_usuario, 1, id_versao_modelo, 1)
             cursor.execute(query, values)
             id_avaliacao = cursor.lastrowid
 
@@ -79,7 +79,6 @@ class Avaliacao:
                     "nome": row['Nome'],
                     "descricao": row['Descricao'],
                     "id_avaliador_lider": row['ID_Avaliador_Lider'],
-                    "status": row['Status'],
                     "id_atividade": row['ID_Atividade'],
                     "id_empresa": row['ID_Empresa'],
                     "id_nivel_solicitado": row['ID_Nivel_Solicitado'],
@@ -99,7 +98,7 @@ class Avaliacao:
     def obter_avaliacao(self, projeto_id):
         cursor = self.db.conn.cursor(dictionary=True)
         query = """
-            SELECT a.ID, a.Nome, a.Descricao, a.ID_Avaliador_Lider, u.Nome AS Nome_Avaliador_Lider, a.`Status`, 
+            SELECT a.ID, a.Nome, a.Descricao, a.ID_Avaliador_Lider, u.Nome AS Nome_Avaliador_Lider, 
             atv.Descricao AS Descricao_Atividade, a.ID_Empresa, e.Nome AS Nome_Empresa, n.Nivel AS Nivel_Solicitado, 
             v.Nome AS Nome_Versao_Modelo, a.ID_Instituicao, a.Atividade_Planejamento, a.Cronograma_Planejamento, 
             a.Avaliacao_Aprovada_Pela_Softex, a.ID_Atividade, a.ID_Nivel_Solicitado, a.ID_Versao_Modelo, 
@@ -129,7 +128,6 @@ class Avaliacao:
                 "descricao": row['Descricao'],
                 "id_avaliador_lider": row['ID_Avaliador_Lider'],
                 "nome_avaliador_lider": row['Nome_Avaliador_Lider'],
-                "status": row['Status'],
                 "descricao_atividade": row['Descricao_Atividade'],
                 "id_empresa": row['ID_Empresa'],
                 "nome_empresa": row['Nome_Empresa'],
@@ -173,15 +171,15 @@ class Avaliacao:
         finally:
             cursor.close()
 
-    def atualizar_avaliacao(self, projeto_id, novo_nome, nova_descricao, novo_id_avaliador_lider, novo_status, novo_modelo, novo_id_atividade, novo_id_empresa, novo_id_nivel_solicitado, novo_id_nivel_atribuido, novo_parece_nivel_final):
+    def atualizar_avaliacao(self, projeto_id, novo_nome, nova_descricao, novo_id_avaliador_lider, novo_id_status_avaliacao, novo_modelo, novo_id_atividade, novo_id_empresa, novo_id_nivel_solicitado, novo_id_nivel_atribuido, novo_parece_nivel_final):
         cursor = self.db.conn.cursor(dictionary=True)
         try:
             query = """
-                UPDATE avaliacao SET Nome = %s, Descricao = %s, ID_Avaliador_Lider = %s, Status = %s, 
+                UPDATE avaliacao SET Nome = %s, Descricao = %s, ID_Avaliador_Lider = %s, ID_Status_Avaliacao = %s, 
                 Modelo = %s, ID_Atividade = %s, ID_Empresa = %s, ID_Nivel_Solicitado = %s, 
                 ID_Nivel_Atribuido = %s, Parece_Nivel_Final = %s WHERE ID = %s
             """
-            values = (novo_nome, nova_descricao, novo_id_avaliador_lider, novo_status, novo_modelo, novo_id_atividade, novo_id_empresa, novo_id_nivel_solicitado, novo_id_nivel_atribuido, novo_parece_nivel_final, projeto_id)
+            values = (novo_nome, nova_descricao, novo_id_avaliador_lider, novo_id_status_avaliacao, novo_modelo, novo_id_atividade, novo_id_empresa, novo_id_nivel_solicitado, novo_id_nivel_atribuido, novo_parece_nivel_final, projeto_id)
             cursor.execute(query, values)
             
             # Confirmar a atualização
