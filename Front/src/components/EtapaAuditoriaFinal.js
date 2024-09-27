@@ -34,7 +34,7 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
   const [relatorioExiste, setRelatorioExiste] = useState(false);
   const [arrayResumo, setArrayResumo] = useState([]);
   const [grausImplementacao, setGrausImplementacao] = useState({});
-
+  const [activeTab, setActiveTab] = useState(null);
   const parentTabs = ['Informações Gerais', 'Processos', 'Resumo da Caracterização da Avaliação', 'Resultado Auditoria'];
 
   useEffect(() => {
@@ -48,6 +48,13 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
       carregarResultadosEsperados(activeChildTab);
     }
   }, [activeChildTab]);
+
+  useEffect(() => {
+    if (processos.length > 0 && activeParentTab === 'Resumo da Caracterização da Avaliação') {
+      setActiveTab(processos[0].ID);
+    }
+  }, [processos, activeParentTab]);
+  
 
   const handleNextStep = () => {
     if (aprovacao === 'Aprovar') {
@@ -362,30 +369,55 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
     return (
       <div className="management-etapa5-container">
         <h1 className='management-etapa5-title'>RESUMO DA CARACTERIZAÇÃO DA AVALIAÇÃO</h1>
-        <table className='resumo-tabela'>
-          <thead>
-            <tr>
-              <th>Processo</th>
-              <th>Resultado Esperado</th>
-              <th>Nota</th>
-            </tr>
-          </thead>
-          <tbody>
-            {arrayResumo.map(item => (
-              <tr key={item.id_resultado_esperado}>
-                <td>{item.processo_descricao}</td>
-                <td className='tooltip-container'>
-                  <Tippy content={item.resultado_descricao} placement="top" animation="fade">
-                    <span className='resultado-esperado'>
-                      {item.resultado_descricao.substring(0, 50)}{item.resultado_descricao.length > 50 ? '...' : ''}
-                    </span>
-                  </Tippy>
-                </td>
-                <td>{item.nota}</td>
+        <div className="tabs">
+          {processos.map((processo, index) => (
+            <button
+              key={processo.ID}
+              className={`tab-button ${activeTab === processo.ID ? 'active' : ''}`}
+              onClick={() => setActiveTab(processo.ID)}
+            >
+              {processo.Descricao === "Gerência de Projetos" ? "GPR" :
+               processo.Descricao === "Engenharia de Requisitos" ? "REQ" : 
+               processo.Descricao === "Projeto e Construção do Produto" ? "PCP" :
+               processo.Descricao === "Integração do Produto" ? "ITP" :
+               processo.Descricao === "Verificação e Validação" ? "VV" :
+               processo.Descricao === "Gerência de Configuração" ? "GCO" :
+               processo.Descricao === "Aquisição" ? "AQU" :
+               processo.Descricao === "Medição" ? "MED" :
+               processo.Descricao === "Gerência de Decisões" ? "GDE" :
+               processo.Descricao === "Gerência de Recursos Humanos" ? "GRH" :
+               processo.Descricao === "Gerência de Processos" ? "GPC" :
+               processo.Descricao === "Gerência Organizacional" ? "ORG" :
+               processo.Descricao}
+            </button>
+          ))}
+        </div>
+        <div className="tab-content">
+          <table className='resumo-tabela'>
+            <thead>
+              <tr>
+                <th>Resultado Esperado</th>
+                <th>Nota</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {arrayResumo
+                .filter(item => item.id_processo === activeTab)
+                .map(item => (
+                  <tr key={item.id_resultado_esperado}>
+                    <td className='tooltip-container'>
+                      <Tippy content={item.resultado_descricao} placement="top" animation="fade">
+                        <span className='resultado-esperado'>
+                          {item.resultado_descricao.substring(0, 50)}{item.resultado_descricao.length > 50 ? '...' : ''}
+                        </span>
+                      </Tippy>
+                    </td>
+                    <td>{item.nota}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   };

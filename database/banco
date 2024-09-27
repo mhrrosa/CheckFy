@@ -57,7 +57,6 @@ CREATE TABLE `avaliacao` (
   `Nome` varchar(75) NOT NULL,
   `Descricao` varchar(150) NOT NULL,
   `ID_Avaliador_Lider` int DEFAULT NULL,
-  `Status` varchar(15) NOT NULL,
   `ID_Atividade` int DEFAULT NULL,
   `ID_Empresa` int DEFAULT NULL,
   `ID_Nivel_Solicitado` int NOT NULL,
@@ -100,7 +99,7 @@ CREATE TABLE `avaliacao` (
 
 LOCK TABLES `avaliacao` WRITE;
 /*!40000 ALTER TABLE `avaliacao` DISABLE KEYS */;
-INSERT INTO `avaliacao` VALUES (52,'Avaliação de teste 1','a',20,'Em andamento',19,15,43,NULL,NULL,2,1,'asdfasdf','asdf',1,NULL,NULL,NULL,NULL,NULL,2),(53,'Testando','a',20,'Em andamento',24,2,43,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'dfdiughdfogali',2),(54,'Teste 2','Teste 2',20,'Em andamento',19,2,43,52,'Satisfeito',1,1,'aa','bb',1,'A Startup Enxuta - Eric Ries.pdf','2024-09-10',1,1,'SFASDF',2),(55,'Avaliação de teste do erro de back end','Avaliação de teste do erro de back end',20,'Em andamento',19,13,43,NULL,NULL,2,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,2),(56,'aaaaaaaaa','bbbbbbbbbbbb',20,'Em andamento',23,13,43,43,'Satisfeito',1,NULL,'Atividades de planejamento','Cronograma do planejamento',1,NULL,NULL,NULL,NULL,'a',2);
+INSERT INTO `avaliacao` VALUES (52,'Avaliação de teste 1','a',20,19,15,43,NULL,NULL,2,1,'asdfasdf','asdf',1,NULL,NULL,NULL,NULL,NULL,2),(53,'Testando','a',20,24,2,43,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'dfdiughdfogali',2),(54,'Teste 2','Teste 2',20,19,2,43,52,'Satisfeito',1,1,'aa','bb',1,'A Startup Enxuta - Eric Ries.pdf','2024-09-10',1,1,'SFASDF',2),(55,'Avaliação de teste do erro de back end','Avaliação de teste do erro de back end',20,19,13,43,NULL,NULL,2,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,2),(56,'aaaaaaaaa','bbbbbbbbbbbb',20,24,13,43,43,'Satisfeito',1,1,'Atividades de planejamento','Cronograma do planejamento',1,NULL,'2024-10-10',1,1,'aadasd',2);
 /*!40000 ALTER TABLE `avaliacao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -173,7 +172,7 @@ CREATE TABLE `evidencia` (
   KEY `indicador_FK_1` (`ID_Resultado_Esperado`),
   CONSTRAINT `indicador_FK` FOREIGN KEY (`ID_Documento`) REFERENCES `documento` (`ID`),
   CONSTRAINT `indicador_FK_1` FOREIGN KEY (`ID_Resultado_Esperado`) REFERENCES `resultado_esperado_mpsbr` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -227,7 +226,7 @@ CREATE TABLE `grau_implementacao_processo_projeto` (
   KEY `grau_implementacao_processo_projeto_FK_1` (`ID_Resultado_Esperado`),
   CONSTRAINT `grau_implementacao_processo_projeto_FK` FOREIGN KEY (`ID_Projeto`) REFERENCES `projeto` (`ID`),
   CONSTRAINT `grau_implementacao_processo_projeto_FK_1` FOREIGN KEY (`ID_Resultado_Esperado`) REFERENCES `resultado_esperado_mpsbr` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -236,7 +235,7 @@ CREATE TABLE `grau_implementacao_processo_projeto` (
 
 LOCK TABLES `grau_implementacao_processo_projeto` WRITE;
 /*!40000 ALTER TABLE `grau_implementacao_processo_projeto` DISABLE KEYS */;
-INSERT INTO `grau_implementacao_processo_projeto` VALUES (7,'Não implementado (N)',11,72),(8,'Parcialmente implementado (P)',11,73),(9,'Largamente implementado (L)',12,72),(10,'Largamente implementado (L)',12,73),(11,'Parcialmente implementado (P)',14,72),(12,'Parcialmente implementado (P)',14,73),(13,'Não implementado (N)',16,72),(14,'Não implementado (N)',16,73),(15,'Fora do escopo (F)',18,72),(16,'Fora do escopo (F)',18,73),(17,'Parcialmente implementado (P)',11,74),(18,'Parcialmente implementado (P)',11,75),(19,'Parcialmente implementado (P)',11,76),(20,'Largamente implementado (L)',13,76),(21,'Parcialmente implementado (P)',69,72);
+INSERT INTO `grau_implementacao_processo_projeto` VALUES (7,'Não implementado (N)',11,72),(8,'Parcialmente implementado (P)',11,73),(9,'Largamente implementado (L)',12,72),(10,'Largamente implementado (L)',12,73),(11,'Parcialmente implementado (P)',14,72),(12,'Parcialmente implementado (P)',14,73),(13,'Não implementado (N)',16,72),(14,'Não implementado (N)',16,73),(15,'Fora do escopo (F)',18,72),(16,'Fora do escopo (F)',18,73),(17,'Parcialmente implementado (P)',11,74),(18,'Parcialmente implementado (P)',11,75),(19,'Parcialmente implementado (P)',11,76),(20,'Largamente implementado (L)',13,76),(21,'Parcialmente implementado (P)',69,72),(22,'Não implementado (N)',15,76);
 /*!40000 ALTER TABLE `grau_implementacao_processo_projeto` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -266,7 +265,7 @@ CREATE TABLE `grau_implementacao_processo_unidade_organizacional` (
 
 LOCK TABLES `grau_implementacao_processo_unidade_organizacional` WRITE;
 /*!40000 ALTER TABLE `grau_implementacao_processo_unidade_organizacional` DISABLE KEYS */;
-INSERT INTO `grau_implementacao_processo_unidade_organizacional` VALUES (51,11,'Fora do escopo (F)',53),(52,12,'Largamente implementado (L)',53),(53,14,'Parcialmente implementado (P)',53),(54,16,'Não implementado (N)',53),(55,18,'Largamente implementado (L)',53),(56,19,'Não avaliado (NA)',53),(57,20,'Não avaliado (NA)',53),(58,22,'Não avaliado (NA)',53),(59,23,'Não avaliado (NA)',53),(60,24,'Não avaliado (NA)',53),(61,26,'Não avaliado (NA)',53),(62,27,'Não avaliado (NA)',53),(63,29,'Não avaliado (NA)',53),(64,31,'Não avaliado (NA)',53),(65,33,'Não avaliado (NA)',53),(66,34,'Não avaliado (NA)',53),(67,35,'Não avaliado (NA)',53),(68,37,'Não avaliado (NA)',53),(69,43,'Não avaliado (NA)',53),(70,44,'Não avaliado (NA)',53),(71,46,'Não avaliado (NA)',53),(72,48,'Não avaliado (NA)',53),(73,50,'Não avaliado (NA)',53),(74,51,'Não avaliado (NA)',53),(75,52,'Não avaliado (NA)',53),(76,11,'Largamente implementado (L)',54),(77,12,'Não avaliado (NA)',54),(78,14,'Não avaliado (NA)',54),(79,16,'Não avaliado (NA)',54),(80,18,'Não avaliado (NA)',54),(81,19,'Não avaliado (NA)',54),(82,20,'Não avaliado (NA)',54),(83,22,'Não avaliado (NA)',54),(84,23,'Não avaliado (NA)',54),(85,24,'Não avaliado (NA)',54),(86,26,'Não avaliado (NA)',54),(87,27,'Não avaliado (NA)',54),(88,29,'Não avaliado (NA)',54),(89,31,'Não avaliado (NA)',54),(90,33,'Não avaliado (NA)',54),(91,34,'Não avaliado (NA)',54),(92,35,'Não avaliado (NA)',54),(93,37,'Não avaliado (NA)',54),(94,43,'Não avaliado (NA)',54),(95,44,'Parcialmente implementado (P)',54),(96,46,'Não avaliado (NA)',54),(97,48,'Não avaliado (NA)',54),(98,50,'Não avaliado (NA)',54),(99,51,'Não avaliado (NA)',54),(100,52,'Não avaliado (NA)',54),(101,11,'Fora do escopo (F)',56),(102,13,'Largamente implementado (L)',56),(103,15,'Não avaliado (NA)',56),(104,17,'Não avaliado (NA)',56),(105,18,'Não avaliado (NA)',56),(106,19,'Não avaliado (NA)',56),(107,21,'Não avaliado (NA)',56),(108,22,'Não avaliado (NA)',56),(109,23,'Não avaliado (NA)',56),(110,25,'Não avaliado (NA)',56),(111,26,'Não avaliado (NA)',56),(112,28,'Não avaliado (NA)',56),(113,30,'Não avaliado (NA)',56),(114,32,'Não avaliado (NA)',56),(115,33,'Não avaliado (NA)',56),(116,34,'Não avaliado (NA)',56),(117,36,'Não avaliado (NA)',56),(118,38,'Não avaliado (NA)',56),(119,39,'Não avaliado (NA)',56),(120,40,'Não avaliado (NA)',56),(121,41,'Não avaliado (NA)',56),(122,42,'Não avaliado (NA)',56),(123,43,'Não avaliado (NA)',56),(124,45,'Não avaliado (NA)',56),(125,47,'Não avaliado (NA)',56),(126,49,'Não avaliado (NA)',56),(127,50,'Não avaliado (NA)',56),(128,51,'Não avaliado (NA)',56),(129,52,'Não avaliado (NA)',56),(130,64,'Não avaliado (NA)',56),(131,65,'Não avaliado (NA)',56),(132,66,'Não avaliado (NA)',56),(133,67,'Não avaliado (NA)',56),(134,68,'Não avaliado (NA)',56),(135,69,'Não avaliado (NA)',56),(136,70,'Não avaliado (NA)',56),(137,71,'Não avaliado (NA)',56),(138,73,'Não avaliado (NA)',56),(139,74,'Não avaliado (NA)',56);
+INSERT INTO `grau_implementacao_processo_unidade_organizacional` VALUES (51,11,'Fora do escopo (F)',53),(52,12,'Largamente implementado (L)',53),(53,14,'Parcialmente implementado (P)',53),(54,16,'Não implementado (N)',53),(55,18,'Largamente implementado (L)',53),(56,19,'Não avaliado (NA)',53),(57,20,'Não avaliado (NA)',53),(58,22,'Não avaliado (NA)',53),(59,23,'Não avaliado (NA)',53),(60,24,'Não avaliado (NA)',53),(61,26,'Não avaliado (NA)',53),(62,27,'Não avaliado (NA)',53),(63,29,'Não avaliado (NA)',53),(64,31,'Não avaliado (NA)',53),(65,33,'Não avaliado (NA)',53),(66,34,'Não avaliado (NA)',53),(67,35,'Não avaliado (NA)',53),(68,37,'Não avaliado (NA)',53),(69,43,'Não avaliado (NA)',53),(70,44,'Não avaliado (NA)',53),(71,46,'Não avaliado (NA)',53),(72,48,'Não avaliado (NA)',53),(73,50,'Não avaliado (NA)',53),(74,51,'Não avaliado (NA)',53),(75,52,'Não avaliado (NA)',53),(76,11,'Largamente implementado (L)',54),(77,12,'Não avaliado (NA)',54),(78,14,'Não avaliado (NA)',54),(79,16,'Não avaliado (NA)',54),(80,18,'Não avaliado (NA)',54),(81,19,'Não avaliado (NA)',54),(82,20,'Não avaliado (NA)',54),(83,22,'Não avaliado (NA)',54),(84,23,'Não avaliado (NA)',54),(85,24,'Não avaliado (NA)',54),(86,26,'Não avaliado (NA)',54),(87,27,'Não avaliado (NA)',54),(88,29,'Não avaliado (NA)',54),(89,31,'Não avaliado (NA)',54),(90,33,'Não avaliado (NA)',54),(91,34,'Não avaliado (NA)',54),(92,35,'Não avaliado (NA)',54),(93,37,'Não avaliado (NA)',54),(94,43,'Não avaliado (NA)',54),(95,44,'Parcialmente implementado (P)',54),(96,46,'Não avaliado (NA)',54),(97,48,'Não avaliado (NA)',54),(98,50,'Não avaliado (NA)',54),(99,51,'Não avaliado (NA)',54),(100,52,'Não avaliado (NA)',54),(101,11,'Largamente implementado (L)',56),(102,13,'Largamente implementado (L)',56),(103,15,'Largamente implementado (L)',56),(104,17,'Largamente implementado (L)',56),(105,18,'Totalmente implementado (T)',56),(106,19,'Não avaliado (NA)',56),(107,21,'Não avaliado (NA)',56),(108,22,'Largamente implementado (L)',56),(109,23,'Não avaliado (NA)',56),(110,25,'Não avaliado (NA)',56),(111,26,'Não avaliado (NA)',56),(112,28,'Não avaliado (NA)',56),(113,30,'Não avaliado (NA)',56),(114,32,'Não avaliado (NA)',56),(115,33,'Não avaliado (NA)',56),(116,34,'Não avaliado (NA)',56),(117,36,'Não avaliado (NA)',56),(118,38,'Não avaliado (NA)',56),(119,39,'Não avaliado (NA)',56),(120,40,'Não avaliado (NA)',56),(121,41,'Não avaliado (NA)',56),(122,42,'Totalmente implementado (T)',56),(123,43,'Não avaliado (NA)',56),(124,45,'Não avaliado (NA)',56),(125,47,'Não avaliado (NA)',56),(126,49,'Não avaliado (NA)',56),(127,50,'Não avaliado (NA)',56),(128,51,'Não avaliado (NA)',56),(129,52,'Não avaliado (NA)',56),(130,64,'Não avaliado (NA)',56),(131,65,'Não avaliado (NA)',56),(132,66,'Não avaliado (NA)',56),(133,67,'Não avaliado (NA)',56),(134,68,'Não avaliado (NA)',56),(135,69,'Não avaliado (NA)',56),(136,70,'Não avaliado (NA)',56),(137,71,'Não avaliado (NA)',56),(138,73,'Não avaliado (NA)',56),(139,74,'Não avaliado (NA)',56);
 /*!40000 ALTER TABLE `grau_implementacao_processo_unidade_organizacional` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -310,7 +309,7 @@ CREATE TABLE `nivel_maturidade_mpsbr` (
   PRIMARY KEY (`ID`),
   KEY `nivel_maturidade_mpsbr_FK` (`ID_Versao_Modelo`),
   CONSTRAINT `nivel_maturidade_mpsbr_FK` FOREIGN KEY (`ID_Versao_Modelo`) REFERENCES `versao_modelo` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -407,7 +406,7 @@ CREATE TABLE `relatorio` (
 
 LOCK TABLES `relatorio` WRITE;
 /*!40000 ALTER TABLE `relatorio` DISABLE KEYS */;
-INSERT INTO `relatorio` VALUES (19,'aaaaaaa',1,56,'relatorio para usar como guia base para fazer PVS.XLS'),(20,'aaaaa',2,56,'Não existe'),(21,'aaaaa',2,53,'Não existe');
+INSERT INTO `relatorio` VALUES (19,'aaaaaaa',1,56,'relatorio para usar como guia base para fazer PVS.XLS'),(20,'Aprovado',2,56,'Não existe'),(21,'aaaaa',2,53,'Não existe');
 /*!40000 ALTER TABLE `relatorio` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -615,4 +614,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-27 14:54:04
+-- Dump completed on 2024-09-27 17:37:02
