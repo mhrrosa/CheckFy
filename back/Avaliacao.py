@@ -6,10 +6,10 @@ class Avaliacao:
         try:
             cursor = self.db.conn.cursor(dictionary=True)
             query = """
-                INSERT INTO avaliacao (Nome, Descricao, Status, ID_Nivel_Solicitado, ID_Avaliador_Lider, ID_Atividade, ID_Versao_Modelo) 
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO avaliacao (Nome, Descricao, Status, ID_Nivel_Solicitado, ID_Avaliador_Lider, ID_Atividade, ID_Versao_Modelo, ID_Status_Avaliacao) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             """
-            values = (nome, descricao, "Em andamento", id_nivel_solicitado, id_usuario, 1, id_versao_modelo)
+            values = (nome, descricao, "Em andamento", id_nivel_solicitado, id_usuario, 1, id_versao_modelo, 1)
             cursor.execute(query, values)
             id_avaliacao = cursor.lastrowid
 
@@ -84,6 +84,7 @@ class Avaliacao:
                     "id_empresa": row['ID_Empresa'],
                     "id_nivel_solicitado": row['ID_Nivel_Solicitado'],
                     "id_versao_modelo": row['ID_Versao_Modelo'],
+                    "id_status_avaliacao": row['ID_Status_Avaliacao']
                 }
                 for row in result
             ]
@@ -104,7 +105,7 @@ class Avaliacao:
             a.Avaliacao_Aprovada_Pela_Softex, a.ID_Atividade, a.ID_Nivel_Solicitado, a.ID_Versao_Modelo, 
             r.descricao AS Descricao_Relatorio_Ajuste_Inicial, r.Caminho_Arquivo AS Caminho_Arquivo_Relatorio_Ajuste_Inicial, 
             tr.descricao AS Tipo_Relatorio_Ajuste_Inicial, a.Ata_Reuniao_Abertura, a.ID_Nivel_Atribuido, 
-            n2.Nivel AS Nivel_Atribuido, a.Parecer_Final
+            n2.Nivel AS Nivel_Atribuido, a.Parecer_Final, a.ID_Status_Avaliacao
             FROM avaliacao a
             LEFT JOIN empresa e ON a.ID_Empresa = e.ID
             LEFT JOIN nivel_maturidade_mpsbr n ON a.ID_Nivel_Solicitado = n.ID
@@ -147,7 +148,8 @@ class Avaliacao:
                 "ata_reuniao_abertura": row['Ata_Reuniao_Abertura'],
                 "id_nivel_atribuido": row['ID_Nivel_Atribuido'],
                 "nivel_atribuido": row['Nivel_Atribuido'],
-                "parecer_final": row['Parecer_Final'],
+                "parecer_final": row['Parecer_Final'],                
+                "id_status_avaliacao": row['ID_Status_Avaliacao']
             }
             cursor.close()
             return avaliacao_data
