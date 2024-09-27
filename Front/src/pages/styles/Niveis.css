@@ -43,7 +43,7 @@
     text-align: left;
 }
 
-tr{
+.tr-nivel{
     display: flex;
     align-items: center;
 }

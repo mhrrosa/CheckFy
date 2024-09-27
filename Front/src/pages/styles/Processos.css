@@ -43,7 +43,7 @@
     text-align: left;
 }
 
-tr{
+.tr-processo{
     display: flex;
     align-items: center;
 }

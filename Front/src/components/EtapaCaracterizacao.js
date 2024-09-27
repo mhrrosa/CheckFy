@@ -193,14 +193,13 @@ function EtapaCaracterizacao({ onNext, avaliacaoId, idVersaoModelo }) {
                 const nota = notaIndex !== -1 ? resultado.Descricao.substring(notaIndex).trim() : '';
                 return (
                   <div className='div-resultado-esperado-caracterizacao' key={resultado.ID}>
-                    <label className='label-etapas'>Resultado Esperado: </label>
                     <h3 className='title-resultado-caracterizacao'>{descricao}</h3>
                     {nota && <div className='nota-adicional-div'><p className='nota-adicional-resultado'>{nota}</p></div>}
                     {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
                       <div key={projeto.ID}>
                         <h4 className='title-projeto-caracterizacao'>Projeto: {projeto.Nome_Projeto}</h4>
                         <select
-                          className='select-grau'
+                          className='select-grau-caracterizacao'
                           value={grausImplementacao[`${resultado.ID}-${projeto.ID}`] || "Não avaliado (NA)"}
                           onChange={(e) => handleSelectChange(e, resultado.ID, projeto.ID)}
                         >

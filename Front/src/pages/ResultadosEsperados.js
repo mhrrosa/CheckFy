@@ -171,7 +171,7 @@ function ResultadosEsperados() {
           <table>
             <tbody>
               {resultados.map(resultado => (
-                <tr key={resultado.id}>
+                <tr className='tr-resultado-esperado' key={resultado.id}>
                   <td className='nome-inserido-td'>
                     <textarea
                       className='textarea-preenchido'

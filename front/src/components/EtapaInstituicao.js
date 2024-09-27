@@ -141,7 +141,7 @@ function EtapaInstituicaoAvaliadora({ onNext, avaliacaoId }) {
         </>
       )}
 
-      <button className='button-next' onClick={salvarDados}>SALVAR</button>
+      <button className='button-save' onClick={salvarDados}>SALVAR</button>
       <button className='button-next' onClick={() => onNext(avaliacaoId)}>PRÓXIMA ETAPA</button>
     </div>
   );

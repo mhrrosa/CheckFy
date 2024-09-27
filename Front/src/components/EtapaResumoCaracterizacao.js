@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Tippy from '@tippyjs/react';
-import 'tippy.js/dist/tippy.css';
 import {
   getProcessosPorAvaliacao,
   getResultadosEsperadosPorProcesso,
@@ -10,6 +8,10 @@ import {
   updateGrausImplementacaoEmpresa
 } from '../services/Api';
 import '../components/styles/EtapaResumoCaracterizacao.css';
+import '../components/styles/Button.css';
+import '../components/styles/Container.css';
+import '../components/styles/Body.css';
+import '../components/styles/Etapas.css';
 
 function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
   const [processos, setProcessos] = useState([]);
@@ -17,12 +19,25 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
   const [arrayResumo, setArrayResumo] = useState([]); // Array para salvar os dados de avaliação
   const [resumoSalvo, setResumoSalvo] = useState(false); // Estado para determinar se será "SALVAR" ou "ATUALIZAR"
   const [dropdownVisible, setDropdownVisible] = useState(null); // Controlar qual dropdown está visível
+  const [activeTab, setActiveTab] = useState(null); // Estado para a aba ativa
 
   useEffect(() => {
     if (avaliacaoId && idVersaoModelo) {
       carregarDados();
     }
   }, [avaliacaoId, idVersaoModelo]);
+
+  useEffect(() => {
+    if (activeTab) {
+      carregarResultadosEsperados(activeTab);
+    }
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (processos.length > 0) {
+      setActiveTab(processos[0].ID);
+    }
+  }, [processos]);
 
   const carregarDados = async () => {
     try {
@@ -40,6 +55,18 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
       }
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
+    }
+  };
+
+  const carregarResultadosEsperados = async (processoId) => {
+    try {
+      const data = await getResultadosEsperadosPorProcesso(processoId, avaliacaoId);
+      setResultadosEsperados(prevResultados => ({
+        ...prevResultados,
+        [processoId]: data
+      }));  
+    } catch (error) {
+      console.error('Erro ao carregar resultados esperados:', error);
     }
   };
 
@@ -178,84 +205,97 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
   );
 
   return (
-    <div className="management-etapa5-container">
-      <h1 className='management-etapa5-title'>RESUMO DA AVALIAÇÃO</h1>
-      <table className='resumo-tabela'>
-        <thead>
-          <tr>
-            <th>Processo</th>
-            <th>Resultado Esperado</th>
-            <th>Nota</th>
-          </tr>
-        </thead>
-        <tbody>
-          {processos.map(processo => (
-            (resultadosEsperados[processo.ID] || []).map(resultado => {
-              const itemResumo = arrayResumo.find(item => item.id_resultado_esperado === resultado.ID);
-
-              return (
-                <tr key={resultado.ID}>
-                  <td>{processo.Descricao}</td>
-                  <td className='tooltip-container'>
-                    <Tippy content={resultado.Descricao} placement="top" animation="fade">
-                      <span className='resultado-esperado'>
-                        {resultado.Descricao.substring(0, 50)}{resultado.Descricao.length > 50 ? '...' : ''}
-                      </span>
-                    </Tippy>
-                  </td>
-                  <td>
-                    {/* Se a nota exigir escolha, mostra o botão */}
-                    {itemResumo?.nota === 'Escolher L ou P' || itemResumo?.nota === 'Escolher L, N ou P' ? (
-                      <>
-                        <button onClick={() => setDropdownVisible(resultado.ID)}>
-                          {itemResumo?.nota}
-                        </button>
-                        {/* Dropdown para selecionar as opções */}
-                        {dropdownVisible === resultado.ID && (
+    <div className="container-etapa">
+      <h1 className='title-form'>RESUMO DA CARACTERIZAÇÃO</h1>
+      <div className="tabs">
+        {processos.map((processo, index) => (
+          <button
+            key={processo.ID}
+            className={`tab-button ${activeTab === processo.ID ? 'active' : ''}`}
+            onClick={() => setActiveTab(processo.ID)}
+          >
+            {processo.Descricao === "Gerência de Projetos" ? "GPR" :
+             processo.Descricao === "Engenharia de Requisitos" ? "REQ" : 
+             processo.Descricao === "Projeto e Construção do Produto" ? "PCP" :
+             processo.Descricao === "Integração do Produto" ? "ITP" :
+             processo.Descricao === "Verificação e Validação" ? "VV" :
+             processo.Descricao === "Gerência de Configuração" ? "GCO" :
+             processo.Descricao === "Aquisição" ? "AQU" :
+             processo.Descricao === "Medição" ? "MED" :
+             processo.Descricao === "Gerência de Decisões" ? "GDE" :
+             processo.Descricao === "Gerência de Recursos Humanos" ? "GRH" :
+             processo.Descricao === "Gerência de Processos" ? "GPC" :
+             processo.Descricao === "Gerência Organizacional" ? "ORG" :
+             processo.Descricao}
+          </button>
+        ))}
+      </div>
+      <div className="tab-content">
+        <table className='resumo-tabela'>
+          <thead>
+            <tr className='tr-table-resumo-caracterizacao'>
+              <th className='resultado-esperado-head'>Resultado Esperado</th>
+              <th className='nota-head'>Nota</th>
+            </tr>
+          </thead>
+          <tbody>
+            {processos.map(processo => (
+              activeTab === processo.ID && (
+                (resultadosEsperados[processo.ID] || []).map(resultado => {
+                  const itemResumo = arrayResumo.find(item => item.id_resultado_esperado === resultado.ID);
+                  return (
+                    <tr className='tr-table-resumo-caracterizacao' key={resultado.ID}>
+                      <td className='resultado-esperado-body'>
+                        <span className='resultado-esperado'>
+                          {resultado.Descricao}
+                        </span>
+                      </td>
+                      <td className='nota-body'>
+                        {itemResumo?.nota === 'Escolher L ou P' || itemResumo?.nota === 'Escolher L, N ou P' ? (
                           <select
-                            className="nota-selector"
+                            className="select-grau-resumo-caracterizacao-invalido"
                             onChange={(e) => handleNotaChange(resultado.ID, e.target.value)}
                             value=""
                           >
-                            <option value="" disabled>Selecione</option>
                             {itemResumo?.nota === 'Escolher L ou P' ? (
                               <>
+                                <option value="" disabled>Selecione L ou P</option>
                                 <option value="Largamente implementado (L)">Largamente implementado (L)</option>
                                 <option value="Parcialmente implementado (P)">Parcialmente implementado (P)</option>
                               </>
                             ) : (
                               <>
+                                <option value="" disabled>Selecione L, N ou P</option>
                                 <option value="Largamente implementado (L)">Largamente implementado (L)</option>
-                                <option value="Parcialmente implementado (P)">Parcialmente implementado (P)</option>
                                 <option value="Não implementado (N)">Não implementado (N)</option>
+                                <option value="Parcialmente implementado (P)">Parcialmente implementado (P)</option>
                               </>
                             )}
                           </select>
+                        ) : (
+                          <select
+                            className="select-grau-resumo-caracterizacao"
+                            value={itemResumo?.nota || 'Não avaliado (NA)'}
+                            onChange={(e) => handleNotaChange(resultado.ID, e.target.value)}
+                          >
+                            <option value="Totalmente implementado (T)">Totalmente implementado (T)</option>
+                            <option value="Largamente implementado (L)">Largamente implementado (L)</option>
+                            <option value="Parcialmente implementado (P)">Parcialmente implementado (P)</option>
+                            <option value="Não implementado (N)">Não implementado (N)</option>
+                            <option value="Não avaliado (NA)">Não avaliado (NA)</option>
+                            <option value="Fora do escopo (F)">Fora do escopo (F)</option>
+                          </select>
                         )}
-                      </>
-                    ) : (
-                      // Caso contrário, mostra o dropdown normal
-                      <select
-                        className="nota-selector"
-                        value={itemResumo?.nota || 'Não avaliado (NA)'}
-                        onChange={(e) => handleNotaChange(resultado.ID, e.target.value)}
-                      >
-                        <option value="Totalmente implementado (T)">Totalmente implementado (T)</option>
-                        <option value="Largamente implementado (L)">Largamente implementado (L)</option>
-                        <option value="Parcialmente implementado (P)">Parcialmente implementado (P)</option>
-                        <option value="Não implementado (N)">Não implementado (N)</option>
-                        <option value="Não avaliado (NA)">Não avaliado (NA)</option>
-                        <option value="Fora do escopo (F)">Fora do escopo (F)</option>
-                      </select>
-                    )}
-                  </td>
-                </tr>
-              );
-            })
-          ))}
-        </tbody>
-      </table>
-      <button className='button-save' onClick={salvarResumoCaracterizacao} disabled={desabilitarBotao}>
+                      </td>
+                    </tr>
+                  );
+                })
+              )
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <button className='button-next' onClick={salvarResumoCaracterizacao} disabled={desabilitarBotao}>
         {resumoSalvo ? 'ATUALIZAR' : 'SALVAR'}
       </button>
       <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
