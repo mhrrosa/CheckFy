@@ -4,10 +4,11 @@ class Avaliacao:
 
     def adicionar_avaliacao(self, nome, descricao, id_nivel_solicitado, adjunto_emails, colaborador_emails, id_usuario, id_versao_modelo):
         try:
+
             cursor = self.db.conn.cursor(dictionary=True)
             query = """
                 INSERT INTO avaliacao (Nome, Descricao, ID_Nivel_Solicitado, ID_Avaliador_Lider, ID_Atividade, ID_Versao_Modelo, ID_Status_Avaliacao) 
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
             """
             values = (nome, descricao, id_nivel_solicitado, id_usuario, 1, id_versao_modelo, 1)
             cursor.execute(query, values)
@@ -19,7 +20,6 @@ class Avaliacao:
             """
             values = (id_avaliacao, id_usuario, 1)
             cursor.execute(query, values)
-
             def inserir_ou_linkar_usuario(email, id_funcao):
                 query = "SELECT ID FROM usuario WHERE Email = %s"
                 cursor.execute(query, (email,))
@@ -30,7 +30,8 @@ class Avaliacao:
 
                 if usuario:
                     query = "INSERT INTO usuarios_avaliacao (ID_Avaliacao, ID_Usuario, ID_Funcao) VALUES (%s, %s, %s)"
-                    cursor.execute(query, (id_avaliacao, usuario[0], id_funcao))
+                    cursor.execute(query, (id_avaliacao, usuario['ID'], id_funcao))
+                    
                 else:
                     query = "INSERT INTO usuario (Nome, Email, Senha, ID_Tipo) VALUES (%s, %s, %s, %s)"
                     cursor.execute(query, ("Usuário", email, "senha", id_funcao))
@@ -38,7 +39,7 @@ class Avaliacao:
                     query = "INSERT INTO usuarios_avaliacao (ID_Avaliacao, ID_Usuario, ID_Funcao) VALUES (%s, %s, %s)"
                     cursor.execute(query, (id_avaliacao, novo_usuario_id, id_funcao))
                     print(f"Simulação de envio de e-mail para {email} solicitando cadastro no sistema.")
-
+                   
             for email in adjunto_emails:
                 inserir_ou_linkar_usuario(email, 2)
 
