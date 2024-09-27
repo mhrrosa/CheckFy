@@ -6,10 +6,10 @@ class Avaliacao:
         try:
             cursor = self.db.conn.cursor(dictionary=True)
             query = """
-                INSERT INTO avaliacao (Nome, Descricao, Status, ID_Nivel_Solicitado, ID_Avaliador_Lider, ID_Atividade, ID_Versao_Modelo, ID_Status_Avaliacao) 
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO avaliacao (Nome, Descricao, ID_Nivel_Solicitado, ID_Avaliador_Lider, ID_Atividade, ID_Versao_Modelo, ID_Status_Avaliacao) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
             """
-            values = (nome, descricao, "Em andamento", id_nivel_solicitado, id_usuario, 1, id_versao_modelo, 1)
+            values = (nome, descricao, id_nivel_solicitado, id_usuario, 1, id_versao_modelo, 1)
             cursor.execute(query, values)
             id_avaliacao = cursor.lastrowid
 
