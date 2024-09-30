@@ -11,21 +11,26 @@ from email.mime.multipart import MIMEMultipart
 class Email:
     def __init__(self, db):
         self.db = db
-
+    
     def email_aprovar_softex(self, id_avaliacao):
         cursor = self.db.conn.cursor(dictionary=True)
         query = """
-            SELECT a.ID, a.Nome, a.Descricao, a.ID_Avaliador_Lider, u.Nome, 
-                   a.Status, atv.Descricao, a.ID_Empresa, e.Nome, n.Nivel, 
-                   v.Nome, a.ID_Instituicao, a.Atividade_Planejamento, 
-                   a.Cronograma_Planejamento, a.Avaliacao_Aprovada_Pela_Softex,
-                   a.ID_Atividade, a.ID_Nivel_Solicitado, a.ID_Versao_Modelo
+            SELECT a.ID, a.Nome, a.Descricao, a.ID_Avaliador_Lider, u.Nome AS Nome_Avaliador_Lider, 
+            atv.Descricao AS Descricao_Atividade, a.ID_Empresa, e.Nome AS Nome_Empresa, n.Nivel AS Nivel_Solicitado, 
+            v.Nome AS Nome_Versao_Modelo, a.ID_Instituicao, a.Atividade_Planejamento, a.Cronograma_Planejamento, 
+            a.Avaliacao_Aprovada_Pela_Softex, a.ID_Atividade, a.ID_Nivel_Solicitado, a.ID_Versao_Modelo, 
+            r.descricao AS Descricao_Relatorio_Ajuste_Inicial, r.Caminho_Arquivo AS Caminho_Arquivo_Relatorio_Ajuste_Inicial, 
+            tr.descricao AS Tipo_Relatorio_Ajuste_Inicial, a.Ata_Reuniao_Abertura, a.ID_Nivel_Atribuido, 
+            n2.Nivel AS Nivel_Atribuido, a.Parecer_Final, a.ID_Status_Avaliacao
             FROM avaliacao a
             LEFT JOIN empresa e ON a.ID_Empresa = e.ID
             LEFT JOIN nivel_maturidade_mpsbr n ON a.ID_Nivel_Solicitado = n.ID
+            LEFT JOIN nivel_maturidade_mpsbr n2 ON a.ID_Nivel_Atribuido = n2.ID
             LEFT JOIN usuario u ON a.ID_Avaliador_Lider = u.ID
             LEFT JOIN versao_modelo v ON a.ID_Versao_Modelo = v.ID
             LEFT JOIN atividade atv ON a.ID_Atividade = atv.ID
+            LEFT JOIN relatorio r ON a.ID = r.ID_Avaliacao
+            LEFT JOIN tipo_relatorio tr ON r.ID_Tipo = tr.ID
             WHERE a.ID = %s
         """
 
@@ -39,7 +44,6 @@ class Email:
                 nome = row['Nome']
                 descricao = row['Descricao']
                 nome_avaliador_lider = row['Nome_Avaliador_Lider']
-                status = row['Status']
                 descricao_atividade =  row['Descricao_Atividade']
                 nome_empresa = row['Nome_Empresa']
                 nivel_solicitado =row['Nivel_Solicitado']
@@ -58,7 +62,6 @@ class Email:
                 Nome da Avaliação: {nome}
                 Descrição: {descricao}
                 Avaliador Líder: {nome_avaliador_lider}
-                Status: {status}
                 Empresa: {nome_empresa}
                 Nível Solicitado: {nivel_solicitado}
                 Versão do Modelo: {nome_versao_modelo}
@@ -95,22 +98,25 @@ class Email:
     def enviar_email_auditor_avaliacao_inicial(self, id_avaliacao, email_auditor):
         cursor = self.db.conn.cursor(dictionary=True)
         query = """
-                    SELECT a.ID, a.Nome, a.Descricao, a.ID_Avaliador_Lider, u.Nome, 
-                        a.Status, atv.Descricao, a.ID_Empresa, e.Nome, n.Nivel, 
-                        v.Nome, a.ID_Instituicao, a.Atividade_Planejamento, 
-                        a.Cronograma_Planejamento, a.Avaliacao_Aprovada_Pela_Softex,
-                        a.ID_Atividade, a.ID_Nivel_Solicitado, a.ID_Versao_Modelo,
-                        r.descricao as descricao_relatorio, tr.descricao as tipo_relatorio
-                    FROM avaliacao a
-                    LEFT JOIN empresa e ON a.ID_Empresa = e.ID
-                    LEFT JOIN nivel_maturidade_mpsbr n ON a.ID_Nivel_Solicitado = n.ID
-                    LEFT JOIN usuario u ON a.ID_Avaliador_Lider = u.ID
-                    LEFT JOIN versao_modelo v ON a.ID_Versao_Modelo = v.ID
-                    LEFT JOIN atividade atv ON a.ID_Atividade = atv.ID
-                    LEFT JOIN relatorio r ON a.ID = r.ID_Avaliacao
-                    LEFT JOIN tipo_relatorio tr ON r.ID_Tipo = tr.ID
-                    WHERE a.ID = %s
-                """
+            SELECT a.ID, a.Nome, a.Descricao, a.ID_Avaliador_Lider, u.Nome AS Nome_Avaliador_Lider, 
+            atv.Descricao AS Descricao_Atividade, a.ID_Empresa, e.Nome AS Nome_Empresa, n.Nivel AS Nivel_Solicitado, 
+            v.Nome AS Nome_Versao_Modelo, a.ID_Instituicao, a.Atividade_Planejamento, a.Cronograma_Planejamento, 
+            a.Avaliacao_Aprovada_Pela_Softex, a.ID_Atividade, a.ID_Nivel_Solicitado, a.ID_Versao_Modelo, 
+            r.descricao AS Descricao_Relatorio_Ajuste_Inicial, r.Caminho_Arquivo AS Caminho_Arquivo_Relatorio_Ajuste_Inicial, 
+            tr.descricao AS Tipo_Relatorio_Ajuste_Inicial, a.Ata_Reuniao_Abertura, a.ID_Nivel_Atribuido, 
+            n2.Nivel AS Nivel_Atribuido, a.Parecer_Final, a.ID_Status_Avaliacao
+            FROM avaliacao a
+            LEFT JOIN empresa e ON a.ID_Empresa = e.ID
+            LEFT JOIN nivel_maturidade_mpsbr n ON a.ID_Nivel_Solicitado = n.ID
+            LEFT JOIN nivel_maturidade_mpsbr n2 ON a.ID_Nivel_Atribuido = n2.ID
+            LEFT JOIN usuario u ON a.ID_Avaliador_Lider = u.ID
+            LEFT JOIN versao_modelo v ON a.ID_Versao_Modelo = v.ID
+            LEFT JOIN atividade atv ON a.ID_Atividade = atv.ID
+            LEFT JOIN relatorio r ON a.ID = r.ID_Avaliacao
+            LEFT JOIN tipo_relatorio tr ON r.ID_Tipo = tr.ID
+            WHERE a.ID = %s
+        """
+
 
         try:
             cursor.execute(query, (id_avaliacao,))
@@ -122,12 +128,10 @@ class Email:
                 nome = row['Nome']
                 descricao = row['Descricao']
                 nome_avaliador_lider = row['Nome_Avaliador_Lider']
-                status = row['Status']
                 descricao_atividade =  row['Descricao_Atividade']
                 nome_empresa = row['Nome_Empresa']
                 nivel_solicitado =row['Nivel_Solicitado']
                 nome_versao_modelo = row['Nome_Versao_Modelo']
-
                 # Configurando o e-mail
                 remetente = "checkfy123@gmail.com"
                 destinatario = email_auditor
@@ -194,7 +198,7 @@ class Email:
                 id = row['ID']
                 nome = row['Nome']
                 data_avaliacao_final = row['data_avaliacao_final']
-                nome_avaliador_lider = row[3]
+                nome_avaliador_lider = row['Nome']
 
                 # Convertendo e formatando a data para o formato dia/mês/ano
                 try:
@@ -296,7 +300,7 @@ class Email:
             if participantes:
                 # Iterar sobre cada participante e enviar um e-mail de notificação
                 for participante in participantes:
-                    email_participante = participante[0]
+                    email_participante = participante['Email']
 
                     remetente = "checkfy123@gmail.com"
                     destinatario = email_participante
@@ -339,15 +343,17 @@ class Email:
     def enviar_email_auditor_avaliacao_final(self, id_avaliacao):
         cursor = self.db.conn.cursor(dictionary=True)
         query_avaliacao = """
-            SELECT a.ID, a.Nome, a.Descricao, a.ID_Avaliador_Lider, u.Nome, 
-                a.Status, atv.Descricao, a.ID_Empresa, e.Nome, n.Nivel, 
-                v.Nome, a.ID_Instituicao, a.Atividade_Planejamento, 
-                a.Cronograma_Planejamento, a.Avaliacao_Aprovada_Pela_Softex,
-                a.ID_Atividade, a.ID_Nivel_Solicitado, a.ID_Versao_Modelo,
-                r.descricao as descricao_relatorio, tr.descricao as tipo_relatorio
+            SELECT a.ID, a.Nome, a.Descricao, a.ID_Avaliador_Lider, u.Nome AS Nome_Avaliador_Lider, 
+            atv.Descricao AS Descricao_Atividade, a.ID_Empresa, e.Nome AS Nome_Empresa, n.Nivel AS Nivel_Solicitado, 
+            v.Nome AS Nome_Versao_Modelo, a.ID_Instituicao, a.Atividade_Planejamento, a.Cronograma_Planejamento, 
+            a.Avaliacao_Aprovada_Pela_Softex, a.ID_Atividade, a.ID_Nivel_Solicitado, a.ID_Versao_Modelo, 
+            r.descricao AS Descricao_Relatorio_Ajuste_Inicial, r.Caminho_Arquivo AS Caminho_Arquivo_Relatorio_Ajuste_Inicial, 
+            tr.descricao AS Tipo_Relatorio_Ajuste_Inicial, a.Ata_Reuniao_Abertura, a.ID_Nivel_Atribuido, 
+            n2.Nivel AS Nivel_Atribuido, a.Parecer_Final, a.ID_Status_Avaliacao
             FROM avaliacao a
             LEFT JOIN empresa e ON a.ID_Empresa = e.ID
             LEFT JOIN nivel_maturidade_mpsbr n ON a.ID_Nivel_Solicitado = n.ID
+            LEFT JOIN nivel_maturidade_mpsbr n2 ON a.ID_Nivel_Atribuido = n2.ID
             LEFT JOIN usuario u ON a.ID_Avaliador_Lider = u.ID
             LEFT JOIN versao_modelo v ON a.ID_Versao_Modelo = v.ID
             LEFT JOIN atividade atv ON a.ID_Atividade = atv.ID
@@ -355,6 +361,7 @@ class Email:
             LEFT JOIN tipo_relatorio tr ON r.ID_Tipo = tr.ID
             WHERE a.ID = %s
         """
+
         
         query_auditor = """
             SELECT u.Email
@@ -374,7 +381,6 @@ class Email:
                 nome = row['Nome']
                 descricao = row['Descricao']
                 nome_avaliador_lider = row['Nome_Avaliador_Lider']
-                status = row['Status']
                 descricao_atividade =  row['Descricao_Atividade']
                 nome_empresa = row['Nome_Empresa']
                 nivel_solicitado =row['Nivel_Solicitado']
