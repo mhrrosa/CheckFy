@@ -78,7 +78,8 @@ function Home() {
         {avaliacoes.length > 0 ? (
           avaliacoes.map(avaliacao => (
             <div key={avaliacao.id} className="avaliacao-item">
-              <p className='nome-avaliacao'>{avaliacao.nome}</p><p className='status-avaliacao'>{avaliacao.status}</p>
+              <p className='nome-avaliacao'>{avaliacao.nome}</p>
+              <p className='status-avaliacao'></p>
               <div className="botoes-avaliacao">
                 {(userType === 1 || userType === 2 || userType === 3 || userType === 4 || userType === 5) && (
                   <button className="button-home-avaliacao" onClick={() => navigate(`/details-evaluation`, { state: { id: avaliacao.id } })}>
