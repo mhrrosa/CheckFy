@@ -24,6 +24,7 @@ import EtapaResultadoAvaliacaoFinal from '../components/EtapaResultadoAvaliacaoF
 import EtapaConfirmarAvaliacaoFinal from '../components/EtapaConfirmarAvaliacaoFinal';
 import EtapaAuditoriaFinal from '../components/EtapaAuditoriaFinal';
 import EtapaRealizarAjusteAvaliacaoFinal from '../components/EtapaRealizarAjusteAvaliacaoFinal';
+import EtapaCaracterizacaoCapacidadeProcesso from '../components/EtapaCaracterizacaoCapacidadeProcesso'
 import EtapaConfete from '../components/EtapaConfete';
 import { getAvaliacaoById, updateIdAtividade, getAtividade } from '../services/Api';
 import { UserContext } from '../contexts/UserContext';
@@ -51,12 +52,13 @@ const etapaComponents = {
   16: EtapaAtaAbertura,
   17: EtapaCaracterizacao,
   18: EtapaResumoCaracterizacao,
-  19: EtapaAtribuirNivelMaturidade,
-  20: EtapaResultadoAvaliacaoFinal,
-  21: EtapaConfirmarAvaliacaoFinal,
-  22: EtapaAuditoriaFinal,
-  23: EtapaRealizarAjusteAvaliacaoFinal,
-  24: EtapaConfete
+  19: EtapaCaracterizacaoCapacidadeProcesso,
+  20: EtapaAtribuirNivelMaturidade,
+  21: EtapaResultadoAvaliacaoFinal,
+  22: EtapaConfirmarAvaliacaoFinal,
+  23: EtapaAuditoriaFinal,
+  24: EtapaRealizarAjusteAvaliacaoFinal,
+  25: EtapaConfete
 };
 
 const etapaUsuarioMap = { 
@@ -79,11 +81,12 @@ const etapaUsuarioMap = {
   17: [1, 2],
   18: [1, 2],
   19: [1, 2],
-  20: [1, 5], 
-  21: [1, 2],
-  22: [1, 3],
-  23: [1, 2],
-  24: [1, 2, 3, 4, 5]
+  20: [1, 2],
+  21: [1, 5], 
+  22: [1, 2],
+  23: [1, 3],
+  24: [1, 2],
+  25: [1, 2, 3, 4, 5]
   
 };
 
