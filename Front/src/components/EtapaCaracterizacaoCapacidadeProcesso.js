@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {
-  getProcessosPorAvaliacao,
-  getResultadosEsperadosPorProcesso,
+  getProcessos,
+  getPerguntasCapacidadeProjeto,
+  getPerguntasCapacidadeOrganizacional,
   getProjetosByAvaliacao,
-  getGrausImplementacao,
-  addOrUpdateGrauImplementacao
+  getAvaliacaoById
 } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/Form.css';
@@ -14,21 +14,23 @@ import '../components/styles/Etapas.css';
 import '../components/styles/EtapaCaracterizacao.css';
 
 function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, onNext }) {
-  const [processos, setProcessos] = useState([]);
-  const [resultadosEsperados, setResultadosEsperados] = useState({});
+  const [processos, setProcessos] = useState([]); // Processos para a aba Organizacional
+  const [perguntasProjeto, setPerguntasProjeto] = useState([]); // Perguntas para a aba Projeto
+  const [perguntasOrganizacional, setPerguntasOrganizacional] = useState({}); // Perguntas para cada processo
   const [projetos, setProjetos] = useState([]);
-  const [notasFinais, setNotasFinais] = useState({});
+  const [idNivel, setIdNivel] = useState(null); // ID do nível
+  const [notasFinais, setNotasFinais] = useState({}); // Notas finais selecionadas
   const [activeParentTab, setActiveParentTab] = useState('Projeto');
-  const [activeChildTab, setActiveChildTab] = useState(null);
+  const [activeChildTab, setActiveChildTab] = useState(null); // Apenas para a aba Organizacional
 
   const parentTabs = ['Projeto', 'Organizacional'];
+
   const options = [
     "Totalmente implementado (T)",
     "Largamente implementado (L)",
     "Parcialmente implementado (P)",
     "Não implementado (N)",
-    "Não avaliado (NA)",
-    "Fora do escopo (F)"
+    "Não avaliado (NA)"
   ];
 
   const descricaoToAbbr = {
@@ -46,227 +48,183 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
     "Gerência Organizacional": "ORG"
   };
 
-  const organizationalProcessNames = [
-    "Aquisição",
-    "Gerência de Configuração",
-    "Medição",
-    "Gerência de Decisões",
-    "Gerência de Recursos Humanos",
-    "Gerência de Processos",
-    "Gerência Organizacional"
-  ];
-
   useEffect(() => {
     if (avaliacaoId && idVersaoModelo) {
-      carregarDados();
+      console.log("Carregando dados da avaliação...");
+      carregarAvaliacao();
     }
   }, [avaliacaoId, idVersaoModelo]);
 
   useEffect(() => {
-    if (activeChildTab) {
-      carregarResultadosEsperados(activeChildTab);
+    if (idNivel) {
+      console.log("Carregando dados necessários após obter o idNivel...");
+      carregarDados();
     }
-  }, [activeChildTab]);
+  }, [idNivel]);
 
   useEffect(() => {
-    const childProcessos = getChildProcessos();
-    if (childProcessos.length > 0) {
-      setActiveChildTab(childProcessos[0].ID);
-      carregarResultadosEsperados(childProcessos[0].ID);
+    if (activeParentTab === 'Organizacional' && activeChildTab) {
+      console.log("Carregando perguntas organizacionais para o processo com ID:", activeChildTab);
+      carregarPerguntasOrganizacional(activeChildTab);
     }
-  }, [activeParentTab, processos]);
+  }, [activeParentTab, activeChildTab]);
 
-  const carregarDados = async () => {
-    await carregarProjetos();
-    await carregarProcessos();
-    await carregarNotasFinais();
-  };
-
-  const carregarProcessos = async () => {
+  const carregarAvaliacao = async () => {
     try {
-      const data = await getProcessosPorAvaliacao(avaliacaoId, idVersaoModelo);
-      setProcessos(data.processos);
-      if (data.processos.length > 0) {
-        setActiveChildTab(data.processos[0].ID);
+      console.log("Carregando dados da avaliação com ID:", avaliacaoId);
+      const data = await getAvaliacaoById(avaliacaoId);
+      console.log("Dados da avaliação carregados:", data);
+
+      if (data && data.id_nivel_solicitado) {
+        setIdNivel(data.id_nivel_solicitado);
+      } else {
+        console.error("id_nivel_solicitado não encontrado nos dados da avaliação.");
       }
     } catch (error) {
-      console.error('Erro ao carregar processos:', error);
+      console.error('Erro ao carregar dados da avaliação:', error);
+    }
+  };
+
+  const carregarDados = async () => {
+    console.log("Dados recebidos - Avaliação ID:", avaliacaoId, "Versão Modelo ID:", idVersaoModelo, "Nível ID:", idNivel);
+    await carregarProjetos();
+    if (activeParentTab === 'Projeto') {
+      await carregarPerguntasProjeto();
+    } else if (activeParentTab === 'Organizacional') {
+      await carregarProcessos();
     }
   };
 
   const carregarProjetos = async () => {
     try {
+      console.log("Carregando projetos...");
       const data = await getProjetosByAvaliacao(avaliacaoId);
+      console.log("Projetos carregados:", data);
       setProjetos(data);
     } catch (error) {
       console.error('Erro ao carregar projetos:', error);
     }
   };
 
-  const carregarResultadosEsperados = async (processoId) => {
+  const carregarProcessos = async () => {
     try {
-      const data = await getResultadosEsperadosPorProcesso(processoId, avaliacaoId);
-      setResultadosEsperados(prevResultados => ({
-        ...prevResultados,
+      console.log("Carregando processos para a versão do modelo:", idVersaoModelo);
+      const data = await getProcessos(idVersaoModelo);
+      console.log("Processos carregados:", data);
+      setProcessos(data); // Ajuste aqui
+      if (data && data.length > 0) {
+        setActiveChildTab(data[0].ID);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar processos:', error);
+    }
+  };
+
+  const carregarPerguntasProjeto = async () => {
+    if (!idNivel) {
+      console.error("idNivel não está definido. Não é possível carregar as perguntas do projeto.");
+      return;
+    }
+    try {
+      console.log("Carregando perguntas para o projeto com nível ID:", idNivel);
+      const data = await getPerguntasCapacidadeProjeto(idNivel);
+      console.log("Perguntas de Projeto carregadas:", data);
+      setPerguntasProjeto(data);
+    } catch (error) {
+      console.error('Erro ao carregar perguntas do projeto:', error);
+    }
+  };
+
+  const carregarPerguntasOrganizacional = async (processoId) => {
+    if (!idNivel) {
+      console.error("idNivel não está definido. Não é possível carregar as perguntas organizacionais.");
+      return;
+    }
+    try {
+      console.log("Carregando perguntas organizacionais para o processo ID:", processoId, "e nível ID:", idNivel);
+      const data = await getPerguntasCapacidadeOrganizacional(idNivel);
+      console.log("Perguntas Organizacionais carregadas:", data);
+      setPerguntasOrganizacional(prevState => ({
+        ...prevState,
         [processoId]: data
       }));
     } catch (error) {
-      console.error('Erro ao carregar resultados esperados:', error);
+      console.error('Erro ao carregar perguntas organizacional:', error);
     }
   };
 
-  const carregarNotasFinais = async () => {
-    try {
-      const data = await getGrausImplementacao(avaliacaoId);
-      const notas = {};
-      data.forEach(grau => {
-        if (grau.ID_Resultado_Esperado === null) {
-          if (grau.ID_Projeto !== null) {
-            // Nota final para o projeto
-            notas[`${grau.ID_Projeto}`] = grau.Nota;
-          } else if (grau.ID_Processo !== null) {
-            // Nota final para o processo organizacional
-            notas[`organizational_${grau.ID_Processo}`] = grau.Nota;
-          }
-        }
-      });
-      setNotasFinais(notas);
-    } catch (error) {
-      console.error('Erro ao carregar notas finais:', error);
-    }
-  };
-
-  const handleNotaFinalChange = (key, nota) => {
-    setNotasFinais(prevNotasFinais => ({
-      ...prevNotasFinais,
-      [key]: nota
+  const handleNotaFinalChange = (key, value) => {
+    setNotasFinais(prevState => ({
+      ...prevState,
+      [key]: value
     }));
   };
 
-  const salvarNotasFinais = async () => {
-    try {
-      const finalEntries = Object.entries(notasFinais);
-      for (const [key, nota] of finalEntries) {
-        // Only process keys that are project IDs (numbers)
-        if (!key.startsWith('organizational_')) {
-          await addOrUpdateGrauImplementacao({
-            nota,
-            resultadoId: null, // Indica que é a nota final para o projeto
-            projetoId: parseInt(key)
-          });
-        }
-      }
-      alert('Notas finais salvas com sucesso!');
-    } catch (error) {
-      console.error('Erro ao salvar notas finais:', error);
-      alert('Erro ao salvar notas finais.');
-    }
-  };
+  const renderProjectContent = () => {
+    console.log("Renderizando conteúdo da aba Projeto...");
 
-  const salvarNotasFinaisOrganizacional = async () => {
-    try {
-      const finalEntries = Object.entries(notasFinais);
-      for (const [key, nota] of finalEntries) {
-        // Only process keys that start with 'organizational_'
-        if (key.startsWith('organizational_')) {
-          const processoId = key.split('_')[1]; // Get the processo ID
-          await addOrUpdateGrauImplementacao({
-            nota,
-            resultadoId: null, // Indica que é a nota final para o processo organizacional
-            processoId: parseInt(processoId)
-          });
-        }
-      }
-      alert('Notas finais salvas com sucesso!');
-    } catch (error) {
-      console.error('Erro ao salvar notas finais organizacional:', error);
-      alert('Erro ao salvar notas finais.');
+    if (!Array.isArray(perguntasProjeto)) {
+      console.error("perguntasProjeto não é um array:", perguntasProjeto);
+      return <p>Nenhuma pergunta encontrada.</p>;
     }
-  };
-
-  const getChildProcessos = () => {
-    if (activeParentTab === 'Projeto') {
-      return processos.filter(processo => !organizationalProcessNames.includes(processo.Descricao));
-    } else if (activeParentTab === 'Organizacional') {
-      return processos.filter(processo => organizationalProcessNames.includes(processo.Descricao));
-    }
-    return [];
-  };
-
-  const renderProcessosContent = () => {
-    const childProcessos = getChildProcessos();
 
     return (
-      <>
-        <div className="tabs">
-          {childProcessos.map((processo) => (
-            <button
-              key={processo.ID}
-              className={`tab-button ${activeChildTab === processo.ID ? 'active' : ''}`}
-              onClick={() => setActiveChildTab(processo.ID)}
-            >
-              {descricaoToAbbr[processo.Descricao] || processo.Descricao}
-            </button>
-          ))}
-        </div>
-        <div className="tab-content">
-          {childProcessos.map(processo => (
-            activeChildTab === processo.ID && (
-              <div key={processo.ID}>
-                <h2 className='title-processo-caracterizacao'>{processo.Descricao}</h2>
-                <table className='tabela-caracterizacao'>
-                  <thead>
-                    <tr>
-                      <th>Resultado Esperado</th>
-                      {projetos.map(projeto => (
-                        <th key={projeto.ID}>{projeto.Nome_Projeto}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {resultadosEsperados[processo.ID] && resultadosEsperados[processo.ID].map(resultado => (
-                      <tr key={resultado.ID}>
-                        <td>{resultado.Descricao}</td>
-                        {projetos.map(projeto => (
-                          <td key={projeto.ID}></td> // Células vazias
-                        ))}
-                      </tr>
+      <div>
+        <h2 className='title-processo-caracterizacao'>Perguntas de Projeto</h2>
+        <table className='tabela-caracterizacao'>
+          <thead>
+            <tr>
+              <th>Pergunta</th>
+              {projetos.map(projeto => (
+                <th key={projeto.ID}>{projeto.Nome_Projeto}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {perguntasProjeto.map(pergunta => (
+              <tr key={pergunta.ID}>
+                <td>{pergunta.pergunta}</td>
+                {projetos.map(projeto => (
+                  <td key={projeto.ID}></td>
+                ))}
+              </tr>
+            ))}
+            {/* Nota Final */}
+            <tr>
+              <td><strong>Nota Final</strong></td>
+              {projetos.map(projeto => (
+                <td key={projeto.ID}>
+                  <select
+                    className='select-grau'
+                    value={notasFinais[projeto.ID] || "Não avaliado (NA)"}
+                    onChange={(e) => handleNotaFinalChange(projeto.ID, e.target.value)}
+                  >
+                    {options.map((option, index) => (
+                      <option key={index} value={option}>{option}</option>
                     ))}
-                    {/* Nota Final */}
-                    <tr>
-                      <td><strong>Nota Final</strong></td>
-                      {projetos.map(projeto => (
-                        <td key={projeto.ID}>
-                          <select
-                            className='select-grau'
-                            value={notasFinais[`${projeto.ID}`] || "Não avaliado (NA)"}
-                            onChange={(e) => handleNotaFinalChange(projeto.ID, e.target.value)}
-                          >
-                            {options.map((option, index) => (
-                              <option key={index} value={option}>{option}</option>
-                            ))}
-                          </select>
-                        </td>
-                      ))}
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            )
-          ))}
-        </div>
-        <button className='button-save' onClick={salvarNotasFinais}>SALVAR NOTAS FINAIS</button>
-      </>
+                  </select>
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+      </div>
     );
   };
 
   const renderOrganizationalContent = () => {
-    const childProcessos = getChildProcessos();
+    console.log("Renderizando conteúdo da aba Organizacional...");
+    console.log("Processos:", processos);
+    console.log("Active Child Tab:", activeChildTab);
+
+    if (!processos || processos.length === 0) {
+      return <p>Carregando processos...</p>;
+    }
 
     return (
       <>
         <div className="tabs">
-          {childProcessos.map((processo) => (
+          {processos.map((processo) => (
             <button
               key={processo.ID}
               className={`tab-button ${activeChildTab === processo.ID ? 'active' : ''}`}
@@ -277,22 +235,22 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
           ))}
         </div>
         <div className="tab-content">
-          {childProcessos.map(processo => (
+          {processos.map(processo => (
             activeChildTab === processo.ID && (
               <div key={processo.ID}>
                 <h2 className='title-processo-caracterizacao'>{processo.Descricao}</h2>
                 <table className='tabela-caracterizacao'>
                   <thead>
                     <tr>
-                      <th>Resultado Esperado</th>
+                      <th>Pergunta</th>
                       <th>Evidências</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {resultadosEsperados[processo.ID] && resultadosEsperados[processo.ID].map(resultado => (
-                      <tr key={resultado.ID}>
-                        <td>{resultado.Descricao}</td>
-                        <td></td> {/* Células vazias */}
+                    {(perguntasOrganizacional[processo.ID] || []).map(pergunta => (
+                      <tr key={pergunta.ID}>
+                        <td>{pergunta.pergunta}</td>
+                        <td></td>
                       </tr>
                     ))}
                     {/* Nota Final */}
@@ -316,15 +274,15 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
             )
           ))}
         </div>
-        <button className='button-save' onClick={salvarNotasFinaisOrganizacional}>SALVAR NOTAS FINAIS</button>
       </>
     );
   };
 
   const renderContent = () => {
+    console.log("Renderizando conteúdo baseado na aba ativa:", activeParentTab);
     switch (activeParentTab) {
       case 'Projeto':
-        return renderProcessosContent();
+        return renderProjectContent();
       case 'Organizacional':
         return renderOrganizationalContent();
       default:
@@ -342,6 +300,11 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
             className={`tab-button ${activeParentTab === tab ? 'active' : ''}`}
             onClick={() => {
               setActiveParentTab(tab);
+              if (tab === 'Projeto') {
+                carregarPerguntasProjeto();
+              } else if (tab === 'Organizacional') {
+                carregarProcessos();
+              }
             }}
           >
             {tab}

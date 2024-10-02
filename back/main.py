@@ -17,6 +17,8 @@ from Email import Email
 from Auditor import Auditor
 from Relatorio import Relatorio
 from GrauImplementacao import GrauImplementacao
+from ImplementacaoOrganizacional import ImplementacaoOrganizacional
+from ImplementacaoProjeto import ImplementacaoProjeto
 import os
 from gevent.pywsgi import WSGIServer
 
@@ -459,7 +461,7 @@ def get_processos_por_avaliacao(avaliacao_id, id_versao_modelo):
         nivel_solicitado = db.cursor.fetchone()[0]
 
         processos_query = """
-            SELECT DISTINCT p.ID, p.Descricao 
+            SELECT DISTINCT p.ID, p.Descricao
             FROM processo p
             JOIN resultado_esperado_mpsbr re ON p.ID = re.ID_Processo
             WHERE %s <= re.ID_Nivel_Intervalo_Inicio AND %s >= re.ID_Nivel_Intervalo_Fim and p.ID_Versao_Modelo = %s
@@ -1260,6 +1262,34 @@ def update_resultado_final(id_avaliacao):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+@app.route('/get_perguntas_capacidade_processo_organizacional/<int:id_nivel>', methods=['GET'])
+def get_perguntas_capacidade_processo_organizacional(id_nivel):
+    print(id_nivel)
+    db = get_db()
+    organizacional = ImplementacaoOrganizacional(db)
+    try:        
+        perguntas = organizacional.get_perguntas(id_nivel)
+        if perguntas is not None:
+            return jsonify(perguntas), 200
+        else:
+            return jsonify({'message': 'Nenhuma pergunta encontrada para o nível especificado.'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@app.route('/get_perguntas_capacidade_processo_projeto/<int:id_nivel>', methods=['GET'])
+def get_perguntas_capacidade_processo_projeto(id_nivel):
+    print(id_nivel)
+    db = get_db()
+    projeto = ImplementacaoProjeto(db)
+    try:        
+        perguntas = projeto.get_perguntas(id_nivel)
+        if perguntas is not None:
+            return jsonify(perguntas), 200
+        else:
+            return jsonify({'message': 'Nenhuma pergunta encontrada para o nível especificado.'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 if __name__ == '__main__':

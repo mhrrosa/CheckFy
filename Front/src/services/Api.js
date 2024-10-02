@@ -573,6 +573,13 @@ function updateResultadoFinal(avaliacaoId, data) {
   return put(`/update_resultado_final/${avaliacaoId}`, data);
 }
 
+function getPerguntasCapacidadeOrganizacional(idNivel) {
+  return get(`/get_perguntas_capacidade_processo_organizacional/${idNivel}`);
+}
+
+function getPerguntasCapacidadeProjeto(idNivel) {
+  return get(`/get_perguntas_capacidade_processo_projeto/${idNivel}`);
+}
 
 export {
   startNewEvaluation,
@@ -656,5 +663,7 @@ export {
   getGrausImplementacaoEmpresa,
   addGrauImplementacaoEmpresa,
   updateGrausImplementacaoEmpresa,
-  updateResultadoFinal
+  updateResultadoFinal,
+  getPerguntasCapacidadeOrganizacional,
+  getPerguntasCapacidadeProjeto
 };
