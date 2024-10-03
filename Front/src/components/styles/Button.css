@@ -196,7 +196,7 @@
 .button-documentos-etapa-evidencia {
     padding: 10px 10px;
     margin-left: 10px;
-    font-size: 1em;
+    font-size: 0.9em;
     font-weight: bolder;
     color: white;
     border: none;
@@ -223,6 +223,22 @@
 }
 
 .button-mostrar-documento-etapa-evidencia:hover {
+    background-color: #007c17;
+}
+
+.button-mostrar-relatorio {
+    padding: 10px 10px;
+    font-size: 1em;
+    font-weight: bolder;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #009f1d;
+    transition: background-color 0.3s;
+}
+
+.button-mostrar-relatorio:hover {
     background-color: #007c17;
 }
 
@@ -313,6 +329,7 @@
     border-radius: 4px;
     cursor: pointer;
     background-color: #007bff;
+    border: none;
     transition: background-color 0.3s;
 }
 
@@ -328,6 +345,7 @@
     border-radius: 4px;
     cursor: pointer;
     background-color: #007bff;
+    border: none;
     transition: background-color 0.3s;
 }
 

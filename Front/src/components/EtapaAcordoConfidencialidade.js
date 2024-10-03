@@ -3,6 +3,7 @@ import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
 import '../components/styles/Button.css';
+import '../components/styles/Etapas.css';
 import '../components/styles/EtapaAcordoConfidencialidade.css';
 import { uploadAcordoConfidencialidade, getAcordoConfidencialidade } from '../services/Api.js';
 
@@ -76,7 +77,7 @@ function EtapaAcordoConfidencialidade({ onNext, avaliacaoId, idAtividade }) {
                 <h1 className="title-form">ACORDO DE CONFIDENCIALIDADE</h1>
             </div>
             <div className='div-input-acordo-confidencialidade'>
-                <label className="label">Acordo de Confidencialidade:</label>
+                <label className="label-etapas">Acordo de Confidencialidade:</label>
                 {canEdit && (
                     <>
                         <input
@@ -100,7 +101,7 @@ function EtapaAcordoConfidencialidade({ onNext, avaliacaoId, idAtividade }) {
             )}
 
             {canEdit && (
-                <button className='button-next' onClick={salvarAcordoConfidencialidade}>SALVAR</button>
+                <button className='button-save' onClick={salvarAcordoConfidencialidade}>SALVAR</button>
             )}
             <button className='button-next' onClick={handleNextStepClick}>PRÓXIMA ETAPA</button>
         </div>

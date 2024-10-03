@@ -295,7 +295,7 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
           </tbody>
         </table>
       </div>
-      <button className='button-next' onClick={salvarResumoCaracterizacao} disabled={desabilitarBotao}>
+      <button className='button-save' onClick={salvarResumoCaracterizacao} disabled={desabilitarBotao}>
         {resumoSalvo ? 'ATUALIZAR' : 'SALVAR'}
       </button>
       <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>

@@ -137,7 +137,7 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
       )}
 
       {/* Botão de Salvar sempre visível */}
-      <button className='button-next' onClick={salvarPlanejamento}>SALVAR</button>
+      <button className='button-save' onClick={salvarPlanejamento}>SALVAR</button>
 
       {avaliacaoAprovada ? (
         <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>

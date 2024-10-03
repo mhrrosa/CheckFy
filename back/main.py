@@ -1082,7 +1082,9 @@ def get_relatorio_auditoria_final(avaliacao_id):
 @app.route('/enviar_email_auditor/<int:avaliacao_id>', methods=['POST'])
 def enviar_email_auditor(avaliacao_id):
     db = get_db()
+    db_email = get_db()
     auditor = Auditor(db)
+    email = Email(db_email)
     try:
         # Chama o método da classe Auditor para obter o e-mail
         email_auditor = auditor.get_email_auditor(avaliacao_id)

@@ -64,7 +64,7 @@ function AtaReuniaoAbertura({onNext, avaliacaoId }) {
             4 - Presença: Todos os colaboradores entrevistados devem estar presentes. Ausentes por força maior serão informados no início de suas entrevistas.
             </p>
         </div>
-        <label className="label">Ata de Reunião:</label>
+        <label className="label-etapas">Ata de Reunião:</label>
         <div className='dica-div'>
           <strong className='dica-titulo'>Dica:</strong>
           <p className="dica-texto">
@@ -74,15 +74,14 @@ function AtaReuniaoAbertura({onNext, avaliacaoId }) {
         <br></br>
         <div className='textarea-wrapper'>
         <textarea
+          className="input-textarea-avaliacao"
           value={ataReuniao}
           onChange={(e) => setAtaReuniao(e.target.value)}
           rows="4"
-          className="textarea"
-          style={{ marginLeft: 10, width: 500 }}
         ></textarea>
       </div>
 
-      <button className='button-next' onClick={salvarAtaReuniao}>SALVAR</button>
+      <button className='button-save' onClick={salvarAtaReuniao}>SALVAR</button>
       <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
     </div>
   );

@@ -95,7 +95,7 @@ function CadastroAuditor({ onNext, avaliacaoId }) {
         />
       </div>
 
-      <button className='button-next' onClick={salvarDados} disabled={isLoading || isSaving}>
+      <button className='button-save' onClick={salvarDados} disabled={isLoading || isSaving}>
         {isLoading ? 'SALVANDO...' : 'SALVAR'}
       </button>
       <button className='button-next' onClick={proximaEtapa} disabled={isLoading}>

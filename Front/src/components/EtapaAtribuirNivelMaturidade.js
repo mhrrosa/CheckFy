@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getAvaliacaoById, getNiveisLimitado, enviarEmailResultadoAvaliacaoInicial, updateResultadoFinal } from '../services/Api'; 
 import '../components/styles/Button.css';
+import '../components/styles/Container.css';
+import '../components/styles/Body.css';
+import '../components/styles/Etapas.css';
 import '../components/styles/EtapaAtribuirNivelMaturidade.css'; // Importa o CSS externo
 
 function EtapaAtribuirNivelMaturidade({ onNext }) {
@@ -98,7 +101,7 @@ function EtapaAtribuirNivelMaturidade({ onNext }) {
 
   return (
     <div className="container-etapa">
-      <h1 className="title">ATRIBUIR NÍVEL DE MATURIDADE</h1>
+      <h1 className="title-form">ATRIBUIR NÍVEL DE MATURIDADE</h1>
 
       <div className="tip">
         <strong>Dica:</strong>
