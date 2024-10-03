@@ -1264,7 +1264,6 @@ def update_resultado_final(id_avaliacao):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
 @app.route('/get_perguntas_capacidade_processo_organizacional/<int:id_nivel>', methods=['GET'])
 def get_perguntas_capacidade_processo_organizacional(id_nivel):
     print(id_nivel)
@@ -1279,6 +1278,45 @@ def get_perguntas_capacidade_processo_organizacional(id_nivel):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+@app.route('/get_capacidade_processo_organizacional/<int:id_avaliacao>', methods=['GET'])
+def get_capacidade_processo_organizacional(id_avaliacao):
+    db = get_db()
+    organizacional = ImplementacaoOrganizacional(db)
+    capacidade_processo = organizacional.get_capacidade_processo_organizacional(id_avaliacao)
+    return jsonify(capacidade_processo), 200
+
+@app.route('/insert_capacidade_processo_organizacional', methods=['POST']) 
+def insert_capacidade_processo_organizacional():
+    db = get_db()
+    organizacional = ImplementacaoOrganizacional(db)
+    try:
+        # O 'data' agora é um array de objetos, onde cada objeto tem 'id_avaliacao', 'id_resultado_esperado' e 'nota'
+        data = request.json
+
+        # Montar os valores para o insert múltiplo
+        valores = [(item['id_avaliacao'], item['id_processo'], item['nota']) for item in data]
+
+        # Realizar o insert múltiplo
+        organizacional.add_capacidade_processo_organizacional(valores)
+
+        return jsonify({'message': 'Capacidade do processo inserido com sucesso!'}), 201
+    except Exception as e:
+        print(f"Erro ao inserir graus de implementação: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/update_capacidade_processo_organizacional', methods=['PUT'])
+def update_capacidade_processo_organizacional():
+    db = get_db()
+    organizacional = ImplementacaoOrganizacional(db)
+    try:
+        data = request.json
+        update_data = [(item['nota'], item['id_avaliacao'], item['id_processo']) for item in data]
+
+        organizacional.update_capacidade_processo_organizacional_batch(update_data)
+        return jsonify({'message': 'Capacidade do processo atualizados com sucesso!'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
 @app.route('/get_perguntas_capacidade_processo_projeto/<int:id_nivel>', methods=['GET'])
 def get_perguntas_capacidade_processo_projeto(id_nivel):
     print(id_nivel)
@@ -1290,6 +1328,44 @@ def get_perguntas_capacidade_processo_projeto(id_nivel):
             return jsonify(perguntas), 200
         else:
             return jsonify({'message': 'Nenhuma pergunta encontrada para o nível especificado.'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@app.route('/get_capacidade_processo_projeto/<int:id_avaliacao>', methods=['GET'])
+def get_capacidade_processo_projeto(id_avaliacao):
+    db = get_db()
+    projeto = ImplementacaoProjeto(db)
+    capacidade_processo = projeto.get_capacidade_processo_projeto(id_avaliacao)
+    return jsonify(capacidade_processo), 200
+
+@app.route('/insert_capacidade_processo_projeto', methods=['POST']) 
+def insert_capacidade_processo_projeto():
+    db = get_db()
+    projeto = ImplementacaoProjeto(db)
+    try:
+        # O 'data' agora é um array de objetos, onde cada objeto tem 'id_avaliacao', 'id_resultado_esperado' e 'nota'
+        data = request.json
+        # Montar os valores para o insert múltiplo
+        valores = [(item['id_avaliacao'], item['id_projeto'], item['nota']) for item in data]
+
+        # Realizar o insert múltiplo
+        projeto.add_capacidade_processo_projeto(valores)
+
+        return jsonify({'message': 'Capacidade do processo inserido com sucesso!'}), 201
+    except Exception as e:
+        print(f"Erro ao inserir graus de implementação: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/update_capacidade_processo_projeto', methods=['PUT'])
+def update_capacidade_processo_projeto():
+    db = get_db()
+    projeto = ImplementacaoProjeto(db)
+    try:
+        data = request.json
+        update_data = [(item['nota'], item['id_avaliacao'], item['id_projeto']) for item in data]
+        print(update_data)
+        projeto.update_capacidade_processo_projeto_batch(update_data)
+        return jsonify({'message': 'Capacidade do processo atualizados com sucesso!'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

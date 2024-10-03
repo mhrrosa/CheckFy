@@ -399,12 +399,12 @@ DROP TABLE IF EXISTS `nota_capacidade_processo_organizacional`;
 CREATE TABLE `nota_capacidade_processo_organizacional` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `Nota` varchar(30) NOT NULL,
-  `ID_Avalicao` int NOT NULL,
+  `ID_Avaliacao` int NOT NULL,
   `ID_Processo` int NOT NULL,
   PRIMARY KEY (`ID`),
-  KEY `nota_capacidade_processo_organizacional_FK` (`ID_Avalicao`),
+  KEY `nota_capacidade_processo_organizacional_FK` (`ID_Avaliacao`),
   KEY `nota_capacidade_processo_organizacional_FK_1` (`ID_Processo`),
-  CONSTRAINT `nota_capacidade_processo_organizacional_FK` FOREIGN KEY (`ID_Avalicao`) REFERENCES `avaliacao` (`ID`),
+  CONSTRAINT `nota_capacidade_processo_organizacional_FK` FOREIGN KEY (`ID_Avaliacao`) REFERENCES `avaliacao` (`ID`),
   CONSTRAINT `nota_capacidade_processo_organizacional_FK_1` FOREIGN KEY (`ID_Processo`) REFERENCES `processo` (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

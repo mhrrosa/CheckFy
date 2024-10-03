@@ -11,7 +11,12 @@ import {
   inserirRelatorioAuditoriaFinal,
   atualizarRelatorioAuditoriaFinal,
   getGrausImplementacaoEmpresa,
-  getGrausImplementacao
+  getGrausImplementacao,
+  getProcessos,
+  getPerguntasCapacidadeProjeto,
+  getPerguntasCapacidadeOrganizacional,
+  getCapacidadeProcessoProjeto,
+  getCapacidadeProcessoOrganizacional
 } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/Form.css';
@@ -35,13 +40,46 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
   const [arrayResumo, setArrayResumo] = useState([]);
   const [grausImplementacao, setGrausImplementacao] = useState({});
   const [activeTab, setActiveTab] = useState(null);
-  const parentTabs = ['Informações Gerais', 'Processos', 'Resumo da Caracterização da Avaliação', 'Resultado Auditoria'];
+  const [processosOrganizacionais, setProcessosOrganizacionais] = useState([]);
+  const [perguntasProjeto, setPerguntasProjeto] = useState([]);
+  const [perguntasOrganizacional, setPerguntasOrganizacional] = useState([]);
+  const [respostasProjeto, setRespostasProjeto] = useState({});
+  const [respostasOrganizacional, setRespostasOrganizacional] = useState({});
+  const [activeChildProjectTab, setActiveChildProjectTab] = useState(null);
+  const [activeChildOrganizationalTab, setActiveChildOrganizationalTab] = useState(null);
+  const [idNivel, setIdNivel] = useState(null);
+
+  const parentTabs = ['Informações Gerais', 'Processos', 'Resumo da Caracterização da Avaliação', 'Projeto', 'Organizacional', 'Resultado Auditoria'];
+
+  const descricaoToAbbr = {
+    "Gerência de Projetos": "GPR",
+    "Engenharia de Requisitos": "REQ",
+    "Projeto e Construção do Produto": "PCP",
+    "Integração do Produto": "ITP",
+    "Verificação e Validação": "VV",
+    "Gerência de Configuração": "GCO",
+    "Aquisição": "AQU",
+    "Medição": "MED",
+    "Gerência de Decisões": "GDE",
+    "Gerência de Recursos Humanos": "GRH",
+    "Gerência de Processos": "GPC",
+    "Gerência Organizacional": "ORG"
+  };
+
+  const processCodes = ['GCO', 'AQU', 'MED', 'GDE', 'GRH', 'GPC', 'ORG'];
 
   useEffect(() => {
     if (avaliacaoId && idVersaoModelo) {
       carregarDados();
     }
   }, [avaliacaoId, idVersaoModelo]);
+
+  useEffect(() => {
+    if (idNivel) {
+      carregarPerguntasProjeto();
+      carregarPerguntasOrganizacional();
+    }
+  }, [idNivel]);
 
   useEffect(() => {
     if (activeChildTab) {
@@ -54,7 +92,18 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
       setActiveTab(processos[0].ID);
     }
   }, [processos, activeParentTab]);
-  
+
+  useEffect(() => {
+    if (activeParentTab === 'Projeto' && projetos.length > 0) {
+      setActiveChildProjectTab(projetos[0].ID);
+    }
+  }, [activeParentTab, projetos]);
+
+  useEffect(() => {
+    if (activeParentTab === 'Organizacional' && processosOrganizacionais.length > 0) {
+      setActiveChildOrganizationalTab(processosOrganizacionais[0].ID);
+    }
+  }, [activeParentTab, processosOrganizacionais]);
 
   const handleNextStep = () => {
     if (aprovacao === 'Aprovar') {
@@ -68,10 +117,18 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
     try {
       const avaliacaoData = await getAvaliacaoById(avaliacaoId);
       setAvaliacao(avaliacaoData);
+      if (avaliacaoData && avaliacaoData.id_nivel_solicitado) {
+        setIdNivel(avaliacaoData.id_nivel_solicitado);
+      }
 
       await carregarRelatorioAuditoriaFinal();
 
       await carregarProjetos();
+
+      await carregarProcessosOrganizacionais();
+
+      await carregarRespostasProjeto();
+      await carregarRespostasOrganizacional();
 
       const processosLoaded = await carregarProcessos();
 
@@ -110,8 +167,96 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
     try {
       const data = await getProjetosByAvaliacao(avaliacaoId);
       setProjetos(data);
+
+      // Initialize respostasProjeto with default nota
+      const initialRespostas = {};
+      data.forEach(projeto => {
+        initialRespostas[projeto.ID] = { nota: 'Não avaliado (NA)' };
+      });
+      setRespostasProjeto(initialRespostas);
     } catch (error) {
       console.error('Erro ao carregar projetos:', error);
+    }
+  };
+
+  const carregarProcessosOrganizacionais = async () => {
+    try {
+      const data = await getProcessos(idVersaoModelo);
+      const filteredProcesses = data.filter(processo => {
+        const abbr = descricaoToAbbr[processo.Descricao];
+        return processCodes.includes(abbr);
+      });
+      setProcessosOrganizacionais(filteredProcesses);
+
+      // Initialize respostasOrganizacional with default nota
+      const initialRespostas = {};
+      filteredProcesses.forEach(processo => {
+        initialRespostas[processo.ID] = { nota: 'Não avaliado (NA)' };
+      });
+      setRespostasOrganizacional(initialRespostas);
+    } catch (error) {
+      console.error('Erro ao carregar processos organizacionais:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (idNivel) {
+      carregarPerguntasProjeto();
+      carregarPerguntasOrganizacional();
+    }
+  }, [idNivel]);
+
+  const carregarPerguntasProjeto = async () => {
+    if (!idNivel) return;
+    try {
+      const data = await getPerguntasCapacidadeProjeto(idNivel);
+      setPerguntasProjeto(data);
+    } catch (error) {
+      console.error('Erro ao carregar perguntas do projeto:', error);
+    }
+  };
+
+  const carregarPerguntasOrganizacional = async () => {
+    if (!idNivel) return;
+    try {
+      const data = await getPerguntasCapacidadeOrganizacional(idNivel);
+      setPerguntasOrganizacional(data);
+    } catch (error) {
+      console.error('Erro ao carregar perguntas organizacionais:', error);
+    }
+  };
+
+  const carregarRespostasProjeto = async () => {
+    try {
+      const data = (await getCapacidadeProcessoProjeto(avaliacaoId)) || [];
+      setRespostasProjeto(prevState => {
+        const novasRespostas = { ...prevState };
+        data.forEach(item => {
+          const projectId = item.ID_Projeto;
+          const nota = item.Nota;
+          novasRespostas[projectId] = { nota };
+        });
+        return novasRespostas;
+      });
+    } catch (error) {
+      console.error('Erro ao carregar respostas do projeto:', error);
+    }
+  };
+
+  const carregarRespostasOrganizacional = async () => {
+    try {
+      const data = (await getCapacidadeProcessoOrganizacional(avaliacaoId)) || [];
+      setRespostasOrganizacional(prevState => {
+        const novasRespostas = { ...prevState };
+        data.forEach(item => {
+          const processId = item.ID_Processo;
+          const nota = item.Nota;
+          novasRespostas[processId] = { nota };
+        });
+        return novasRespostas;
+      });
+    } catch (error) {
+      console.error('Erro ao carregar respostas organizacionais:', error);
     }
   };
 
@@ -244,19 +389,7 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
               className={`tab-button ${activeChildTab === processo.ID ? 'active' : ''}`}
               onClick={() => setActiveChildTab(processo.ID)}
             >
-              {processo.Descricao === "Gerência de Projetos" ? "GPR" :
-                processo.Descricao === "Engenharia de Requisitos" ? "REQ" :
-                  processo.Descricao === "Projeto e Construção do Produto" ? "PCP" :
-                    processo.Descricao === "Integração do Produto" ? "ITP" :
-                      processo.Descricao === "Verificação e Validação" ? "VV" :
-                        processo.Descricao === "Gerência de Configuração" ? "GCO" :
-                          processo.Descricao === "Aquisição" ? "AQU" :
-                            processo.Descricao === "Medição" ? "MED" :
-                              processo.Descricao === "Gerência de Decisões" ? "GDE" :
-                                processo.Descricao === "Gerência de Recursos Humanos" ? "GRH" :
-                                  processo.Descricao === "Gerência de Processos" ? "GPC" :
-                                    processo.Descricao === "Gerência Organizacional" ? "ORG" :
-                                      processo.Descricao}
+              {descricaoToAbbr[processo.Descricao] || processo.Descricao}
             </button>
           ))}
         </div>
@@ -301,6 +434,113 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
     );
   };
 
+  const renderProjetoContent = () => {
+    if (!projetos || projetos.length === 0) {
+      return <p>Carregando projetos...</p>;
+    }
+
+    return (
+      <>
+        <div className="tabs">
+          {projetos.map(projeto => (
+            <button
+              key={projeto.ID}
+              className={`tab-button ${activeChildProjectTab === projeto.ID ? 'active' : ''}`}
+              onClick={() => setActiveChildProjectTab(projeto.ID)}
+            >
+              {projeto.Nome_Projeto}
+            </button>
+          ))}
+        </div>
+        <div className="tab-content">
+          {projetos.map(projeto => (
+            activeChildProjectTab === projeto.ID && (
+              <div key={projeto.ID}>
+                <h2 className='title-processo-caracterizacao'>{projeto.Nome_Projeto}</h2>
+                <table className='tabela-caracterizacao'>
+                  <thead>
+                    <tr>
+                      <th>Descrição</th>
+                      <th>Evidências</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {perguntasProjeto.map(pergunta => (
+                      <tr key={pergunta.ID}>
+                        <td>{pergunta.pergunta}</td>
+                        <td></td>
+                      </tr>
+                    ))}
+                    {/* Nota Final */}
+                    <tr>
+                      <td><strong>Nota Final</strong></td>
+                      <td>
+                        {respostasProjeto[projeto.ID]?.nota || "Não avaliado (NA)"}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )
+          ))}
+        </div>
+      </>
+    );
+  };
+
+  const renderOrganizacionalContent = () => {
+    if (!processosOrganizacionais || processosOrganizacionais.length === 0) {
+      return <p>Carregando processos organizacionais...</p>;
+    }
+
+    return (
+      <>
+        <div className="tabs">
+          {processosOrganizacionais.map(processo => (
+            <button
+              key={processo.ID}
+              className={`tab-button ${activeChildOrganizationalTab === processo.ID ? 'active' : ''}`}
+              onClick={() => setActiveChildOrganizationalTab(processo.ID)}
+            >
+              {descricaoToAbbr[processo.Descricao] || processo.Descricao}
+            </button>
+          ))}
+        </div>
+        <div className="tab-content">
+          {processosOrganizacionais.map(processo => (
+            activeChildOrganizationalTab === processo.ID && (
+              <div key={processo.ID}>
+                <h2 className='title-processo-caracterizacao'>{processo.Descricao}</h2>
+                <table className='tabela-caracterizacao'>
+                  <thead>
+                    <tr>
+                      <th>Descrição</th>
+                      <th>Evidências</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {perguntasOrganizacional.map(pergunta => (
+                      <tr key={pergunta.ID}>
+                        <td>{pergunta.pergunta}</td>
+                        <td></td>
+                      </tr>
+                    ))}
+                    {/* Nota Final */}
+                    <tr>
+                      <td><strong>Nota Final</strong></td>
+                      <td>
+                        {respostasOrganizacional[processo.ID]?.nota || "Não avaliado (NA)"}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )
+          ))}
+        </div>
+      </>
+    );
+  };
 
   const renderResultadoAuditoriaContent = () => {
     return (
@@ -376,19 +616,7 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
               className={`tab-button ${activeTab === processo.ID ? 'active' : ''}`}
               onClick={() => setActiveTab(processo.ID)}
             >
-              {processo.Descricao === "Gerência de Projetos" ? "GPR" :
-               processo.Descricao === "Engenharia de Requisitos" ? "REQ" : 
-               processo.Descricao === "Projeto e Construção do Produto" ? "PCP" :
-               processo.Descricao === "Integração do Produto" ? "ITP" :
-               processo.Descricao === "Verificação e Validação" ? "VV" :
-               processo.Descricao === "Gerência de Configuração" ? "GCO" :
-               processo.Descricao === "Aquisição" ? "AQU" :
-               processo.Descricao === "Medição" ? "MED" :
-               processo.Descricao === "Gerência de Decisões" ? "GDE" :
-               processo.Descricao === "Gerência de Recursos Humanos" ? "GRH" :
-               processo.Descricao === "Gerência de Processos" ? "GPC" :
-               processo.Descricao === "Gerência Organizacional" ? "ORG" :
-               processo.Descricao}
+              {descricaoToAbbr[processo.Descricao] || processo.Descricao}
             </button>
           ))}
         </div>
@@ -428,10 +656,14 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
         return renderInformacoesGeraisContent();
       case 'Processos':
         return renderProcessosContent();
-      case 'Resultado Auditoria':
-        return renderResultadoAuditoriaContent();
+      case 'Projeto':
+        return renderProjetoContent();
       case 'Resumo da Caracterização da Avaliação':
         return renderResumoAvaliacaoContent();
+      case 'Organizacional':
+        return renderOrganizacionalContent();
+      case 'Resultado Auditoria':
+        return renderResultadoAuditoriaContent();
       default:
         return null;
     }
@@ -484,11 +716,17 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
             className={`tab-button ${activeParentTab === tab ? 'active' : ''}`}
             onClick={() => {
               setActiveParentTab(tab);
-              if (tab !== 'Processos') {
-                setActiveChildTab(null);
-              } else if (processos.length > 0) {
+              if (tab === 'Processos' && processos.length > 0) {
                 setActiveChildTab(processos[0].ID);
                 carregarResultadosEsperados(processos[0].ID);
+              } else if (tab === 'Projeto' && projetos.length > 0) {
+                setActiveChildProjectTab(projetos[0].ID);
+              } else if (tab === 'Organizacional' && processosOrganizacionais.length > 0) {
+                setActiveChildOrganizationalTab(processosOrganizacionais[0].ID);
+              } else {
+                setActiveChildTab(null);
+                setActiveChildProjectTab(null);
+                setActiveChildOrganizationalTab(null);
               }
             }}
           >

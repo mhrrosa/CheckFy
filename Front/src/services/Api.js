@@ -573,12 +573,79 @@ function updateResultadoFinal(avaliacaoId, data) {
   return put(`/update_resultado_final/${avaliacaoId}`, data);
 }
 
+
 function getPerguntasCapacidadeOrganizacional(idNivel) {
   return get(`/get_perguntas_capacidade_processo_organizacional/${idNivel}`);
 }
 
+function getCapacidadeProcessoOrganizacional(avaliacaoId) {
+  return get(`/get_capacidade_processo_organizacional/${avaliacaoId}`)
+    .then(response => {
+      return response;
+    })
+    .catch(error => {
+      console.error('Erro ao buscar capacidade do processo:', error);
+      throw error;
+    });
+}
+
+function addCapacidadeProcessoOrganizacional(data) {
+  return post('/insert_capacidade_processo_organizacional', data)
+    .then(response => {
+      return response;
+    })
+    .catch(error => {
+      console.error('Erro ao adicionar capacidade do processo:', error);
+      throw error;
+    });
+}
+
+function updateCapacidadeProcessoOrganizacional(data) {
+  return put('/update_capacidade_processo_organizacional', data)
+    .then(response => {
+      return response;
+    })
+    .catch(error => {
+      console.error('Erro ao atualizar capacidade do processo:', error);
+      throw error;
+    });
+}
+
 function getPerguntasCapacidadeProjeto(idNivel) {
   return get(`/get_perguntas_capacidade_processo_projeto/${idNivel}`);
+}
+
+function getCapacidadeProcessoProjeto(avaliacaoId) {
+  return get(`/get_capacidade_processo_projeto/${avaliacaoId}`)
+    .then(response => {
+      return response;
+    })
+    .catch(error => {
+      console.error('Erro ao buscar capacidade do processo:', error);
+      throw error;
+    });
+}
+
+function addCapacidadeProcessoProjeto(data) {
+  return post('/insert_capacidade_processo_projeto', data)
+    .then(response => {
+      return response;
+    })
+    .catch(error => {
+      console.error('Erro ao adicionar capacidade do processo:', error);
+      throw error;
+    });
+}
+
+function updateCapacidadeProcessoProjeto(data) {
+  return put('/update_capacidade_processo_projeto', data)
+    .then(response => {
+      return response;
+    })
+    .catch(error => {
+      console.error('Erro ao atualizar capacidade do processo:', error);
+      throw error;
+    });
 }
 
 export {
@@ -665,5 +732,11 @@ export {
   updateGrausImplementacaoEmpresa,
   updateResultadoFinal,
   getPerguntasCapacidadeOrganizacional,
-  getPerguntasCapacidadeProjeto
+  getPerguntasCapacidadeProjeto,
+  getCapacidadeProcessoOrganizacional,
+  addCapacidadeProcessoOrganizacional,
+  updateCapacidadeProcessoOrganizacional,
+  getCapacidadeProcessoProjeto,
+  addCapacidadeProcessoProjeto,
+  updateCapacidadeProcessoProjeto
 };

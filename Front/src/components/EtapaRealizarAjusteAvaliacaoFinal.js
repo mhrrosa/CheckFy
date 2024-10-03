@@ -12,7 +12,16 @@ import {
   addGrauImplementacaoEmpresa,
   updateGrausImplementacaoEmpresa,
   addOrUpdateGrauImplementacao,
-  getGrausImplementacao
+  getGrausImplementacao,
+  getProcessos,
+  getPerguntasCapacidadeProjeto,
+  getPerguntasCapacidadeOrganizacional,
+  getCapacidadeProcessoProjeto,
+  addCapacidadeProcessoProjeto,
+  updateCapacidadeProcessoProjeto,
+  getCapacidadeProcessoOrganizacional,
+  addCapacidadeProcessoOrganizacional,
+  updateCapacidadeProcessoOrganizacional
 } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/Form.css';
@@ -37,9 +46,19 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
   const [arrayResumo, setArrayResumo] = useState([]);
   const [resumoSalvo, setResumoSalvo] = useState(false);
   const [grausImplementacao, setGrausImplementacao] = useState({});
-  const [activeTab, setActiveTab] = useState(null); // Added for tabs in Resumo da Caracterização
+  const [activeTab, setActiveTab] = useState(null);
 
-  const parentTabs = ['Resultado Auditoria', 'Informações Gerais', 'Processos', 'Resumo da Caracterização da Avaliação', 'Concluir Ajustes e Solicitar a Auditoria'];
+  // New state variables for Projeto and Organizacional tabs
+  const [processosOrganizacionais, setProcessosOrganizacionais] = useState([]);
+  const [perguntasProjeto, setPerguntasProjeto] = useState([]);
+  const [perguntasOrganizacional, setPerguntasOrganizacional] = useState([]);
+  const [respostasProjeto, setRespostasProjeto] = useState({});
+  const [respostasOrganizacional, setRespostasOrganizacional] = useState({});
+  const [activeChildProjectTab, setActiveChildProjectTab] = useState(null);
+  const [activeChildOrganizationalTab, setActiveChildOrganizationalTab] = useState(null);
+  const [idNivel, setIdNivel] = useState(null);
+
+  const parentTabs = ['Resultado Auditoria', 'Informações Gerais', 'Processos', 'Resumo da Caracterização da Avaliação', 'Projeto', 'Organizacional', 'Concluir Ajustes e Solicitar a Auditoria'];
 
   const options = [
     "Totalmente implementado (T)",
@@ -50,11 +69,35 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     "Fora do escopo (F)"
   ];
 
+  const descricaoToAbbr = {
+    "Gerência de Projetos": "GPR",
+    "Engenharia de Requisitos": "REQ",
+    "Projeto e Construção do Produto": "PCP",
+    "Integração do Produto": "ITP",
+    "Verificação e Validação": "VV",
+    "Gerência de Configuração": "GCO",
+    "Aquisição": "AQU",
+    "Medição": "MED",
+    "Gerência de Decisões": "GDE",
+    "Gerência de Recursos Humanos": "GRH",
+    "Gerência de Processos": "GPC",
+    "Gerência Organizacional": "ORG"
+  };
+
+  const processCodes = ['GCO', 'AQU', 'MED', 'GDE', 'GRH', 'GPC', 'ORG'];
+
   useEffect(() => {
     if (avaliacaoId && idVersaoModelo) {
       carregarDados();
     }
   }, [avaliacaoId, idVersaoModelo]);
+
+  useEffect(() => {
+    if (idNivel) {
+      carregarPerguntasProjeto();
+      carregarPerguntasOrganizacional();
+    }
+  }, [idNivel]);
 
   useEffect(() => {
     if (activeChildTab) {
@@ -67,6 +110,18 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
       setActiveTab(processos[0].ID);
     }
   }, [processos, activeParentTab]);
+
+  useEffect(() => {
+    if (activeParentTab === 'Projeto' && projetos.length > 0) {
+      setActiveChildProjectTab(projetos[0].ID);
+    }
+  }, [activeParentTab, projetos]);
+
+  useEffect(() => {
+    if (activeParentTab === 'Organizacional' && processosOrganizacionais.length > 0) {
+      setActiveChildOrganizationalTab(processosOrganizacionais[0].ID);
+    }
+  }, [activeParentTab, processosOrganizacionais]);
 
   const salvarNotas = async () => {
     try {
@@ -90,21 +145,29 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     try {
       const avaliacaoData = await getAvaliacaoById(avaliacaoId);
       setAvaliacao(avaliacaoData);
+      if (avaliacaoData && avaliacaoData.id_nivel_solicitado) {
+        setIdNivel(avaliacaoData.id_nivel_solicitado);
+      }
 
       await carregarRelatorioAuditoriaFinal();
 
       await carregarProjetos();
 
+      await carregarProcessosOrganizacionais();
+
+      await carregarRespostasProjeto();
+      await carregarRespostasOrganizacional();
+
       const processosLoaded = await carregarProcessos();
 
       await carregarGrausImplementacao();
 
-      // Carregar resultados esperados para todos os processos
+      // Load expected results for all processes
       for (const processo of processosLoaded) {
         await carregarResultadosEsperados(processo.ID);
       }
 
-      // Carregar resumo da caracterização da avaliação
+      // Load evaluation summary
       await carregarResumoAvaliacao(processosLoaded);
 
       if (activeParentTab === 'Processos') {
@@ -128,6 +191,96 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     }
   };
 
+  const carregarProjetos = async () => {
+    try {
+      const data = await getProjetosByAvaliacao(avaliacaoId);
+      setProjetos(data);
+
+      // Initialize respostasProjeto with default nota
+      const initialRespostas = {};
+      data.forEach(projeto => {
+        initialRespostas[projeto.ID] = { nota: 'Não avaliado (NA)' };
+      });
+      setRespostasProjeto(initialRespostas);
+    } catch (error) {
+      console.error('Erro ao carregar projetos:', error);
+    }
+  };
+
+  const carregarProcessosOrganizacionais = async () => {
+    try {
+      const data = await getProcessos(idVersaoModelo);
+      const filteredProcesses = data.filter(processo => {
+        const abbr = descricaoToAbbr[processo.Descricao];
+        return processCodes.includes(abbr);
+      });
+      setProcessosOrganizacionais(filteredProcesses);
+
+      // Initialize respostasOrganizacional with default nota
+      const initialRespostas = {};
+      filteredProcesses.forEach(processo => {
+        initialRespostas[processo.ID] = { nota: 'Não avaliado (NA)' };
+      });
+      setRespostasOrganizacional(initialRespostas);
+    } catch (error) {
+      console.error('Erro ao carregar processos organizacionais:', error);
+    }
+  };
+
+  const carregarPerguntasProjeto = async () => {
+    if (!idNivel) return;
+    try {
+      const data = await getPerguntasCapacidadeProjeto(idNivel);
+      setPerguntasProjeto(data);
+    } catch (error) {
+      console.error('Erro ao carregar perguntas do projeto:', error);
+    }
+  };
+
+  const carregarPerguntasOrganizacional = async () => {
+    if (!idNivel) return;
+    try {
+      const data = await getPerguntasCapacidadeOrganizacional(idNivel);
+      setPerguntasOrganizacional(data);
+    } catch (error) {
+      console.error('Erro ao carregar perguntas organizacionais:', error);
+    }
+  };
+
+  const carregarRespostasProjeto = async () => {
+    try {
+      const data = (await getCapacidadeProcessoProjeto(avaliacaoId)) || [];
+      setRespostasProjeto(prevState => {
+        const novasRespostas = { ...prevState };
+        data.forEach(item => {
+          const projectId = item.ID_Projeto;
+          const nota = item.Nota;
+          novasRespostas[projectId] = { nota };
+        });
+        return novasRespostas;
+      });
+    } catch (error) {
+      console.error('Erro ao carregar respostas do projeto:', error);
+    }
+  };
+
+  const carregarRespostasOrganizacional = async () => {
+    try {
+      const data = (await getCapacidadeProcessoOrganizacional(avaliacaoId)) || [];
+      setRespostasOrganizacional(prevState => {
+        const novasRespostas = { ...prevState };
+        data.forEach(item => {
+          const processId = item.ID_Processo;
+          const nota = item.Nota;
+          novasRespostas[processId] = { nota };
+        });
+        return novasRespostas;
+      });
+    } catch (error) {
+      console.error('Erro ao carregar respostas organizacionais:', error);
+    }
+  };
+
   const carregarGrausImplementacao = async () => {
     try {
       const data = await getGrausImplementacao(avaliacaoId);
@@ -138,15 +291,6 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
       setGrausImplementacao(graus);
     } catch (error) {
       console.error('Erro ao carregar graus de implementação:', error);
-    }
-  };
-
-  const carregarProjetos = async () => {
-    try {
-      const data = await getProjetosByAvaliacao(avaliacaoId);
-      setProjetos(data);
-    } catch (error) {
-      console.error('Erro ao carregar projetos:', error);
     }
   };
 
@@ -218,7 +362,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
         setResumoSalvo(true);
         await montarArrayComResumo(resumo, processosLoaded);
       } else {
-        // Se não há resumo salvo, inicializamos as notas como 'Não avaliado (NA)'
+        // If no summary saved, initialize notes as 'Não avaliado (NA)'
         await montarArrayComResumo([], processosLoaded);
       }
     } catch (error) {
@@ -268,6 +412,96 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     }));
   };
 
+  const handleRespostaProjetoChange = (projectId, value) => {
+    setRespostasProjeto(prevState => ({
+      ...prevState,
+      [projectId]: { nota: value }
+    }));
+  };
+
+  const handleRespostaOrganizacionalChange = (processId, value) => {
+    setRespostasOrganizacional(prevState => ({
+      ...prevState,
+      [processId]: { nota: value }
+    }));
+  };
+
+  const salvarRespostasProjeto = async () => {
+    try {
+      const dataToSend = Object.keys(respostasProjeto).map(projectId => ({
+        id_avaliacao: avaliacaoId,
+        id_projeto: projectId,
+        nota: respostasProjeto[projectId].nota
+      }));
+
+      if (dataToSend.length === 0) {
+        console.warn("Nenhuma resposta para salvar na aba Projeto.");
+        return;
+      }
+
+      const existingData = await getCapacidadeProcessoProjeto(avaliacaoId);
+      const existingProjectIds = existingData ? existingData.map(item => item.ID_Projeto) : [];
+
+      const dataToUpdate = dataToSend.filter(item => existingProjectIds.includes(item.id_projeto));
+      const dataToInsert = dataToSend.filter(item => !existingProjectIds.includes(item.id_projeto));
+
+      if (dataToUpdate.length > 0) {
+        await updateCapacidadeProcessoProjeto(dataToUpdate);
+      }
+
+      if (dataToInsert.length > 0) {
+        await addCapacidadeProcessoProjeto(dataToInsert);
+      }
+
+      alert("Respostas do projeto salvas com sucesso.");
+    } catch (error) {
+      console.error('Erro ao salvar respostas do projeto:', error);
+      alert('Erro ao salvar respostas do projeto.');
+    }
+  };
+
+  const salvarRespostasOrganizacional = async () => {
+    try {
+      const dataToSend = Object.keys(respostasOrganizacional).map(processId => ({
+        id_avaliacao: avaliacaoId,
+        id_processo: processId,
+        nota: respostasOrganizacional[processId].nota
+      }));
+
+      if (dataToSend.length === 0) {
+        console.warn("Nenhuma resposta para salvar na aba Organizacional.");
+        return;
+      }
+
+      const existingData = await getCapacidadeProcessoOrganizacional(avaliacaoId);
+      const existingProcessIds = existingData ? existingData.map(item => item.ID_Processo) : [];
+
+      const dataToUpdate = dataToSend.filter(item => existingProcessIds.includes(item.id_processo));
+      const dataToInsert = dataToSend.filter(item => !existingProcessIds.includes(item.id_processo));
+
+      if (dataToUpdate.length > 0) {
+        await updateCapacidadeProcessoOrganizacional(dataToUpdate);
+      }
+
+      if (dataToInsert.length > 0) {
+        await addCapacidadeProcessoOrganizacional(dataToInsert);
+      }
+
+      alert("Respostas organizacionais salvas com sucesso.");
+    } catch (error) {
+      console.error('Erro ao salvar respostas organizacionais:', error);
+      alert('Erro ao salvar respostas organizacionais.');
+    }
+  };
+
+  const handleSaveProjeto = () => {
+    salvarRespostasProjeto();
+  };
+
+  const handleSaveOrganizacional = () => {
+    salvarRespostasOrganizacional();
+  };
+
   const handleNotaChange = (resultadoId, nota) => {
     setArrayResumo(prevArray => 
       prevArray.map(item => 
@@ -296,190 +530,278 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     }
   };
 
-    const renderProcessosContent = () => {
+  const renderProcessosContent = () => {
     return (
-        <>
+      <>
         <div className="tabs">
-            {processos.map((processo) => (
+          {processos.map((processo) => (
             <button
-                key={processo.ID}
-                className={`tab-button ${activeChildTab === processo.ID ? 'active' : ''}`}
-                onClick={() => setActiveChildTab(processo.ID)}
+              key={processo.ID}
+              className={`tab-button ${activeChildTab === processo.ID ? 'active' : ''}`}
+              onClick={() => setActiveChildTab(processo.ID)}
             >
-                {processo.Descricao === "Gerência de Projetos" ? "GPR" :
-                processo.Descricao === "Engenharia de Requisitos" ? "REQ" :
-                    processo.Descricao === "Projeto e Construção do Produto" ? "PCP" :
-                    processo.Descricao === "Integração do Produto" ? "ITP" :
-                        processo.Descricao === "Verificação e Validação" ? "VV" :
-                        processo.Descricao === "Gerência de Configuração" ? "GCO" :
-                            processo.Descricao === "Aquisição" ? "AQU" :
-                            processo.Descricao === "Medição" ? "MED" :
-                                processo.Descricao === "Gerência de Decisões" ? "GDE" :
-                                processo.Descricao === "Gerência de Recursos Humanos" ? "GRH" :
-                                    processo.Descricao === "Gerência de Processos" ? "GPC" :
-                                    processo.Descricao === "Gerência Organizacional" ? "ORG" :
-                                        processo.Descricao}
+              {descricaoToAbbr[processo.Descricao] || processo.Descricao}
             </button>
-            ))}
+          ))}
         </div>
         <div className="tab-content">
-            {processos.map(processo => (
+          {processos.map(processo => (
             activeChildTab === processo.ID && (
-                <div key={processo.ID}>
+              <div key={processo.ID}>
                 <label className='label-etapas'>Processo: </label>
                 <h2 className='title-processo-caracterizacao'>{processo.Descricao}</h2>
                 {resultadosEsperados[processo.ID] && resultadosEsperados[processo.ID].map(resultado => {
-                    const notaIndex = resultado.Descricao.indexOf('NOTA');
-                    const descricao = notaIndex !== -1 ? resultado.Descricao.substring(0, notaIndex).trim() : resultado.Descricao;
-                    const nota = notaIndex !== -1 ? resultado.Descricao.substring(notaIndex).trim() : '';
-                    return (
+                  const notaIndex = resultado.Descricao.indexOf('NOTA');
+                  const descricao = notaIndex !== -1 ? resultado.Descricao.substring(0, notaIndex).trim() : resultado.Descricao;
+                  const nota = notaIndex !== -1 ? resultado.Descricao.substring(notaIndex).trim() : '';
+                  return (
                     <div className='div-resultado-esperado-caracterizacao' key={resultado.ID}>
-                        <label className='label-etapas'>Resultado Esperado: </label>
-                        <h3 className='title-resultado-caracterizacao'>{descricao}</h3>
-                        {nota && <div className='nota-adicional-div'><p className='nota-adicional-resultado'>{nota}</p></div>}
-                        {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
+                      <label className='label-etapas'>Resultado Esperado: </label>
+                      <h3 className='title-resultado-caracterizacao'>{descricao}</h3>
+                      {nota && <div className='nota-adicional-div'><p className='nota-adicional-resultado'>{nota}</p></div>}
+                      {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
                         <div key={projeto.ID}>
-                            <h4 className='title-projeto-caracterizacao'>Projeto: {projeto.Nome_Projeto}</h4>
-                            <select
+                          <h4 className='title-projeto-caracterizacao'>Projeto: {projeto.Nome_Projeto}</h4>
+                          <select
                             className='select-grau'
                             value={grausImplementacao[`${resultado.ID}-${projeto.ID}`] || "Não avaliado (NA)"}
                             onChange={(e) => handleSelectChange(e, resultado.ID, projeto.ID)}
-                            >
+                          >
                             {options.map((option, index) => (
-                                <option key={index} value={option}>{option}</option>
+                              <option key={index} value={option}>{option}</option>
                             ))}
-                            </select>
-                            <div>
+                          </select>
+                          <div>
                             {evidencias[`${resultado.ID}-${projeto.ID}`] && evidencias[`${resultado.ID}-${projeto.ID}`]
-                                .map(evidencia => (
+                              .map(evidencia => (
                                 <div className='evidencia-e-botao' key={evidencia.id}>
-                                    <p className='title-evidencia-caracterizacao'>Evidencia: {evidencia.nomeArquivo}</p>
-                                    <button className='button-mostrar-documento-etapa-evidencia' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
+                                  <p className='title-evidencia-caracterizacao'>Evidencia: {evidencia.nomeArquivo}</p>
+                                  <button className='button-mostrar-documento-etapa-evidencia' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
                                 </div>
-                                ))}
-                            </div>
+                              ))}
+                          </div>
                         </div>
-                        ))}
+                      ))}
                     </div>
-                    );
+                  );
                 })}
-                </div>
+              </div>
             )
-            ))}
+          ))}
         </div>
         <button className='button-save' onClick={salvarNotas}>SALVAR NOTAS</button>
-        </>
+      </>
     );
-    };
+  };
 
-    const renderResultadoAuditoriaContent = () => {
-        return (
-        <div className="conteudo-resultado">
-            <h2>Resultado da auditoria</h2>
-            {aprovacao === 'Aprovar' && <p>Auditoria Aprovada</p>}
-            {aprovacao === 'Reprovar' && (
-            <>
-                <p>Auditoria Reprovada</p>
-                <p>Justificativa: {justificativa}</p>
-            </>
-            )}
-        </div>
-        );
-    };
-
-    const renderResumoAvaliacaoContent = () => {
-      return (
-        <div className="container-etapa">
-          <h1 className='title-form'>RESUMO DA CARACTERIZAÇÃO DA AVALIAÇÃO</h1>
-          <div className="tabs">
-            {processos.map((processo, index) => (
-              <button
-                key={processo.ID}
-                className={`tab-button ${activeTab === processo.ID ? 'active' : ''}`}
-                onClick={() => setActiveTab(processo.ID)}
-              >
-                {processo.Descricao === "Gerência de Projetos" ? "GPR" :
-                 processo.Descricao === "Engenharia de Requisitos" ? "REQ" : 
-                 processo.Descricao === "Projeto e Construção do Produto" ? "PCP" :
-                 processo.Descricao === "Integração do Produto" ? "ITP" :
-                 processo.Descricao === "Verificação e Validação" ? "VV" :
-                 processo.Descricao === "Gerência de Configuração" ? "GCO" :
-                 processo.Descricao === "Aquisição" ? "AQU" :
-                 processo.Descricao === "Medição" ? "MED" :
-                 processo.Descricao === "Gerência de Decisões" ? "GDE" :
-                 processo.Descricao === "Gerência de Recursos Humanos" ? "GRH" :
-                 processo.Descricao === "Gerência de Processos" ? "GPC" :
-                 processo.Descricao === "Gerência Organizacional" ? "ORG" :
-                 processo.Descricao}
-              </button>
-            ))}
-          </div>
-          <div className="tab-content">
-            <table className='resumo-tabela'>
-              <thead>
-                <tr className='tr-table-resumo-caracterizacao'>
-                  <th className='resultado-esperado-head'>Resultado Esperado</th>
-                  <th className='nota-head'>Nota</th>
-                </tr>
-              </thead>
-              <tbody>
-                {processos.map(processo => (
-                  activeTab === processo.ID && (
-                    (resultadosEsperados[processo.ID] || []).map(resultado => {
-                      const itemResumo = arrayResumo.find(item => item.id_resultado_esperado === resultado.ID);
-                      return (
-                        <tr className='tr-table-resumo-caracterizacao' key={resultado.ID}>
-                          <td className='resultado-esperado-body'>
-                            <Tippy content={resultado.Descricao} placement="top" animation="fade">
-                              <span className='resultado-esperado'>
-                                {resultado.Descricao.substring(0, 50)}{resultado.Descricao.length > 50 ? '...' : ''}
-                              </span>
-                            </Tippy>
-                          </td>
-                          <td className='nota-body'>
-                            <select
-                              className="select-grau-resumo-caracterizacao"
-                              value={itemResumo?.nota || 'Não avaliado (NA)'}
-                              onChange={(e) => handleNotaChange(resultado.ID, e.target.value)}
-                            >
-                              <option value="Totalmente implementado (T)">Totalmente implementado (T)</option>
-                              <option value="Largamente implementado (L)">Largamente implementado (L)</option>
-                              <option value="Parcialmente implementado (P)">Parcialmente implementado (P)</option>
-                              <option value="Não implementado (N)">Não implementado (N)</option>
-                              <option value="Não avaliado (NA)">Não avaliado (NA)</option>
-                              <option value="Fora do escopo (F)">Fora do escopo (F)</option>
-                            </select>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <button className='button-save' onClick={salvarResumoCaracterizacao}>
-            {resumoSalvo ? 'ATUALIZAR' : 'SALVAR'}
-          </button>
-        </div>
-      );
-    };
-
-  const renderContent = () => {
-    switch (activeParentTab) {
-      case 'Informações Gerais':
-        return renderInformacoesGeraisContent();
-      case 'Processos':
-        return renderProcessosContent();
-      case 'Resultado Auditoria':
-        return renderResultadoAuditoriaContent();
-      case 'Resumo da Caracterização da Avaliação':
-        return renderResumoAvaliacaoContent(); 
-        case 'Concluir Ajustes e Solicitar a Auditoria':
-        return renderConcluirAjustesContent();
-      default:
-        return null;
+  const renderProjetoContent = () => {
+    if (!projetos || projetos.length === 0) {
+      return <p>Carregando projetos...</p>;
     }
+
+    return (
+      <>
+        <div className="tabs">
+          {projetos.map(projeto => (
+            <button
+              key={projeto.ID}
+              className={`tab-button ${activeChildProjectTab === projeto.ID ? 'active' : ''}`}
+              onClick={() => setActiveChildProjectTab(projeto.ID)}
+            >
+              {projeto.Nome_Projeto}
+            </button>
+          ))}
+        </div>
+        <div className="tab-content">
+          {projetos.map(projeto => (
+            activeChildProjectTab === projeto.ID && (
+              <div key={projeto.ID}>
+                <h2 className='title-processo-caracterizacao'>{projeto.Nome_Projeto}</h2>
+                <table className='tabela-caracterizacao'>
+                  <thead>
+                    <tr>
+                      <th>Descrição</th>
+                      <th>Evidências</th>
+                      <th>Nota</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {perguntasProjeto.map(pergunta => (
+                      <tr key={pergunta.ID}>
+                        <td>{pergunta.pergunta}</td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    ))}
+                    {/* Nota Final */}
+                    <tr>
+                      <td><strong>Nota Final</strong></td>
+                      <td></td>
+                      <td>
+                        <select
+                          className='select-grau'
+                          value={respostasProjeto[projeto.ID]?.nota || "Não avaliado (NA)"}
+                          onChange={(e) => handleRespostaProjetoChange(projeto.ID, e.target.value)}
+                        >
+                          {options.map((option, index) => (
+                            <option key={index} value={option}>{option}</option>
+                          ))}
+                        </select>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )
+          ))}
+        </div>
+        <button className='button-save' onClick={handleSaveProjeto}>SALVAR</button>
+      </>
+    );
+  };
+
+  const renderOrganizacionalContent = () => {
+    if (!processosOrganizacionais || processosOrganizacionais.length === 0) {
+      return <p>Carregando processos organizacionais...</p>;
+    }
+
+    return (
+      <>
+        <div className="tabs">
+          {processosOrganizacionais.map(processo => (
+            <button
+              key={processo.ID}
+              className={`tab-button ${activeChildOrganizationalTab === processo.ID ? 'active' : ''}`}
+              onClick={() => setActiveChildOrganizationalTab(processo.ID)}
+            >
+              {descricaoToAbbr[processo.Descricao] || processo.Descricao}
+            </button>
+          ))}
+        </div>
+        <div className="tab-content">
+          {processosOrganizacionais.map(processo => (
+            activeChildOrganizationalTab === processo.ID && (
+              <div key={processo.ID}>
+                <h2 className='title-processo-caracterizacao'>{processo.Descricao}</h2>
+                <table className='tabela-caracterizacao'>
+                  <thead>
+                    <tr>
+                      <th>Descrição</th>
+                      <th>Evidências</th>
+                      <th>Nota</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {perguntasOrganizacional.map(pergunta => (
+                      <tr key={pergunta.ID}>
+                        <td>{pergunta.pergunta}</td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    ))}
+                    {/* Nota Final */}
+                    <tr>
+                      <td><strong>Nota Final</strong></td>
+                      <td></td>
+                      <td>
+                        <select
+                          className='select-grau'
+                          value={respostasOrganizacional[processo.ID]?.nota || "Não avaliado (NA)"}
+                          onChange={(e) => handleRespostaOrganizacionalChange(processo.ID, e.target.value)}
+                        >
+                          {options.map((option, index) => (
+                            <option key={index} value={option}>{option}</option>
+                          ))}
+                        </select>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )
+          ))}
+        </div>
+        <button className='button-save' onClick={handleSaveOrganizacional}>SALVAR</button>
+      </>
+    );
+  };
+
+  const renderResultadoAuditoriaContent = () => {
+    return (
+      <div className="conteudo-resultado">
+        <h2>Resultado da auditoria</h2>
+        {aprovacao === 'Aprovar' && <p>Auditoria Aprovada</p>}
+        {aprovacao === 'Reprovar' && (
+          <>
+            <p>Auditoria Reprovada</p>
+            <p>Justificativa: {justificativa}</p>
+          </>
+        )}
+      </div>
+    );
+  };
+
+  const renderResumoAvaliacaoContent = () => {
+    return (
+      <div className="container-etapa">
+        <h1 className='title-form'>RESUMO DA CARACTERIZAÇÃO DA AVALIAÇÃO</h1>
+        <div className="tabs">
+          {processos.map((processo, index) => (
+            <button
+              key={processo.ID}
+              className={`tab-button ${activeTab === processo.ID ? 'active' : ''}`}
+              onClick={() => setActiveTab(processo.ID)}
+            >
+              {descricaoToAbbr[processo.Descricao] || processo.Descricao}
+            </button>
+          ))}
+        </div>
+        <div className="tab-content">
+          <table className='resumo-tabela'>
+            <thead>
+              <tr className='tr-table-resumo-caracterizacao'>
+                <th className='resultado-esperado-head'>Resultado Esperado</th>
+                <th className='nota-head'>Nota</th>
+              </tr>
+            </thead>
+            <tbody>
+              {processos.map(processo => (
+                activeTab === processo.ID && (
+                  (resultadosEsperados[processo.ID] || []).map(resultado => {
+                    const itemResumo = arrayResumo.find(item => item.id_resultado_esperado === resultado.ID);
+                    return (
+                      <tr className='tr-table-resumo-caracterizacao' key={resultado.ID}>
+                        <td className='resultado-esperado-body'>
+                          <Tippy content={resultado.Descricao} placement="top" animation="fade">
+                            <span className='resultado-esperado'>
+                              {resultado.Descricao.substring(0, 50)}{resultado.Descricao.length > 50 ? '...' : ''}
+                            </span>
+                          </Tippy>
+                        </td>
+                        <td className='nota-body'>
+                          <select
+                            className="select-grau-resumo-caracterizacao"
+                            value={itemResumo?.nota || 'Não avaliado (NA)'}
+                            onChange={(e) => handleNotaChange(resultado.ID, e.target.value)}
+                          >
+                            {options.map((option, index) => (
+                              <option key={index} value={option}>{option}</option>
+                            ))}
+                          </select>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <button className='button-save' onClick={salvarResumoCaracterizacao}>
+          {resumoSalvo ? 'ATUALIZAR' : 'SALVAR'}
+        </button>
+      </div>
+    );
   };
 
   const renderInformacoesGeraisContent = () => {
@@ -534,13 +856,34 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     );
   };
 
+  const renderContent = () => {
+    switch (activeParentTab) {
+      case 'Informações Gerais':
+        return renderInformacoesGeraisContent();
+      case 'Processos':
+        return renderProcessosContent();
+      case 'Projeto':
+        return renderProjetoContent();
+      case 'Organizacional':
+        return renderOrganizacionalContent();
+      case 'Resultado Auditoria':
+        return renderResultadoAuditoriaContent();
+      case 'Resumo da Caracterização da Avaliação':
+        return renderResumoAvaliacaoContent(); 
+      case 'Concluir Ajustes e Solicitar a Auditoria':
+        return renderConcluirAjustesContent();
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="container-etapa">
       <h1 className='title-form'>AJUSTE DA AVALIAÇÃO FINAL</h1>
       <div className='dica-div'>
         <strong className="dica-titulo">Dica:</strong>
         <p className='dica-texto'>
-          Aqui você pode visualizar as evidências que comprovam a implementação dos processos e o nível de capacidade de processo.
+          Aqui você pode visualizar e ajustar as informações relacionadas à avaliação final.
         </p>
       </div>
       <div className="parent-tabs">
@@ -550,11 +893,17 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
             className={`tab-button ${activeParentTab === tab ? 'active' : ''}`}
             onClick={() => {
               setActiveParentTab(tab);
-              if (tab !== 'Processos') {
-                setActiveChildTab(null);
-              } else if (processos.length > 0) {
+              if (tab === 'Processos' && processos.length > 0) {
                 setActiveChildTab(processos[0].ID);
                 carregarResultadosEsperados(processos[0].ID);
+              } else if (tab === 'Projeto' && projetos.length > 0) {
+                setActiveChildProjectTab(projetos[0].ID);
+              } else if (tab === 'Organizacional' && processosOrganizacionais.length > 0) {
+                setActiveChildOrganizationalTab(processosOrganizacionais[0].ID);
+              } else {
+                setActiveChildTab(null);
+                setActiveChildProjectTab(null);
+                setActiveChildOrganizationalTab(null);
               }
             }}
           >
