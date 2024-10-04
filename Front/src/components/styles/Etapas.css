@@ -62,7 +62,21 @@
     border-radius: 4px;
 }
 
+
 .nota-adicional-resultado {
+    font-size: 1em;
+    margin: 0;
+}
+
+.nota-adicional-tabela {
+    background-color: #d6efff;
+    border-left: 4px solid #36abff;
+    margin: 0 40px 0px 0px;
+    padding: 5px 0 5px 3px;
+    border-radius: 4px;
+}
+
+.nota-adicional-resultado-tabela {
     font-size: 1em;
     margin: 0;
 }

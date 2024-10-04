@@ -242,13 +242,17 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
             {processos.map(processo => (
               activeTab === processo.ID && (
                 (resultadosEsperados[processo.ID] || []).map(resultado => {
+                  const notaIndex = resultado.Descricao.indexOf('NOTA');
+                  const descricao = notaIndex !== -1 ? resultado.Descricao.substring(0, notaIndex).trim() : resultado.Descricao;
+                  const nota = notaIndex !== -1 ? resultado.Descricao.substring(notaIndex).trim() : '';
                   const itemResumo = arrayResumo.find(item => item.id_resultado_esperado === resultado.ID);
                   return (
                     <tr className='tr-table-resumo-caracterizacao' key={resultado.ID}>
                       <td className='resultado-esperado-body'>
                         <span className='resultado-esperado'>
-                          {resultado.Descricao}
+                        {descricao}
                         </span>
+                        {nota && <div className='nota-adicional-tabela'><p className='nota-adicional-resultado-tabela'>{nota}</p></div>}
                       </td>
                       <td className='nota-body'>
                         {itemResumo?.nota === 'Escolher L ou P' || itemResumo?.nota === 'Escolher L, N ou P' ? (
