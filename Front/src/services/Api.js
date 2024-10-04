@@ -648,6 +648,10 @@ function updateCapacidadeProcessoProjeto(data) {
     });
 }
 
+function notificaParticipantesResultadoAvaliacaoFinal(avaliacaoId) {
+  return post(`/notificar_participantes_resultado_avaliacao_final/${avaliacaoId}`);
+}
+
 export {
   startNewEvaluation,
   getAllAvaliacoes,
@@ -738,5 +742,6 @@ export {
   updateCapacidadeProcessoOrganizacional,
   getCapacidadeProcessoProjeto,
   addCapacidadeProcessoProjeto,
-  updateCapacidadeProcessoProjeto
+  updateCapacidadeProcessoProjeto,
+  notificaParticipantesResultadoAvaliacaoFinal
 };

@@ -16,7 +16,8 @@ import {
   getPerguntasCapacidadeProjeto,
   getPerguntasCapacidadeOrganizacional,
   getCapacidadeProcessoProjeto,
-  getCapacidadeProcessoOrganizacional
+  getCapacidadeProcessoOrganizacional,
+  notificaParticipantesResultadoAvaliacaoFinal 
 } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/Form.css';
@@ -107,12 +108,25 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
 
   const handleNextStep = () => {
     if (aprovacao === 'Aprovar') {
-      onDuploNext(); // Avançar duas etapas
+      // Exibir a mensagem de confirmação
+      const confirmarEnvio = window.confirm('Ao continuar, um e-mail será enviado aos participantes. Deseja continuar?');
+      if (confirmarEnvio) {
+        notificaParticipantesResultadoAvaliacaoFinal(avaliacaoId)
+          .then(() => {
+            alert('E-mail enviado com sucesso!');
+            onDuploNext(); // Avançar duas etapas
+          })
+          .catch((error) => {
+            console.error('Erro ao enviar notificação:', error);
+            alert('Erro ao enviar notificação.');
+          });
+      } else {
+        return;
+      }
     } else {
       onNext(); // Avançar uma etapa
     }
   };
-
   const carregarDados = async () => {
     try {
       const avaliacaoData = await getAvaliacaoById(avaliacaoId);
@@ -608,7 +622,6 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
   const renderResumoAvaliacaoContent = () => {
     return (
       <div className="management-etapa5-container">
-        <h1 className='management-etapa5-title'>RESUMO DA CARACTERIZAÇÃO DA AVALIAÇÃO</h1>
         <div className="tabs">
           {processos.map((processo, index) => (
             <button
@@ -621,6 +634,7 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
           ))}
         </div>
         <div className="tab-content">
+          <h1 className='management-etapa5-title'>RESUMO DA CARACTERIZAÇÃO DA AVALIAÇÃO</h1>
           <table className='resumo-tabela'>
             <thead>
               <tr>

@@ -1368,6 +1368,18 @@ def update_capacidade_processo_projeto():
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/notificar_participantes_resultado_avaliacao_final/<int:avaliacao_id>', methods=['POST'])
+def notificar_participantes_resultado_avaliacao_final(avaliacao_id):
+    db = get_db()
+    email = Email(db)
+    try:
+        email.notificar_participantes_resultado_avaliacao_final(avaliacao_id)
+        return jsonify({"message": "E-mail de avaliação final enviado com sucesso"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+
 if __name__ == '__main__':
     # eventlet.wsgi.server(eventlet.listen(('127.0.0.1', 5000)), app)
     WSGIServer(('127.0.0.1', 5000),app).serve_forever()

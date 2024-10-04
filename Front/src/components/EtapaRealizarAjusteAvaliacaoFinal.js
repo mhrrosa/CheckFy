@@ -21,7 +21,9 @@ import {
   updateCapacidadeProcessoProjeto,
   getCapacidadeProcessoOrganizacional,
   addCapacidadeProcessoOrganizacional,
-  updateCapacidadeProcessoOrganizacional
+  updateCapacidadeProcessoOrganizacional,
+  getNiveisLimitado, 
+  updateResultadoFinal, 
 } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/Form.css';
@@ -47,8 +49,6 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
   const [resumoSalvo, setResumoSalvo] = useState(false);
   const [grausImplementacao, setGrausImplementacao] = useState({});
   const [activeTab, setActiveTab] = useState(null);
-
-  // New state variables for Projeto and Organizacional tabs
   const [processosOrganizacionais, setProcessosOrganizacionais] = useState([]);
   const [perguntasProjeto, setPerguntasProjeto] = useState([]);
   const [perguntasOrganizacional, setPerguntasOrganizacional] = useState([]);
@@ -57,6 +57,10 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
   const [activeChildProjectTab, setActiveChildProjectTab] = useState(null);
   const [activeChildOrganizationalTab, setActiveChildOrganizationalTab] = useState(null);
   const [idNivel, setIdNivel] = useState(null);
+  const [parecerFinal, setParecerFinal] = useState('');
+  const [selectedNivel, setSelectedNivel] = useState('');
+  const [niveis, setNiveis] = useState([]);
+  const [nivelDisabled, setNivelDisabled] = useState(false);
 
   const parentTabs = ['Resultado Auditoria', 'Informações Gerais', 'Processos', 'Resumo da Caracterização da Avaliação', 'Projeto', 'Organizacional', 'Concluir Ajustes e Solicitar a Auditoria'];
 
@@ -143,33 +147,62 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
 
   const carregarDados = async () => {
     try {
+      // Carrega os dados da avaliação a partir do ID fornecido
       const avaliacaoData = await getAvaliacaoById(avaliacaoId);
       setAvaliacao(avaliacaoData);
+  
+      // Verifica se a avaliação possui um nível solicitado e carrega os níveis correspondentes
       if (avaliacaoData && avaliacaoData.id_nivel_solicitado) {
         setIdNivel(avaliacaoData.id_nivel_solicitado);
+  
+        // Busca os níveis limitados até o nível solicitado com base na versão do modelo
+        const niveisData = await getNiveisLimitado(
+          avaliacaoData.id_versao_modelo,
+          avaliacaoData.id_nivel_solicitado
+        );
+        setNiveis(niveisData);
       }
-
+  
+      // Define o parecer final e o nível atribuído com base nos dados da avaliação
+      setParecerFinal(avaliacaoData.parecer_final || '');
+      if (avaliacaoData.parecer_final === 'Satisfeito') {
+        setSelectedNivel(avaliacaoData.id_nivel_atribuido || avaliacaoData.id_nivel_solicitado);
+        setNivelDisabled(true);
+      } else if (avaliacaoData.parecer_final === 'Não Satisfeito') {
+        setSelectedNivel(avaliacaoData.id_nivel_atribuido || '');
+        setNivelDisabled(false);
+      } else {
+        setNivelDisabled(true);
+      }
+  
+      // Carrega o relatório de auditoria final se existir
       await carregarRelatorioAuditoriaFinal();
-
+  
+      // Carrega os projetos relacionados à avaliação
       await carregarProjetos();
-
+  
+      // Carrega os processos organizacionais baseados na versão do modelo
       await carregarProcessosOrganizacionais();
-
+  
+      // Carrega as respostas do projeto e organizacionais já existentes no banco de dados
       await carregarRespostasProjeto();
       await carregarRespostasOrganizacional();
-
+  
+      // Carrega os processos da avaliação com base na ID da avaliação e versão do modelo
       const processosLoaded = await carregarProcessos();
-
+  
+      // Carrega os graus de implementação existentes
       await carregarGrausImplementacao();
-
-      // Load expected results for all processes
+  
+      // Carrega os resultados esperados para cada processo carregado
       for (const processo of processosLoaded) {
         await carregarResultadosEsperados(processo.ID);
       }
-
-      // Load evaluation summary
+  
+      // Carrega o resumo da caracterização da avaliação
       await carregarResumoAvaliacao(processosLoaded);
-
+  
+      // Define o processo ativo na aba "Processos" se estiver ativa
       if (activeParentTab === 'Processos') {
         if (processosLoaded.length > 0) {
           setActiveChildTab(processosLoaded[0].ID);
@@ -402,6 +435,44 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     } catch (error) {
       console.error('Erro ao montar array com resumo:', error);
     }
+  };
+
+  const handleParecerFinalChange = (e) => {
+    const valor = e.target.value;
+    setParecerFinal(valor);
+
+    if (valor === 'Satisfeito') {
+      setSelectedNivel(avaliacao.id_nivel_solicitado);
+      setNivelDisabled(true);
+    } else if (valor === 'Não Satisfeito') {
+      setSelectedNivel('');
+      setNivelDisabled(false);
+    } else {
+      setSelectedNivel('');
+      setNivelDisabled(true);
+    }
+  };
+
+  const handleSaveInformacoesGerais = () => {
+    if (!parecerFinal || !selectedNivel) {
+      alert('Por favor, selecione o parecer final e o nível atribuído.');
+      return;
+    }
+
+    const data = {
+      idAvaliacao: avaliacaoId,
+      parecerFinal: parecerFinal,
+      idNivelAtribuido: selectedNivel,
+    };
+
+    updateResultadoFinal(avaliacaoId, data)
+      .then(() => {
+        alert('Informações gerais atualizadas com sucesso!');
+      })
+      .catch((error) => {
+        console.error('Erro ao atualizar informações gerais:', error);
+        alert('Erro ao atualizar informações gerais. Tente novamente.');
+      });
   };
 
   const handleSelectChange = (evento, resultadoId, projetoId) => {
@@ -744,7 +815,6 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
   const renderResumoAvaliacaoContent = () => {
     return (
       <div className="container-etapa">
-        <h1 className='title-form'>RESUMO DA CARACTERIZAÇÃO DA AVALIAÇÃO</h1>
         <div className="tabs">
           {processos.map((processo, index) => (
             <button
@@ -757,6 +827,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
           ))}
         </div>
         <div className="tab-content">
+          <h1 className='title-form'>RESUMO DA CARACTERIZAÇÃO DA AVALIAÇÃO</h1>
           <table className='resumo-tabela'>
             <thead>
               <tr className='tr-table-resumo-caracterizacao'>
@@ -808,32 +879,115 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     if (!avaliacao) {
       return <p>Carregando dados...</p>;
     }
-
+  
     return (
       <div className="conteudo-informacoes-gerais">
         <h2>Informações Gerais</h2>
-        <p><strong>Nome da Avaliação:</strong> {avaliacao.nome}</p>
-        <p><strong>Descrição:</strong> {avaliacao.descricao}</p>
-        <p><strong>Avaliador Líder:</strong> {avaliacao.nome_avaliador_lider}</p>
-        <p><strong>Empresa:</strong> {avaliacao.nome_empresa}</p>
-        <p><strong>Nível Solicitado:</strong> {avaliacao.nivel_solicitado}</p>
-        <p><strong>Versão do Modelo:</strong> {avaliacao.nome_versao_modelo}</p>
-        <p><strong>Status:</strong> {avaliacao.status}</p>
-        <p><strong>Atividade Planejamento:</strong> {avaliacao.atividade_planejamento}</p>
-        <p><strong>Cronograma Planejamento:</strong> {avaliacao.cronograma_planejamento}</p>
-        <p><strong>Ata de Reunião de Abertura:</strong> {avaliacao.ata_reuniao_abertura}</p>
-        <p><strong>Descrição Relatório de Ajuste Inicial:</strong> {avaliacao.descricao_relatorio_ajuste_inicial}</p>
-        <button
-          className="button-next"
-          onClick={() => window.open(`http://127.0.0.1:5000/uploads/${avaliacao.caminho_arquivo_relatorio_ajuste_inicial}`, '_blank')}
-        >
-          Visualizar Relatório de Ajuste Inicial
+        <div className="row">
+          <label className="label"><strong>Nome da Avaliação:</strong></label>
+          <span className="value">{avaliacao.nome}</span>
+        </div>
+  
+        <div className="row">
+          <label className="label"><strong>Descrição:</strong></label>
+          <span className="value">{avaliacao.descricao}</span>
+        </div>
+  
+        <div className="row">
+          <label className="label"><strong>Avaliador Líder:</strong></label>
+          <span className="value">{avaliacao.nome_avaliador_lider}</span>
+        </div>
+  
+        <div className="row">
+          <label className="label"><strong>Empresa:</strong></label>
+          <span className="value">{avaliacao.nome_empresa}</span>
+        </div>
+  
+        <div className="row">
+          <label className="label"><strong>Nível Solicitado:</strong></label>
+          <span className="value">{avaliacao.nivel_solicitado}</span>
+        </div>
+  
+        <div className="row">
+          <label className="label"><strong>Versão do Modelo:</strong></label>
+          <span className="value">{avaliacao.nome_versao_modelo}</span>
+        </div>
+  
+        <div className="row">
+          <label className="label"><strong>Status:</strong></label>
+          <span className="value">{avaliacao.status}</span>
+        </div>
+  
+        <div className="row">
+          <label className="label"><strong>Atividade Planejamento:</strong></label>
+          <span className="value">{avaliacao.atividade_planejamento}</span>
+        </div>
+  
+        <div className="row">
+          <label className="label"><strong>Cronograma Planejamento:</strong></label>
+          <span className="value">{avaliacao.cronograma_planejamento}</span>
+        </div>
+  
+        <div className="row">
+          <label className="label"><strong>Ata de Reunião de Abertura:</strong></label>
+          <span className="value">{avaliacao.ata_reuniao_abertura}</span>
+        </div>
+  
+        <div className="row">
+          <label className="label"><strong>Descrição Relatório de Ajuste Inicial:</strong></label>
+          <span className="value">{avaliacao.descricao_relatorio_ajuste_inicial}</span>
+        </div>
+  
+        <div className="row">
+          <label className="label"><strong>Parecer Final:</strong></label>
+          <select
+            value={parecerFinal}
+            onChange={handleParecerFinalChange}
+            className="select"
+          >
+            <option value="">Selecione um resultado</option>
+            <option value="Satisfeito">Satisfeito</option>
+            <option value="Não Satisfeito">Não Satisfeito</option>
+          </select>
+        </div>
+  
+        {parecerFinal && (
+          <div className="row">
+            <label className="label"><strong>Nível Atribuído:</strong></label>
+            <select
+              value={selectedNivel}
+              onChange={(e) => setSelectedNivel(e.target.value)}
+              className="select"
+              disabled={nivelDisabled}
+            >
+              <option value="">Selecione um nível</option>
+              {niveis.length > 0 &&
+                niveis.map((nivel) => (
+                  <option key={nivel['ID']} value={nivel['ID']}>
+                    {nivel['Nivel']} - {nivel['Nome_Nivel']}
+                  </option>
+                ))}
+            </select>
+          </div>
+        )}
+  
+        <div className="row">
+          <label className="label"><strong>Nível Atribuído Atual:</strong></label>
+          <span className="value">{avaliacao.nivel_atribuido}</span>
+        </div>
+  
+        <div className="row">
+          <label className="label"><strong>Parecer Final Atual:</strong></label>
+          <span className="value">{avaliacao.parecer_final}</span>
+        </div>
+  
+        <button className="button-save" onClick={handleSaveInformacoesGerais}>
+          Salvar
         </button>
-        <p><strong>Parecer Final:</strong> {avaliacao.parecer_final}</p>
-        <p><strong>Nível Atribuído:</strong> {avaliacao.nivel_atribuido}</p>
       </div>
     );
   };
+  
 
   const renderConcluirAjustesContent = () => {
     const handleConcluirClick = () => {
