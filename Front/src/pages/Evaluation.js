@@ -97,6 +97,7 @@ function Evaluation() {
   const [avaliacaoId, setAvaliacaoId] = useState(null);
   const [idVersaoModelo, setIdVersaoModelo] = useState(null);
   const [selectedEtapa, setSelectedEtapa] = useState(null);
+  const [nomeAvaliacao, setNomeAvaliacao] = useState(""); // Novo estado para o nome
   const [isLoading, setIsLoading] = useState(true);
   const [hasPermission, setHasPermission] = useState(false);
   const [atividades, setAtividades] = useState([]);
@@ -104,19 +105,18 @@ function Evaluation() {
   useEffect(() => {
     const fetchAtividadesAndAvaliacao = async () => {
       try {
-        // Primeiro, busca as atividades
         const atividadesResponse = await getAtividade();
         setAtividades(atividadesResponse);
 
-        // Após buscar as atividades, busca a avaliação
         const avaliacaoId = location.state?.id;
         if (avaliacaoId) {
           const avaliacao = await getAvaliacaoById(avaliacaoId);
-          console.log(avaliacao)
+          console.log(avaliacao);
           setAvaliacaoId(avaliacao.id);
           setIdAtividade(avaliacao.id_atividade);
           setIdVersaoModelo(avaliacao.id_versao_modelo);
           setSelectedEtapa(avaliacao.id_atividade);
+          setNomeAvaliacao(avaliacao.nome); // Definir o nome da avaliação
         }
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
@@ -174,7 +174,6 @@ function Evaluation() {
     }
   };
 
-
   const handleStepClick = (etapa) => {
     setSelectedEtapa(etapa);
   };
@@ -199,7 +198,9 @@ function Evaluation() {
         selectedEtapa={selectedEtapa}
       />
       <div className="main-content-evaluation">
-        <h1 className="evaluation-title">AVALIAÇÃO:</h1>
+        <h1 className="evaluation-title">
+          AVALIAÇÃO: {nomeAvaliacao} {/* Adiciona o nome ao lado do título */}
+        </h1>
         <div className="form-section-evaluation">
           {hasPermission ? (
             <EtapaComponent
