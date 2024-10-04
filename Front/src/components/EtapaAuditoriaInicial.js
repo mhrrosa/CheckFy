@@ -70,86 +70,55 @@ function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
     <div className='container-etapa'>
       <h1 className='title-form'>AUDITORIA DA AVALIAÇÃO INICIAL</h1>
       <div className="lista-input">
-        {[{ label: "Nome da empresa", value: avaliacao.nome_empresa },
-          { label: "Descrição", value: avaliacao.descricao },
-          { label: "Status", value: avaliacao.status },
-          { label: "Nível Solicitado", value: avaliacao.nivel_solicitado },
-          { label: "Nome do Avaliador Líder", value: avaliacao.nome_avaliador_lider },
-          { label: "Cronograma", value: avaliacao.cronograma_planejamento },
-          { label: "Atividades Planejadas", value: avaliacao.atividade_planejamento },
-          { label: "Relatório de Ajuste", value: avaliacao.descricao_relatorio_ajuste_inicial }]
-          .map((item, index) => (
-            <div key={index} style={{
-              marginBottom: '15px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              <label style={{ fontWeight: 'bold', color: '#666', width: '45%' }}>
-                {item.label}:
-              </label>
-              <span style={{ color: '#333', width: '55%', textAlign: 'left' }}>
-                {item.value}
-              </span>
-            </div>
-          ))}
-        
-        {avaliacao.caminho_arquivo_relatorio_ajuste_inicial && (
-          <div style={{
-            marginBottom: '15px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}>
-            <label style={{ fontWeight: 'bold', color: '#666', width: '45%' }}>
-              Arquivo de Relatório de Ajuste:
-            </label>
-            <button
-              style={{
-                padding: '10px 20px',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                color: '#fff',
-                fontWeight: 'bold',
-                backgroundColor: '#2196F3',
-                transition: 'background-color 0.3s ease'
-              }}
-              onMouseOver={(e) => e.target.style.backgroundColor = '#1976D2'}
-              onMouseOut={(e) => e.target.style.backgroundColor = '#2196F3'}
-              onClick={() => window.open(`http://127.0.0.1:5000/uploads/${avaliacao.caminho_arquivo_relatorio_ajuste_inicial}`, '_blank')}
-              disabled={isLoading}
-            >
-              MOSTRAR
-            </button>
-          </div>
-        )}
+        <table className='tabela-etapas'>
+          <tbody>
+            {[{ label: "Nome da empresa", value: avaliacao.nome_empresa },
+              { label: "Descrição", value: avaliacao.descricao },
+              { label: "Status", value: avaliacao.status },
+              { label: "Nível Solicitado", value: avaliacao.nivel_solicitado },
+              { label: "Nome do Avaliador Líder", value: avaliacao.nome_avaliador_lider },
+              { label: "Cronograma", value: avaliacao.cronograma_planejamento },
+              { label: "Atividades Planejadas", value: avaliacao.atividade_planejamento },
+              { label: "Relatório de Ajuste", value: avaliacao.descricao_relatorio_ajuste_inicial }]
+              .map((item, index) => (
+                <tr key={index} className='linha-etapas'>
+                  <th className='label-etapas'>
+                    {item.label}:
+                  </th>
+                  <td className='valor-etapas'>
+                    {item.value}
+                  </td>
+                </tr>
+              ))}
+            {avaliacao.caminho_arquivo_relatorio_ajuste_inicial && (
+              <tr className='linha-etapas'>
+                <th className='label-etapas'>
+                  Arquivo de Relatório de Ajuste:
+                </th>
+                <td className='valor-etapas'>
+                  <button className='button-mostrar-relatorio'
+                    onClick={() => window.open(`http://127.0.0.1:5000/uploads/${avaliacao.caminho_arquivo_relatorio_ajuste_inicial}`, '_blank')}
+                    disabled={isLoading}
+                  >
+                    MOSTRAR
+                  </button>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
-
+  
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         marginTop: '20px'
       }}>
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div className='div-botoes-aprovar-reprovar'>
           <button
             onClick={handleDuploNext}
-            style={{
-              padding: '10px 20px',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              color: '#fff',
-              fontWeight: 'bold',
-              backgroundColor: isLoading ? '#ccc' : '#4CAF50',
-              transition: 'background-color 0.3s ease',
-              position: 'relative',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              minWidth: '150px'
-            }}
+            className='button-aprovar-relatorio'
             onMouseOver={(e) => !isLoading && (e.target.style.backgroundColor = '#45a049')}
             onMouseOut={(e) => !isLoading && (e.target.style.backgroundColor = '#4CAF50')}
             disabled={isLoading}
@@ -170,17 +139,7 @@ function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
           </button>
           <button
             onClick={handleNext}
-            style={{
-              padding: '10px 20px',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              color: '#fff',
-              fontWeight: 'bold',
-              backgroundColor: '#f44336',
-              transition: 'background-color 0.3s ease',
-              minWidth: '150px'
-            }}
+            className='button-reprovar-relatorio'
             onMouseOver={(e) => e.target.style.backgroundColor = '#d32f2f'}
             onMouseOut={(e) => e.target.style.backgroundColor = '#f44336'}
             disabled={isLoading}

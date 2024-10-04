@@ -68,7 +68,7 @@ function EtapaProjeto({ onNext, avaliacaoId }) {
       </div>
       <div className='lista-input'>
         <div className='input-wrapper-project'>
-          <label className="label">Nome do Projeto:</label>
+          <label className="label-etapas">Nome do Projeto:</label>
           <input
             type="text"
             value={novoProjetoNome}
@@ -77,7 +77,7 @@ function EtapaProjeto({ onNext, avaliacaoId }) {
           />
         </div>
         <div className='checkbox-wrapper-project'>
-          <label className="label">Projeto Habilitado:</label>
+          <label className="label-etapas">Projeto Habilitado:</label>
           <input className='checkbox-project'
             type="checkbox"
             checked={novoProjetoHabilitado}
@@ -108,7 +108,7 @@ function EtapaProjeto({ onNext, avaliacaoId }) {
                   />
                 </td>
                 <td className='projeto-checkbox-inserido-td'>
-                  <label className='label'>
+                  <label className='label-etapas'>
                     Habilitado:
                     <input
                       className='checkbox-projeto-status'
@@ -121,7 +121,7 @@ function EtapaProjeto({ onNext, avaliacaoId }) {
                     />
                   </label>
                 </td>
-                <td className='acoes-td-projetos'>
+                <td className='acao-td-projetos'>
                   <button className='button-update-project' onClick={() => atualizarProjeto(projeto.ID, projeto.Nome_Projeto, projeto.Projeto_Habilitado)}>ATUALIZAR</button>
                 </td>
               </tr>

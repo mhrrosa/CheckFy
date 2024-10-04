@@ -7,7 +7,6 @@ import '../components/styles/Form.css';
 import '../components/styles/Button.css';
 import '../components/styles/Etapas.css';
 import '../components/styles/EtapaConsultarRelatorioAjuste.css';
-import logo from '../img/logo_horizontal.png';
 
 function EtapaConsultarRelatorioAjuste({ onNext }) {
   const location = useLocation();
@@ -36,64 +35,42 @@ function EtapaConsultarRelatorioAjuste({ onNext }) {
     onNext(); // Navega para a próxima etapa ao clicar em próximo
   };
 
-  return (
+    return (
     <div className='container-etapa'>
       <h1 className='title-form'>CONSULTAR RELATÓRIO DE AJUSTE</h1>
       <div className='dica-div'>
-        <strong className='dica-titulo'>Dica:</strong>
+        <strong className='dica-titulo'>Observação:</strong>
         <p className='dica-texto'>
           Visualize os ajustes necessários para a avaliação final. Acesse os relatórios detalhados para realizar as correções e garantir que tudo esteja em conformidade, antes da data da avaliação final.
         </p>
       </div>
       <div className="lista-input">
-        {/* Relatório de Ajuste */}
-        <div style={{
-          marginBottom: '15px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <label style={{ fontWeight: 'bold', color: '#666', width: '45%' }}>
-            Relatório de Ajuste:
-          </label>
-          <span style={{ color: '#333', width: '55%', textAlign: 'left' }}>
-            {avaliacao.descricao_relatorio_ajuste_inicial}
-          </span>
-        </div>
-
-        {/* Adicionando o botão "Mostrar" caso o caminho do arquivo esteja disponível */}
-        {avaliacao.caminho_arquivo_relatorio_ajuste_inicial && (
-          <div style={{
-            marginBottom: '15px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}>
-            <label style={{ fontWeight: 'bold', color: '#666', width: '45%' }}>
-              Arquivo de Relatório de Ajuste:
-            </label>
-            <button
-              style={{
-                padding: '10px 20px',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                color: '#fff',
-                fontWeight: 'bold',
-                backgroundColor: '#2196F3',
-                transition: 'background-color 0.3s ease'
-              }}
-              onMouseOver={(e) => e.target.style.backgroundColor = '#1976D2'}
-              onMouseOut={(e) => e.target.style.backgroundColor = '#2196F3'}
-              onClick={() => window.open(`http://127.0.0.1:5000/uploads/${avaliacao.caminho_arquivo_relatorio_ajuste_inicial}`, '_blank')}
-              disabled={isLoading} // Desabilitar o botão enquanto carrega
-            >
-              MOSTRAR
-            </button>
-          </div>
-        )}
+        <table className='tabela-etapas'>
+          <tbody>
+            <tr className='linha-etapas'>
+              <th className='label-etapas'>Relatório de Ajuste:</th>
+              <td className='valor-etapas'>
+                {avaliacao.descricao_relatorio_ajuste_inicial}
+              </td>
+            </tr>
+            {avaliacao.caminho_arquivo_relatorio_ajuste_inicial && (
+              <tr className='linha-etapas'>
+                <th className='label-etapas'>Arquivo de Relatório de Ajuste:</th>
+                <td className='valor-etapas'>
+                  <button
+                    className='button-mostrar-relatorio'
+                    onClick={() => window.open(`http://127.0.0.1:5000/uploads/${avaliacao.caminho_arquivo_relatorio_ajuste_inicial}`, '_blank')}
+                    disabled={isLoading}
+                  >
+                    MOSTRAR
+                  </button>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
-
+  
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -101,22 +78,11 @@ function EtapaConsultarRelatorioAjuste({ onNext }) {
         marginTop: '20px'
       }}>
         <button
+          className='button-next'
           onClick={handleNext}
-          style={{
-            padding: '10px 20px',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            color: '#fff',
-            fontWeight: 'bold',
-            backgroundColor: '#4CAF50',
-            transition: 'background-color 0.3s ease'
-          }}
-          onMouseOver={(e) => e.target.style.backgroundColor = '#45a049'}
-          onMouseOut={(e) => e.target.style.backgroundColor = '#4CAF50'}
-          disabled={isLoading} // Desabilitar o botão enquanto carrega
+          disabled={isLoading}
         >
-          PRÓXIMO
+          PRÓXIMA ETAPA
         </button>
       </div>
     </div>

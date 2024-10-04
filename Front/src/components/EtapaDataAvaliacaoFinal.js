@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { addData, getData, updateData, enviarEmailDataAvaliacao } from '../services/Api';
 import '../components/styles/Body.css';
+import '../components/styles/Etapas.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
+import '../components/styles/EtapaDataAvaliacaoFinal.css';
 import '../components/styles/Button.css';
 
 function CadastroDataAvaliacao({ onNext, avaliacaoId }) {
@@ -90,48 +92,42 @@ function CadastroDataAvaliacao({ onNext, avaliacaoId }) {
   };
 
   return (
-      <div className='container-etapa'>
-        <h1 className='title-form'>DEFINIÇÃO DA DATA DE AVALIAÇÃO FINAL</h1>
-        <div className='dica-div'>
-          <strong className='div-titulo'>Dica: </strong>
-          <p className='dica-texto'>
-            A data da avaliação final deve ser confirmada para garantir a conformidade com o cronograma,
-            participantes da avaliação serão notificados caso houver atualização da data.
-          </p>
-        </div>
-        <br></br>
-        <div className="input-container">
-            <label
-            className="label"
-            style={{
-                marginRight: '10px',  // Espaçamento entre o label e o input
-                fontWeight: 'bold'    // Estilo negrito para o texto do label
-            }}
-            >
-            Data da Avaliação Final:
-            </label>
-            <input
+    <div className='container-etapa'>
+      <h1 className='title-form'>DEFINIÇÃO DA DATA DE AVALIAÇÃO FINAL</h1>
+      <div className='dica-div'>
+        <strong className='div-titulo'>Observação: </strong>
+        <p className='dica-texto'>
+          A data da avaliação final deve ser confirmada para garantir a conformidade com o cronograma,
+          participantes da avaliação serão notificados caso houver atualização da data.
+        </p>
+      </div>
+      <br></br>
+      <div className="input-container">
+          <label
+          className="label-etapas"
+          >
+          Data da Avaliação Final:
+          </label>
+          <input
             type="date"
             className="input-date"
             value={dataAvaliacaoFinal}
             onChange={(e) => setDataAvaliacaoFinal(e.target.value)}
             disabled={isLoading}
-            style={{width: 200}}
-            />
-        </div>
-        <br></br>
-        <button className='button-next' onClick={salvarDados} disabled={isLoading || isSaving}>
-            {isLoading ? 'SALVANDO...' : 'SALVAR'}
-        </button>
-        <button 
-            className='button-next' 
-            onClick={proximaEtapa} 
-            disabled={isLoading || !dataAvaliacaoFinal}>
-                PRÓXIMA ETAPA
-            </button>
-            </div>
-
-
+          />
+      </div>
+      <br></br>
+      <button className='button-save' onClick={salvarDados} disabled={isLoading || isSaving}>
+          {isLoading ? 'SALVANDO...' : 'SALVAR'}
+      </button>
+      <button 
+        className='button-next' 
+        onClick={proximaEtapa} 
+        disabled={isLoading || !dataAvaliacaoFinal}
+      >
+        PRÓXIMA ETAPA
+      </button>
+    </div>
   );
 }
 

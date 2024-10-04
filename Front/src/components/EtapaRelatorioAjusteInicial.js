@@ -97,13 +97,13 @@ function EtapaRelatorioAjusteInicial({ onNext, avaliacaoId }) {
     <div className='container-etapa'>
       <h1 className='title-form'>RELATÓRIO DE AJUSTE</h1>
       <div className='dica-div'>
-        <strong className='dica-titulo'>Dica: </strong>
+        <strong className='dica-titulo'>Observação: </strong>
         <p className='dica-texto'>
           O relatório detalha todos os pontos que precisam ser ajustados antes da avaliação final. 
         </p>
       </div>
       <div className="input-wrapper">
-        <label className="label">Relatório de Ajuste:</label>
+        <label className="label-etapas">Relatório de Ajuste:</label>
         <textarea
           className='input-textarea-avaliacao'
           value={relatorioAjuste}
@@ -112,21 +112,22 @@ function EtapaRelatorioAjusteInicial({ onNext, avaliacaoId }) {
         />
       </div>
 
-      <div className="input-wrapper">
-        <label className="label">Anexar Arquivo:</label>
+      <div className="div-input-relatorio-ajuste-inicial">
+        <label className="label-etapas">Anexar Arquivo:</label>
         <input 
           type="file" 
+		  className='input-campo-relatorio-ajuste-inicial'
           onChange={(e) => setSelectedFile(e.target.files[0])} 
         />
         {existingFilePath && (
-          <div style={{ marginTop: '10px' }}>
-            <p>Arquivo atual:</p>
-            <button className="acoes-botao-document" onClick={() => window.open(`http://127.0.0.1:5000/uploads/${existingFilePath}`, '_blank')}>MOSTRAR</button>
+          <div>
+            <p className='relatorio-adicionado'>Arquivo atual:</p>
+            <button className="button-mostrar-relatorio" onClick={() => window.open(`http://127.0.0.1:5000/uploads/${existingFilePath}`, '_blank')}>MOSTRAR</button>
           </div>
         )}
       </div>
 
-      <button className='button-next' onClick={salvarDados}>SALVAR</button>
+      <button className='button-save' onClick={salvarDados}>SALVAR</button>
       <button className='button-next' onClick={proximaEtapa}>PRÓXIMA ETAPA</button>
     </div>
   );

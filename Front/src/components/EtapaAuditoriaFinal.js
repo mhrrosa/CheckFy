@@ -25,6 +25,7 @@ import '../components/styles/Button.css';
 import '../components/styles/Container.css';
 import '../components/styles/Etapas.css';
 import '../components/styles/EtapaEvidencia.css';
+import '../components/styles/EtapaAuditoriaFinal.css';
 import '../components/styles/EtapaResumoCaracterizacao.css';
 
 function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext }) {
@@ -691,25 +692,73 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
     return (
       <div className="conteudo-informacoes-gerais">
         <h2>Informações Gerais</h2>
-        <p><strong>Nome da Avaliação:</strong> {avaliacao.nome}</p>
-        <p><strong>Descrição:</strong> {avaliacao.descricao}</p>
-        <p><strong>Avaliador Líder:</strong> {avaliacao.nome_avaliador_lider}</p>
-        <p><strong>Empresa:</strong> {avaliacao.nome_empresa}</p>
-        <p><strong>Nível Solicitado:</strong> {avaliacao.nivel_solicitado}</p>
-        <p><strong>Versão do Modelo:</strong> {avaliacao.nome_versao_modelo}</p>
-        <p><strong>Status:</strong> {avaliacao.status}</p>
-        <p><strong>Atividade Planejamento:</strong> {avaliacao.atividade_planejamento}</p>
-        <p><strong>Cronograma Planejamento:</strong> {avaliacao.cronograma_planejamento}</p>
-        <p><strong>Ata de Reunião de Abertura:</strong> {avaliacao.ata_reuniao_abertura}</p>
-        <p><strong>Descrição Relatório de Ajuste Inicial:</strong> {avaliacao.descricao_relatorio_ajuste_inicial}</p>
-        <button
-          className="button-next"
-          onClick={() => window.open(`http://127.0.0.1:5000/uploads/${avaliacao.caminho_arquivo_relatorio_ajuste_inicial}`, '_blank')}
-        >
-          Visualizar Relatório de Ajuste Inicial
-        </button>
-        <p><strong>Parecer Final:</strong> {avaliacao.parecer_final}</p>
-        <p><strong>Nível Atribuído:</strong> {avaliacao.nivel_atribuido}</p>
+        <table className='tabela-etapas'>
+          <tbody>
+            <tr className='linha-etapas'>
+              <th className='label-etapas'>Nome da Avaliação:</th>
+              <td className='valor-etapas'>{avaliacao.nome}</td>
+            </tr>
+            <tr className='linha-etapas'>
+              <th className='label-etapas'>Descrição:</th>
+              <td className='valor-etapas'>{avaliacao.descricao}</td>
+            </tr>
+            <tr className='linha-etapas'>
+              <th className='label-etapas'>Avaliador Líder:</th>
+              <td className='valor-etapas'>{avaliacao.nome_avaliador_lider}</td>
+            </tr>
+            <tr className='linha-etapas'>
+              <th className='label-etapas'>Empresa:</th>
+              <td className='valor-etapas'>{avaliacao.nome_empresa}</td>
+            </tr>
+            <tr className='linha-etapas'>
+              <th className='label-etapas'>Nível Solicitado:</th>
+              <td className='valor-etapas'>{avaliacao.nivel_solicitado}</td>
+            </tr>
+            <tr className='linha-etapas'>
+              <th className='label-etapas'>Versão do Modelo:</th>
+              <td className='valor-etapas'>{avaliacao.nome_versao_modelo}</td>
+            </tr>
+            <tr className='linha-etapas'>
+              <th className='label-etapas'>Status:</th>
+              <td className='valor-etapas'>{avaliacao.status}</td>
+            </tr>
+            <tr className='linha-etapas'>
+              <th className='label-etapas'>Atividade Planejamento:</th>
+              <td className='valor-etapas'>{avaliacao.atividade_planejamento}</td>
+            </tr>
+            <tr className='linha-etapas'>
+              <th className='label-etapas'>Cronograma Planejamento:</th>
+              <td className='valor-etapas'>{avaliacao.cronograma_planejamento}</td>
+            </tr>
+            <tr className='linha-etapas'>
+              <th className='label-etapas'>Ata de Reunião de Abertura:</th>
+              <td className='valor-etapas'>{avaliacao.ata_reuniao_abertura}</td>
+            </tr>
+            <tr className='linha-etapas'>
+              <th className='label-etapas'>Descrição Relatório de Ajuste Inicial:</th>
+              <td className='valor-etapas'>{avaliacao.descricao_relatorio_ajuste_inicial}</td>
+            </tr>
+            <tr className='linha-etapas'>
+              <th className='label-etapas'>Arquivo de Relatório de Ajuste Inicial:</th>
+              <td className='valor-etapas'>
+                <button
+                  className="button-mostrar-relatorio-auditoria"
+                  onClick={() => window.open(`http://127.0.0.1:5000/uploads/${avaliacao.caminho_arquivo_relatorio_ajuste_inicial}`, '_blank')}
+                >
+                  VISUALIZAR RELATÓRIO DE AJUSTE INICIAL
+                </button>
+              </td>
+            </tr>
+            <tr className='linha-etapas'>
+              <th className='label-etapas'>Parecer Final:</th>
+              <td className='valor-etapas'>{avaliacao.parecer_final}</td>
+            </tr>
+            <tr className='linha-etapas'>
+              <th className='label-etapas'>Nível Atribuído:</th>
+              <td className='valor-etapas'>{avaliacao.nivel_atribuido}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     );
   };
@@ -718,7 +767,7 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
     <div className="container-etapa">
       <h1 className='title-form'>AUDITORIA FINAL</h1>
       <div className='dica-div'>
-        <strong className="dica-titulo">Dica:</strong>
+        <strong className="dica-titulo">Observação:</strong>
         <p className='dica-texto'>
           Aqui você pode visualizar as evidências que comprovam a implementação dos processos e o nível de capacidade de processo.
         </p>

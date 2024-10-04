@@ -12,7 +12,6 @@ import '../components/styles/Form.css';
 import '../components/styles/Button.css';
 import '../components/styles/Etapas.css';
 import '../components/styles/EtapaRealizarAjusteAvaliacaoInicial.css';
-import logo from '../img/logo_horizontal.png';
 
 function EtapaRealizarAjusteAvaliacaoInicial({ onBack }) {
   const location = useLocation();
@@ -137,82 +136,75 @@ function EtapaRealizarAjusteAvaliacaoInicial({ onBack }) {
   };
   
 
-  return (
+    return (
     <div className='container-etapa'>
-      <h1 className='title-fomr'>EDIÇÃO DA AVALIAÇÃO</h1>
-
+      <h1 className='title-form'>EDIÇÃO DA AVALIAÇÃO</h1>
       <div className="lista-input">
-        {/* Nome da Empresa */}
-        <div style={{ marginBottom: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <label style={{ fontWeight: 'bold', color: '#666', width: '45%' }}>Nome da empresa:</label>
-          <input
-            type="text"
-            value={avaliacao.nome_empresa}
-            onChange={(e) => setAvaliacao({ ...avaliacao, nome_empresa: e.target.value })}
-            style={{ width: '55%' }}
-          />
-        </div>
-
-        {/* Descrição */}
-        <div style={{ marginBottom: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <label style={{ fontWeight: 'bold', color: '#666', width: '45%' }}>Descrição:</label>
-          <input
-            type="text"
-            value={avaliacao.descricao}
-            onChange={(e) => setAvaliacao({ ...avaliacao, descricao: e.target.value })}
-            style={{ width: '55%' }}
-          />
-        </div>
-
-        {/* Relatório de Ajuste */}
-        <div style={{ marginBottom: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <label style={{ fontWeight: 'bold', color: '#666', width: '45%' }}>Relatório de Ajuste:</label>
-          <textarea
-            value={avaliacao.descricao_relatorio_ajuste_inicial}
-            onChange={(e) => setAvaliacao({ ...avaliacao, descricao_relatorio_ajuste_inicial: e.target.value })}
-            style={{ width: '55%' }}
-          />
-        </div>
-
-        {/* Upload de Arquivo */}
-        <div style={{ marginBottom: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <label style={{ fontWeight: 'bold', color: '#666', width: '45%' }}>Anexar Arquivo:</label>
-          <input
-            type="file"
-            onChange={(e) => setFile(e.target.files[0])}
-            style={{ width: '55%' }}
-          />
-        </div>
-
-        {/* Botão para mostrar o arquivo se existir */}
-        {avaliacao.caminho_arquivo_relatorio_ajuste_inicial && (
-          <div style={{ marginBottom: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <label style={{ fontWeight: 'bold', color: '#666', width: '45%' }}>Arquivo de Relatório de Ajuste:</label>
-            <button
-              style={{
-                padding: '10px 20px',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                color: '#fff',
-                fontWeight: 'bold',
-                backgroundColor: '#2196F3',
-                transition: 'background-color 0.3s ease'
-              }}
-              onMouseOver={(e) => e.target.style.backgroundColor = '#1976D2'}
-              onMouseOut={(e) => e.target.style.backgroundColor = '#2196F3'}
-              onClick={() => window.open(`http://127.0.0.1:5000/uploads/${avaliacao.caminho_arquivo_relatorio_ajuste_inicial}`, '_blank')}
-            >
-              MOSTRAR
-            </button>
-          </div>
-        )}
+        <table className='tabela-etapas'>
+          <tbody>
+            <tr className='linha-etapas'>
+              <th className='label-etapas'>Nome da empresa:</th>
+              <td className='valor-etapas'>
+                <input
+                  type="text"
+                  className='input-field'
+                  value={avaliacao.nome_empresa}
+                  onChange={(e) => setAvaliacao({ ...avaliacao, nome_empresa: e.target.value })}
+                />
+              </td>
+            </tr>
+            <tr className='linha-etapas'>
+              <th className='label-etapas'>Descrição:</th>
+              <td className='valor-etapas'>
+                <input
+                  type="text"
+                  className='input-field-etapas'
+                  value={avaliacao.descricao}
+                  onChange={(e) => setAvaliacao({ ...avaliacao, descricao: e.target.value })}
+                  style={{ width: '100%' }}
+                />
+              </td>
+            </tr>
+            <tr className='linha-etapas'>
+              <th className='label-etapas'>Relatório de Ajuste:</th>
+              <td className='valor-etapas'>
+                <textarea className='input-textarea-avaliacao-tabela'
+                  value={avaliacao.descricao_relatorio_ajuste_inicial}
+                  onChange={(e) => setAvaliacao({ ...avaliacao, descricao_relatorio_ajuste_inicial: e.target.value })}
+                />
+              </td>
+            </tr>
+            <tr className='linha-etapas'>
+              <th className='label-etapas'>Anexar Arquivo:</th>
+              <td className='valor-etapas'>
+                <input
+                  type="file"
+                  onChange={(e) => setFile(e.target.files[0])}
+                  style={{ width: '100%' }}
+                />
+              </td>
+            </tr>
+            {avaliacao.caminho_arquivo_relatorio_ajuste_inicial && (
+              <tr className='linha-etapas'>
+                <th className='label-etapas'>Arquivo de Relatório de Ajuste:</th>
+                <td className='valor-etapas'>
+                  <button
+                    className='button-mostrar-relatorio'
+                    onClick={() => window.open(`http://127.0.0.1:5000/uploads/${avaliacao.caminho_arquivo_relatorio_ajuste_inicial}`, '_blank')}
+                  >
+                    MOSTRAR
+                  </button>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
-
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px' }}>
+  
+      <div>
         <button
           onClick={handleSalvar}
-          className='button-next'
+          className='button-save'
           disabled={isSaving} // Desabilitar o botão enquanto salva
         >
           SALVAR

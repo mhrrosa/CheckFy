@@ -28,7 +28,7 @@
     background: #f4f4f4;
     border-radius: 3px;
     vertical-align: middle;
-    border: 1px solid #dcdcdc;
+    border: 1px solid #adadad;
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -61,11 +61,11 @@
 
 .tr-projeto {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
 }
 
 .projeto-inserido-td {
-    width: 16em;
+    width: 25em;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -86,8 +86,10 @@
 }
 
 .projeto-checkbox-inserido-td {
-    font-size: 20px;
-    color: #ffffff;
+    width: 10em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .checkbox-projeto-status {
@@ -130,9 +132,11 @@
 }
 
 
-.acoes-td-projetos {
-    margin-left: 10px;
-    text-align: right;
+.acao-td-projetos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 }
 
 .nenhum-encontrado {

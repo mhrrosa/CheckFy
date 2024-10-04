@@ -77,7 +77,7 @@ function CadastroAuditor({ onNext, avaliacaoId }) {
     <div className='container-etapa'>
       <h1 className='title-form'>CADASTRO DO AUDITOR</h1>
       <div className='dica-div'>
-        <strong className='dica-titulo'>Dica: </strong>
+        <strong className='dica-titulo'>Observação: </strong>
         <p className='dica-texto'>
           O auditor é responsável por garantir que todos os processos estejam em conformidade com os requisitos da avaliação.
         </p>
@@ -95,7 +95,7 @@ function CadastroAuditor({ onNext, avaliacaoId }) {
         />
       </div>
 
-      <button className='button-next' onClick={salvarDados} disabled={isLoading || isSaving}>
+      <button className='button-save' onClick={salvarDados} disabled={isLoading || isSaving}>
         {isLoading ? 'SALVANDO...' : 'SALVAR'}
       </button>
       <button className='button-next' onClick={proximaEtapa} disabled={isLoading}>

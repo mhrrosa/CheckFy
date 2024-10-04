@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getAvaliacaoById, getNiveisLimitado, enviarEmailResultadoAvaliacaoInicial, updateResultadoFinal } from '../services/Api'; 
 import '../components/styles/Button.css';
+import '../components/styles/Container.css';
+import '../components/styles/Body.css';
+import '../components/styles/Etapas.css';
 import '../components/styles/EtapaAtribuirNivelMaturidade.css'; // Importa o CSS externo
 
 function EtapaAtribuirNivelMaturidade({ onNext }) {
@@ -96,72 +99,78 @@ function EtapaAtribuirNivelMaturidade({ onNext }) {
     }
   };
 
-  return (
+    return (
     <div className="container-etapa">
-      <h1 className="title">ATRIBUIR NÍVEL DE MATURIDADE</h1>
-
-      <div className="tip">
-        <strong>Dica:</strong>
-        <p>Rever a Caracterização dos Processos: Antes de iniciar a atividade, certifique-se de que todos os processos foram devidamente caracterizados.</p>
+      <h1 className="title-form">ATRIBUIR NÍVEL DE MATURIDADE</h1>
+  
+      <div className="dica-div">
+        <strong className="dica-titulo">Observação:</strong>
+        <p className="dica-texto">
+          Rever a Caracterização dos Processos: Antes de iniciar a atividade, certifique-se de que todos os processos foram devidamente caracterizados.
+        </p>
       </div>
-
-      <div className="row">
-        <label className="label">Nome da Empresa Avaliada:</label>
-        <span className="value">{avaliacao.nome_empresa}</span>
+  
+      <div className="lista-input">
+        <table className="tabela-etapas">
+          <tbody>
+            <tr className="linha-etapas">
+              <th className="label-etapas">Nome da Empresa Avaliada:</th>
+              <td className="valor-etapas">{avaliacao.nome_empresa}</td>
+            </tr>
+            <tr className="linha-etapas">
+              <th className="label-etapas">Nível Solicitado:</th>
+              <td className="valor-etapas">{avaliacao.nivel_solicitado}</td>
+            </tr>
+            <tr className="linha-etapas">
+              <th className="label-etapas">Resultado Final:</th>
+              <td className="valor-etapas">
+                <select 
+                  value={satisfacao} 
+                  onChange={handleSatisfacaoChange}
+                  className="select-resultado-final"
+                >
+                  <option value="">Selecione um resultado</option>
+                  <option value="Satisfeito">Satisfeito</option>
+                  <option value="Não Satisfeito">Não Satisfeito</option>
+                </select>
+              </td>
+            </tr>
+            {satisfacao && (
+              <tr className="linha-etapas">
+                <th className="label-etapas">Selecione o Nível Final:</th>
+                <td className="valor-etapas">
+                  <select 
+                    value={selectedNivel} 
+                    onChange={(e) => setSelectedNivel(e.target.value)} 
+                    className="select-resultado-final"
+                    disabled={nivelDisabled} // Desabilita o seletor se for "Satisfeito"
+                  >
+                    <option value="">Selecione um nível</option>
+                    {niveis.length > 0 && niveis.map(nivel => (
+                      <option key={nivel['ID']} value={nivel['ID']}>{nivel['Nivel']} - {nivel['Nome_Nivel']}</option>
+                    ))}
+                  </select>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
-
-      <div className="row">
-        <label className="label">Nível Solicitado:</label>
-        <span className="value">{avaliacao.nivel_solicitado}</span>
-      </div>
-
-      {/* Seletor de Satisfação */}
-      <div className="row">
-        <label className="label">Resultado Final:</label>
-        <select 
-          value={satisfacao} 
-          onChange={handleSatisfacaoChange}
-          className="select"
-        >
-          <option value="">Selecione um resultado</option>
-          <option value="Satisfeito">Satisfeito</option>
-          <option value="Não Satisfeito">Não Satisfeito</option>
-        </select>
-      </div>
-
-      {/* Seletor de Níveis - Só aparece se um resultado final estiver selecionado */}
-      {satisfacao && (
-        <div className="row">
-          <label className="label">Selecione o Nível Final:</label>
-          <select 
-            value={selectedNivel} 
-            onChange={(e) => setSelectedNivel(e.target.value)} 
-            className="select"
-            disabled={nivelDisabled} // Desabilita o seletor se for "Satisfeito"
-          >
-            <option value="">Selecione um nível</option>
-            {niveis.length > 0 && niveis.map(nivel => (
-              <option key={nivel['ID']} value={nivel['ID']}>{nivel['Nivel']} - {nivel['Nome_Nivel']}</option>
-            ))}
-          </select>
-        </div>
-      )}
-
-      {/* Botões de salvar e próximo */}
-      <div className="buttonContainer">
+  
+      <div>
         <button
           onClick={handleNext}
-          className="saveButton"
+          className="button-save"
           disabled={isLoading}
         >
-          {isLoading ? 'Enviando...' : 'Salvar e Enviar E-mail'}
+          {isLoading ? 'Enviando...' : 'SALVAR'}
         </button>
         <button
           onClick={onNext}
           className="button-next"
           disabled={isLoading}
         >
-          Próximo
+          PRÓXIMA ETAPA
         </button>
       </div>
     </div>

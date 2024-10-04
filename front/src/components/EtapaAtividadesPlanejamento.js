@@ -65,7 +65,7 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
         <h1 className='title-form'>APROVAÇÃO PELA SOFTEX</h1>
       </div>
       <div className='dica-div'>
-        <strong className='dica-titulo'>Dica:</strong> {/* Texto de dica mais escuro */}
+        <strong className='dica-titulo'>Observação:</strong> {/* Texto de dica mais escuro */}
         <p className='dica-texto'>
           A Softex responderá o email encaminhado com a aprovação ou não da avaliação.
         </p>
@@ -100,7 +100,7 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
           <div className='textarea-wrapper'>
             <label className="label">Planejamento de atividades para a avaliação:</label>
             <div className='dica-div'>
-              <strong className="dica-titulo">Dica:</strong>
+              <strong className="dica-titulo">Observação:</strong>
               <p className='dica-texto'>
                 Dica para preencher: dicas
               </p>
@@ -115,7 +115,7 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
           <div className='textarea-wrapper'>
             <label className="label">Planejamento de cronograma para a avaliação:</label>
             <div className='dica-div'>
-              <strong className='dica-titulo'>Dica:</strong>
+              <strong className='dica-titulo'>Observação:</strong>
               <p className="dica-texto">
                 Uma base para estimar o tempo da avaliação inicial, da avaliação final e a composição da equipe sugerida pelo MA-MPS:
                 <ul>
@@ -137,7 +137,7 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
       )}
 
       {/* Botão de Salvar sempre visível */}
-      <button className='button-next' onClick={salvarPlanejamento}>SALVAR</button>
+      <button className='button-save' onClick={salvarPlanejamento}>SALVAR</button>
 
       {avaliacaoAprovada ? (
         <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>

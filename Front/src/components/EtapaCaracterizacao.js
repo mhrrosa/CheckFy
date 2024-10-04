@@ -150,7 +150,7 @@ function EtapaCaracterizacao({ onNext, avaliacaoId, idVersaoModelo }) {
     <div className="container-etapa">
       <h1 className='title-form'>CARACTERIZAÇÃO DE GRAU DE CADA RESULTADO ESPERADO DO PROCESSO</h1>
       <div className='dica-div'>
-        <strong className="dica-titulo">Dica:</strong>
+        <strong className="dica-titulo">Observação:</strong>
         <p className='dica-texto'>
           Evidências são indicadores que comprovam a implementação dos processos e o nível de capacidade de processo.
         </p>
@@ -195,29 +195,31 @@ function EtapaCaracterizacao({ onNext, avaliacaoId, idVersaoModelo }) {
                   <div className='div-resultado-esperado-caracterizacao' key={resultado.ID}>
                     <h3 className='title-resultado-caracterizacao'>{descricao}</h3>
                     {nota && <div className='nota-adicional-div'><p className='nota-adicional-resultado'>{nota}</p></div>}
-                    {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
-                      <div key={projeto.ID}>
-                        <h4 className='title-projeto-caracterizacao'>Projeto: {projeto.Nome_Projeto}</h4>
-                        <select
-                          className='select-grau-caracterizacao'
-                          value={grausImplementacao[`${resultado.ID}-${projeto.ID}`] || "Não avaliado (NA)"}
-                          onChange={(e) => handleSelectChange(e, resultado.ID, projeto.ID)}
-                        >
-                          {options.map((option, index) => (
-                            <option key={index} value={option}>{option}</option>
-                          ))}
-                        </select>
-                        <div>
-                          {evidencias[`${resultado.ID}-${projeto.ID}`] && evidencias[`${resultado.ID}-${projeto.ID}`]
-                            .map(evidencia => (
-                              <div className='evidencia-e-botao' key={evidencia.id}>
-                                <p className='title-evidencia-caracterizacao'>Evidencia: {evidencia.nomeArquivo}</p>
-                                <button className='button-mostrar-documento-etapa-evidencia' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
-                              </div>
+                    <div className='div-projetos-evidencia-caracterizacao'>
+                      {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
+                        <div key={projeto.ID}>
+                          <h4 className='title-projeto-caracterizacao'>Projeto: {projeto.Nome_Projeto}</h4>
+                          <select
+                            className='select-grau-caracterizacao'
+                            value={grausImplementacao[`${resultado.ID}-${projeto.ID}`] || "Não avaliado (NA)"}
+                            onChange={(e) => handleSelectChange(e, resultado.ID, projeto.ID)}
+                          >
+                            {options.map((option, index) => (
+                              <option key={index} value={option}>{option}</option>
                             ))}
+                          </select>
+                          <div>
+                            {evidencias[`${resultado.ID}-${projeto.ID}`] && evidencias[`${resultado.ID}-${projeto.ID}`]
+                              .map(evidencia => (
+                                <div className='evidencia-e-botao' key={evidencia.id}>
+                                  <p className='title-evidencia-caracterizacao'>Evidencia: {evidencia.nomeArquivo}</p>
+                                  <button className='button-mostrar-documento-etapa-evidencia' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
+                                </div>
+                              ))}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 );
               })}

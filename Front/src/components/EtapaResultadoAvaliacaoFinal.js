@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getAvaliacaoById } from '../services/Api';
 import '../components/styles/Body.css';
-import logo from '../img/logo_horizontal.png';
+import '../components/styles/Container.css';
+import '../components/styles/Form.css';
+import '../components/styles/Button.css'; 
+import '../components/styles/Etapas.css';
+import '../components/styles/EtapaResultadoAvaliacaoFinal.css';
 
 function EtapaResultadoAvaliacaoFinal({ onNext }) {
   const location = useLocation();
@@ -30,82 +34,36 @@ function EtapaResultadoAvaliacaoFinal({ onNext }) {
     fetchAvaliacao();
   }, [location.state.id]);
 
-  return (
+    return (
     <div className='container-etapa'>
       <h1 className='title-form'>RESULTADO DA AVALIAÇÃO FINAL</h1>
-
+  
       <div className='dica-div'>
-        <strong className='dica-titulo'>Dica:</strong>
+        <strong className='dica-titulo'>Observação:</strong>
         <p className='dica-texto'>
-        Por favor, confirme a visualização do resultado final da avaliação para que a equipe possa prosseguir com os próximos passos do processo.
+          Por favor, confirme a visualização do resultado final da avaliação para que a equipe possa prosseguir com os próximos passos do processo.
         </p>
       </div>
-
-      <div style={{
-        marginBottom: '15px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-      }}>
-        <label style={{ fontWeight: 'bold', color: '#666', width: '45%' }}>
-          Nome da Empresa Avaliada:
-        </label>
-        <span style={{
-          color: '#333',
-          width: '55%',
-          textAlign: 'left',
-          border: '1px solid black',
-          padding: '5px',
-          borderRadius: '4px'
-        }}>
-          {avaliacao.nome_empresa}
-        </span>
+  
+      <div className="lista-input">
+        <table className='tabela-etapas'>
+          <tbody>
+            <tr className='linha-etapas'>
+              <th className='label-etapas'>Nome da Empresa Avaliada:</th>
+              <td className='valor-etapas'>{avaliacao.nome_empresa}</td>
+            </tr>
+            <tr className='linha-etapas'>
+              <th className='label-etapas'>Nível Solicitado:</th>
+              <td className='valor-etapas'>{avaliacao.nivel_solicitado}</td>
+            </tr>
+            <tr className='linha-etapas'>
+              <th className='label-etapas'>Resultado da Avaliação:</th>
+              <td className='valor-etapas'>{avaliacao.resultado}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-
-      <div style={{
-        marginBottom: '15px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-      }}>
-        <label style={{ fontWeight: 'bold', color: '#666', width: '45%' }}>
-          Nível Solicitado:
-        </label>
-        <span style={{
-          color: '#333',
-          width: '55%',
-          textAlign: 'left',
-          border: '1px solid black',
-          padding: '5px',
-          borderRadius: '4px'
-        }}>
-          {avaliacao.nivel_solicitado}
-        </span>
-      </div>
-
-      {/* Campo não editável para o resultado final */}
-      <div style={{
-        marginBottom: '15px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-      }}>
-        <label style={{ fontWeight: 'bold', color: '#666', width: '45%' }}>
-          Resultado da Avaliação:
-        </label>
-        <span style={{
-          width: '55%',
-          padding: '5px',
-          border: '1px solid black',
-          borderRadius: '4px',
-          backgroundColor: '#e0e0e0',
-          color: '#333'
-        }}>
-          {avaliacao.resultado}
-        </span>
-      </div>
-
-      {/* Botão para confirmar visualização e avançar */}
+  
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',

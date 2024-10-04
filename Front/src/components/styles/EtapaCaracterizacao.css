@@ -34,6 +34,12 @@
     border-radius: 4px;
 }
 
+.div-projetos-evidencia-caracterizacao {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
 .title-processo-caracterizacao {
     color: black;
     font-size: 1.8em;
@@ -60,12 +66,12 @@
 
 .div-resultado-esperado-caracterizacao {
     background-color: white;
-    border: 1px solid #ccc;
-    padding: 10px;
+    border: 1px solid #000000;
+    padding: 20px 10px 70px 10px;
 }
 
 .select-grau-caracterizacao {
-    width: 30%;
+    width: 100%;
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 4px;

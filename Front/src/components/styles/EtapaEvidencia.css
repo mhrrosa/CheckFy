@@ -69,6 +69,11 @@
   border-radius: 4px;
 }
 
+.div-projetos-evidencia {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .title-processo-evidencia {
   color: black;
   font-size: 1.8em;
@@ -95,8 +100,8 @@
 
 .div-resultado-esperado-evidencia {
   background-color: white;
-  border: 1px solid #ccc;
-  padding: 10px;
+    border: 1px solid #000000;
+    padding: 20px 10px 70px 10px;
 }
 
 .form-section-document {
@@ -179,14 +184,13 @@
   background-color: #00437e;
 }
 
-table {
+.documentos-existente-table {
   width: 100%;
+  border-collapse: collapse;
 }
 
-.input-botoes-documento-preenchido td{
-  display: flex;
-  align-items: center;
-  width: 100%;
+.input-botoes-documento-preenchido {
+  display: table-row;
 }
 
 .input-field-documento-preenchido {
