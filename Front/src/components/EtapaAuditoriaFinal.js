@@ -719,10 +719,6 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
               <td className='valor-etapas'>{avaliacao.nome_versao_modelo}</td>
             </tr>
             <tr className='linha-etapas'>
-              <th className='label-etapas'>Status:</th>
-              <td className='valor-etapas'>{avaliacao.status}</td>
-            </tr>
-            <tr className='linha-etapas'>
               <th className='label-etapas'>Atividade Planejamento:</th>
               <td className='valor-etapas'>{avaliacao.atividade_planejamento}</td>
             </tr>

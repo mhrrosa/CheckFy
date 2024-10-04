@@ -13,7 +13,6 @@ function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
   const [avaliacao, setAvaliacao] = useState({
     nome: '',
     descricao: '',
-    status: '',
     id_empresa: '',
     id_nivel_solicitado: '',
     id_avaliador_lider: '',
@@ -74,7 +73,6 @@ function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
           <tbody>
             {[{ label: "Nome da empresa", value: avaliacao.nome_empresa },
               { label: "Descrição", value: avaliacao.descricao },
-              { label: "Status", value: avaliacao.status },
               { label: "Nível Solicitado", value: avaliacao.nivel_solicitado },
               { label: "Nome do Avaliador Líder", value: avaliacao.nome_avaliador_lider },
               { label: "Cronograma", value: avaliacao.cronograma_planejamento },

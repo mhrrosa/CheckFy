@@ -914,11 +914,6 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
         </div>
   
         <div className="row">
-          <label className="label"><strong>Status:</strong></label>
-          <span className="value">{avaliacao.status}</span>
-        </div>
-  
-        <div className="row">
           <label className="label"><strong>Atividade Planejamento:</strong></label>
           <span className="value">{avaliacao.atividade_planejamento}</span>
         </div>
