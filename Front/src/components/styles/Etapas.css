@@ -15,6 +15,12 @@
     margin: 5px 0;
 }
 
+.title-form-auditoria-final {
+    color: black;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
 .label-etapas {
     font-size: 1.1em;
     color: black;

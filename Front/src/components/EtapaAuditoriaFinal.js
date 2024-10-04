@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Tippy from '@tippyjs/react';
-import 'tippy.js/dist/tippy.css';
 import {
   getAvaliacaoById,
   getProcessosPorAvaliacao,
@@ -422,22 +420,24 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
                     <div className='div-resultado-esperado-evidencia' key={resultado.ID}>
                       <label className='label-etapas'>Resultado Esperado: </label>
                       <h3 className='title-resultado-evidencia'>{descricao}</h3>
-                      {nota && <p className='nota-adicional-resultado'>{nota}</p>}
-                      {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
-                        <div key={projeto.ID}>
-                          <h4 className='title-projeto-evidencia'>Projeto: {projeto.Nome_Projeto}</h4>
-                          <p className='nota-grau'>Nota: {grausImplementacao[`${resultado.ID}-${projeto.ID}`] || "Não avaliado (NA)"}</p>
-                          <div>
-                            {evidencias[`${resultado.ID}-${projeto.ID}`] && evidencias[`${resultado.ID}-${projeto.ID}`]
-                              .map(evidencia => (
-                                <div key={evidencia.id}>
-                                  <p className='title-evidencia'>Evidência: {evidencia.nomeArquivo}</p>
-                                  <button className='button-mostrar-documento-etapa-evidencia' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
-                                </div>
-                              ))}
+                      {nota && <div className='nota-adicional-div'><p className='nota-adicional-resultado'>{nota}</p></div>}
+                      <div className='div-projetos-evidencia-caracterizacao-auditoria-final'>  
+                        {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
+                          <div key={projeto.ID}>
+                            <h4 className='title-projeto-evidencia'>Projeto: {projeto.Nome_Projeto}</h4>
+                            <p className='nota-grau-auditoria-final'>Nota: {grausImplementacao[`${resultado.ID}-${projeto.ID}`] || "Não avaliado (NA)"}</p>
+                            <div>
+                              {evidencias[`${resultado.ID}-${projeto.ID}`] && evidencias[`${resultado.ID}-${projeto.ID}`]
+                                .map(evidencia => (
+                                  <div className='evidencia-processos-auditoria-final' key={evidencia.id}>
+                                    <p className='title-evidencia'>Evidência: {evidencia.nomeArquivo}</p>
+                                    <button className='button-mostrar-documento-etapa-evidencia' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
+                                  </div>
+                                ))}
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   );
                 })}
@@ -471,8 +471,8 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
           {projetos.map(projeto => (
             activeChildProjectTab === projeto.ID && (
               <div key={projeto.ID}>
-                <h2 className='title-processo-caracterizacao'>{projeto.Nome_Projeto}</h2>
-                <table className='tabela-caracterizacao'>
+                <h2 className='title-caracterizacao-capacidade-auditoria'>{projeto.Nome_Projeto}</h2>
+                <table className='tabela-caracterizacao-capacidade-auditoria'>
                   <thead>
                     <tr>
                       <th>Descrição</th>
@@ -525,8 +525,8 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
           {processosOrganizacionais.map(processo => (
             activeChildOrganizationalTab === processo.ID && (
               <div key={processo.ID}>
-                <h2 className='title-processo-caracterizacao'>{processo.Descricao}</h2>
-                <table className='tabela-caracterizacao'>
+                <h2 className='title-caracterizacao-capacidade-auditoria'>{processo.Descricao}</h2>
+                <table className='tabela-caracterizacao-capacidade-auditoria'>
                   <thead>
                     <tr>
                       <th>Descrição</th>
@@ -559,31 +559,32 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
 
   const renderResultadoAuditoriaContent = () => {
     return (
-      <div className="conteudo-resultado">
-        <h2>Resultado da auditoria</h2>
-        <p>Selecione uma opção:</p>
-        <select
-          value={aprovacao}
-          onChange={(e) => setAprovacao(e.target.value)}
-          className="select-aprovacao"
-        >
-          {aprovacao === '' && <option value="">Selecione</option>}
-          <option value="Aprovar">Aprovar</option>
-          <option value="Reprovar">Reprovar</option>
-        </select>
-
+      <div className="container-etapa">
+        <h2 className='title-form-auditoria-final'>RESULTADO DA AUDITORIA</h2>
+        <div className="div-opcao-aprovacao">
+          <p className='label-etapas'>Selecione uma opção:</p>
+          <select
+            value={aprovacao}
+            onChange={(e) => setAprovacao(e.target.value)}
+            className="select-aprovacao"
+          >
+            {aprovacao === '' && <option value="">Selecione</option>}
+            <option value="Aprovar">Aprovar</option>
+            <option value="Reprovar">Reprovar</option>
+          </select>
+        </div>
         {aprovacao === 'Reprovar' && (
           <>
             <textarea
               value={justificativa}
               onChange={(e) => setJustificativa(e.target.value)}
               placeholder="Escreva a justificativa da reprovação"
-              className="textarea-justificativa"
+              className="input-textarea-avaliacao"
             />
           </>
         )}
 
-        <button className="button-next" onClick={salvarDecisao}>SALVAR</button>
+        <button className="button-save" onClick={salvarDecisao}>SALVAR</button>
         <button className='button-next' onClick={handleNextStep}>PRÓXIMA ETAPA</button>
       </div>
     );
@@ -621,8 +622,8 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
   };
 
   const renderResumoAvaliacaoContent = () => {
-    return (
-      <div className="management-etapa5-container">
+        return (
+      <div className="container-etapa">
         <div className="tabs">
           {processos.map((processo, index) => (
             <button
@@ -635,7 +636,7 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
           ))}
         </div>
         <div className="tab-content">
-          <h1 className='management-etapa5-title'>RESUMO DA CARACTERIZAÇÃO DA AVALIAÇÃO</h1>
+          <h2 className='title-form-auditoria-final'>RESUMO DA CARACTERIZAÇÃO DA AVALIAÇÃO</h2>
           <table className='resumo-tabela'>
             <thead>
               <tr>
@@ -646,18 +647,22 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
             <tbody>
               {arrayResumo
                 .filter(item => item.id_processo === activeTab)
-                .map(item => (
-                  <tr key={item.id_resultado_esperado}>
-                    <td className='tooltip-container'>
-                      <Tippy content={item.resultado_descricao} placement="top" animation="fade">
+                .map(item => {
+                  const notaIndex = item.resultado_descricao.indexOf('NOTA');
+                  const descricao = notaIndex !== -1 ? item.resultado_descricao.substring(0, notaIndex).trim() : item.resultado_descricao;
+                  const nota = notaIndex !== -1 ? item.resultado_descricao.substring(notaIndex).trim() : '';
+                  return (
+                    <tr key={item.id_resultado_esperado}>
+                      <td>
                         <span className='resultado-esperado'>
-                          {item.resultado_descricao.substring(0, 50)}{item.resultado_descricao.length > 50 ? '...' : ''}
+                          {descricao}
                         </span>
-                      </Tippy>
-                    </td>
-                    <td>{item.nota}</td>
-                  </tr>
-                ))}
+                        {nota && <div className='nota-adicional-tabela'><p className='nota-adicional-resultado-tabela'>{nota}</p></div>}
+                      </td>
+                      <td>{item.nota}</td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </table>
         </div>
@@ -691,7 +696,7 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
 
     return (
       <div className="conteudo-informacoes-gerais">
-        <h2>Informações Gerais</h2>
+        <h2 className='title-form-auditoria-final'>INFORMAÇÕES GERAIS</h2>
         <table className='tabela-etapas'>
           <tbody>
             <tr className='linha-etapas'>
