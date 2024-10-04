@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
+import '../components/styles/Etapas.css';
 import '../components/styles/Button.css';
 import { enviarEmailSolicitarFeedback } from '../services/Api';
 
@@ -26,9 +27,12 @@ function EtapaEmailFeedbackSoftex({ onNext, avaliacaoId }) {
   return (
     <div className='container-etapa'>
       <h1 className='title-form'>SOLICITAR LINK DE FEEDBACK SOFTEX</h1>
-      <p className='conteudo-etapa'>
-        Ao clicar no botão abaixo, um e-mail será enviado para a Softex solicitando o link do formulário de feedback.
-      </p>
+      <div className='dica-div'>
+        <strong className='dica-titulo'>Observação:</strong>
+        <p className='dica-texto'>
+          Ao clicar no botão abaixo, um e-mail será enviado para a Softex solicitando o link do formulário de feedback.
+        </p>
+      </div>
       <button
         className='button-next'
         onClick={handleSendEmail}

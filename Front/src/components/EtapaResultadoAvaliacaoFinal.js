@@ -70,21 +70,7 @@ function EtapaResultadoAvaliacaoFinal({ onNext }) {
         alignItems: 'center',
         marginTop: '20px'
       }}>
-        <button
-          onClick={onNext}
-          style={{
-            padding: '10px 20px',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            color: '#fff',
-            fontWeight: 'bold',
-            backgroundColor: '#4CAF50',
-            transition: 'background-color 0.3s ease'
-          }}
-          onMouseOver={(e) => e.target.style.backgroundColor = '#45a049'}
-          onMouseOut={(e) => e.target.style.backgroundColor = '#4CAF50'}
-          disabled={isLoading}
+        <button className='button-confirmar-visualizacao'
         >
           CONFIRMAR VISUALIZAÇÃO
         </button>

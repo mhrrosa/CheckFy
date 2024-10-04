@@ -68,7 +68,7 @@ function EtapaApresentacoesIniciais({ onNext, avaliacaoId }) {
 
   return (
     <div className='container-etapa'>
-      <h1 className='title-form'>PLANEJAMENTO</h1>
+      <h1 className='title-form'>APRESENTAÇÕES INICIAIS E TREINAMENTO</h1>
       <div className='dica-div'>
         <strong className='diva-titulo'>Observação:</strong>
         <p className='dica-texto'>
@@ -128,7 +128,7 @@ function EtapaApresentacoesIniciais({ onNext, avaliacaoId }) {
 
       {/* Botão "Salvar" */}
       <button
-        className={`button-next ${isSaveButtonEnabled ? '' : 'button-disabled'}`}
+        className={`button-save ${isSaveButtonEnabled ? '' : 'button-disabled'}`}
         onClick={handleSave}
         disabled={!isSaveButtonEnabled}
       >

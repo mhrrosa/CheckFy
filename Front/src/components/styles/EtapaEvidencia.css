@@ -72,6 +72,7 @@
 .div-projetos-evidencia {
   display: flex;
   flex-wrap: wrap;
+  gap: 10px;
 }
 
 .title-processo-evidencia {
@@ -100,8 +101,8 @@
 
 .div-resultado-esperado-evidencia {
   background-color: white;
-    border: 1px solid #000000;
-    padding: 20px 10px 70px 10px;
+  border: 1px solid #000000;
+  padding: 20px 10px 70px 10px;
 }
 
 .form-section-document {

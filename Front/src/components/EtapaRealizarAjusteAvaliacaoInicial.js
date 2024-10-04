@@ -138,7 +138,7 @@ function EtapaRealizarAjusteAvaliacaoInicial({ onBack }) {
 
     return (
     <div className='container-etapa'>
-      <h1 className='title-form'>EDIÇÃO DA AVALIAÇÃO</h1>
+      <h1 className='title-form'>AJUSTE DA AVALIAÇÃO INICIAL</h1>
       <div className="lista-input">
         <table className='tabela-etapas'>
           <tbody>
@@ -201,21 +201,12 @@ function EtapaRealizarAjusteAvaliacaoInicial({ onBack }) {
         </table>
       </div>
   
-      <div>
-        <button
-          onClick={handleSalvar}
-          className='button-save'
-          disabled={isSaving} // Desabilitar o botão enquanto salva
-        >
-          SALVAR
-        </button>
-        <button
-          onClick={onBack}
-          className='button-next'
-        >
-          PRÓXIMA ETAPA
-        </button>
-      </div>
+      <button onClick={handleSalvar} className='button-save' disabled={isSaving}>
+        SALVAR
+      </button>
+      <button onClick={onBack} className='button-next'>
+        PRÓXIMA ETAPA
+      </button>
     </div>
   );
 }

@@ -156,23 +156,12 @@ function EtapaAtribuirNivelMaturidade({ onNext }) {
           </tbody>
         </table>
       </div>
-  
-      <div>
-        <button
-          onClick={handleNext}
-          className="button-save"
-          disabled={isLoading}
-        >
-          {isLoading ? 'Enviando...' : 'SALVAR'}
-        </button>
-        <button
-          onClick={onNext}
-          className="button-next"
-          disabled={isLoading}
-        >
-          PRÓXIMA ETAPA
-        </button>
-      </div>
+      <button onClick={handleNext} className="button-save" disabled={isLoading}>
+        {isLoading ? 'Enviando...' : 'SALVAR'}
+      </button>
+      <button onClick={onNext} className="button-next" disabled={isLoading}>
+        PRÓXIMA ETAPA
+      </button>
     </div>
   );
 }

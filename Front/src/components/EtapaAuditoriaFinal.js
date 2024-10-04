@@ -741,7 +741,7 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
                   className="button-mostrar-relatorio-auditoria"
                   onClick={() => window.open(`http://127.0.0.1:5000/uploads/${avaliacao.caminho_arquivo_relatorio_ajuste_inicial}`, '_blank')}
                 >
-                  VISUALIZAR RELATÓRIO DE AJUSTE INICIAL
+                  VISUALIZAR RELATÓRIO
                 </button>
               </td>
             </tr>

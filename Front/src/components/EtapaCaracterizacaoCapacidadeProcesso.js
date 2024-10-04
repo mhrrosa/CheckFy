@@ -17,7 +17,7 @@ import '../components/styles/Form.css';
 import '../components/styles/Button.css';
 import '../components/styles/Container.css';
 import '../components/styles/Etapas.css';
-import '../components/styles/EtapaCaracterizacao.css';
+import '../components/styles/EtapaCaracterizacaoCapacidadeProcesso.css';
 
 function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, onNext }) {
   const [projetos, setProjetos] = useState([]); // Projetos para a aba "Projeto"
@@ -232,8 +232,8 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
           {projetos.map(projeto => (
             activeChildProjectTab === projeto.ID && (
               <div key={projeto.ID}>
-                <h2 className='title-processo-caracterizacao'>{projeto.Nome_Projeto}</h2>
-                <table className='tabela-caracterizacao'>
+                <h2 className='title-caracterizacao-capacidade-processo'>{projeto.Nome_Projeto}</h2>
+                <table className='tabela-caracterizacao-capacidade-processo'>
                   <thead>
                     <tr>
                       <th>Descrição</th>
@@ -249,10 +249,10 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
                     ))}
                     {/* Nota Final */}
                     <tr>
-                      <td><strong>Nota Final</strong></td>
+                      <td><strong className='label-etapas'>Nota Final</strong></td>
                       <td>
                         <select
-                          className='select-grau'
+                          className='select-grau-caracterizacao-capacidade-processo'
                           value={respostasProjeto[projeto.ID]?.nota || "Não avaliado (NA)"}
                           onChange={(e) => handleRespostaProjetoChange(projeto.ID, e.target.value)}
                         >
@@ -294,8 +294,8 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
           {processosOrganizacionais.map(processo => (
             activeChildOrganizationalTab === processo.ID && (
               <div key={processo.ID}>
-                <h2 className='title-processo-caracterizacao'>{processo.Descricao}</h2>
-                <table className='tabela-caracterizacao'>
+                <h2 className='title-caracterizacao-capacidade-processo'>{processo.Descricao}</h2>
+                <table className='tabela-caracterizacao-capacidade-processo'>
                   <thead>
                     <tr>
                       <th>Descrição</th>
@@ -311,10 +311,10 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
                     ))}
                     {/* Nota Final */}
                     <tr>
-                      <td><strong>Nota Final</strong></td>
+                      <th><strong className='label-etapas'>Nota Final</strong></th>
                       <td>
                         <select
-                          className='select-grau'
+                          className='select-grau-caracterizacao-capacidade-processo'
                           value={respostasOrganizacional[processo.ID]?.nota || "Não avaliado (NA)"}
                           onChange={(e) => handleRespostaOrganizacionalChange(processo.ID, e.target.value)}
                         >
@@ -422,10 +422,8 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
       <div className="parent-tab-content">
         {activeParentTab === 'Projeto' ? renderProjectContent() : renderOrganizationalContent()}
       </div>
-      <div className="button-group">
-        <button className='button-save' onClick={handleSave}>SALVAR</button>
-        <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
-      </div>
+      <button className='button-save' onClick={handleSave}>SALVAR</button>
+      <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
     </div>
   );
 }
