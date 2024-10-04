@@ -242,6 +242,22 @@
     background-color: #007c17;
 }
 
+.button-mostrar-relatorio-auditoria {
+    padding: 10px 10px;
+    font-size: 0.9em;
+    font-weight: bolder;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #007BFF;
+    transition: background-color 0.3s;
+}
+
+.button-mostrar-relatorio-auditoria:hover {
+    background-color: #0056b3;
+}
+
 .button-excluir-documento-etapa-evidencia {
     padding: 10px 10px;
     margin-left: 20px;
@@ -362,11 +378,11 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
-  }
+}
   
-  .button-save:hover {
+.button-save:hover {
     background-color: #0056b3;
-  }  
+}  
 
 .button-next {
     margin-top: 20px;
@@ -382,3 +398,19 @@
   .button-next:hover {
     background-color: #0056b3;
   }  
+
+.button-solicitar-auditoria {
+    padding: 10px 20px;
+    width: 15em;
+    font-weight: bolder;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #007bff;
+    transition: background-color 0.3s;
+}
+
+.button-solicitar-auditoria:hover {
+    background-color: #0056b3;
+}

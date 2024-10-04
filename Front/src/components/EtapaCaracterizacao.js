@@ -150,7 +150,7 @@ function EtapaCaracterizacao({ onNext, avaliacaoId, idVersaoModelo }) {
     <div className="container-etapa">
       <h1 className='title-form'>CARACTERIZAÇÃO DE GRAU DE CADA RESULTADO ESPERADO DO PROCESSO</h1>
       <div className='dica-div'>
-        <strong className="dica-titulo">Dica:</strong>
+        <strong className="dica-titulo">Observação:</strong>
         <p className='dica-texto'>
           Evidências são indicadores que comprovam a implementação dos processos e o nível de capacidade de processo.
         </p>

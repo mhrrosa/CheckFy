@@ -95,7 +95,7 @@ function CadastroDataAvaliacao({ onNext, avaliacaoId }) {
     <div className='container-etapa'>
       <h1 className='title-form'>DEFINIÇÃO DA DATA DE AVALIAÇÃO FINAL</h1>
       <div className='dica-div'>
-        <strong className='div-titulo'>Dica: </strong>
+        <strong className='div-titulo'>Observação: </strong>
         <p className='dica-texto'>
           A data da avaliação final deve ser confirmada para garantir a conformidade com o cronograma,
           participantes da avaliação serão notificados caso houver atualização da data.

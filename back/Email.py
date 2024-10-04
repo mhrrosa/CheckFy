@@ -374,7 +374,8 @@ class Email:
             # Buscar dados da avaliação
             cursor.execute(query_avaliacao, (id_avaliacao,))
             row = cursor.fetchone()
-
+            cursor.fetchall()
+          
             if row:
                 # Extraindo dados da avaliação
                 id = row['ID']
@@ -387,11 +388,16 @@ class Email:
                 nome_versao_modelo = row['Nome_Versao_Modelo']
 
                 # Buscar o e-mail do auditor (ID_Funcao = 3)
+                cursor.close()
+                
+                cursor = self.db.conn.cursor(dictionary=True)
                 cursor.execute(query_auditor, (id_avaliacao,))
                 email_auditor_row = cursor.fetchone()
+                cursor.fetchall()
                 cursor.close()
+
                 if email_auditor_row:
-                    email_auditor = email_auditor_row[0]
+                    email_auditor = email_auditor_row['Email']
                 else:
                     print("E-mail do auditor não encontrado.")
                     return

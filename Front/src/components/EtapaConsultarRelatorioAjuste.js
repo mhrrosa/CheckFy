@@ -39,7 +39,7 @@ function EtapaConsultarRelatorioAjuste({ onNext }) {
     <div className='container-etapa'>
       <h1 className='title-form'>CONSULTAR RELATÓRIO DE AJUSTE</h1>
       <div className='dica-div'>
-        <strong className='dica-titulo'>Dica:</strong>
+        <strong className='dica-titulo'>Observação:</strong>
         <p className='dica-texto'>
           Visualize os ajustes necessários para a avaliação final. Acesse os relatórios detalhados para realizar as correções e garantir que tudo esteja em conformidade, antes da data da avaliação final.
         </p>

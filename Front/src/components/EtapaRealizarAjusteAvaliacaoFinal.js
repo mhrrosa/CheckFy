@@ -881,7 +881,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     <div className="container-etapa">
       <h1 className='title-form'>AJUSTE DA AVALIAÇÃO FINAL</h1>
       <div className='dica-div'>
-        <strong className="dica-titulo">Dica:</strong>
+        <strong className="dica-titulo">Observação:</strong>
         <p className='dica-texto'>
           Aqui você pode visualizar e ajustar as informações relacionadas à avaliação final.
         </p>

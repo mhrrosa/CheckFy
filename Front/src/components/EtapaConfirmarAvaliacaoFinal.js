@@ -3,6 +3,8 @@ import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
 import '../components/styles/Button.css';
+import '../components/styles/Etapas.css';
+import '../components/styles/EtapaConfirmarAvaliacaoFinal.css';
 import { enviarEmailAuditorAvaliacaoFinal } from '../services/Api';
 
 function EtapaConfirmarAvaliacaoFinal({ onNext, avaliacaoId }) {
@@ -32,12 +34,15 @@ function EtapaConfirmarAvaliacaoFinal({ onNext, avaliacaoId }) {
   return (
     <div className='container-etapa'>
       <h2 className='title-form'>CONFIRMAR AVALIAÇÃO FINAL</h2>
-      <p className='conteudo-etapa'>
-        Ao clicar no botão abaixo, você estará solicitando a auditoria da avaliação final. 
-        Tenha certeza de que todos os dados estão corretos antes de continuar.
-      </p>
+      <div className='dica-div'>
+        <strong className='dica-titulo'>Observação:</strong>
+        <p className='dica-texto'>
+          Ao clicar no botão abaixo, você estará solicitando a auditoria da avaliação final. 
+          Tenha certeza de que todos os dados estão corretos antes de continuar.
+        </p>
+      </div>
       <button
-        className='button-next'
+        className='button-solicitar-auditoria'
         onClick={handleConfirmarAvaliacao}
         disabled={loading || confirmado}
         style={{
@@ -45,7 +50,7 @@ function EtapaConfirmarAvaliacaoFinal({ onNext, avaliacaoId }) {
           cursor: confirmado ? 'not-allowed' : 'pointer'
         }}
       >
-        {loading ? 'Enviando email...' : confirmado ? 'Auditoria solicitada' : 'Solicitar auditoria da avaliação final'}
+        {loading ? 'Enviando email...' : confirmado ? 'AUDITORIA SOLICITADA' : 'SOLICITAR AUDITORIA'}
       </button>
       <br />
       <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>

@@ -50,7 +50,7 @@ function AtaReuniaoAbertura({onNext, avaliacaoId }) {
         <h1 className='title-form'>ATA DE REUNIÃO DE ABERTURA DA AVALIAÇÃO FINAL</h1>
       </div>
         <div className='dica-div'>
-            <strong className='dica-titulo'>Dica:</strong> {/* Texto de dica mais escuro */}
+            <strong className='dica-titulo'>Observação:</strong> {/* Texto de dica mais escuro */}
             <p className='dica-texto'>
             1 - Avaliador Líder: Apresentou os níveis MR-MPS e o processo de avaliação. Explicou o Acordo de Confidencialidade, escopo e nível de maturidade pleiteado.
             </p>
@@ -66,7 +66,7 @@ function AtaReuniaoAbertura({onNext, avaliacaoId }) {
         </div>
         <label className="label-etapas">Ata de Reunião:</label>
         <div className='dica-div'>
-          <strong className='dica-titulo'>Dica:</strong>
+          <strong className='dica-titulo'>Observação:</strong>
           <p className="dica-texto">
             Dica para preencher: adicionar dica
           </p>
