@@ -807,7 +807,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
         {aprovacao === 'Aprovar' && (
           <>
             <div className='div-resultado-auditoria'>
-              <p>Auditoria Aprovada</p>
+              <p className='label-etapas'>Auditoria Aprovada</p>
               <img src={img_certo} className='imagem-certo-errado' alt="certo"/>
             </div>
           </>
