@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Tippy from '@tippyjs/react';
-import 'tippy.js/dist/tippy.css';
 import {
   getAvaliacaoById,
   getProcessosPorAvaliacao,
@@ -32,7 +30,10 @@ import '../components/styles/Container.css';
 import '../components/styles/Etapas.css';
 import '../components/styles/EtapaEvidencia.css';
 import '../components/styles/EtapaResumoCaracterizacao.css';
+import '../components/styles/EtapaRealizarAjusteAvaliacaoFinal.css';
 import '../components/styles/EtapaCaracterizacao.css';
+import img_certo from '../img/certo.png';
+import img_errado from '../img/errado.png';
 
 function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack  }) {
   const [processos, setProcessos] = useState([]);
@@ -62,7 +63,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
   const [niveis, setNiveis] = useState([]);
   const [nivelDisabled, setNivelDisabled] = useState(false);
 
-  const parentTabs = ['Resultado Auditoria', 'Informações Gerais', 'Processos', 'Resumo da Caracterização da Avaliação', 'Projeto', 'Organizacional', 'Concluir Ajustes e Solicitar a Auditoria'];
+  const parentTabs = ['Resultado Auditoria', 'Informações Gerais', 'Processos', 'Resumo da Caracterização da Avaliação', 'Projeto', 'Organizacional', 'Concluir Ajustes'];
 
   const options = [
     "Totalmente implementado (T)",
@@ -630,29 +631,31 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
                       <label className='label-etapas'>Resultado Esperado: </label>
                       <h3 className='title-resultado-caracterizacao'>{descricao}</h3>
                       {nota && <div className='nota-adicional-div'><p className='nota-adicional-resultado'>{nota}</p></div>}
-                      {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
-                        <div key={projeto.ID}>
-                          <h4 className='title-projeto-caracterizacao'>Projeto: {projeto.Nome_Projeto}</h4>
-                          <select
-                            className='select-grau'
-                            value={grausImplementacao[`${resultado.ID}-${projeto.ID}`] || "Não avaliado (NA)"}
-                            onChange={(e) => handleSelectChange(e, resultado.ID, projeto.ID)}
-                          >
-                            {options.map((option, index) => (
-                              <option key={index} value={option}>{option}</option>
-                            ))}
-                          </select>
-                          <div>
-                            {evidencias[`${resultado.ID}-${projeto.ID}`] && evidencias[`${resultado.ID}-${projeto.ID}`]
-                              .map(evidencia => (
-                                <div className='evidencia-e-botao' key={evidencia.id}>
-                                  <p className='title-evidencia-caracterizacao'>Evidencia: {evidencia.nomeArquivo}</p>
-                                  <button className='button-mostrar-documento-etapa-evidencia' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
-                                </div>
+                      <div className='div-projeto-evidencias-ajuste-avaliacao-final'>
+                        {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
+                          <div key={projeto.ID}>
+                            <h4 className='title-projeto-caracterizacao'>Projeto: {projeto.Nome_Projeto}</h4>
+                            <select
+                              className='select-grau-ajuste-avaliacao-final'
+                              value={grausImplementacao[`${resultado.ID}-${projeto.ID}`] || "Não avaliado (NA)"}
+                              onChange={(e) => handleSelectChange(e, resultado.ID, projeto.ID)}
+                            >
+                              {options.map((option, index) => (
+                                <option key={index} value={option}>{option}</option>
                               ))}
+                            </select>
+                            <div>
+                              {evidencias[`${resultado.ID}-${projeto.ID}`] && evidencias[`${resultado.ID}-${projeto.ID}`]
+                                .map(evidencia => (
+                                  <div className='evidencia-e-botao' key={evidencia.id}>
+                                    <p className='title-evidencia-caracterizacao'>Evidência: {evidencia.nomeArquivo}</p>
+                                    <button className='button-mostrar-documento-etapa-evidencia' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
+                                  </div>
+                                ))}
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   );
                 })}
@@ -687,8 +690,8 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
           {projetos.map(projeto => (
             activeChildProjectTab === projeto.ID && (
               <div key={projeto.ID}>
-                <h2 className='title-processo-caracterizacao'>{projeto.Nome_Projeto}</h2>
-                <table className='tabela-caracterizacao'>
+                <h2 className='title-caracterizacao-ajuste-final'>{projeto.Nome_Projeto}</h2>
+                <table className='tabela-caracterizacao-ajustefinal'>
                   <thead>
                     <tr>
                       <th>Descrição</th>
@@ -753,8 +756,8 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
           {processosOrganizacionais.map(processo => (
             activeChildOrganizationalTab === processo.ID && (
               <div key={processo.ID}>
-                <h2 className='title-processo-caracterizacao'>{processo.Descricao}</h2>
-                <table className='tabela-caracterizacao'>
+                <h2 className='title-caracterizacao-ajuste-final'>{processo.Descricao}</h2>
+                <table className='tabela-caracterizacao-ajustefinal'>
                   <thead>
                     <tr>
                       <th>Descrição</th>
@@ -799,13 +802,23 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
 
   const renderResultadoAuditoriaContent = () => {
     return (
-      <div className="conteudo-resultado">
-        <h2>Resultado da auditoria</h2>
-        {aprovacao === 'Aprovar' && <p>Auditoria Aprovada</p>}
+      <div className="container-etapas">
+        <h2 className='title-form-auditoria-final'>RESULTADO DA AUDITORIA FINAL</h2>
+        {aprovacao === 'Aprovar' && (
+          <>
+            <div className='div-resultado-auditoria'>
+              <p>Auditoria Aprovada</p>
+              <img src={img_certo} className='imagem-certo-errado' alt="certo"/>
+            </div>
+          </>
+        )}
         {aprovacao === 'Reprovar' && (
           <>
-            <p>Auditoria Reprovada</p>
-            <p>Justificativa: {justificativa}</p>
+            <div className='div-resultado-auditoria'>
+              <p className='label-etapas'>Auditoria Reprovada</p>
+              <img src={img_errado} className='imagem-certo-errado' alt="errado"/>
+            </div>
+            <p className='label-etapas'>Justificativa: {justificativa}</p>
           </>
         )}
       </div>
@@ -827,7 +840,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
           ))}
         </div>
         <div className="tab-content">
-          <h1 className='title-form'>RESUMO DA CARACTERIZAÇÃO DA AVALIAÇÃO</h1>
+          <h2 className='title-form-auditoria-final'>RESUMO DA CARACTERIZAÇÃO DA AVALIAÇÃO</h2>
           <table className='resumo-tabela'>
             <thead>
               <tr className='tr-table-resumo-caracterizacao'>
@@ -836,35 +849,63 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
               </tr>
             </thead>
             <tbody>
-              {processos.map(processo => (
-                activeTab === processo.ID && (
-                  (resultadosEsperados[processo.ID] || []).map(resultado => {
-                    const itemResumo = arrayResumo.find(item => item.id_resultado_esperado === resultado.ID);
-                    return (
-                      <tr className='tr-table-resumo-caracterizacao' key={resultado.ID}>
-                        <td className='resultado-esperado-body'>
-                          <Tippy content={resultado.Descricao} placement="top" animation="fade">
-                            <span className='resultado-esperado'>
-                              {resultado.Descricao.substring(0, 50)}{resultado.Descricao.length > 50 ? '...' : ''}
-                            </span>
-                          </Tippy>
-                        </td>
-                        <td className='nota-body'>
+            {processos.map(processo => (
+              activeTab === processo.ID && (
+                (resultadosEsperados[processo.ID] || []).map(resultado => {
+                  const notaIndex = resultado.Descricao.indexOf('NOTA');
+                  const descricao = notaIndex !== -1 ? resultado.Descricao.substring(0, notaIndex).trim() : resultado.Descricao;
+                  const nota = notaIndex !== -1 ? resultado.Descricao.substring(notaIndex).trim() : '';
+                  const itemResumo = arrayResumo.find(item => item.id_resultado_esperado === resultado.ID);
+                  return (
+                    <tr className='tr-table-resumo-caracterizacao' key={resultado.ID}>
+                      <td className='resultado-esperado-body'>
+                        <span className='resultado-esperado'>
+                        {descricao}
+                        </span>
+                        {nota && <div className='nota-adicional-tabela'><p className='nota-adicional-resultado-tabela'>{nota}</p></div>}
+                      </td>
+                      <td className='nota-body'>
+                        {itemResumo?.nota === 'Escolher L ou P' || itemResumo?.nota === 'Escolher L, N ou P' ? (
+                          <select
+                            className="select-grau-resumo-caracterizacao-invalido"
+                            onChange={(e) => handleNotaChange(resultado.ID, e.target.value)}
+                            value=""
+                          >
+                            {itemResumo?.nota === 'Escolher L ou P' ? (
+                              <>
+                                <option value="" disabled>Selecione L ou P</option>
+                                <option value="Largamente implementado (L)">Largamente implementado (L)</option>
+                                <option value="Parcialmente implementado (P)">Parcialmente implementado (P)</option>
+                              </>
+                            ) : (
+                              <>
+                                <option value="" disabled>Selecione L, N ou P</option>
+                                <option value="Largamente implementado (L)">Largamente implementado (L)</option>
+                                <option value="Não implementado (N)">Não implementado (N)</option>
+                                <option value="Parcialmente implementado (P)">Parcialmente implementado (P)</option>
+                              </>
+                            )}
+                          </select>
+                        ) : (
                           <select
                             className="select-grau-resumo-caracterizacao"
                             value={itemResumo?.nota || 'Não avaliado (NA)'}
                             onChange={(e) => handleNotaChange(resultado.ID, e.target.value)}
                           >
-                            {options.map((option, index) => (
-                              <option key={index} value={option}>{option}</option>
-                            ))}
+                            <option value="Totalmente implementado (T)">Totalmente implementado (T)</option>
+                            <option value="Largamente implementado (L)">Largamente implementado (L)</option>
+                            <option value="Parcialmente implementado (P)">Parcialmente implementado (P)</option>
+                            <option value="Não implementado (N)">Não implementado (N)</option>
+                            <option value="Não avaliado (NA)">Não avaliado (NA)</option>
+                            <option value="Fora do escopo (F)">Fora do escopo (F)</option>
                           </select>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )
-              ))}
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })
+              )
+            ))}
             </tbody>
           </table>
         </div>
@@ -881,103 +922,97 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     }
   
     return (
-      <div className="conteudo-informacoes-gerais">
-        <h2>Informações Gerais</h2>
-        <div className="row">
-          <label className="label"><strong>Nome da Avaliação:</strong></label>
-          <span className="value">{avaliacao.nome}</span>
-        </div>
-  
-        <div className="row">
-          <label className="label"><strong>Descrição:</strong></label>
-          <span className="value">{avaliacao.descricao}</span>
-        </div>
-  
-        <div className="row">
-          <label className="label"><strong>Avaliador Líder:</strong></label>
-          <span className="value">{avaliacao.nome_avaliador_lider}</span>
-        </div>
-  
-        <div className="row">
-          <label className="label"><strong>Empresa:</strong></label>
-          <span className="value">{avaliacao.nome_empresa}</span>
-        </div>
-  
-        <div className="row">
-          <label className="label"><strong>Nível Solicitado:</strong></label>
-          <span className="value">{avaliacao.nivel_solicitado}</span>
-        </div>
-  
-        <div className="row">
-          <label className="label"><strong>Versão do Modelo:</strong></label>
-          <span className="value">{avaliacao.nome_versao_modelo}</span>
-        </div>
-  
-        <div className="row">
-          <label className="label"><strong>Atividade Planejamento:</strong></label>
-          <span className="value">{avaliacao.atividade_planejamento}</span>
-        </div>
-  
-        <div className="row">
-          <label className="label"><strong>Cronograma Planejamento:</strong></label>
-          <span className="value">{avaliacao.cronograma_planejamento}</span>
-        </div>
-  
-        <div className="row">
-          <label className="label"><strong>Ata de Reunião de Abertura:</strong></label>
-          <span className="value">{avaliacao.ata_reuniao_abertura}</span>
-        </div>
-  
-        <div className="row">
-          <label className="label"><strong>Descrição Relatório de Ajuste Inicial:</strong></label>
-          <span className="value">{avaliacao.descricao_relatorio_ajuste_inicial}</span>
-        </div>
-  
-        <div className="row">
-          <label className="label"><strong>Parecer Final:</strong></label>
-          <select
-            value={parecerFinal}
-            onChange={handleParecerFinalChange}
-            className="select"
-          >
-            <option value="">Selecione um resultado</option>
-            <option value="Satisfeito">Satisfeito</option>
-            <option value="Não Satisfeito">Não Satisfeito</option>
-          </select>
-        </div>
-  
-        {parecerFinal && (
-          <div className="row">
-            <label className="label"><strong>Nível Atribuído:</strong></label>
-            <select
-              value={selectedNivel}
-              onChange={(e) => setSelectedNivel(e.target.value)}
-              className="select"
-              disabled={nivelDisabled}
-            >
-              <option value="">Selecione um nível</option>
-              {niveis.length > 0 &&
-                niveis.map((nivel) => (
-                  <option key={nivel['ID']} value={nivel['ID']}>
-                    {nivel['Nivel']} - {nivel['Nome_Nivel']}
-                  </option>
-                ))}
-            </select>
-          </div>
-        )}
-  
-        <div className="row">
-          <label className="label"><strong>Nível Atribuído Atual:</strong></label>
-          <span className="value">{avaliacao.nivel_atribuido}</span>
-        </div>
-  
-        <div className="row">
-          <label className="label"><strong>Parecer Final Atual:</strong></label>
-          <span className="value">{avaliacao.parecer_final}</span>
-        </div>
-  
+      <div className="conteudo-etapas">
+        <h2 className='title-form-auditoria-final'>INFORMAÇÕES GERAIS</h2>
+        <table className="table-informacoes-gerais-ajuste-avaliacao-final">
+          <tbody>
+            <tr>
+              <th>Nome da Avaliação:</th>
+              <td>{avaliacao.nome}</td>
+            </tr>
+            <tr>
+              <th>Descrição:</th>
+              <td>{avaliacao.descricao}</td>
+            </tr>
+            <tr>
+              <th>Avaliador Líder:</th>
+              <td>{avaliacao.nome_avaliador_lider}</td>
+            </tr>
+            <tr>
+              <th>Empresa:</th>
+              <td>{avaliacao.nome_empresa}</td>
+            </tr>
+            <tr>
+              <th>Nível Solicitado:</th>
+              <td>{avaliacao.nivel_solicitado}</td>
+            </tr>
+            <tr>
+              <th>Versão do Modelo:</th>
+              <td>{avaliacao.nome_versao_modelo}</td>
+            </tr>
+            <tr>
+              <th>Atividade Planejamento:</th>
+              <td>{avaliacao.atividade_planejamento}</td>
+            </tr>
+            <tr>
+              <th>Cronograma Planejamento:</th>
+              <td>{avaliacao.cronograma_planejamento}</td>
+            </tr>
+            <tr>
+              <th>Ata de Reunião de Abertura:</th>
+              <td>{avaliacao.ata_reuniao_abertura}</td>
+            </tr>
+            <tr>
+              <th>Descrição Relatório de Ajuste Inicial:</th>
+              <td>{avaliacao.descricao_relatorio_ajuste_inicial}</td>
+            </tr>
+            <tr>
+              <th>Parecer Final:</th>
+              <td>
+                <select
+                  value={parecerFinal}
+                  onChange={handleParecerFinalChange}
+                  className="select-ajuste-avaliacao-final"
+                >
+                  <option value="">Selecione um resultado</option>
+                  <option value="Satisfeito">Satisfeito</option>
+                  <option value="Não Satisfeito">Não Satisfeito</option>
+                </select>
+              </td>
+            </tr>
+            {parecerFinal && (
+              <tr>
+                <th>Nível Atribuído:</th>
+                <td>
+                  <select
+                    value={selectedNivel}
+                    onChange={(e) => setSelectedNivel(e.target.value)}
+                    className="select-ajuste-avaliacao-final"
+                    disabled={nivelDisabled}
+                  >
+                    <option value="">Selecione um nível</option>
+                    {niveis.length > 0 &&
+                      niveis.map((nivel) => (
+                        <option key={nivel['ID']} value={nivel['ID']}>
+                          {nivel['Nivel']} - {nivel['Nome_Nivel']}
+                        </option>
+                      ))}
+                  </select>
+                </td>
+              </tr>
+            )}
+            <tr>
+              <th>Nível Atribuído Atual:</th>
+              <td>{avaliacao.nivel_atribuido}</td>
+            </tr>
+            <tr>
+              <th>Parecer Final Atual:</th>
+              <td>{avaliacao.parecer_final}</td>
+            </tr>
+          </tbody>
+        </table>
         <button className="button-save" onClick={handleSaveInformacoesGerais}>
-          Salvar
+          SALVAR
         </button>
       </div>
     );
@@ -987,7 +1022,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
   const renderConcluirAjustesContent = () => {
     const handleConcluirClick = () => {
       const confirmacao = window.confirm(
-        "Se continuar, será solicitado que o auditor realize a auditoria novamente. Deseja continuar?"
+        "Será solicitado que o auditor realize a auditoria novamente. Deseja continuar?"
       );
   
       if (confirmacao) {
@@ -996,10 +1031,16 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     };
   
     return (
-      <div className="conteudo-concluir-ajustes">
-        <h2>Concluir Ajustes e Solicitar a Auditoria</h2>
+      <div className="container-etapas">
+        <h2 className='title-form-auditoria-final'>CONCLUIR AJUSTES</h2>
+        <div className="dica-div">
+          <strong className="dica-titulo">Observação:</strong>
+          <p className="dica-texto">
+            Ao clicar em "CONCLUIR", o auditor será solicitado a realizar a auditoria novamente.
+          </p>
+        </div>
         <button className="button-next" onClick={handleConcluirClick}>
-          Concluir
+          CONCLUIR
         </button>
       </div>
     );
@@ -1019,7 +1060,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
         return renderResultadoAuditoriaContent();
       case 'Resumo da Caracterização da Avaliação':
         return renderResumoAvaliacaoContent(); 
-      case 'Concluir Ajustes e Solicitar a Auditoria':
+      case 'Concluir Ajustes':
         return renderConcluirAjustesContent();
       default:
         return null;
