@@ -70,7 +70,7 @@ function EtapaResultadoAvaliacaoFinal({ onNext }) {
         alignItems: 'center',
         marginTop: '20px'
       }}>
-        <button className='button-confirmar-visualizacao'
+        <button className='button-confirmar-visualizacao' onClick={onNext} disabled={isLoading}
         >
           CONFIRMAR VISUALIZAÇÃO
         </button>

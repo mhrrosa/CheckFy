@@ -407,7 +407,7 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
 
   return (
     <div className="container-etapa">
-      <h1 className='title-form'>CAPACIDADE DO PROCESSO</h1>
+      <h1 className='title-form'>CARACTERIZAÇÃO DA CAPACIDADE DO PROCESSO</h1>
       <div className="parent-tabs">
         {parentTabs.map(tab => (
           <button
