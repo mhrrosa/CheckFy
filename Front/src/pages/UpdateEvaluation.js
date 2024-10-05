@@ -54,10 +54,10 @@ function UpdateEvaluation() {
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
-        <h1 className="title-form">ATUALIZAR AVALIAÇÃO</h1>
+        <h1 className="title-form-gerenciamento">ATUALIZAR AVALIAÇÃO</h1>
         <div className="lista-input">
           <div className="input-wrapper">
-            <label className="label">Nome da avaliação:</label>
+            <label className="label-gerenciamento">Nome da avaliação:</label>
             <input
               className="input-field"
               type="text"
@@ -68,7 +68,7 @@ function UpdateEvaluation() {
             />
           </div>
           <div className="input-wrapper">
-            <label className="label">Descrição:</label>
+            <label className="label-gerenciamento">Descrição:</label>
             <input
               className="input-field"
               type="text"
@@ -79,7 +79,7 @@ function UpdateEvaluation() {
             />
           </div>
           <div className="input-wrapper">
-            <label className="label">Status:</label>
+            <label className="label-gerenciamento">Status:</label>
             <input
               className="input-field"
               type="text"
@@ -90,7 +90,7 @@ function UpdateEvaluation() {
             />
           </div>
           <div className="input-wrapper">
-            <label className="label">ID da Empresa:</label>
+            <label className="label-gerenciamento">ID da Empresa:</label>
             <input
               className="input-field"
               type="text"
@@ -101,7 +101,7 @@ function UpdateEvaluation() {
             />
           </div>
           <div className="input-wrapper">
-            <label className="label">ID do Nível Solicitado:</label>
+            <label className="label-gerenciamento">ID do Nível Solicitado:</label>
             <input
               className="input-field"
               type="text"
@@ -112,7 +112,7 @@ function UpdateEvaluation() {
             />
           </div>
           <div className="input-wrapper">
-            <label className="label">ID do Avaliador Líder:</label>
+            <label className="label-gerenciamento">ID do Avaliador Líder:</label>
             <input
               className="input-field"
               type="text"
@@ -123,7 +123,7 @@ function UpdateEvaluation() {
             />
           </div>
           <div className="input-wrapper">
-            <label className="label">ID da Atividade:</label>
+            <label className="label-gerenciamento">ID da Atividade:</label>
             <input
               className="input-field"
               type="text"
@@ -134,7 +134,7 @@ function UpdateEvaluation() {
             />
           </div>
           <div className="input-wrapper">
-            <label className="label">ID da Versão do Modelo:</label>
+            <label className="label-gerenciamento">ID da Versão do Modelo:</label>
             <input
               className="input-field"
               type="text"
