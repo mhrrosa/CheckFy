@@ -1460,6 +1460,17 @@ def delete_evidencia_organizacional(evidencia_id):
         print(f"Erro ao deletar evidência: {e}")
         return jsonify({"message": "Erro ao deletar evidência", "error": str(e)}), 500
 
+@app.route('/atualizar_status_avaliacao/<int:id_avaliacao>', methods=['PUT'])
+def atualizar_status_avaliacao(id_avaliacao):
+    db = get_db()
+    avaliacao = Avaliacao(db)
+    data = request.json
+    try:
+        id_status = data['id_status']
+        avaliacao.atualizar_status_avaliacao(id_avaliacao, id_status)
+        return jsonify({"message": "Resultado final atualizado com sucesso"}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     # eventlet.wsgi.server(eventlet.listen(('127.0.0.1', 5000)), app)

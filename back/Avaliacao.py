@@ -70,7 +70,7 @@ class Avaliacao:
             avaliacao_ids = [row['ID_Avaliacao'] for row in avaliacao_ids]
 
             placeholders = ','.join(['%s'] * len(avaliacao_ids))
-            query = f"SELECT * FROM avaliacao WHERE ID IN ({placeholders})"
+            query = f"SELECT * FROM avaliacao WHERE ID IN ({placeholders}) order by ID DESC"
             cursor.execute(query, tuple(avaliacao_ids))
             result = cursor.fetchall()
 
@@ -370,5 +370,24 @@ class Avaliacao:
             self.db.conn.rollback()
             print(f"Erro ao atualizar resultado final: {e}")
             raise e
+        finally:
+            cursor.close()
+
+
+    def atualizar_status_avaliacao(self, id_avaliacao, id_status):
+        cursor = self.db.conn.cursor(dictionary=True)
+        try:
+            query = """
+                UPDATE avaliacao SET ID_Status_Avaliacao = %s WHERE ID = %s
+            """
+            values = (id_status, id_avaliacao)
+            cursor.execute(query, values)
+            
+            # Confirmar a atualização
+            self.db.conn.commit()
+        except Exception as e:
+            # Desfazer mudanças em caso de erro
+            self.db.conn.rollback()
+            print(f"Erro ao atualizar avaliação: {e}")
         finally:
             cursor.close()

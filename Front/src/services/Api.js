@@ -683,6 +683,10 @@ function uploadFile(formData) {
   });
 }
 
+function atualizarStatusAvaliacao(avaliacaoId, data) {
+  return put(`/atualizar_status_avaliacao/${avaliacaoId}`, data);
+}
+
 export {
   startNewEvaluation,
   getAllAvaliacoes,
@@ -781,5 +785,6 @@ export {
   getEvidenciasPorPerguntaOrganizacional,
   addEvidenciaOrganizacional,
   deleteEvidenciaOrganizacional,
-  uploadFile
+  uploadFile,
+  atualizarStatusAvaliacao
 };
