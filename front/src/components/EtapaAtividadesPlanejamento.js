@@ -102,7 +102,7 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
             <div className='dica-div'>
               <strong className="dica-titulo">Observação:</strong>
               <p className='dica-texto'>
-                Dica para preencher: dicas
+                Preencha com as atividades que serão realizadas durante a avaliação.
               </p>
             </div>
             <textarea

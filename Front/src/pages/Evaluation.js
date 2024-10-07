@@ -213,9 +213,7 @@ function Evaluation() {
             />
           ) : (
             <p className='mensagem-usuario'>
-              {userType === 2
-                ? 'Você não é o responsável por essa atividade.'
-                : 'Você não é o responsável por essa atividade.'}
+              {'Você não é o responsável por esse processo.'}
             </p>
           )}
         </div>
