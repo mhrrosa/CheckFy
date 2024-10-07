@@ -29,7 +29,9 @@ function EtapaConfete({ avaliacaoId }) {
 
     return (
     <div className="container-etapa">
-      <Confetti />
+      <Confetti 
+        width={'1200px'}
+      />
       <h1 className="title-form">AVALIAÇÃO CONCLUÍDA</h1>
       {avaliacao && (
         <div className="avaliacao-detalhes">
