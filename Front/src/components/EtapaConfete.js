@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Confetti from 'react-confetti';
 import { getAvaliacaoById } from '../services/Api';
 import '../components/styles/Body.css';
@@ -8,10 +9,10 @@ import '../components/styles/Container.css';
 import '../components/styles/Etapas.css';
 import '../components/styles/EtapaConfete.css';
 import img_certo from '../img/certo.png';
-import { Link } from 'react-router-dom';
 
-function EtapaConfete({ avaliacaoId, idVersaoModelo, onBack }) {
+function EtapaConfete({ avaliacaoId }) {
   const [avaliacao, setAvaliacao] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAvaliacao = async () => {
@@ -22,6 +23,7 @@ function EtapaConfete({ avaliacaoId, idVersaoModelo, onBack }) {
         console.error('Erro ao buscar avaliação:', error);
       }
     };
+
     fetchAvaliacao();
   }, [avaliacaoId]);
 
@@ -62,7 +64,7 @@ function EtapaConfete({ avaliacaoId, idVersaoModelo, onBack }) {
           </table>
         </div>
       )}
-      <Link  to="/"><button className="button-sair-avaliacao"><strong>SAIR</strong></button></Link>
+      <button onClick={() => navigate('/')} className="button-sair-avaliacao"><strong>SAIR</strong></button>
     </div>
   );
 }
