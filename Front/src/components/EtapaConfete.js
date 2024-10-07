@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Confetti from 'react-confetti';
-import { getAvaliacaoById } from '../services/Api';
+import { getAvaliacaoById, atualizarStatusAvaliacao } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/Form.css';
 import '../components/styles/Button.css';
@@ -27,7 +27,19 @@ function EtapaConfete({ avaliacaoId }) {
     fetchAvaliacao();
   }, [avaliacaoId]);
 
-    return (
+  const handleFinalizar = async () => {
+    try {
+      // Atualiza o status da avaliação para "Concluída" (id_status = 3)
+      await atualizarStatusAvaliacao(avaliacaoId, { id_status: 3 });
+      alert('Avaliação marcada como concluída com sucesso!');
+      navigate('/'); // Redireciona para a página inicial
+    } catch (error) {
+      console.error('Erro ao atualizar status da avaliação:', error);
+      alert('Erro ao finalizar a avaliação. Tente novamente.');
+    }
+  };
+
+  return (
     <div className="container-etapa">
       <Confetti 
         width={'1200px'}
@@ -66,7 +78,7 @@ function EtapaConfete({ avaliacaoId }) {
           </table>
         </div>
       )}
-      <button onClick={() => navigate('/')} className="button-sair-avaliacao"><strong>SAIR</strong></button>
+      <button onClick={handleFinalizar} className="button-sair-avaliacao"><strong>Finalizar</strong></button>
     </div>
   );
 }

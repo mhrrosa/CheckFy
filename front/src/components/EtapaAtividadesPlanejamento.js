@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getAvaliacaoById, inserir_planejamento } from '../services/Api';
+import { getAvaliacaoById, inserir_planejamento, atualizarStatusAvaliacao } from '../services/Api';
 import { useNavigate } from 'react-router-dom';
 import '../components/styles/Body.css';
 import '../components/styles/Container.css';
@@ -34,7 +34,7 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
       console.error('Erro ao carregar dados da avaliação:', error);
     }
   };
-  
+
   const salvarPlanejamento = async () => {
     try {
       const data = {
@@ -55,8 +55,16 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
     setAvaliacaoAprovada(value);
   };
 
-  const finalizar = () => {
-    navigate('/home'); // Navega para a página inicial
+  const finalizar = async () => {
+    try {
+      // Atualiza o status para "Cancelada" (id_status = 5)
+      await atualizarStatusAvaliacao(avaliacaoId, { id_status: 5 });
+      alert('Status atualizado para Cancelada');
+      navigate('/home'); // Navega para a página inicial
+    } catch (error) {
+      console.error('Erro ao atualizar o status da avaliação:', error);
+      alert('Erro ao finalizar a avaliação. Tente novamente.');
+    }
   };
 
   return (
