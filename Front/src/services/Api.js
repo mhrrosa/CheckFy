@@ -652,6 +652,37 @@ function notificaParticipantesResultadoAvaliacaoFinal(avaliacaoId) {
   return post(`/notificar_participantes_resultado_avaliacao_final/${avaliacaoId}`);
 }
 
+function getEvidenciasPorPerguntaProjeto(perguntaId, projetoId) {
+  return get(`/get_evidencias_por_pergunta_projeto/${perguntaId}/${projetoId}`);
+}
+
+function addEvidenciaProjeto(data) {
+  return post('/add_evidencia_projeto', data);
+}
+
+function deleteEvidenciaProjeto(evidenciaId) {
+  return deleteRequest(`/delete_evidencia_projeto/${evidenciaId}`);
+}
+
+function getEvidenciasPorPerguntaOrganizacional(perguntaId, processoId) {
+  return get(`/get_evidencias_por_pergunta_organizacional/${perguntaId}/${processoId}`);
+}
+
+function addEvidenciaOrganizacional(data) {
+  return post('/add_evidencia_organizacional', data);
+}
+
+function deleteEvidenciaOrganizacional(evidenciaId) {
+  return deleteRequest(`/delete_evidencia_organizacional/${evidenciaId}`);
+}
+
+function uploadFile(formData) {
+  return fetch(`${baseUrl}/upload`, {
+    method: 'POST',
+    body: formData,
+  });
+}
+
 export {
   startNewEvaluation,
   getAllAvaliacoes,
@@ -743,5 +774,12 @@ export {
   getCapacidadeProcessoProjeto,
   addCapacidadeProcessoProjeto,
   updateCapacidadeProcessoProjeto,
-  notificaParticipantesResultadoAvaliacaoFinal
+  notificaParticipantesResultadoAvaliacaoFinal,
+  getEvidenciasPorPerguntaProjeto,
+  addEvidenciaProjeto,
+  deleteEvidenciaProjeto,
+  getEvidenciasPorPerguntaOrganizacional,
+  addEvidenciaOrganizacional,
+  deleteEvidenciaOrganizacional,
+  uploadFile
 };

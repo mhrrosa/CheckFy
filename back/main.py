@@ -33,7 +33,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 db_config = {
     "host": "127.0.0.1",
     "user": "root",
-    "password": "root",
+    "password": "I#p4Zp&zS!Zv",
     "database": "checkfy"
 }
 
@@ -1380,6 +1380,85 @@ def notificar_participantes_resultado_avaliacao_final(avaliacao_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/get_evidencias_por_pergunta_projeto/<int:pergunta_id>/<int:projeto_id>', methods=['GET'])
+def get_evidencias_por_pergunta_projeto(pergunta_id, projeto_id):
+    db = get_db()
+    implementacao_projeto = ImplementacaoProjeto(db)
+    try:
+        evidencias = implementacao_projeto.get_evidencias_por_pergunta(pergunta_id, projeto_id)
+        return jsonify(evidencias), 200
+    except Exception as e:
+        print(f"Erro ao buscar evidências: {e}")
+        return jsonify({"message": "Erro ao buscar evidências", "error": str(e)}), 500
+
+@app.route('/add_evidencia_projeto', methods=['POST'])
+def add_evidencia_projeto():
+    db = get_db()
+    implementacao_projeto = ImplementacaoProjeto(db)
+    data = request.json
+    try:
+        id_pergunta = data['id_pergunta']
+        id_projeto = data['id_projeto']
+        caminho_arquivo = data['caminho_arquivo']
+        nome_arquivo = data['nome_arquivo']
+
+        evidencia_id = implementacao_projeto.add_evidencia_projeto(id_pergunta, id_projeto, caminho_arquivo, nome_arquivo)
+        return jsonify({"message": "Evidência adicionada com sucesso", "evidencia_id": evidencia_id}), 200
+    except Exception as e:
+        print(f"Erro ao adicionar evidência: {e}")
+        return jsonify({"message": "Erro ao adicionar evidência", "error": str(e)}), 500
+
+@app.route('/delete_evidencia_projeto/<int:evidencia_id>', methods=['DELETE'])
+def delete_evidencia_projeto(evidencia_id):
+    db = get_db()
+    implementacao_projeto = ImplementacaoProjeto(db)
+    try:
+        implementacao_projeto.delete_evidencia_projeto(evidencia_id)
+        return jsonify({"message": "Evidência deletada com sucesso"}), 200
+    except Exception as e:
+        print(f"Erro ao deletar evidência: {e}")
+        return jsonify({"message": "Erro ao deletar evidência", "error": str(e)}), 500
+
+# Similar routes for Organizacional
+@app.route('/get_evidencias_por_pergunta_organizacional/<int:pergunta_id>/<int:processo_id>', methods=['GET'])
+def get_evidencias_por_pergunta_organizacional(pergunta_id, processo_id):
+    db = get_db()
+    implementacao_organizacional = ImplementacaoOrganizacional(db)
+    try:
+        evidencias = implementacao_organizacional.get_evidencias_por_pergunta(pergunta_id, processo_id)
+        return jsonify(evidencias), 200
+    except Exception as e:
+        print(f"Erro ao buscar evidências: {e}")
+        return jsonify({"message": "Erro ao buscar evidências", "error": str(e)}), 500
+
+@app.route('/add_evidencia_organizacional', methods=['POST'])
+def add_evidencia_organizacional():
+    db = get_db()
+    implementacao_organizacional = ImplementacaoOrganizacional(db)
+    data = request.json
+    try:
+        id_pergunta = data['id_pergunta']
+        id_processo = data['id_processo']
+        caminho_arquivo = data['caminho_arquivo']
+        nome_arquivo = data['nome_arquivo']
+        id_avaliacao = data['id_avaliacao']
+
+        evidencia_id = implementacao_organizacional.add_evidencia_organizacional(id_pergunta, id_processo, caminho_arquivo, nome_arquivo, id_avaliacao)
+        return jsonify({"message": "Evidência adicionada com sucesso", "evidencia_id": evidencia_id}), 200
+    except Exception as e:
+        print(f"Erro ao adicionar evidência: {e}")
+        return jsonify({"message": "Erro ao adicionar evidência", "error": str(e)}), 500
+
+@app.route('/delete_evidencia_organizacional/<int:evidencia_id>', methods=['DELETE'])
+def delete_evidencia_organizacional(evidencia_id):
+    db = get_db()
+    implementacao_organizacional = ImplementacaoOrganizacional(db)
+    try:
+        implementacao_organizacional.delete_evidencia_organizacional(evidencia_id)
+        return jsonify({"message": "Evidência deletada com sucesso"}), 200
+    except Exception as e:
+        print(f"Erro ao deletar evidência: {e}")
+        return jsonify({"message": "Erro ao deletar evidência", "error": str(e)}), 500
 
 
 if __name__ == '__main__':

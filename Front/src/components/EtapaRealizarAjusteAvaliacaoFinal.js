@@ -20,8 +20,15 @@ import {
   getCapacidadeProcessoOrganizacional,
   addCapacidadeProcessoOrganizacional,
   updateCapacidadeProcessoOrganizacional,
-  getNiveisLimitado, 
-  updateResultadoFinal, 
+  getNiveisLimitado,
+  updateResultadoFinal,
+  getEvidenciasPorPerguntaProjeto,
+  addEvidenciaProjeto,
+  deleteEvidenciaProjeto,
+  getEvidenciasPorPerguntaOrganizacional,
+  addEvidenciaOrganizacional,
+  deleteEvidenciaOrganizacional,
+  uploadFile,
 } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/Form.css';
@@ -35,7 +42,7 @@ import '../components/styles/EtapaCaracterizacao.css';
 import img_certo from '../img/certo.png';
 import img_errado from '../img/errado.png';
 
-function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack  }) {
+function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack }) {
   const [processos, setProcessos] = useState([]);
   const [resultadosEsperados, setResultadosEsperados] = useState({});
   const [projetos, setProjetos] = useState([]);
@@ -63,30 +70,41 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
   const [niveis, setNiveis] = useState([]);
   const [nivelDisabled, setNivelDisabled] = useState(false);
 
-  const parentTabs = ['Resultado Auditoria', 'Informações Gerais', 'Processos', 'Resumo da Caracterização da Avaliação', 'Projeto', 'Organizacional', 'Concluir Ajustes'];
+  const [evidenciasProjeto, setEvidenciasProjeto] = useState({});
+  const [evidenciasOrganizacional, setEvidenciasOrganizacional] = useState({});
+
+  const parentTabs = [
+    'Resultado Auditoria',
+    'Informações Gerais',
+    'Processos',
+    'Resumo da Caracterização da Avaliação',
+    'Projeto',
+    'Organizacional',
+    'Concluir Ajustes',
+  ];
 
   const options = [
-    "Totalmente implementado (T)",
-    "Largamente implementado (L)",
-    "Parcialmente implementado (P)",
-    "Não implementado (N)",
-    "Não avaliado (NA)",
-    "Fora do escopo (F)"
+    'Totalmente implementado (T)',
+    'Largamente implementado (L)',
+    'Parcialmente implementado (P)',
+    'Não implementado (N)',
+    'Não avaliado (NA)',
+    'Fora do escopo (F)',
   ];
 
   const descricaoToAbbr = {
-    "Gerência de Projetos": "GPR",
-    "Engenharia de Requisitos": "REQ",
-    "Projeto e Construção do Produto": "PCP",
-    "Integração do Produto": "ITP",
-    "Verificação e Validação": "VV",
-    "Gerência de Configuração": "GCO",
-    "Aquisição": "AQU",
-    "Medição": "MED",
-    "Gerência de Decisões": "GDE",
-    "Gerência de Recursos Humanos": "GRH",
-    "Gerência de Processos": "GPC",
-    "Gerência Organizacional": "ORG"
+    'Gerência de Projetos': 'GPR',
+    'Engenharia de Requisitos': 'REQ',
+    'Projeto e Construção do Produto': 'PCP',
+    'Integração do Produto': 'ITP',
+    'Verificação e Validação': 'VV',
+    'Gerência de Configuração': 'GCO',
+    'Aquisição': 'AQU',
+    'Medição': 'MED',
+    'Gerência de Decisões': 'GDE',
+    'Gerência de Recursos Humanos': 'GRH',
+    'Gerência de Processos': 'GPC',
+    'Gerência Organizacional': 'ORG',
   };
 
   const processCodes = ['GCO', 'AQU', 'MED', 'GDE', 'GRH', 'GPC', 'ORG'];
@@ -128,6 +146,20 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     }
   }, [activeParentTab, processosOrganizacionais]);
 
+  // Adicionando useEffect para carregar evidências do projeto
+  useEffect(() => {
+    if (projetos.length > 0 && perguntasProjeto.length > 0) {
+      carregarEvidenciasProjeto();
+    }
+  }, [projetos, perguntasProjeto]);
+
+  // Adicionando useEffect para carregar evidências organizacionais
+  useEffect(() => {
+    if (processosOrganizacionais.length > 0 && perguntasOrganizacional.length > 0) {
+      carregarEvidenciasOrganizacional();
+    }
+  }, [processosOrganizacionais, perguntasOrganizacional]);
+
   const salvarNotas = async () => {
     try {
       const entries = Object.entries(grausImplementacao);
@@ -136,7 +168,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
         await addOrUpdateGrauImplementacao({
           nota,
           resultadoId: parseInt(resultadoId),
-          projetoId: parseInt(projetoId)
+          projetoId: parseInt(projetoId),
         });
       }
       alert('Notas salvas com sucesso!');
@@ -148,23 +180,19 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
 
   const carregarDados = async () => {
     try {
-      // Carrega os dados da avaliação a partir do ID fornecido
       const avaliacaoData = await getAvaliacaoById(avaliacaoId);
       setAvaliacao(avaliacaoData);
-  
-      // Verifica se a avaliação possui um nível solicitado e carrega os níveis correspondentes
+
       if (avaliacaoData && avaliacaoData.id_nivel_solicitado) {
         setIdNivel(avaliacaoData.id_nivel_solicitado);
-  
-        // Busca os níveis limitados até o nível solicitado com base na versão do modelo
+
         const niveisData = await getNiveisLimitado(
           avaliacaoData.id_versao_modelo,
           avaliacaoData.id_nivel_solicitado
         );
         setNiveis(niveisData);
       }
-  
-      // Define o parecer final e o nível atribuído com base nos dados da avaliação
+
       setParecerFinal(avaliacaoData.parecer_final || '');
       if (avaliacaoData.parecer_final === 'Satisfeito') {
         setSelectedNivel(avaliacaoData.id_nivel_atribuido || avaliacaoData.id_nivel_solicitado);
@@ -175,35 +203,30 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
       } else {
         setNivelDisabled(true);
       }
-  
-      // Carrega o relatório de auditoria final se existir
+
       await carregarRelatorioAuditoriaFinal();
-  
-      // Carrega os projetos relacionados à avaliação
+
       await carregarProjetos();
-  
-      // Carrega os processos organizacionais baseados na versão do modelo
+
       await carregarProcessosOrganizacionais();
-  
-      // Carrega as respostas do projeto e organizacionais já existentes no banco de dados
+
       await carregarRespostasProjeto();
       await carregarRespostasOrganizacional();
-  
-      // Carrega os processos da avaliação com base na ID da avaliação e versão do modelo
+
       const processosLoaded = await carregarProcessos();
-  
-      // Carrega os graus de implementação existentes
+
       await carregarGrausImplementacao();
-  
-      // Carrega os resultados esperados para cada processo carregado
+
       for (const processo of processosLoaded) {
         await carregarResultadosEsperados(processo.ID);
       }
-  
-      // Carrega o resumo da caracterização da avaliação
+
       await carregarResumoAvaliacao(processosLoaded);
-  
-      // Define o processo ativo na aba "Processos" se estiver ativa
+
+      // Removendo chamadas para carregar evidências daqui
+      // await carregarEvidenciasProjeto();
+      // await carregarEvidenciasOrganizacional();
+
       if (activeParentTab === 'Processos') {
         if (processosLoaded.length > 0) {
           setActiveChildTab(processosLoaded[0].ID);
@@ -230,7 +253,6 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
       const data = await getProjetosByAvaliacao(avaliacaoId);
       setProjetos(data);
 
-      // Initialize respostasProjeto with default nota
       const initialRespostas = {};
       data.forEach(projeto => {
         initialRespostas[projeto.ID] = { nota: 'Não avaliado (NA)' };
@@ -250,7 +272,6 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
       });
       setProcessosOrganizacionais(filteredProcesses);
 
-      // Initialize respostasOrganizacional with default nota
       const initialRespostas = {};
       filteredProcesses.forEach(processo => {
         initialRespostas[processo.ID] = { nota: 'Não avaliado (NA)' };
@@ -315,6 +336,42 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     }
   };
 
+  const carregarEvidenciasProjeto = async () => {
+    try {
+      const novasEvidencias = {};
+      for (const projeto of projetos) {
+        for (const pergunta of perguntasProjeto) {
+          const data = await getEvidenciasPorPerguntaProjeto(pergunta.ID, projeto.ID);
+          novasEvidencias[projeto.ID] = {
+            ...(novasEvidencias[projeto.ID] || {}),
+            [pergunta.ID]: data,
+          };
+        }
+      }
+      setEvidenciasProjeto(novasEvidencias);
+    } catch (error) {
+      console.error('Erro ao carregar evidências do projeto:', error);
+    }
+  };
+
+  const carregarEvidenciasOrganizacional = async () => {
+    try {
+      const novasEvidencias = {};
+      for (const processo of processosOrganizacionais) {
+        for (const pergunta of perguntasOrganizacional) {
+          const data = await getEvidenciasPorPerguntaOrganizacional(pergunta.ID, processo.ID);
+          novasEvidencias[processo.ID] = {
+            ...(novasEvidencias[processo.ID] || {}),
+            [pergunta.ID]: data,
+          };
+        }
+      }
+      setEvidenciasOrganizacional(novasEvidencias);
+    } catch (error) {
+      console.error('Erro ao carregar evidências organizacionais:', error);
+    }
+  };
+
   const carregarGrausImplementacao = async () => {
     try {
       const data = await getGrausImplementacao(avaliacaoId);
@@ -328,12 +385,12 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     }
   };
 
-  const carregarResultadosEsperados = async (processoId) => {
+  const carregarResultadosEsperados = async processoId => {
     try {
       const data = await getResultadosEsperadosPorProcesso(processoId, avaliacaoId);
       setResultadosEsperados(prevResultados => ({
         ...prevResultados,
-        [processoId]: data
+        [processoId]: data,
       }));
 
       if (projetos.length > 0) {
@@ -355,11 +412,11 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
         id: doc[0],
         caminhoArquivo: doc[1],
         nomeArquivo: doc[2],
-        idProjeto: doc[3]
+        idProjeto: doc[3],
       }));
       setEvidencias(prevEvidencias => ({
         ...prevEvidencias,
-        [`${resultadoId}-${projetoId}`]: evidenciasFormatadas
+        [`${resultadoId}-${projetoId}`]: evidenciasFormatadas,
       }));
     } catch (error) {
       console.error('Erro ao carregar evidencias:', error);
@@ -388,7 +445,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     }
   };
 
-  const carregarResumoAvaliacao = async (processosLoaded) => {
+  const carregarResumoAvaliacao = async processosLoaded => {
     try {
       const resumo = await getGrausImplementacaoEmpresa(avaliacaoId);
 
@@ -396,7 +453,6 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
         setResumoSalvo(true);
         await montarArrayComResumo(resumo, processosLoaded);
       } else {
-        // If no summary saved, initialize notes as 'Não avaliado (NA)'
         await montarArrayComResumo([], processosLoaded);
       }
     } catch (error) {
@@ -414,12 +470,14 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
           resultados = await getResultadosEsperadosPorProcesso(processo.ID, avaliacaoId);
           setResultadosEsperados(prevResultados => ({
             ...prevResultados,
-            [processo.ID]: resultados
+            [processo.ID]: resultados,
           }));
         }
 
         resultados.forEach(resultado => {
-          const notaResumo = resumo.find(item => item.ID_Resultado_Esperado === resultado.ID)?.Nota || 'Não avaliado (NA)';
+          const notaResumo =
+            resumo.find(item => item.ID_Resultado_Esperado === resultado.ID)?.Nota ||
+            'Não avaliado (NA)';
 
           arrayInicial.push({
             id_avaliacao: avaliacaoId,
@@ -427,7 +485,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
             processo_descricao: processo.Descricao,
             id_resultado_esperado: resultado.ID,
             resultado_descricao: resultado.Descricao,
-            nota: notaResumo
+            nota: notaResumo,
           });
         });
       }
@@ -438,7 +496,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     }
   };
 
-  const handleParecerFinalChange = (e) => {
+  const handleParecerFinalChange = e => {
     const valor = e.target.value;
     setParecerFinal(valor);
 
@@ -470,7 +528,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
       .then(() => {
         alert('Informações gerais atualizadas com sucesso!');
       })
-      .catch((error) => {
+      .catch(error => {
         console.error('Erro ao atualizar informações gerais:', error);
         alert('Erro ao atualizar informações gerais. Tente novamente.');
       });
@@ -480,22 +538,93 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     const nota = evento.target.value;
     setGrausImplementacao(prevGraus => ({
       ...prevGraus,
-      [`${resultadoId}-${projetoId}`]: nota
+      [`${resultadoId}-${projetoId}`]: nota,
     }));
   };
 
   const handleRespostaProjetoChange = (projectId, value) => {
     setRespostasProjeto(prevState => ({
       ...prevState,
-      [projectId]: { nota: value }
+      [projectId]: { nota: value },
     }));
   };
 
   const handleRespostaOrganizacionalChange = (processId, value) => {
     setRespostasOrganizacional(prevState => ({
       ...prevState,
-      [processId]: { nota: value }
+      [processId]: { nota: value },
     }));
+  };
+
+  const handleFileChangeProjeto = async (projectId, perguntaId, event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await uploadFile(formData);
+      const result = await response.json();
+      if (response.ok) {
+        const data = {
+          id_pergunta: perguntaId,
+          id_projeto: projectId,
+          caminho_arquivo: result.filepath,
+          nome_arquivo: file.name,
+        };
+        await addEvidenciaProjeto(data);
+        await carregarEvidenciasProjeto();
+      } else {
+        console.error('Erro ao fazer upload do arquivo:', result.message);
+      }
+    } catch (error) {
+      console.error('Erro ao fazer upload do arquivo:', error);
+    }
+  };
+
+  const handleDeleteEvidenciaProjeto = async (projectId, perguntaId, evidenciaId) => {
+    try {
+      await deleteEvidenciaProjeto(evidenciaId);
+      await carregarEvidenciasProjeto();
+    } catch (error) {
+      console.error('Erro ao deletar evidência:', error);
+    }
+  };
+
+  const handleFileChangeOrganizacional = async (processId, perguntaId, event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await uploadFile(formData);
+      const result = await response.json();
+      if (response.ok) {
+        const data = {
+          id_pergunta: perguntaId,
+          id_processo: processId,
+          caminho_arquivo: result.filepath,
+          nome_arquivo: file.name,
+          id_avaliacao: avaliacaoId,
+        };
+        await addEvidenciaOrganizacional(data);
+        await carregarEvidenciasOrganizacional();
+      } else {
+        console.error('Erro ao fazer upload do arquivo:', result.message);
+      }
+    } catch (error) {
+      console.error('Erro ao fazer upload do arquivo:', error);
+    }
+  };
+
+  const handleDeleteEvidenciaOrganizacional = async (processId, perguntaId, evidenciaId) => {
+    try {
+      await deleteEvidenciaOrganizacional(evidenciaId);
+      await carregarEvidenciasOrganizacional();
+    } catch (error) {
+      console.error('Erro ao deletar evidência:', error);
+    }
   };
 
   const salvarRespostasProjeto = async () => {
@@ -503,11 +632,11 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
       const dataToSend = Object.keys(respostasProjeto).map(projectId => ({
         id_avaliacao: avaliacaoId,
         id_projeto: projectId,
-        nota: respostasProjeto[projectId].nota
+        nota: respostasProjeto[projectId].nota,
       }));
 
       if (dataToSend.length === 0) {
-        console.warn("Nenhuma resposta para salvar na aba Projeto.");
+        console.warn('Nenhuma resposta para salvar na aba Projeto.');
         return;
       }
 
@@ -515,7 +644,9 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
       const existingProjectIds = existingData ? existingData.map(item => item.ID_Projeto) : [];
 
       const dataToUpdate = dataToSend.filter(item => existingProjectIds.includes(item.id_projeto));
-      const dataToInsert = dataToSend.filter(item => !existingProjectIds.includes(item.id_projeto));
+      const dataToInsert = dataToSend.filter(
+        item => !existingProjectIds.includes(item.id_projeto)
+      );
 
       if (dataToUpdate.length > 0) {
         await updateCapacidadeProcessoProjeto(dataToUpdate);
@@ -525,7 +656,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
         await addCapacidadeProcessoProjeto(dataToInsert);
       }
 
-      alert("Respostas do projeto salvas com sucesso.");
+      alert('Respostas do projeto salvas com sucesso.');
     } catch (error) {
       console.error('Erro ao salvar respostas do projeto:', error);
       alert('Erro ao salvar respostas do projeto.');
@@ -537,19 +668,23 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
       const dataToSend = Object.keys(respostasOrganizacional).map(processId => ({
         id_avaliacao: avaliacaoId,
         id_processo: processId,
-        nota: respostasOrganizacional[processId].nota
+        nota: respostasOrganizacional[processId].nota,
       }));
 
       if (dataToSend.length === 0) {
-        console.warn("Nenhuma resposta para salvar na aba Organizacional.");
+        console.warn('Nenhuma resposta para salvar na aba Organizacional.');
         return;
       }
 
       const existingData = await getCapacidadeProcessoOrganizacional(avaliacaoId);
       const existingProcessIds = existingData ? existingData.map(item => item.ID_Processo) : [];
 
-      const dataToUpdate = dataToSend.filter(item => existingProcessIds.includes(item.id_processo));
-      const dataToInsert = dataToSend.filter(item => !existingProcessIds.includes(item.id_processo));
+      const dataToUpdate = dataToSend.filter(item =>
+        existingProcessIds.includes(item.id_processo)
+      );
+      const dataToInsert = dataToSend.filter(
+        item => !existingProcessIds.includes(item.id_processo)
+      );
 
       if (dataToUpdate.length > 0) {
         await updateCapacidadeProcessoOrganizacional(dataToUpdate);
@@ -559,7 +694,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
         await addCapacidadeProcessoOrganizacional(dataToInsert);
       }
 
-      alert("Respostas organizacionais salvas com sucesso.");
+      alert('Respostas organizacionais salvas com sucesso.');
     } catch (error) {
       console.error('Erro ao salvar respostas organizacionais:', error);
       alert('Erro ao salvar respostas organizacionais.');
@@ -575,11 +710,9 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
   };
 
   const handleNotaChange = (resultadoId, nota) => {
-    setArrayResumo(prevArray => 
-      prevArray.map(item => 
-        item.id_resultado_esperado === resultadoId 
-          ? { ...item, nota: nota } 
-          : item
+    setArrayResumo(prevArray =>
+      prevArray.map(item =>
+        item.id_resultado_esperado === resultadoId ? { ...item, nota: nota } : item
       )
     );
   };
@@ -592,7 +725,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
       } else {
         const response = await addGrauImplementacaoEmpresa(arrayResumo);
         if (response.message === 'Graus de implementação inseridos com sucesso!') {
-          setResumoSalvo(true); 
+          setResumoSalvo(true);
           alert('Resumo salvo com sucesso!');
         }
       }
@@ -606,7 +739,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     return (
       <>
         <div className="tabs">
-          {processos.map((processo) => (
+          {processos.map(processo => (
             <button
               key={processo.ID}
               className={`tab-button ${activeChildTab === processo.ID ? 'active' : ''}`}
@@ -617,53 +750,85 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
           ))}
         </div>
         <div className="tab-content">
-          {processos.map(processo => (
-            activeChildTab === processo.ID && (
+          {processos.map(processo =>
+            activeChildTab === processo.ID ? (
               <div key={processo.ID}>
-                <label className='label-etapas'>Processo: </label>
-                <h2 className='title-processo-caracterizacao'>{processo.Descricao}</h2>
-                {resultadosEsperados[processo.ID] && resultadosEsperados[processo.ID].map(resultado => {
-                  const notaIndex = resultado.Descricao.indexOf('NOTA');
-                  const descricao = notaIndex !== -1 ? resultado.Descricao.substring(0, notaIndex).trim() : resultado.Descricao;
-                  const nota = notaIndex !== -1 ? resultado.Descricao.substring(notaIndex).trim() : '';
-                  return (
-                    <div className='div-resultado-esperado-caracterizacao' key={resultado.ID}>
-                      <label className='label-etapas'>Resultado Esperado: </label>
-                      <h3 className='title-resultado-caracterizacao'>{descricao}</h3>
-                      {nota && <div className='nota-adicional-div'><p className='nota-adicional-resultado'>{nota}</p></div>}
-                      <div className='div-projeto-evidencias-ajuste-avaliacao-final'>
-                        {projetos.filter(proj => proj.ID_Avaliacao === avaliacaoId).map(projeto => (
-                          <div key={projeto.ID}>
-                            <h4 className='title-projeto-caracterizacao'>Projeto: {projeto.Nome_Projeto}</h4>
-                            <select
-                              className='select-grau-ajuste-avaliacao-final'
-                              value={grausImplementacao[`${resultado.ID}-${projeto.ID}`] || "Não avaliado (NA)"}
-                              onChange={(e) => handleSelectChange(e, resultado.ID, projeto.ID)}
-                            >
-                              {options.map((option, index) => (
-                                <option key={index} value={option}>{option}</option>
-                              ))}
-                            </select>
-                            <div>
-                              {evidencias[`${resultado.ID}-${projeto.ID}`] && evidencias[`${resultado.ID}-${projeto.ID}`]
-                                .map(evidencia => (
-                                  <div className='evidencia-e-botao' key={evidencia.id}>
-                                    <p className='title-evidencia-caracterizacao'>Evidência: {evidencia.nomeArquivo}</p>
-                                    <button className='button-mostrar-documento-etapa-evidencia' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
-                                  </div>
-                                ))}
-                            </div>
+                <label className="label-etapas">Processo: </label>
+                <h2 className="title-processo-caracterizacao">{processo.Descricao}</h2>
+                {resultadosEsperados[processo.ID] &&
+                  resultadosEsperados[processo.ID].map(resultado => {
+                    const notaIndex = resultado.Descricao.indexOf('NOTA');
+                    const descricao =
+                      notaIndex !== -1
+                        ? resultado.Descricao.substring(0, notaIndex).trim()
+                        : resultado.Descricao;
+                    const nota =
+                      notaIndex !== -1 ? resultado.Descricao.substring(notaIndex).trim() : '';
+                    return (
+                      <div className="div-resultado-esperado-caracterizacao" key={resultado.ID}>
+                        <label className="label-etapas">Resultado Esperado: </label>
+                        <h3 className="title-resultado-caracterizacao">{descricao}</h3>
+                        {nota && (
+                          <div className="nota-adicional-div">
+                            <p className="nota-adicional-resultado">{nota}</p>
                           </div>
-                        ))}
+                        )}
+                        <div className="div-projeto-evidencias-ajuste-avaliacao-final">
+                          {projetos
+                            .filter(proj => proj.ID_Avaliacao === avaliacaoId)
+                            .map(projeto => (
+                              <div key={projeto.ID}>
+                                <h4 className="title-projeto-caracterizacao">
+                                  Projeto: {projeto.Nome_Projeto}
+                                </h4>
+                                <select
+                                  className="select-grau-ajuste-avaliacao-final"
+                                  value={
+                                    grausImplementacao[`${resultado.ID}-${projeto.ID}`] ||
+                                    'Não avaliado (NA)'
+                                  }
+                                  onChange={e => handleSelectChange(e, resultado.ID, projeto.ID)}
+                                >
+                                  {options.map((option, index) => (
+                                    <option key={index} value={option}>
+                                      {option}
+                                    </option>
+                                  ))}
+                                </select>
+                                <div>
+                                  {evidencias[`${resultado.ID}-${projeto.ID}`] &&
+                                    evidencias[`${resultado.ID}-${projeto.ID}`].map(evidencia => (
+                                      <div className="evidencia-e-botao" key={evidencia.id}>
+                                        <p className="title-evidencia-caracterizacao">
+                                          Evidência: {evidencia.nomeArquivo}
+                                        </p>
+                                        <button
+                                          className="button-mostrar-documento-etapa-evidencia"
+                                          onClick={() =>
+                                            window.open(
+                                              `http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`,
+                                              '_blank'
+                                            )
+                                          }
+                                        >
+                                          Mostrar
+                                        </button>
+                                      </div>
+                                    ))}
+                                </div>
+                              </div>
+                            ))}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
               </div>
-            )
-          ))}
+            ) : null
+          )}
         </div>
-        <button className='button-save' onClick={salvarNotas}>SALVAR NOTAS</button>
+        <button className="button-save" onClick={salvarNotas}>
+          SALVAR NOTAS
+        </button>
       </>
     );
   };
@@ -687,38 +852,68 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
           ))}
         </div>
         <div className="tab-content">
-          {projetos.map(projeto => (
-            activeChildProjectTab === projeto.ID && (
+          {projetos.map(projeto =>
+            activeChildProjectTab === projeto.ID ? (
               <div key={projeto.ID}>
-                <h2 className='title-caracterizacao-ajuste-final'>{projeto.Nome_Projeto}</h2>
-                <table className='tabela-caracterizacao-ajustefinal'>
+                <h2 className="title-caracterizacao-capacidade-processo">{projeto.Nome_Projeto}</h2>
+                <table className="tabela-caracterizacao-capacidade-processo">
                   <thead>
                     <tr>
                       <th>Descrição</th>
                       <th>Evidências</th>
-                      <th>Nota</th>
                     </tr>
                   </thead>
                   <tbody>
                     {perguntasProjeto.map(pergunta => (
                       <tr key={pergunta.ID}>
                         <td>{pergunta.pergunta}</td>
-                        <td></td>
-                        <td></td>
+                        <td>
+                          {evidenciasProjeto[projeto.ID]?.[pergunta.ID]?.length > 0 ? (
+                            evidenciasProjeto[projeto.ID][pergunta.ID].map(evidencia => (
+                              <div key={evidencia.ID}>
+                                <button
+                                  onClick={() =>
+                                    window.open(
+                                      `http://127.0.0.1:5000/uploads/${evidencia.Caminho_Arquivo}`,
+                                      '_blank'
+                                    )
+                                  }
+                                >
+                                  Mostrar
+                                </button>
+                                <button
+                                  onClick={() =>
+                                    handleDeleteEvidenciaProjeto(projeto.ID, pergunta.ID, evidencia.ID)
+                                  }
+                                >
+                                  Excluir
+                                </button>
+                              </div>
+                            ))
+                          ) : (
+                            <input
+                              type="file"
+                              onChange={e => handleFileChangeProjeto(projeto.ID, pergunta.ID, e)}
+                            />
+                          )}
+                        </td>
                       </tr>
                     ))}
                     {/* Nota Final */}
                     <tr>
-                      <td><strong>Nota Final</strong></td>
-                      <td></td>
+                      <td>
+                        <strong className="label-etapas">Nota Final</strong>
+                      </td>
                       <td>
                         <select
-                          className='select-grau'
-                          value={respostasProjeto[projeto.ID]?.nota || "Não avaliado (NA)"}
-                          onChange={(e) => handleRespostaProjetoChange(projeto.ID, e.target.value)}
+                          className="select-grau-caracterizacao-capacidade-processo"
+                          value={respostasProjeto[projeto.ID]?.nota || 'Não avaliado (NA)'}
+                          onChange={e => handleRespostaProjetoChange(projeto.ID, e.target.value)}
                         >
                           {options.map((option, index) => (
-                            <option key={index} value={option}>{option}</option>
+                            <option key={index} value={option}>
+                              {option}
+                            </option>
                           ))}
                         </select>
                       </td>
@@ -726,10 +921,12 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
                   </tbody>
                 </table>
               </div>
-            )
-          ))}
+            ) : null
+          )}
         </div>
-        <button className='button-save' onClick={handleSaveProjeto}>SALVAR</button>
+        <button className="button-save" onClick={handleSaveProjeto}>
+          SALVAR
+        </button>
       </>
     );
   };
@@ -745,7 +942,9 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
           {processosOrganizacionais.map(processo => (
             <button
               key={processo.ID}
-              className={`tab-button ${activeChildOrganizationalTab === processo.ID ? 'active' : ''}`}
+              className={`tab-button ${
+                activeChildOrganizationalTab === processo.ID ? 'active' : ''
+              }`}
               onClick={() => setActiveChildOrganizationalTab(processo.ID)}
             >
               {descricaoToAbbr[processo.Descricao] || processo.Descricao}
@@ -753,38 +952,74 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
           ))}
         </div>
         <div className="tab-content">
-          {processosOrganizacionais.map(processo => (
-            activeChildOrganizationalTab === processo.ID && (
+          {processosOrganizacionais.map(processo =>
+            activeChildOrganizationalTab === processo.ID ? (
               <div key={processo.ID}>
-                <h2 className='title-caracterizacao-ajuste-final'>{processo.Descricao}</h2>
-                <table className='tabela-caracterizacao-ajustefinal'>
+                <h2 className="title-caracterizacao-capacidade-processo">{processo.Descricao}</h2>
+                <table className="tabela-caracterizacao-capacidade-processo">
                   <thead>
                     <tr>
                       <th>Descrição</th>
                       <th>Evidências</th>
-                      <th>Nota</th>
                     </tr>
                   </thead>
                   <tbody>
                     {perguntasOrganizacional.map(pergunta => (
                       <tr key={pergunta.ID}>
                         <td>{pergunta.pergunta}</td>
-                        <td></td>
-                        <td></td>
+                        <td>
+                          {evidenciasOrganizacional[processo.ID]?.[pergunta.ID]?.length > 0 ? (
+                            evidenciasOrganizacional[processo.ID][pergunta.ID].map(evidencia => (
+                              <div key={evidencia.ID}>
+                                <button
+                                  onClick={() =>
+                                    window.open(
+                                      `http://127.0.0.1:5000/uploads/${evidencia.Caminho_Arquivo}`,
+                                      '_blank'
+                                    )
+                                  }
+                                >
+                                  Mostrar
+                                </button>
+                                <button
+                                  onClick={() =>
+                                    handleDeleteEvidenciaOrganizacional(
+                                      processo.ID,
+                                      pergunta.ID,
+                                      evidencia.ID
+                                    )
+                                  }
+                                >
+                                  Excluir
+                                </button>
+                              </div>
+                            ))
+                          ) : (
+                            <input
+                              type="file"
+                              onChange={e =>
+                                handleFileChangeOrganizacional(processo.ID, pergunta.ID, e)
+                              }
+                            />
+                          )}
+                        </td>
                       </tr>
                     ))}
                     {/* Nota Final */}
                     <tr>
-                      <td><strong>Nota Final</strong></td>
-                      <td></td>
+                      <th>
+                        <strong className="label-etapas">Nota Final</strong>
+                      </th>
                       <td>
                         <select
-                          className='select-grau'
-                          value={respostasOrganizacional[processo.ID]?.nota || "Não avaliado (NA)"}
-                          onChange={(e) => handleRespostaOrganizacionalChange(processo.ID, e.target.value)}
+                          className="select-grau-caracterizacao-capacidade-processo"
+                          value={respostasOrganizacional[processo.ID]?.nota || 'Não avaliado (NA)'}
+                          onChange={e => handleRespostaOrganizacionalChange(processo.ID, e.target.value)}
                         >
                           {options.map((option, index) => (
-                            <option key={index} value={option}>{option}</option>
+                            <option key={index} value={option}>
+                              {option}
+                            </option>
                           ))}
                         </select>
                       </td>
@@ -792,10 +1027,12 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
                   </tbody>
                 </table>
               </div>
-            )
-          ))}
+            ) : null
+          )}
         </div>
-        <button className='button-save' onClick={handleSaveOrganizacional}>SALVAR</button>
+        <button className="button-save" onClick={handleSaveOrganizacional}>
+          SALVAR
+        </button>
       </>
     );
   };
@@ -803,22 +1040,22 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
   const renderResultadoAuditoriaContent = () => {
     return (
       <div className="container-etapas">
-        <h2 className='title-form-auditoria-final'>RESULTADO DA AUDITORIA FINAL</h2>
+        <h2 className="title-form-auditoria-final">RESULTADO DA AUDITORIA FINAL</h2>
         {aprovacao === 'Aprovar' && (
           <>
-            <div className='div-resultado-auditoria'>
-              <p className='label-etapas'>Auditoria Aprovada</p>
-              <img src={img_certo} className='imagem-certo-errado' alt="certo"/>
+            <div className="div-resultado-auditoria">
+              <p className="label-etapas">Auditoria Aprovada</p>
+              <img src={img_certo} className="imagem-certo-errado" alt="certo" />
             </div>
           </>
         )}
         {aprovacao === 'Reprovar' && (
           <>
-            <div className='div-resultado-auditoria'>
-              <p className='label-etapas'>Auditoria Reprovada</p>
-              <img src={img_errado} className='imagem-certo-errado' alt="errado"/>
+            <div className="div-resultado-auditoria">
+              <p className="label-etapas">Auditoria Reprovada</p>
+              <img src={img_errado} className="imagem-certo-errado" alt="errado" />
             </div>
-            <p className='label-etapas'>Justificativa: {justificativa}</p>
+            <p className="label-etapas">Justificativa: {justificativa}</p>
           </>
         )}
       </div>
@@ -840,76 +1077,105 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
           ))}
         </div>
         <div className="tab-content">
-          <h2 className='title-form-auditoria-final'>RESUMO DA CARACTERIZAÇÃO DA AVALIAÇÃO</h2>
-          <table className='resumo-tabela'>
+          <h2 className="title-form-auditoria-final">RESUMO DA CARACTERIZAÇÃO DA AVALIAÇÃO</h2>
+          <table className="resumo-tabela">
             <thead>
-              <tr className='tr-table-resumo-caracterizacao'>
-                <th className='resultado-esperado-head'>Resultado Esperado</th>
-                <th className='nota-head'>Nota</th>
+              <tr className="tr-table-resumo-caracterizacao">
+                <th className="resultado-esperado-head">Resultado Esperado</th>
+                <th className="nota-head">Nota</th>
               </tr>
             </thead>
             <tbody>
-            {processos.map(processo => (
-              activeTab === processo.ID && (
-                (resultadosEsperados[processo.ID] || []).map(resultado => {
-                  const notaIndex = resultado.Descricao.indexOf('NOTA');
-                  const descricao = notaIndex !== -1 ? resultado.Descricao.substring(0, notaIndex).trim() : resultado.Descricao;
-                  const nota = notaIndex !== -1 ? resultado.Descricao.substring(notaIndex).trim() : '';
-                  const itemResumo = arrayResumo.find(item => item.id_resultado_esperado === resultado.ID);
-                  return (
-                    <tr className='tr-table-resumo-caracterizacao' key={resultado.ID}>
-                      <td className='resultado-esperado-body'>
-                        <span className='resultado-esperado'>
-                        {descricao}
-                        </span>
-                        {nota && <div className='nota-adicional-tabela'><p className='nota-adicional-resultado-tabela'>{nota}</p></div>}
-                      </td>
-                      <td className='nota-body'>
-                        {itemResumo?.nota === 'Escolher L ou P' || itemResumo?.nota === 'Escolher L, N ou P' ? (
-                          <select
-                            className="select-grau-resumo-caracterizacao-invalido"
-                            onChange={(e) => handleNotaChange(resultado.ID, e.target.value)}
-                            value=""
-                          >
-                            {itemResumo?.nota === 'Escolher L ou P' ? (
-                              <>
-                                <option value="" disabled>Selecione L ou P</option>
-                                <option value="Largamente implementado (L)">Largamente implementado (L)</option>
-                                <option value="Parcialmente implementado (P)">Parcialmente implementado (P)</option>
-                              </>
-                            ) : (
-                              <>
-                                <option value="" disabled>Selecione L, N ou P</option>
-                                <option value="Largamente implementado (L)">Largamente implementado (L)</option>
-                                <option value="Não implementado (N)">Não implementado (N)</option>
-                                <option value="Parcialmente implementado (P)">Parcialmente implementado (P)</option>
-                              </>
+              {processos.map(processo =>
+                activeTab === processo.ID
+                  ? (resultadosEsperados[processo.ID] || []).map(resultado => {
+                      const notaIndex = resultado.Descricao.indexOf('NOTA');
+                      const descricao =
+                        notaIndex !== -1
+                          ? resultado.Descricao.substring(0, notaIndex).trim()
+                          : resultado.Descricao;
+                      const nota =
+                        notaIndex !== -1 ? resultado.Descricao.substring(notaIndex).trim() : '';
+                      const itemResumo = arrayResumo.find(
+                        item => item.id_resultado_esperado === resultado.ID
+                      );
+                      return (
+                        <tr className="tr-table-resumo-caracterizacao" key={resultado.ID}>
+                          <td className="resultado-esperado-body">
+                            <span className="resultado-esperado">{descricao}</span>
+                            {nota && (
+                              <div className="nota-adicional-tabela">
+                                <p className="nota-adicional-resultado-tabela">{nota}</p>
+                              </div>
                             )}
-                          </select>
-                        ) : (
-                          <select
-                            className="select-grau-resumo-caracterizacao"
-                            value={itemResumo?.nota || 'Não avaliado (NA)'}
-                            onChange={(e) => handleNotaChange(resultado.ID, e.target.value)}
-                          >
-                            <option value="Totalmente implementado (T)">Totalmente implementado (T)</option>
-                            <option value="Largamente implementado (L)">Largamente implementado (L)</option>
-                            <option value="Parcialmente implementado (P)">Parcialmente implementado (P)</option>
-                            <option value="Não implementado (N)">Não implementado (N)</option>
-                            <option value="Não avaliado (NA)">Não avaliado (NA)</option>
-                            <option value="Fora do escopo (F)">Fora do escopo (F)</option>
-                          </select>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })
-              )
-            ))}
+                          </td>
+                          <td className="nota-body">
+                            {itemResumo?.nota === 'Escolher L ou P' ||
+                            itemResumo?.nota === 'Escolher L, N ou P' ? (
+                              <select
+                                className="select-grau-resumo-caracterizacao-invalido"
+                                onChange={e => handleNotaChange(resultado.ID, e.target.value)}
+                                value=""
+                              >
+                                {itemResumo?.nota === 'Escolher L ou P' ? (
+                                  <>
+                                    <option value="" disabled>
+                                      Selecione L ou P
+                                    </option>
+                                    <option value="Largamente implementado (L)">
+                                      Largamente implementado (L)
+                                    </option>
+                                    <option value="Parcialmente implementado (P)">
+                                      Parcialmente implementado (P)
+                                    </option>
+                                  </>
+                                ) : (
+                                  <>
+                                    <option value="" disabled>
+                                      Selecione L, N ou P
+                                    </option>
+                                    <option value="Largamente implementado (L)">
+                                      Largamente implementado (L)
+                                    </option>
+                                    <option value="Não implementado (N)">
+                                      Não implementado (N)
+                                    </option>
+                                    <option value="Parcialmente implementado (P)">
+                                      Parcialmente implementado (P)
+                                    </option>
+                                  </>
+                                )}
+                              </select>
+                            ) : (
+                              <select
+                                className="select-grau-resumo-caracterizacao"
+                                value={itemResumo?.nota || 'Não avaliado (NA)'}
+                                onChange={e => handleNotaChange(resultado.ID, e.target.value)}
+                              >
+                                <option value="Totalmente implementado (T)">
+                                  Totalmente implementado (T)
+                                </option>
+                                <option value="Largamente implementado (L)">
+                                  Largamente implementado (L)
+                                </option>
+                                <option value="Parcialmente implementado (P)">
+                                  Parcialmente implementado (P)
+                                </option>
+                                <option value="Não implementado (N)">Não implementado (N)</option>
+                                <option value="Não avaliado (NA)">Não avaliado (NA)</option>
+                                <option value="Fora do escopo (F)">Fora do escopo (F)</option>
+                              </select>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  : null
+              )}
             </tbody>
           </table>
         </div>
-        <button className='button-save' onClick={salvarResumoCaracterizacao}>
+        <button className="button-save" onClick={salvarResumoCaracterizacao}>
           {resumoSalvo ? 'ATUALIZAR' : 'SALVAR'}
         </button>
       </div>
@@ -920,10 +1186,10 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     if (!avaliacao) {
       return <p>Carregando dados...</p>;
     }
-  
+
     return (
       <div className="conteudo-etapas">
-        <h2 className='title-form-auditoria-final'>INFORMAÇÕES GERAIS</h2>
+        <h2 className="title-form-auditoria-final">INFORMAÇÕES GERAIS</h2>
         <table className="table-informacoes-gerais-ajuste-avaliacao-final">
           <tbody>
             <tr>
@@ -986,13 +1252,13 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
                 <td>
                   <select
                     value={selectedNivel}
-                    onChange={(e) => setSelectedNivel(e.target.value)}
+                    onChange={e => setSelectedNivel(e.target.value)}
                     className="select-ajuste-avaliacao-final"
                     disabled={nivelDisabled}
                   >
                     <option value="">Selecione um nível</option>
                     {niveis.length > 0 &&
-                      niveis.map((nivel) => (
+                      niveis.map(nivel => (
                         <option key={nivel['ID']} value={nivel['ID']}>
                           {nivel['Nivel']} - {nivel['Nome_Nivel']}
                         </option>
@@ -1017,22 +1283,21 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
       </div>
     );
   };
-  
 
   const renderConcluirAjustesContent = () => {
     const handleConcluirClick = () => {
       const confirmacao = window.confirm(
-        "Será solicitado que o auditor realize a auditoria novamente. Deseja continuar?"
+        'Será solicitado que o auditor realize a auditoria novamente. Deseja continuar?'
       );
-  
+
       if (confirmacao) {
         onBack();
       }
     };
-  
+
     return (
       <div className="container-etapas">
-        <h2 className='title-form-auditoria-final'>CONCLUIR AJUSTES</h2>
+        <h2 className="title-form-auditoria-final">CONCLUIR AJUSTES</h2>
         <div className="dica-div">
           <strong className="dica-titulo">Observação:</strong>
           <p className="dica-texto">
@@ -1059,7 +1324,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
       case 'Resultado Auditoria':
         return renderResultadoAuditoriaContent();
       case 'Resumo da Caracterização da Avaliação':
-        return renderResumoAvaliacaoContent(); 
+        return renderResumoAvaliacaoContent();
       case 'Concluir Ajustes':
         return renderConcluirAjustesContent();
       default:
@@ -1069,10 +1334,10 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
 
   return (
     <div className="container-etapa">
-      <h1 className='title-form'>AJUSTE DA AVALIAÇÃO FINAL</h1>
-      <div className='dica-div'>
+      <h1 className="title-form">AJUSTE DA AVALIAÇÃO FINAL</h1>
+      <div className="dica-div">
         <strong className="dica-titulo">Observação:</strong>
-        <p className='dica-texto'>
+        <p className="dica-texto">
           Aqui você pode visualizar e ajustar as informações relacionadas à avaliação final.
         </p>
       </div>
@@ -1101,9 +1366,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
           </button>
         ))}
       </div>
-      <div className="parent-tab-content">
-        {renderContent()}
-      </div>
+      <div className="parent-tab-content">{renderContent()}</div>
     </div>
   );
 }

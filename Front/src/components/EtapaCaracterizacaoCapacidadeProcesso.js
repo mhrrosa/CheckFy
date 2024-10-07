@@ -10,7 +10,14 @@ import {
   updateCapacidadeProcessoProjeto,
   getCapacidadeProcessoOrganizacional,
   addCapacidadeProcessoOrganizacional,
-  updateCapacidadeProcessoOrganizacional
+  updateCapacidadeProcessoOrganizacional,
+  getEvidenciasPorPerguntaProjeto,
+  addEvidenciaProjeto,
+  deleteEvidenciaProjeto,
+  getEvidenciasPorPerguntaOrganizacional,
+  addEvidenciaOrganizacional,
+  deleteEvidenciaOrganizacional,
+  uploadFile
 } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/Form.css';
@@ -20,16 +27,19 @@ import '../components/styles/Etapas.css';
 import '../components/styles/EtapaCaracterizacaoCapacidadeProcesso.css';
 
 function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, onNext }) {
-  const [projetos, setProjetos] = useState([]); // Projetos para a aba "Projeto"
-  const [perguntasProjeto, setPerguntasProjeto] = useState([]); // Perguntas para a aba "Projeto"
-  const [processosOrganizacionais, setProcessosOrganizacionais] = useState([]); // Processos para a aba "Organizacional"
-  const [perguntasOrganizacional, setPerguntasOrganizacional] = useState([]); // Perguntas para a aba "Organizacional"
+  const [projetos, setProjetos] = useState([]);
+  const [perguntasProjeto, setPerguntasProjeto] = useState([]);
+  const [processosOrganizacionais, setProcessosOrganizacionais] = useState([]);
+  const [perguntasOrganizacional, setPerguntasOrganizacional] = useState([]);
   const [activeParentTab, setActiveParentTab] = useState('Projeto');
-  const [activeChildProjectTab, setActiveChildProjectTab] = useState(null); // Aba ativa na aba "Projeto"
-  const [activeChildOrganizationalTab, setActiveChildOrganizationalTab] = useState(null); // Aba ativa na aba "Organizacional"
-  const [respostasProjeto, setRespostasProjeto] = useState({}); // Respostas por projeto na aba "Projeto"
-  const [respostasOrganizacional, setRespostasOrganizacional] = useState({}); // Respostas por processo na aba "Organizacional"
-  const [idNivel, setIdNivel] = useState(null); // ID do nível
+  const [activeChildProjectTab, setActiveChildProjectTab] = useState(null);
+  const [activeChildOrganizationalTab, setActiveChildOrganizationalTab] = useState(null);
+  const [respostasProjeto, setRespostasProjeto] = useState({});
+  const [respostasOrganizacional, setRespostasOrganizacional] = useState({});
+  const [idNivel, setIdNivel] = useState(null);
+
+  const [evidenciasProjeto, setEvidenciasProjeto] = useState({});
+  const [evidenciasOrganizacional, setEvidenciasOrganizacional] = useState({});
 
   const parentTabs = ['Projeto', 'Organizacional'];
 
@@ -82,6 +92,20 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
     }
   }, [activeParentTab, processosOrganizacionais]);
 
+  // Adicionando useEffect para carregar evidências do projeto
+  useEffect(() => {
+    if (projetos.length > 0 && perguntasProjeto.length > 0) {
+      carregarEvidenciasProjeto();
+    }
+  }, [projetos, perguntasProjeto]);
+
+  // Adicionando useEffect para carregar evidências organizacionais
+  useEffect(() => {
+    if (processosOrganizacionais.length > 0 && perguntasOrganizacional.length > 0) {
+      carregarEvidenciasOrganizacional();
+    }
+  }, [processosOrganizacionais, perguntasOrganizacional]);
+
   const carregarAvaliacao = async () => {
     try {
       const data = await getAvaliacaoById(avaliacaoId);
@@ -101,26 +125,30 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
     await carregarPerguntasProjeto();
     await carregarPerguntasOrganizacional();
 
-    await carregarRespostasProjeto(); // Carregar respostas do projeto
-    await carregarRespostasOrganizacional(); // Carregar respostas organizacionais
+    await carregarRespostasProjeto();
+    await carregarRespostasOrganizacional();
+
+    // Removendo chamadas para carregar evidências daqui
+    // await carregarEvidenciasProjeto();
+    // await carregarEvidenciasOrganizacional();
   };
 
   const carregarProjetos = async () => {
     try {
       const data = await getProjetosByAvaliacao(avaliacaoId);
       setProjetos(data);
-  
-      // Initialize respostasProjeto with default nota
+
       const initialRespostas = {};
       data.forEach(projeto => {
         initialRespostas[projeto.ID] = { nota: 'Não avaliado (NA)' };
       });
       setRespostasProjeto(initialRespostas);
-  
+
     } catch (error) {
       console.error('Erro ao carregar projetos:', error);
     }
   };
+
   const carregarProcessosOrganizacionais = async () => {
     try {
       const data = await getProcessos(idVersaoModelo);
@@ -129,14 +157,13 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
         return processCodes.includes(abbr);
       });
       setProcessosOrganizacionais(filteredProcesses);
-  
-      // Initialize respostasOrganizacional with default nota
+
       const initialRespostas = {};
       filteredProcesses.forEach(processo => {
         initialRespostas[processo.ID] = { nota: 'Não avaliado (NA)' };
       });
       setRespostasOrganizacional(initialRespostas);
-  
+
     } catch (error) {
       console.error('Erro ao carregar processos organizacionais:', error);
     }
@@ -178,7 +205,7 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
       console.error('Erro ao carregar respostas do projeto:', error);
     }
   };
-  
+
   const carregarRespostasOrganizacional = async () => {
     try {
       const data = (await getCapacidadeProcessoOrganizacional(avaliacaoId)) || [];
@@ -196,6 +223,42 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
     }
   };
 
+  const carregarEvidenciasProjeto = async () => {
+    try {
+      const novasEvidencias = {};
+      for (const projeto of projetos) {
+        for (const pergunta of perguntasProjeto) {
+          const data = await getEvidenciasPorPerguntaProjeto(pergunta.ID, projeto.ID);
+          novasEvidencias[projeto.ID] = {
+            ...(novasEvidencias[projeto.ID] || {}),
+            [pergunta.ID]: data
+          };
+        }
+      }
+      setEvidenciasProjeto(novasEvidencias);
+    } catch (error) {
+      console.error('Erro ao carregar evidências do projeto:', error);
+    }
+  };
+
+  const carregarEvidenciasOrganizacional = async () => {
+    try {
+      const novasEvidencias = {};
+      for (const processo of processosOrganizacionais) {
+        for (const pergunta of perguntasOrganizacional) {
+          const data = await getEvidenciasPorPerguntaOrganizacional(pergunta.ID, processo.ID);
+          novasEvidencias[processo.ID] = {
+            ...(novasEvidencias[processo.ID] || {}),
+            [pergunta.ID]: data
+          };
+        }
+      }
+      setEvidenciasOrganizacional(novasEvidencias);
+    } catch (error) {
+      console.error('Erro ao carregar evidências organizacionais:', error);
+    }
+  };
+
   const handleRespostaProjetoChange = (projectId, value) => {
     setRespostasProjeto(prevState => ({
       ...prevState,
@@ -208,6 +271,78 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
       ...prevState,
       [processId]: { nota: value }
     }));
+  };
+
+  const handleFileChangeProjeto = async (projectId, perguntaId, event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await uploadFile(formData);
+      const result = await response.json();
+      if (response.ok) {
+        const data = {
+          id_pergunta: perguntaId,
+          id_projeto: projectId,
+          caminho_arquivo: result.filepath,
+          nome_arquivo: file.name,
+          // No need to include avaliacaoId here as it's fetched from the project in the backend
+        };
+        await addEvidenciaProjeto(data);
+        await carregarEvidenciasProjeto();
+      } else {
+        console.error('Erro ao fazer upload do arquivo:', result.message);
+      }
+    } catch (error) {
+      console.error('Erro ao fazer upload do arquivo:', error);
+    }
+  };
+
+  const handleDeleteEvidenciaProjeto = async (projectId, perguntaId, evidenciaId) => {
+    try {
+      await deleteEvidenciaProjeto(evidenciaId);
+      await carregarEvidenciasProjeto();
+    } catch (error) {
+      console.error('Erro ao deletar evidência:', error);
+    }
+  };
+
+  const handleFileChangeOrganizacional = async (processId, perguntaId, event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await uploadFile(formData);
+      const result = await response.json();
+      if (response.ok) {
+        const data = {
+          id_pergunta: perguntaId,
+          id_processo: processId,
+          caminho_arquivo: result.filepath,
+          nome_arquivo: file.name,
+          id_avaliacao: avaliacaoId, // Ensure avaliacaoId is included
+        };
+        await addEvidenciaOrganizacional(data);
+        await carregarEvidenciasOrganizacional();
+      } else {
+        console.error('Erro ao fazer upload do arquivo:', result.message);
+      }
+    } catch (error) {
+      console.error('Erro ao fazer upload do arquivo:', error);
+    }
+  };
+
+  const handleDeleteEvidenciaOrganizacional = async (processId, perguntaId, evidenciaId) => {
+    try {
+      await deleteEvidenciaOrganizacional(evidenciaId);
+      await carregarEvidenciasOrganizacional();
+    } catch (error) {
+      console.error('Erro ao deletar evidência:', error);
+    }
   };
 
   const renderProjectContent = () => {
@@ -244,7 +379,25 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
                     {perguntasProjeto.map(pergunta => (
                       <tr key={pergunta.ID}>
                         <td>{pergunta.pergunta}</td>
-                        <td></td>
+                        <td>
+                          {evidenciasProjeto[projeto.ID]?.[pergunta.ID]?.length > 0 ? (
+                            evidenciasProjeto[projeto.ID][pergunta.ID].map(evidencia => (
+                              <div key={evidencia.ID}>
+                                <button onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.Caminho_Arquivo}`, '_blank')}>
+                                  Mostrar
+                                </button>
+                                <button onClick={() => handleDeleteEvidenciaProjeto(projeto.ID, pergunta.ID, evidencia.ID)}>
+                                  Excluir
+                                </button>
+                              </div>
+                            ))
+                          ) : (
+                            <input
+                              type="file"
+                              onChange={(e) => handleFileChangeProjeto(projeto.ID, pergunta.ID, e)}
+                            />
+                          )}
+                        </td>
                       </tr>
                     ))}
                     {/* Nota Final */}
@@ -306,7 +459,25 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
                     {perguntasOrganizacional.map(pergunta => (
                       <tr key={pergunta.ID}>
                         <td>{pergunta.pergunta}</td>
-                        <td></td>
+                        <td>
+                          {evidenciasOrganizacional[processo.ID]?.[pergunta.ID]?.length > 0 ? (
+                            evidenciasOrganizacional[processo.ID][pergunta.ID].map(evidencia => (
+                              <div key={evidencia.ID}>
+                                <button onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.Caminho_Arquivo}`, '_blank')}>
+                                  Mostrar
+                                </button>
+                                <button onClick={() => handleDeleteEvidenciaOrganizacional(processo.ID, pergunta.ID, evidencia.ID)}>
+                                  Excluir
+                                </button>
+                              </div>
+                            ))
+                          ) : (
+                            <input
+                              type="file"
+                              onChange={(e) => handleFileChangeOrganizacional(processo.ID, pergunta.ID, e)}
+                            />
+                          )}
+                        </td>
                       </tr>
                     ))}
                     {/* Nota Final */}
@@ -341,32 +512,32 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
         id_projeto: projectId,
         nota: respostasProjeto[projectId].nota
       }));
-  
+
       if (dataToSend.length === 0) {
         console.warn("Nenhuma resposta para salvar na aba Projeto.");
         return;
       }
-  
+
       const existingData = await getCapacidadeProcessoProjeto(avaliacaoId);
       const existingProjectIds = existingData ? existingData.map(item => item.ID_Projeto) : [];
-  
+
       const dataToUpdate = dataToSend.filter(item => existingProjectIds.includes(item.id_projeto));
       const dataToInsert = dataToSend.filter(item => !existingProjectIds.includes(item.id_projeto));
-  
+
       if (dataToUpdate.length > 0) {
         await updateCapacidadeProcessoProjeto(dataToUpdate);
       }
-  
+
       if (dataToInsert.length > 0) {
         await addCapacidadeProcessoProjeto(dataToInsert);
       }
-  
+
       console.log("Respostas do projeto salvas com sucesso.");
     } catch (error) {
       console.error('Erro ao salvar respostas do projeto:', error);
     }
   };
-  
+
   const salvarRespostasOrganizacional = async () => {
     try {
       const dataToSend = Object.keys(respostasOrganizacional).map(processId => ({
@@ -374,26 +545,26 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
         id_processo: processId,
         nota: respostasOrganizacional[processId].nota
       }));
-  
+
       if (dataToSend.length === 0) {
         console.warn("Nenhuma resposta para salvar na aba Organizacional.");
         return;
       }
-  
+
       const existingData = await getCapacidadeProcessoOrganizacional(avaliacaoId);
       const existingProcessIds = existingData ? existingData.map(item => item.ID_Processo) : [];
-  
+
       const dataToUpdate = dataToSend.filter(item => existingProcessIds.includes(item.id_processo));
       const dataToInsert = dataToSend.filter(item => !existingProcessIds.includes(item.id_processo));
-  
+
       if (dataToUpdate.length > 0) {
         await updateCapacidadeProcessoOrganizacional(dataToUpdate);
       }
-  
+
       if (dataToInsert.length > 0) {
         await addCapacidadeProcessoOrganizacional(dataToInsert);
       }
-  
+
       console.log("Respostas organizacionais salvas com sucesso.");
     } catch (error) {
       console.error('Erro ao salvar respostas organizacionais:', error);

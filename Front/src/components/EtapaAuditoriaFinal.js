@@ -15,7 +15,9 @@ import {
   getPerguntasCapacidadeOrganizacional,
   getCapacidadeProcessoProjeto,
   getCapacidadeProcessoOrganizacional,
-  notificaParticipantesResultadoAvaliacaoFinal 
+  notificaParticipantesResultadoAvaliacaoFinal,
+  getEvidenciasPorPerguntaProjeto,
+  getEvidenciasPorPerguntaOrganizacional
 } from '../services/Api';
 import '../components/styles/Body.css';
 import '../components/styles/Form.css';
@@ -48,6 +50,9 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
   const [activeChildProjectTab, setActiveChildProjectTab] = useState(null);
   const [activeChildOrganizationalTab, setActiveChildOrganizationalTab] = useState(null);
   const [idNivel, setIdNivel] = useState(null);
+
+  const [evidenciasProjeto, setEvidenciasProjeto] = useState({});
+  const [evidenciasOrganizacional, setEvidenciasOrganizacional] = useState({});
 
   const parentTabs = ['Informações Gerais', 'Processos', 'Resumo da Caracterização da Avaliação', 'Projeto', 'Organizacional', 'Resultado Auditoria'];
 
@@ -105,6 +110,20 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
     }
   }, [activeParentTab, processosOrganizacionais]);
 
+  // Adicionando useEffect para carregar evidências do projeto
+  useEffect(() => {
+    if (projetos.length > 0 && perguntasProjeto.length > 0) {
+      carregarEvidenciasProjeto();
+    }
+  }, [projetos, perguntasProjeto]);
+
+  // Adicionando useEffect para carregar evidências organizacionais
+  useEffect(() => {
+    if (processosOrganizacionais.length > 0 && perguntasOrganizacional.length > 0) {
+      carregarEvidenciasOrganizacional();
+    }
+  }, [processosOrganizacionais, perguntasOrganizacional]);
+
   const handleNextStep = () => {
     if (aprovacao === 'Aprovar') {
       // Exibir a mensagem de confirmação
@@ -126,6 +145,7 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
       onNext(); // Avançar uma etapa
     }
   };
+
   const carregarDados = async () => {
     try {
       const avaliacaoData = await getAvaliacaoById(avaliacaoId);
@@ -154,6 +174,10 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
 
       // Carregar resumo da caracterização da avaliação
       await carregarResumoAvaliacao(processosLoaded);
+
+      // Removendo chamadas para carregar evidências daqui
+      // await carregarEvidenciasProjeto();
+      // await carregarEvidenciasOrganizacional();
 
       if (activeParentTab === 'Processos') {
         if (processosLoaded.length > 0) {
@@ -272,6 +296,43 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
       console.error('Erro ao carregar respostas organizacionais:', error);
     }
   };
+
+  const carregarEvidenciasProjeto = async () => {
+    try {
+      const novasEvidencias = {};
+      for (const projeto of projetos) {
+        for (const pergunta of perguntasProjeto) {
+          const data = await getEvidenciasPorPerguntaProjeto(pergunta.ID, projeto.ID);
+          novasEvidencias[projeto.ID] = {
+            ...(novasEvidencias[projeto.ID] || {}),
+            [pergunta.ID]: data
+          };
+        }
+      }
+      setEvidenciasProjeto(novasEvidencias);
+    } catch (error) {
+      console.error('Erro ao carregar evidências do projeto:', error);
+    }
+  };
+
+  const carregarEvidenciasOrganizacional = async () => {
+    try {
+      const novasEvidencias = {};
+      for (const processo of processosOrganizacionais) {
+        for (const pergunta of perguntasOrganizacional) {
+          const data = await getEvidenciasPorPerguntaOrganizacional(pergunta.ID, processo.ID);
+          novasEvidencias[processo.ID] = {
+            ...(novasEvidencias[processo.ID] || {}),
+            [pergunta.ID]: data
+          };
+        }
+      }
+      setEvidenciasOrganizacional(novasEvidencias);
+    } catch (error) {
+      console.error('Erro ao carregar evidências organizacionais:', error);
+    }
+  };
+
 
   const carregarResultadosEsperados = async (processoId) => {
     try {
@@ -468,11 +529,11 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
           ))}
         </div>
         <div className="tab-content">
-          {projetos.map(projeto => (
+          {projetos.map(projeto =>
             activeChildProjectTab === projeto.ID && (
               <div key={projeto.ID}>
-                <h2 className='title-caracterizacao-capacidade-auditoria'>{projeto.Nome_Projeto}</h2>
-                <table className='tabela-caracterizacao-capacidade-auditoria'>
+                <h2 className="title-caracterizacao-capacidade-auditoria">{projeto.Nome_Projeto}</h2>
+                <table className="tabela-caracterizacao-capacidade-auditoria">
                   <thead>
                     <tr>
                       <th>Descrição</th>
@@ -483,7 +544,26 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
                     {perguntasProjeto.map(pergunta => (
                       <tr key={pergunta.ID}>
                         <td>{pergunta.pergunta}</td>
-                        <td></td>
+                        <td>
+                          {evidenciasProjeto[projeto.ID]?.[pergunta.ID]?.length > 0 ? (
+                            evidenciasProjeto[projeto.ID][pergunta.ID].map(evidencia => (
+                              <div key={evidencia.ID}>
+                                <button
+                                  onClick={() =>
+                                    window.open(
+                                      `http://127.0.0.1:5000/uploads/${evidencia.Caminho_Arquivo}`,
+                                      '_blank'
+                                    )
+                                  }
+                                >
+                                  Mostrar
+                                </button>
+                              </div>
+                            ))
+                          ) : (
+                            <p>Sem evidências.</p>
+                          )}
+                        </td>
                       </tr>
                     ))}
                     {/* Nota Final */}
@@ -497,12 +577,13 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
                 </table>
               </div>
             )
-          ))}
+          )}
         </div>
       </>
     );
   };
 
+  // Função para renderizar o conteúdo da aba "Organizacional"
   const renderOrganizacionalContent = () => {
     if (!processosOrganizacionais || processosOrganizacionais.length === 0) {
       return <p>Carregando processos organizacionais...</p>;
@@ -522,11 +603,11 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
           ))}
         </div>
         <div className="tab-content">
-          {processosOrganizacionais.map(processo => (
+          {processosOrganizacionais.map(processo =>
             activeChildOrganizationalTab === processo.ID && (
               <div key={processo.ID}>
-                <h2 className='title-caracterizacao-capacidade-auditoria'>{processo.Descricao}</h2>
-                <table className='tabela-caracterizacao-capacidade-auditoria'>
+                <h2 className="title-caracterizacao-capacidade-auditoria">{processo.Descricao}</h2>
+                <table className="tabela-caracterizacao-capacidade-auditoria">
                   <thead>
                     <tr>
                       <th>Descrição</th>
@@ -537,7 +618,26 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
                     {perguntasOrganizacional.map(pergunta => (
                       <tr key={pergunta.ID}>
                         <td>{pergunta.pergunta}</td>
-                        <td></td>
+                        <td>
+                          {evidenciasOrganizacional[processo.ID]?.[pergunta.ID]?.length > 0 ? (
+                            evidenciasOrganizacional[processo.ID][pergunta.ID].map(evidencia => (
+                              <div key={evidencia.ID}>
+                                <button
+                                  onClick={() =>
+                                    window.open(
+                                      `http://127.0.0.1:5000/uploads/${evidencia.Caminho_Arquivo}`,
+                                      '_blank'
+                                    )
+                                  }
+                                >
+                                  Mostrar
+                                </button>
+                              </div>
+                            ))
+                          ) : (
+                            <p>Sem evidências.</p>
+                          )}
+                        </td>
                       </tr>
                     ))}
                     {/* Nota Final */}
@@ -551,7 +651,7 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
                 </table>
               </div>
             )
-          ))}
+          )}
         </div>
       </>
     );

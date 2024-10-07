@@ -45,7 +45,6 @@ class ImplementacaoOrganizacional:
         finally:
             cursor.close()  # Garante que o cursor será fechado
 
-
     def get_capacidade_processo_organizacional(self, id_avaliacao):
         cursor = self.db.conn.cursor(dictionary=True)
         try:
@@ -90,3 +89,48 @@ class ImplementacaoOrganizacional:
             raise
         finally:
             cursor.close()  # Garante que o cursor será fechado
+
+    def get_evidencias_por_pergunta(self, pergunta_id, processo_id):
+        cursor = self.db.conn.cursor(dictionary=True)
+        try:
+            query = """
+                SELECT * FROM arquivo_capacidade_processo_organizacional
+                WHERE ID_Pergunta = %s AND ID_Processo = %s
+            """
+            cursor.execute(query, (pergunta_id, processo_id))
+            evidencias = cursor.fetchall()
+            cursor.close()
+            return evidencias
+        except Exception as e:
+            print(f"Erro ao buscar evidências: {e}")
+            raise
+
+    def add_evidencia_organizacional(self, id_pergunta, id_processo, caminho_arquivo, nome_arquivo, id_avaliacao):
+        cursor = self.db.conn.cursor()
+        try:
+            query = """
+                INSERT INTO arquivo_capacidade_processo_organizacional
+                (Caminho_Arquivo, Nome_Arquivo, ID_Pergunta, ID_Processo, ID_Avaliacao)
+                VALUES (%s, %s, %s, %s, %s)
+            """
+            cursor.execute(query, (caminho_arquivo, nome_arquivo, id_pergunta, id_processo, id_avaliacao))
+            self.db.conn.commit()
+            evidencia_id = cursor.lastrowid
+            cursor.close()
+            return evidencia_id
+        except Exception as e:
+            self.db.conn.rollback()
+            print(f"Erro ao adicionar evidência: {e}")
+            raise
+
+    def delete_evidencia_organizacional(self, evidencia_id):
+        cursor = self.db.conn.cursor()
+        try:
+            query = "DELETE FROM arquivo_capacidade_processo_organizacional WHERE ID = %s"
+            cursor.execute(query, (evidencia_id,))
+            self.db.conn.commit()
+            cursor.close()
+        except Exception as e:
+            self.db.conn.rollback()
+            print(f"Erro ao deletar evidência: {e}")
+            raise
