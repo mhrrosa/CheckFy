@@ -870,8 +870,8 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
                         <td>
                           {evidenciasProjeto[projeto.ID]?.[pergunta.ID]?.length > 0 ? (
                             evidenciasProjeto[projeto.ID][pergunta.ID].map(evidencia => (
-                              <div key={evidencia.ID}>
-                                <button
+                              <div className='evidencia-e-botoes' key={evidencia.ID}>
+                                <button className='button-mostrar-documento-etapa-evidencia'
                                   onClick={() =>
                                     window.open(
                                       `http://127.0.0.1:5000/uploads/${evidencia.Caminho_Arquivo}`,
@@ -881,7 +881,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
                                 >
                                   Mostrar
                                 </button>
-                                <button
+                                <button className='button-excluir-documento-etapa-evidencia'
                                   onClick={() =>
                                     handleDeleteEvidenciaProjeto(projeto.ID, pergunta.ID, evidencia.ID)
                                   }
@@ -970,8 +970,8 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
                         <td>
                           {evidenciasOrganizacional[processo.ID]?.[pergunta.ID]?.length > 0 ? (
                             evidenciasOrganizacional[processo.ID][pergunta.ID].map(evidencia => (
-                              <div key={evidencia.ID}>
-                                <button
+                              <div className='evidencia-e-botoes' key={evidencia.ID}>
+                                <button className='button-mostrar-documento-etapa-evidencia'
                                   onClick={() =>
                                     window.open(
                                       `http://127.0.0.1:5000/uploads/${evidencia.Caminho_Arquivo}`,
@@ -981,7 +981,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
                                 >
                                   Mostrar
                                 </button>
-                                <button
+                                <button className='button-excluir-documento-etapa-evidencia'
                                   onClick={() =>
                                     handleDeleteEvidenciaOrganizacional(
                                       processo.ID,

@@ -382,11 +382,13 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
                         <td>
                           {evidenciasProjeto[projeto.ID]?.[pergunta.ID]?.length > 0 ? (
                             evidenciasProjeto[projeto.ID][pergunta.ID].map(evidencia => (
-                              <div key={evidencia.ID}>
-                                <button onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.Caminho_Arquivo}`, '_blank')}>
+                              <div className='evidencia-e-botoes' key={evidencia.ID}>
+                                <button className='button-mostrar-documento-etapa-evidencia'
+                                  onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.Caminho_Arquivo}`, '_blank')}>
                                   Mostrar
                                 </button>
-                                <button onClick={() => handleDeleteEvidenciaProjeto(projeto.ID, pergunta.ID, evidencia.ID)}>
+                                <button className='button-excluir-documento-etapa-evidencia'
+                                  onClick={() => handleDeleteEvidenciaProjeto(projeto.ID, pergunta.ID, evidencia.ID)}>
                                   Excluir
                                 </button>
                               </div>
@@ -462,11 +464,13 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
                         <td>
                           {evidenciasOrganizacional[processo.ID]?.[pergunta.ID]?.length > 0 ? (
                             evidenciasOrganizacional[processo.ID][pergunta.ID].map(evidencia => (
-                              <div key={evidencia.ID}>
-                                <button onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.Caminho_Arquivo}`, '_blank')}>
+                              <div className='evidencia-e-botoes' key={evidencia.ID}>
+                                <button className='button-mostrar-documento-etapa-evidencia'
+                                  onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.Caminho_Arquivo}`, '_blank')}>
                                   Mostrar
                                 </button>
-                                <button onClick={() => handleDeleteEvidenciaOrganizacional(processo.ID, pergunta.ID, evidencia.ID)}>
+                                <button className='button-excluir-documento-etapa-evidencia'
+                                  onClick={() => handleDeleteEvidenciaOrganizacional(processo.ID, pergunta.ID, evidencia.ID)}>
                                   Excluir
                                 </button>
                               </div>

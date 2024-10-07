@@ -430,3 +430,17 @@
 .button-confirmar-visualizacao:hover {
     background-color: #0056b3;
 }
+
+.button-sair-avaliacao {
+    background-color: #007bff;
+    color: white;
+    width: 10em;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.button-sair-avaliacao:hover {
+    background-color: #0056b3;
+}
