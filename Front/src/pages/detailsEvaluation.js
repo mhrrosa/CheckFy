@@ -42,10 +42,10 @@ function DetailsEvaluation() {
                 <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
             </button>
-            <h1 className="title-form">DETALHES DA AVALIAÇÃO</h1>
+            <h1 className="title-form-gerenciamento">DETALHES DA AVALIAÇÃO</h1>
             <div className="lista-input">
                 <div className="input-wrapper">
-                    <label className="label">Nome da avaliação:</label>
+                    <label className="label-gerenciamento">Nome da avaliação:</label>
                     <input
                         className="input-field"
                         type="text"
@@ -55,7 +55,7 @@ function DetailsEvaluation() {
                     />
                 </div>
                 <div className="input-wrapper">
-                    <label className="label">Descrição:</label>
+                    <label className="label-gerenciamento">Descrição:</label>
                     <textarea
                         className="input-field"
                         name="descricao"
@@ -64,46 +64,46 @@ function DetailsEvaluation() {
                     />
                 </div>
                 <div className="input-grid">
-                <div className="input-wrapper">
-                    <label className="label">Nível Solicitado:</label>
-                    <input
-                    className="input-field"
-                    type="text"
-                    name="nivel_solicitado"
-                    value={avaliacao.nivel_solicitado}
-                    readOnly
-                    />
-                </div>
-                <div className="input-wrapper">
-                    <label className="label">Avaliador Líder:</label>
-                    <input
-                    className="input-field"
-                    type="text"
-                    name="nome_avaliador_lider"
-                    value={avaliacao.nome_avaliador_lider}
-                    readOnly
-                    />
-                </div>
-                <div className="input-wrapper">
-                    <label className="label">Atividade:</label>
-                    <input
-                    className="input-field"
-                    type="text"
-                    name="descricao_atividade"
-                    value={avaliacao.descricao_atividade}
-                    readOnly
-                    />
-                </div>
-                <div className="input-wrapper">
-                    <label className="label">Versão do Modelo:</label>
-                    <input
-                    className="input-field"
-                    type="text"
-                    name="nome_versao_modelo"
-                    value={avaliacao.nome_versao_modelo}
-                    readOnly
-                    />
-                </div>
+                  <div className="input-wrapper">
+                      <label className="label-gerenciamento">Nível Solicitado:</label>
+                      <input
+                      className="input-field"
+                      type="text"
+                      name="nivel_solicitado"
+                      value={avaliacao.nivel_solicitado}
+                      readOnly
+                      />
+                  </div>
+                  <div className="input-wrapper">
+                      <label className="label-gerenciamento">Avaliador Líder:</label>
+                      <input
+                      className="input-field"
+                      type="text"
+                      name="nome_avaliador_lider"
+                      value={avaliacao.nome_avaliador_lider}
+                      readOnly
+                      />
+                  </div>
+                  <div className="input-wrapper">
+                      <label className="label-gerenciamento">Processo atual:</label>
+                      <input
+                      className="input-field"
+                      type="text"
+                      name="descricao_atividade"
+                      value={avaliacao.descricao_atividade}
+                      readOnly
+                      />
+                  </div>
+                  <div className="input-wrapper">
+                      <label className="label-gerenciamento">Versão do Modelo:</label>
+                      <input
+                      className="input-field"
+                      type="text"
+                      name="nome_versao_modelo"
+                      value={avaliacao.nome_versao_modelo}
+                      readOnly
+                      />
+                  </div>
                 </div>
                 <div className="logo-and-button">
                 <img src={logo} className="logo" alt="Logo Checkfy" />

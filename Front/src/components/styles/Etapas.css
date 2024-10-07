@@ -49,7 +49,15 @@
     border-radius: 5px;
     border: 1px solid #ccc;
     color: black;
+    box-sizing: border-box; /* Adicionado para incluir padding e border na largura e altura */
+    resize: none;
 }
+
+.textarea-wrapper {
+    width: 100%; /* Garantir que o contêiner pai tenha largura total */
+}
+
+
 
 .input-textarea-avaliacao-tabela {
     width: 100%;
@@ -58,6 +66,8 @@
     border-radius: 5px;
     border: 1px solid #ccc;
     color: black;
+    box-sizing: border-box;
+    resize: none;
 }
 
 .nota-adicional-div{
