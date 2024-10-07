@@ -48,7 +48,7 @@ function EtapaConfete({ avaliacaoId }) {
                 <td>{avaliacao.nome_versao_modelo}</td>
               </tr>
               <tr>
-                <td className="label-etapas"><strong>Nível Solicitado:</strong></td>
+                <td className="label-etapas"><strong>Nível solicitado:</strong></td>
                 <td>{avaliacao.nivel_solicitado}</td>
               </tr>
               <tr>
