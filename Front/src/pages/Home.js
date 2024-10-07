@@ -92,13 +92,13 @@ function Home() {
               <p>{avaliacao.nome} - {statusMap[avaliacao.id_status_avaliacao]}</p> {/* Mostra a descrição do status */}
               <div className="botoes-avaliacao">
                 {(userType === 1 || userType === 2 || userType === 3 || userType === 4 || userType === 5) && (
-                  <button className="button-home-avaliacao" onClick={() => navigate(`/details-evaluation`, { state: { id: avaliacao.id } })}>
-                    DETALHES
+                  <button className="button-home-avaliacao" onClick={() => handleContinueOrStart(avaliacao.id, avaliacao.id_status_avaliacao)}>
+                    {avaliacao.id_status_avaliacao === 1 ? 'INICIAR' : 'CONTINUAR'}
                   </button>
                 )}
                 {(userType === 1 || userType === 2 || userType === 3 || userType === 4 || userType === 5) && (
-                  <button className="button-home-avaliacao" onClick={() => handleContinueOrStart(avaliacao.id, avaliacao.id_status_avaliacao)}>
-                    {avaliacao.id_status_avaliacao === 1 ? 'INICIAR' : 'CONTINUAR'}
+                  <button className="button-home-avaliacao" onClick={() => navigate(`/details-evaluation`, { state: { id: avaliacao.id } })}>
+                    DETALHES
                   </button>
                 )}
                 {(userType === 1 || userType === 2) && (
