@@ -8,11 +8,6 @@
     font-size: 25px;
 }
 
-.avaliacoes-lista p {
-    padding-left: 20px;
-    margin-bottom: 10px;
-}
-
 .avaliacao-item {
     background-color: #fff;
     padding: 20px 10px;
@@ -29,9 +24,44 @@
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-.avaliacao-item p {
+.avaliacao-e-status {
+    display: flex;
+    align-items: center;
+}
+
+.nome-avaliacao {
     margin: 0;
     padding-left: 30px;
+    padding-right: 30px;
+}
+
+.status-avaliacao {
+    margin: 0;
+    color: white;
+    font-size: 15px;
+    padding: 3px;
+    border-radius: 5px;
+    background-color: #001034;
+}
+
+.status-nao-iniciado {
+    background-color: #f0a24e;
+}
+
+.status-em-andamento {
+    background-color: #337ab7;
+}
+
+.status-concluida {
+    background-color: #5cb85c;
+}
+
+.status-em-pausa {
+    background-color: #7e7e7e;
+}
+
+.status-cancelada {
+    background-color: #c91e18;
 }
 
 .mensagem-nao-encontrado-home {

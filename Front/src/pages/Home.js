@@ -21,6 +21,23 @@ function Home() {
     5: 'Cancelada'
   };
 
+  const getStatusClass = (statusId) => {
+    switch (statusId) {
+      case 1:
+        return 'status-nao-iniciado';
+      case 2:
+        return 'status-em-andamento';
+      case 3:
+        return 'status-concluida';
+      case 4:
+        return 'status-em-pausa';
+      case 5:
+        return 'status-cancelada';
+      default:
+        return '';
+    }
+  };
+
   useEffect(() => {
     const storedUserType = localStorage.getItem('userType');
     if (storedUserType) {
@@ -89,7 +106,12 @@ function Home() {
         {avaliacoes.length > 0 ? (
           avaliacoes.map(avaliacao => (
             <div key={avaliacao.id} className="avaliacao-item">
-              <p>{avaliacao.nome} - {statusMap[avaliacao.id_status_avaliacao]}</p> {/* Mostra a descrição do status */}
+              <div className='avaliacao-e-status'>
+                <p className='nome-avaliacao'>{avaliacao.nome}</p> {/* Mostra a descrição do status */}
+                <p className={`status-avaliacao ${getStatusClass(avaliacao.id_status_avaliacao)}`}>
+                  {statusMap[avaliacao.id_status_avaliacao]}
+                </p>
+              </div>
               <div className="botoes-avaliacao">
                 {(userType === 1 || userType === 2 || userType === 3 || userType === 4 || userType === 5) && (
                   <button className="button-home-avaliacao" onClick={() => handleContinueOrStart(avaliacao.id, avaliacao.id_status_avaliacao)}>
