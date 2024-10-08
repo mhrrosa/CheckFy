@@ -115,7 +115,7 @@ function Home() {
               <div className="botoes-avaliacao">
                 {(userType === 1 || userType === 2 || userType === 3 || userType === 4 || userType === 5) && (
                   <button className="button-home-avaliacao" onClick={() => handleContinueOrStart(avaliacao.id, avaliacao.id_status_avaliacao)}>
-                    {avaliacao.id_status_avaliacao === 1 ? 'INICIAR' : 'CONTINUAR'}
+                    {avaliacao.id_status_avaliacao === 1 ? 'INICIAR' : (avaliacao.id_status_avaliacao === 3 ? 'VISUALIZAR' : 'CONTINUAR')}
                   </button>
                 )}
                 {(userType === 1 || userType === 2 || userType === 3 || userType === 4 || userType === 5) && (
