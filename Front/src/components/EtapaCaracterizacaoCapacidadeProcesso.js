@@ -25,6 +25,8 @@ import '../components/styles/Button.css';
 import '../components/styles/Container.css';
 import '../components/styles/Etapas.css';
 import '../components/styles/EtapaCaracterizacaoCapacidadeProcesso.css';
+import BotaoCarregando from './common/BotaoCarregando';
+import CarregandoEtapa from './common/CarregandoEtapa';
 
 function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, onNext }) {
   const [projetos, setProjetos] = useState([]);
@@ -40,6 +42,10 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
 
   const [evidenciasProjeto, setEvidenciasProjeto] = useState({});
   const [evidenciasOrganizacional, setEvidenciasOrganizacional] = useState({});
+
+  const [carregando, setCarregando] = useState(true);
+  const [salvando, setSalvando] = useState(false);
+  const [processandoEvidencia, setProcessandoEvidencia] = useState(null);
 
   const parentTabs = ['Projeto', 'Organizacional'];
 
@@ -120,17 +126,21 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
   };
 
   const carregarDados = async () => {
-    await carregarProjetos();
-    await carregarProcessosOrganizacionais();
-    await carregarPerguntasProjeto();
-    await carregarPerguntasOrganizacional();
+    try {
+      await carregarProjetos();
+      await carregarProcessosOrganizacionais();
+      await carregarPerguntasProjeto();
+      await carregarPerguntasOrganizacional();
 
-    await carregarRespostasProjeto();
-    await carregarRespostasOrganizacional();
+      await carregarRespostasProjeto();
+      await carregarRespostasOrganizacional();
 
-    // Removendo chamadas para carregar evidências daqui
-    // await carregarEvidenciasProjeto();
-    // await carregarEvidenciasOrganizacional();
+      // Removendo chamadas para carregar evidências daqui
+      // await carregarEvidenciasProjeto();
+      // await carregarEvidenciasOrganizacional();
+    } finally {
+      setCarregando(false);
+    }
   };
 
   const carregarProjetos = async () => {
@@ -277,6 +287,7 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
     const file = event.target.files[0];
     if (!file) return;
 
+    setProcessandoEvidencia(`proj-${projectId}-${perguntaId}`);
     try {
       const formData = new FormData();
       formData.append('file', file);
@@ -297,15 +308,20 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
       }
     } catch (error) {
       console.error('Erro ao fazer upload do arquivo:', error);
+    } finally {
+      setProcessandoEvidencia(null);
     }
   };
 
   const handleDeleteEvidenciaProjeto = async (projectId, perguntaId, evidenciaId) => {
+    setProcessandoEvidencia(`proj-${projectId}-${perguntaId}`);
     try {
       await deleteEvidenciaProjeto(evidenciaId);
       await carregarEvidenciasProjeto();
     } catch (error) {
       console.error('Erro ao deletar evidência:', error);
+    } finally {
+      setProcessandoEvidencia(null);
     }
   };
 
@@ -313,6 +329,7 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
     const file = event.target.files[0];
     if (!file) return;
 
+    setProcessandoEvidencia(`org-${processId}-${perguntaId}`);
     try {
       const formData = new FormData();
       formData.append('file', file);
@@ -333,21 +350,26 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
       }
     } catch (error) {
       console.error('Erro ao fazer upload do arquivo:', error);
+    } finally {
+      setProcessandoEvidencia(null);
     }
   };
 
   const handleDeleteEvidenciaOrganizacional = async (processId, perguntaId, evidenciaId) => {
+    setProcessandoEvidencia(`org-${processId}-${perguntaId}`);
     try {
       await deleteEvidenciaOrganizacional(evidenciaId);
       await carregarEvidenciasOrganizacional();
     } catch (error) {
       console.error('Erro ao deletar evidência:', error);
+    } finally {
+      setProcessandoEvidencia(null);
     }
   };
 
   const renderProjectContent = () => {
     if (!projetos || projetos.length === 0) {
-      return <p>Carregando projetos...</p>;
+      return <CarregandoEtapa texto="Carregando projetos..." />;
     }
 
     return (
@@ -384,19 +406,23 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
                             evidenciasProjeto[projeto.ID][pergunta.ID].map(evidencia => (
                               <div className='evidencia-e-botoes' key={evidencia.ID}>
                                 <button className='button-mostrar-documento-etapa-evidencia'
-                                  onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.Caminho_Arquivo}`, '_blank')}>
+                                  onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.Caminho_Arquivo}`, '_blank')}
+                                  disabled={processandoEvidencia === `proj-${projeto.ID}-${pergunta.ID}`}>
                                   Mostrar
                                 </button>
-                                <button className='button-excluir-documento-etapa-evidencia'
-                                  onClick={() => handleDeleteEvidenciaProjeto(projeto.ID, pergunta.ID, evidencia.ID)}>
+                                <BotaoCarregando className='button-excluir-documento-etapa-evidencia'
+                                  onClick={() => handleDeleteEvidenciaProjeto(projeto.ID, pergunta.ID, evidencia.ID)}
+                                  loading={processandoEvidencia === `proj-${projeto.ID}-${pergunta.ID}`}
+                                  loadingText="Excluindo...">
                                   Excluir
-                                </button>
+                                </BotaoCarregando>
                               </div>
                             ))
                           ) : (
                             <input
                               type="file"
                               onChange={(e) => handleFileChangeProjeto(projeto.ID, pergunta.ID, e)}
+                              disabled={processandoEvidencia === `proj-${projeto.ID}-${pergunta.ID}`}
                             />
                           )}
                         </td>
@@ -429,7 +455,7 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
 
   const renderOrganizationalContent = () => {
     if (!processosOrganizacionais || processosOrganizacionais.length === 0) {
-      return <p>Carregando processos organizacionais...</p>;
+      return <CarregandoEtapa texto="Carregando processos organizacionais..." />;
     }
 
     return (
@@ -466,19 +492,23 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
                             evidenciasOrganizacional[processo.ID][pergunta.ID].map(evidencia => (
                               <div className='evidencia-e-botoes' key={evidencia.ID}>
                                 <button className='button-mostrar-documento-etapa-evidencia'
-                                  onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.Caminho_Arquivo}`, '_blank')}>
+                                  onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.Caminho_Arquivo}`, '_blank')}
+                                  disabled={processandoEvidencia === `org-${processo.ID}-${pergunta.ID}`}>
                                   Mostrar
                                 </button>
-                                <button className='button-excluir-documento-etapa-evidencia'
-                                  onClick={() => handleDeleteEvidenciaOrganizacional(processo.ID, pergunta.ID, evidencia.ID)}>
+                                <BotaoCarregando className='button-excluir-documento-etapa-evidencia'
+                                  onClick={() => handleDeleteEvidenciaOrganizacional(processo.ID, pergunta.ID, evidencia.ID)}
+                                  loading={processandoEvidencia === `org-${processo.ID}-${pergunta.ID}`}
+                                  loadingText="Excluindo...">
                                   Excluir
-                                </button>
+                                </BotaoCarregando>
                               </div>
                             ))
                           ) : (
                             <input
                               type="file"
                               onChange={(e) => handleFileChangeOrganizacional(processo.ID, pergunta.ID, e)}
+                              disabled={processandoEvidencia === `org-${processo.ID}-${pergunta.ID}`}
                             />
                           )}
                         </td>
@@ -575,10 +605,23 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
     }
   };
 
-  const handleSave = () => {
-    salvarRespostasProjeto();
-    salvarRespostasOrganizacional();
+  const handleSave = async () => {
+    setSalvando(true);
+    try {
+      await salvarRespostasProjeto();
+      await salvarRespostasOrganizacional();
+    } finally {
+      setSalvando(false);
+    }
   };
+
+  if (carregando) {
+    return (
+      <div className='container-etapa'>
+        <CarregandoEtapa />
+      </div>
+    );
+  }
 
   return (
     <div className="container-etapa">
@@ -597,8 +640,8 @@ function EtapaCaracterizacaoCapacidadeProcesso({ avaliacaoId, idVersaoModelo, on
       <div className="parent-tab-content">
         {activeParentTab === 'Projeto' ? renderProjectContent() : renderOrganizationalContent()}
       </div>
-      <button className='button-save' onClick={handleSave}>SALVAR</button>
-      <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
+      <BotaoCarregando className='button-save' onClick={handleSave} loading={salvando} loadingText="Salvando...">SALVAR</BotaoCarregando>
+      <button className='button-next' onClick={onNext} disabled={salvando}>PRÓXIMA ETAPA</button>
     </div>
   );
 }

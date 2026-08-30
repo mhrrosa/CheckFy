@@ -9,10 +9,14 @@ import '../components/styles/Container.css';
 import '../components/styles/Etapas.css';
 import '../components/styles/EtapaConfete.css';
 import img_certo from '../img/certo.png';
+import BotaoCarregando from './common/BotaoCarregando';
+import { useToast } from '../contexts/ToastContext';
 
 function EtapaConfete({ avaliacaoId }) {
   const [avaliacao, setAvaliacao] = useState(null);
+  const [salvando, setSalvando] = useState(false);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchAvaliacao = async () => {
@@ -28,14 +32,17 @@ function EtapaConfete({ avaliacaoId }) {
   }, [avaliacaoId]);
 
   const handleFinalizar = async () => {
+    setSalvando(true);
     try {
       // Atualiza o status da avaliação para "Concluída" (id_status = 3)
       await atualizarStatusAvaliacao(avaliacaoId, { id_status: 3 });
-      alert('Avaliação marcada como concluída com sucesso!');
+      showToast('Avaliação marcada como concluída com sucesso!', 'success');
       navigate('/'); // Redireciona para a página inicial
     } catch (error) {
       console.error('Erro ao atualizar status da avaliação:', error);
-      alert('Erro ao finalizar a avaliação. Tente novamente.');
+      showToast('Erro ao finalizar a avaliação. Tente novamente.', 'error');
+    } finally {
+      setSalvando(false);
     }
   };
 
@@ -78,7 +85,7 @@ function EtapaConfete({ avaliacaoId }) {
           </table>
         </div>
       )}
-      <button onClick={handleFinalizar} className="button-sair-avaliacao"><strong>Finalizar</strong></button>
+      <BotaoCarregando onClick={handleFinalizar} className="button-sair-avaliacao" loading={salvando} loadingText="Finalizando..."><strong>Finalizar</strong></BotaoCarregando>
     </div>
   );
 }

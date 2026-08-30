@@ -6,12 +6,16 @@ import '../components/styles/Button.css';
 import '../components/styles/Etapas.css';
 import '../components/styles/EtapaAcordoConfidencialidade.css';
 import { uploadAcordoConfidencialidade, getAcordoConfidencialidade } from '../services/Api.js';
+import BotaoCarregando from './common/BotaoCarregando';
+import { useToast } from '../contexts/ToastContext';
 
 function EtapaAcordoConfidencialidade({ onNext, avaliacaoId, idAtividade }) {
+    const { showToast } = useToast();
     const [acordoConfidencialidade, setAcordoConfidencialidade] = useState(null);
     const [existingAcordo, setExistingAcordo] = useState(null);
     const [canEdit, setCanEdit] = useState(idAtividade === 5);
     const [isSaved, setIsSaved] = useState(false);
+    const [salvando, setSalvando] = useState(false);
 
     useEffect(() => {
         const fetchAcordoConfidencialidade = async () => {
@@ -48,17 +52,20 @@ function EtapaAcordoConfidencialidade({ onNext, avaliacaoId, idAtividade }) {
 
     const salvarAcordoConfidencialidade = async () => {
         if (!acordoConfidencialidade) {
-            alert('Por favor, anexe o acordo de confidencialidade.');
+            showToast('Por favor, anexe o acordo de confidencialidade.', 'warning');
             return;
         }
+        setSalvando(true);
         try {
             const response = await uploadAcordoConfidencialidade(avaliacaoId, acordoConfidencialidade);
-            alert('Acordo de confidencialidade salvo com sucesso!');
+            showToast('Acordo de confidencialidade salvo com sucesso!', 'success');
             setExistingAcordo(response.filepath);
             setIsSaved(true);  // Marcar que o arquivo foi salvo
         } catch (error) {
             console.error('Erro ao salvar o acordo de confidencialidade:', error);
-            alert('Erro ao salvar o acordo de confidencialidade. Tente novamente.');
+            showToast('Erro ao salvar o acordo de confidencialidade. Tente novamente.', 'error');
+        } finally {
+            setSalvando(false);
         }
     };
 
@@ -97,13 +104,13 @@ function EtapaAcordoConfidencialidade({ onNext, avaliacaoId, idAtividade }) {
                 )}
             </div>
             {canEdit && acordoConfidencialidade && (
-                <button className='button-remove-avaliacao' onClick={removerAcordoConfidencialidade}>REMOVER</button>
+                <button className='button-remove-avaliacao' onClick={removerAcordoConfidencialidade} disabled={salvando}>REMOVER</button>
             )}
 
             {canEdit && (
-                <button className='button-save' onClick={salvarAcordoConfidencialidade}>SALVAR</button>
+                <BotaoCarregando className='button-save' onClick={salvarAcordoConfidencialidade} loading={salvando} loadingText="Salvando...">SALVAR</BotaoCarregando>
             )}
-            <button className='button-next' onClick={handleNextStepClick}>PRÓXIMA ETAPA</button>
+            <button className='button-next' onClick={handleNextStepClick} disabled={salvando}>PRÓXIMA ETAPA</button>
         </div>
     );
 }

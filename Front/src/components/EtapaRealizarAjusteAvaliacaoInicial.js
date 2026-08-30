@@ -12,9 +12,13 @@ import '../components/styles/Form.css';
 import '../components/styles/Button.css';
 import '../components/styles/Etapas.css';
 import '../components/styles/EtapaRealizarAjusteAvaliacaoInicial.css';
+import BotaoCarregando from './common/BotaoCarregando';
+import CarregandoEtapa from './common/CarregandoEtapa';
+import { useToast } from '../contexts/ToastContext';
 
 function EtapaRealizarAjusteAvaliacaoInicial({ onBack }) {
   const location = useLocation();
+  const { showToast } = useToast();
   const [avaliacao, setAvaliacao] = useState({
     nome_empresa: '',
     descricao: '',
@@ -27,7 +31,8 @@ function EtapaRealizarAjusteAvaliacaoInicial({ onBack }) {
     descricao_relatorio_ajuste_inicial: '',
     caminho_arquivo_relatorio_ajuste_inicial: '' // Campo para armazenar o caminho do arquivo
   });
-  const [isSaving, setIsSaving] = useState(false); // Controle de múltiplas submissões
+  const [carregando, setCarregando] = useState(true);
+  const [salvando, setSalvando] = useState(false); // Controle de múltiplas submissões
   const [file, setFile] = useState(null); // Estado para armazenar o arquivo selecionado
 
   useEffect(() => {
@@ -37,6 +42,8 @@ function EtapaRealizarAjusteAvaliacaoInicial({ onBack }) {
         setAvaliacao(data);
       } catch (error) {
         console.error('Erro ao buscar avaliação:', error);
+      } finally {
+        setCarregando(false);
       }
     };
     fetchAvaliacao();
@@ -68,19 +75,19 @@ function EtapaRealizarAjusteAvaliacaoInicial({ onBack }) {
   };
 
   const salvarEmpresa = async () => {
-    setIsSaving(true);
+    setSalvando(true);
     try {
       await updateEmpresaAjusteAvaliacaoInicial(avaliacao.id_empresa, { nome: avaliacao.nome_empresa });
     } catch (error) {
       console.error('Erro ao salvar empresa:', error);
-      alert('Erro ao salvar empresa.');
+      showToast('Erro ao salvar empresa.', 'error');
     } finally {
-      setIsSaving(false);
+      setSalvando(false);
     }
   };
 
   const salvarAvaliacao = async () => {
-    setIsSaving(true);
+    setSalvando(true);
     try {
       await updateAvaliacaoAjusteInicial(location.state.id, {
         descricao: avaliacao.descricao,
@@ -89,31 +96,31 @@ function EtapaRealizarAjusteAvaliacaoInicial({ onBack }) {
       });
     } catch (error) {
       console.error('Erro ao salvar avaliação:', error);
-      alert('Erro ao salvar avaliação.');
+      showToast('Erro ao salvar avaliação.', 'error');
     } finally {
-      setIsSaving(false);
+      setSalvando(false);
     }
   };
 
   const salvarRelatorio = async (caminhoArquivo) => {
-    setIsSaving(true);
+    setSalvando(true);
     try {
       await atualizarRelatorioInicial({
         descricao: avaliacao.descricao_relatorio_ajuste_inicial,
         idAvaliacao: location.state.id,
         caminhoArquivo // Passa o caminho do arquivo, se houver
       });
-      alert("Dados salvos com sucesso");
+      showToast('Dados salvos com sucesso', 'success');
     } catch (error) {
       console.error('Erro ao salvar relatório:', error);
-      alert('Erro ao salvar relatório.');
+      showToast('Erro ao salvar relatório.', 'error');
     } finally {
-      setIsSaving(false);
+      setSalvando(false);
     }
   };
 
   const handleSalvar = async () => {
-    setIsSaving(true);
+    setSalvando(true);
     try {
       
       await salvarEmpresa();
@@ -131,10 +138,18 @@ function EtapaRealizarAjusteAvaliacaoInicial({ onBack }) {
     } catch (error) {
       console.error('Erro ao salvar dados:', error);
     } finally {
-      setIsSaving(false);
+      setSalvando(false);
     }
   };
   
+
+  if (carregando) {
+    return (
+      <div className='container-etapa'>
+        <CarregandoEtapa />
+      </div>
+    );
+  }
 
     return (
     <div className='container-etapa'>
@@ -201,10 +216,10 @@ function EtapaRealizarAjusteAvaliacaoInicial({ onBack }) {
         </table>
       </div>
   
-      <button onClick={handleSalvar} className='button-save' disabled={isSaving}>
+      <BotaoCarregando onClick={handleSalvar} className='button-save' loading={salvando} loadingText="Salvando...">
         SALVAR
-      </button>
-      <button onClick={onBack} className='button-next'>
+      </BotaoCarregando>
+      <button onClick={onBack} className='button-next' disabled={salvando}>
         PRÓXIMA ETAPA
       </button>
     </div>

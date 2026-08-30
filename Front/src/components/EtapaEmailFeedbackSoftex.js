@@ -5,20 +5,23 @@ import '../components/styles/Form.css';
 import '../components/styles/Etapas.css';
 import '../components/styles/Button.css';
 import { enviarEmailSolicitarFeedback } from '../services/Api';
+import BotaoCarregando from './common/BotaoCarregando';
+import { useToast } from '../contexts/ToastContext';
 
 function EtapaEmailFeedbackSoftex({ onNext, avaliacaoId }) {
   const [loading, setLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
+  const { showToast } = useToast();
 
   const handleSendEmail = async () => {
     setLoading(true);
     try {
       await enviarEmailSolicitarFeedback(avaliacaoId);
       setEmailSent(true);
-      alert('E-mail enviado com sucesso!');
+      showToast('E-mail enviado com sucesso!', 'success');
     } catch (error) {
       console.error('Erro ao enviar e-mail:', error);
-      alert('Erro ao enviar e-mail. Tente novamente.');
+      showToast('Erro ao enviar e-mail. Tente novamente.', 'error');
     } finally {
       setLoading(false);
     }
@@ -33,19 +36,21 @@ function EtapaEmailFeedbackSoftex({ onNext, avaliacaoId }) {
           Ao clicar no botão abaixo, um e-mail será enviado para a Softex solicitando o link do formulário de feedback.
         </p>
       </div>
-      <button
+      <BotaoCarregando
         className='button-next'
         onClick={handleSendEmail}
-        disabled={loading || emailSent}
+        loading={loading}
+        disabled={emailSent}
+        loadingText="Enviando..."
         style={{
           backgroundColor: emailSent ? 'gray' : '',
           cursor: emailSent ? 'not-allowed' : 'pointer'
         }}
       >
-        {loading ? 'Enviando...' : emailSent ? 'Enviado' : 'ENVIAR EMAIL'}
-      </button>
+        {emailSent ? 'Enviado' : 'ENVIAR EMAIL'}
+      </BotaoCarregando>
       <br />
-      <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
+      <button className='button-next' onClick={onNext} disabled={loading}>PRÓXIMA ETAPA</button>
     </div>
   );
 }

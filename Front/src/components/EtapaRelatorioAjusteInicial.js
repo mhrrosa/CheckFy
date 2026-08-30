@@ -6,8 +6,10 @@ import '../components/styles/EtapaRelatorioAjusteInicial.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
 import '../components/styles/Button.css';
+import { useToast } from '../contexts/ToastContext';
 
 function EtapaRelatorioAjusteInicial({ onNext, avaliacaoId }) {
+  const { showToast } = useToast();
   const [relatorioAjuste, setRelatorioAjuste] = useState('');
   const [relatorioExiste, setRelatorioExiste] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null); // Estado para o arquivo selecionado
@@ -35,7 +37,7 @@ function EtapaRelatorioAjusteInicial({ onNext, avaliacaoId }) {
 
   const salvarDados = async () => {
     if (!relatorioAjuste && !selectedFile) {
-      alert('Por favor, preencha o relatório de ajuste ou anexe um arquivo.');
+      showToast('Por favor, preencha o relatório de ajuste ou anexe um arquivo.', 'warning');
       return;
     }
 
@@ -64,10 +66,10 @@ function EtapaRelatorioAjusteInicial({ onNext, avaliacaoId }) {
 
       if (relatorioExiste) {
         await atualizarRelatorioInicial(data);
-        alert('Relatório atualizado com sucesso!');
+        showToast('Relatório atualizado com sucesso!', 'success');
       } else {
         await inserirRelatorioInicial(data);
-        alert('Relatório inserido com sucesso!');
+        showToast('Relatório inserido com sucesso!', 'success');
         setRelatorioExiste(true);
       }
     } catch (error) {
@@ -77,18 +79,18 @@ function EtapaRelatorioAjusteInicial({ onNext, avaliacaoId }) {
 
   const proximaEtapa = async () => {
     if (!relatorioAjuste) {
-      alert('Por favor, preencha o relatório de ajuste antes de continuar.');
+      showToast('Por favor, preencha o relatório de ajuste antes de continuar.', 'warning');
       return;
     }
 
     if (window.confirm('Ao confirmar, será enviado um e-mail para o auditor realizar a auditoria. Deseja continuar?')) {
       try {
         await enviarEmailRelatorioAjusteInicial(avaliacaoId);
-        alert('E-mail enviado com sucesso!');
+        showToast('E-mail enviado com sucesso!', 'success');
         onNext();  // Chama a próxima etapa após o envio do e-mail
       } catch (error) {
         console.error('Erro ao enviar o e-mail:', error);
-        alert('Ocorreu um erro ao enviar o e-mail.');
+        showToast('Ocorreu um erro ao enviar o e-mail.', 'error');
       }
     }
   };

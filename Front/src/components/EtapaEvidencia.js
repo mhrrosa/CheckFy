@@ -18,6 +18,8 @@ import '../components/styles/Button.css';
 import '../components/styles/Container.css';
 import '../components/styles/Etapas.css';
 import '../components/styles/EtapaEvidencia.css';
+import BotaoCarregando from './common/BotaoCarregando';
+import CarregandoEtapa from './common/CarregandoEtapa';
 
 Modal.setAppElement('#root');
 
@@ -34,6 +36,10 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
   const [fileToUpload, setFileToUpload] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(null); // Estado para a aba ativa
+  const [carregando, setCarregando] = useState(true);
+  const [enviando, setEnviando] = useState(false);
+  const [processandoDoc, setProcessandoDoc] = useState(null); // { id, acao }
+  const [excluindoEvidencia, setExcluindoEvidencia] = useState(null); // `${resultadoId}-${documentoId}`
 
   useEffect(() => {
     if (avaliacaoId && idVersaoModelo) {
@@ -48,12 +54,16 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
   }, [activeTab]);
 
   const carregarDados = async () => {
-    await carregarProjetos();
-    await carregarProcessos();
-    if (activeTab) {
-      await carregarResultadosEsperados(activeTab);
-    } else if (processos.length > 0) {
-      setActiveTab(processos[0].ID);
+    try {
+      await carregarProjetos();
+      await carregarProcessos();
+      if (activeTab) {
+        await carregarResultadosEsperados(activeTab);
+      } else if (processos.length > 0) {
+        setActiveTab(processos[0].ID);
+      }
+    } finally {
+      setCarregando(false);
     }
   };
 
@@ -161,6 +171,7 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
     const formData = new FormData();
     formData.append('file', fileToUpload);
 
+    setEnviando(true);
     try {
       const response = await fetch('http://127.0.0.1:5000/upload', {
         method: 'POST',
@@ -184,30 +195,39 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
       }
     } catch (error) {
       console.error('Erro ao fazer upload do arquivo:', error);
+    } finally {
+      setEnviando(false);
     }
   };
 
   const handleAtualizarDocumento = async (id, nomeArquivo, caminhoArquivo) => {
     const documentoData = { caminho_arquivo: caminhoArquivo, nome_arquivo: nomeArquivo, id_projeto: selectedProjetoId };
+    setProcessandoDoc({ id, acao: 'atualizar' });
     try {
       await updateDocumento(id, documentoData);
       await carregarEvidencias(selectedResultadoId, selectedProjetoId);
     } catch (error) {
       console.error('Erro ao atualizar documento:', error);
+    } finally {
+      setProcessandoDoc(null);
     }
   };
 
   const handleDeletarDocumento = async (documentoId) => {
+    setProcessandoDoc({ id: documentoId, acao: 'remover' });
     try {
       await deleteDocumento(documentoId);
       setDocumentos(prevDocumentos => prevDocumentos.filter(doc => doc.id !== documentoId));
-      recarregarEvidencias(); // Recarregar todas as evidências após a exclusão
+      await recarregarEvidencias(); // Recarregar todas as evidências após a exclusão
     } catch (error) {
       console.error('Erro ao deletar documento:', error);
+    } finally {
+      setProcessandoDoc(null);
     }
   };
 
   const handleAdicionarEvidencia = async (documentoId) => {
+    setProcessandoDoc({ id: documentoId, acao: 'evidencia' });
     try {
       const evidenciaData = { id_resultado_esperado: selectedResultadoId, id_documento: documentoId };
       await addEvidencia(evidenciaData);
@@ -223,15 +243,20 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
       }));
     } catch (error) {
       console.error('Erro ao adicionar evidência:', error);
+    } finally {
+      setProcessandoDoc(null);
     }
   };
 
   const handleExcluirEvidencia = async (resultadoId, documentoId) => {
+    setExcluindoEvidencia(`${resultadoId}-${documentoId}`);
     try {
       await deleteEvidencia({ id_resultado_esperado: resultadoId, id_documento: documentoId });
-      recarregarEvidencias(); // Recarregar todas as evidências após a exclusão
+      await recarregarEvidencias(); // Recarregar todas as evidências após a exclusão
     } catch (error) {
       console.error('Erro ao excluir evidência:', error);
+    } finally {
+      setExcluindoEvidencia(null);
     }
   };
 
@@ -251,6 +276,14 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
     setSelectedProjetoId(null);
     setDocumentos([]);
   };
+
+  if (carregando) {
+    return (
+      <div className="container-etapa">
+        <CarregandoEtapa />
+      </div>
+    );
+  }
 
   return (
     <div className="container-etapa">
@@ -312,7 +345,7 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
                                 <div className='evidencia-e-botoes' key={evidencia.id}>
                                   <p className='title-evidencia'>Evidência: {evidencia.nomeArquivo}</p>
                                   <button className='button-mostrar-documento-etapa-evidencia' onClick={() => window.open(`http://127.0.0.1:5000/uploads/${evidencia.caminhoArquivo}`, '_blank')}>Mostrar</button>
-                                  <button className='button-excluir-documento-etapa-evidencia' onClick={() => handleExcluirEvidencia(resultado.ID, evidencia.id)}>Excluir</button>
+                                  <BotaoCarregando className='button-excluir-documento-etapa-evidencia' onClick={() => handleExcluirEvidencia(resultado.ID, evidencia.id)} loading={excluindoEvidencia === `${resultado.ID}-${evidencia.id}`} loadingText="Excluindo...">Excluir</BotaoCarregando>
                                 </div>
                               ))}
                           </div>
@@ -357,13 +390,13 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
             />
             <label htmlFor="file">Escolha um arquivo</label>
             {fileToUpload && <p className='arquivo-adicionado'>Arquivo adicionado</p>}
-            <button className="button-add-document" type="button" onClick={handleDocumentoUpload}>
+            <BotaoCarregando className="button-add-document" type="button" onClick={handleDocumentoUpload} loading={enviando} loadingText="Enviando...">
               <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10"></circle>
                 <line x1="12" y1="8" x2="12" y2="16"></line>
                 <line x1="8" y1="12" x2="16" y2="12"></line>
               </svg>
-            </button>
+            </BotaoCarregando>
           </div>
           <h3 className='title-document'>Documentos Existentes:</h3>
           <table className='documentos-existente-table'>
@@ -379,13 +412,13 @@ function EtapaEvidencia({ avaliacaoId, idVersaoModelo, onNext }) {
                     />
                   </td>
                   <td>
-                    <button className='acoes-botao-document' onClick={() => handleAtualizarDocumento(doc.id, doc.nomeArquivo, doc.caminhoArquivo)}>ATUALIZAR</button>
+                    <BotaoCarregando className='acoes-botao-document' onClick={() => handleAtualizarDocumento(doc.id, doc.nomeArquivo, doc.caminhoArquivo)} loading={processandoDoc?.id === doc.id && processandoDoc?.acao === 'atualizar'} disabled={processandoDoc?.id === doc.id} loadingText="Atualizando...">ATUALIZAR</BotaoCarregando>
                   </td>
                   <td>
-                    <button className='acoes-botao-document' onClick={() => handleDeletarDocumento(doc.id)}>REMOVER</button>
+                    <BotaoCarregando className='acoes-botao-document' onClick={() => handleDeletarDocumento(doc.id)} loading={processandoDoc?.id === doc.id && processandoDoc?.acao === 'remover'} disabled={processandoDoc?.id === doc.id} loadingText="Removendo...">REMOVER</BotaoCarregando>
                   </td>
                   <td>
-                    <button className='acoes-botao-document' onClick={() => handleAdicionarEvidencia(doc.id)}>ADICIONAR EVIDÊNCIA</button>
+                    <BotaoCarregando className='acoes-botao-document' onClick={() => handleAdicionarEvidencia(doc.id)} loading={processandoDoc?.id === doc.id && processandoDoc?.acao === 'evidencia'} disabled={processandoDoc?.id === doc.id} loadingText="Adicionando...">ADICIONAR EVIDÊNCIA</BotaoCarregando>
                   </td>
                 </tr>
               ))}

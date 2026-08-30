@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { startNewEvaluation, getNiveis, getVersaoModelo } from '../services/Api';
 import { UserContext } from '../contexts/UserContext'; // Importe o UserContext
+import { useToast } from '../contexts/ToastContext';
 import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
@@ -20,6 +21,7 @@ function CreateEvaluation() {
   const [idVersaoModelo, setIdVersaoModelo] = useState('');
   const { userId, setUserId } = useContext(UserContext); // Obtenha o userId e setUserId do contexto
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (!userId) {
@@ -69,7 +71,7 @@ function CreateEvaluation() {
     event.preventDefault();
     
     if (!userId) {
-      alert('ID de usuário não encontrado. Por favor, faça login novamente.');
+      showToast('ID de usuário não encontrado. Por favor, faça login novamente.', 'error');
       return;
     }
 

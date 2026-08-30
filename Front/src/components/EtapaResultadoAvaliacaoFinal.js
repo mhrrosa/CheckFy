@@ -7,6 +7,7 @@ import '../components/styles/Form.css';
 import '../components/styles/Button.css'; 
 import '../components/styles/Etapas.css';
 import '../components/styles/EtapaResultadoAvaliacaoFinal.css';
+import CarregandoEtapa from './common/CarregandoEtapa';
 
 function EtapaResultadoAvaliacaoFinal({ onNext }) {
   const location = useLocation();
@@ -14,11 +15,10 @@ function EtapaResultadoAvaliacaoFinal({ onNext }) {
     nivel_solicitado: '',
     resultado: ''
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
     const fetchAvaliacao = async () => {
-      setIsLoading(true);
       try {
         const data = await getAvaliacaoById(location.state.id);
         setAvaliacao({
@@ -28,11 +28,19 @@ function EtapaResultadoAvaliacaoFinal({ onNext }) {
       } catch (error) {
         console.error('Erro ao buscar avaliação:', error);
       } finally {
-        setIsLoading(false);
+        setCarregando(false);
       }
     };
     fetchAvaliacao();
   }, [location.state.id]);
+
+  if (carregando) {
+    return (
+      <div className='container-etapa'>
+        <CarregandoEtapa />
+      </div>
+    );
+  }
 
     return (
     <div className='container-etapa'>
@@ -70,8 +78,7 @@ function EtapaResultadoAvaliacaoFinal({ onNext }) {
         alignItems: 'center',
         marginTop: '20px'
       }}>
-        <button className='button-confirmar-visualizacao' onClick={onNext} disabled={isLoading}
-        >
+        <button className='button-confirmar-visualizacao' onClick={onNext}>
           CONFIRMAR VISUALIZAÇÃO
         </button>
       </div>

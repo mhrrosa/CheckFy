@@ -444,3 +444,46 @@
 .button-sair-avaliacao:hover {
     background-color: #0056b3;
 }
+
+.button:disabled,
+[class^="button-"]:disabled,
+[class*=" button-"]:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.spinner-botao {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+}
+
+.spinner-grande {
+    width: 28px;
+    height: 28px;
+    border-width: 3px;
+    border-color: rgba(0, 16, 52, 0.2);
+    border-top-color: #001034;
+    margin: 0 auto 10px;
+}
+
+.botao-carregando-conteudo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carregando-etapa {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+    color: #001034;
+}

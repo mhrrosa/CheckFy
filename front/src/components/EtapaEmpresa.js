@@ -4,13 +4,19 @@ import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
 import '../components/styles/Button.css';
+import BotaoCarregando from './common/BotaoCarregando';
+import CarregandoEtapa from './common/CarregandoEtapa';
+import { useToast } from '../contexts/ToastContext';
 
 function EtapaEmpresa({ onNext, avaliacaoId }) {
+  const { showToast } = useToast();
   const [empresas, setEmpresas] = useState([]);
   const [empresaSelecionada, setEmpresaSelecionada] = useState('');
   const [novaEmpresa, setNovaEmpresa] = useState('');
   const [novoCnpj, setNovoCnpj] = useState('');
   const [empresaCadastrada, setEmpresaCadastrada] = useState(false);
+  const [carregando, setCarregando] = useState(true);
+  const [salvando, setSalvando] = useState(false);
 
   useEffect(() => {
     carregarEmpresas();
@@ -35,10 +41,13 @@ function EtapaEmpresa({ onNext, avaliacaoId }) {
       }
     } catch (error) {
       console.error('Erro ao carregar empresas ou avaliação:', error);
+    } finally {
+      setCarregando(false);
     }
   };
 
   const salvarDados = async () => {
+    setSalvando(true);
     try {
       if (!empresaCadastrada) {
         if (novaEmpresa && novoCnpj) {
@@ -46,13 +55,13 @@ function EtapaEmpresa({ onNext, avaliacaoId }) {
           await carregarEmpresas();
           const novaEmpresaId = novaEmpresaResponse.id;
           await empresaAvaliacaoInsert(avaliacaoId, { idEmpresa: novaEmpresaId });
-          alert('Empresa salva com sucesso!');
+          showToast('Empresa salva com sucesso!', 'success');
           setEmpresaSelecionada(novaEmpresaId);
           setNovaEmpresa('');
           setNovoCnpj('');
           setEmpresaCadastrada(true);
         } else {
-          alert('Por favor, preencha todos os campos da nova empresa.');
+          showToast('Por favor, preencha todos os campos da nova empresa.', 'warning');
           return;
         }
       } else if (empresaSelecionada) {
@@ -60,9 +69,11 @@ function EtapaEmpresa({ onNext, avaliacaoId }) {
       }
     } catch (error) {
       console.error('Erro ao salvar os dados:', error);
-      alert('Erro ao salvar os dados. Tente novamente.');
+      showToast('Erro ao salvar os dados. Tente novamente.', 'error');
+    } finally {
+      setSalvando(false);
     }
-  };  
+  };
 
   const handleCheckboxChange = (value) => {
     setEmpresaCadastrada(value);
@@ -71,6 +82,14 @@ function EtapaEmpresa({ onNext, avaliacaoId }) {
       setNovoCnpj('');
     }
   };
+
+  if (carregando) {
+    return (
+      <div className='container-etapa'>
+        <CarregandoEtapa />
+      </div>
+    );
+  }
 
   return (
     <div className='container-etapa'>
@@ -140,8 +159,8 @@ function EtapaEmpresa({ onNext, avaliacaoId }) {
         </>
       )}
 
-      <button className='button-save' onClick={salvarDados}>SALVAR</button>
-      <button className='button-next' onClick={() => onNext(avaliacaoId)}>PRÓXIMA ETAPA</button>
+      <BotaoCarregando className='button-save' onClick={salvarDados} loading={salvando} loadingText="Salvando...">SALVAR</BotaoCarregando>
+      <button className='button-next' onClick={() => onNext(avaliacaoId)} disabled={salvando}>PRÓXIMA ETAPA</button>
     </div>
   );
 }

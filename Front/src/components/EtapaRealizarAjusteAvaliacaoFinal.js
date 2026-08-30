@@ -41,8 +41,12 @@ import '../components/styles/EtapaRealizarAjusteAvaliacaoFinal.css';
 import '../components/styles/EtapaCaracterizacao.css';
 import img_certo from '../img/certo.png';
 import img_errado from '../img/errado.png';
+import BotaoCarregando from './common/BotaoCarregando';
+import CarregandoEtapa from './common/CarregandoEtapa';
+import { useToast } from '../contexts/ToastContext';
 
 function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack }) {
+  const { showToast } = useToast();
   const [processos, setProcessos] = useState([]);
   const [resultadosEsperados, setResultadosEsperados] = useState({});
   const [projetos, setProjetos] = useState([]);
@@ -72,6 +76,14 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
 
   const [evidenciasProjeto, setEvidenciasProjeto] = useState({});
   const [evidenciasOrganizacional, setEvidenciasOrganizacional] = useState({});
+
+  const [carregando, setCarregando] = useState(true);
+  const [salvandoNotas, setSalvandoNotas] = useState(false);
+  const [salvandoProjeto, setSalvandoProjeto] = useState(false);
+  const [salvandoOrganizacional, setSalvandoOrganizacional] = useState(false);
+  const [salvandoResumo, setSalvandoResumo] = useState(false);
+  const [salvandoInformacoes, setSalvandoInformacoes] = useState(false);
+  const [processandoEvidencia, setProcessandoEvidencia] = useState(null);
 
   const parentTabs = [
     'Resultado Auditoria',
@@ -161,6 +173,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
   }, [processosOrganizacionais, perguntasOrganizacional]);
 
   const salvarNotas = async () => {
+    setSalvandoNotas(true);
     try {
       const entries = Object.entries(grausImplementacao);
       for (const [key, nota] of entries) {
@@ -171,10 +184,12 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
           projetoId: parseInt(projetoId),
         });
       }
-      alert('Notas salvas com sucesso!');
+      showToast('Notas salvas com sucesso!', 'success');
     } catch (error) {
       console.error('Erro ao salvar notas:', error);
-      alert('Erro ao salvar notas.');
+      showToast('Erro ao salvar notas.', 'error');
+    } finally {
+      setSalvandoNotas(false);
     }
   };
 
@@ -234,6 +249,8 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
       }
     } catch (error) {
       console.error('Erro ao carregar dados da avaliação:', error);
+    } finally {
+      setCarregando(false);
     }
   };
 
@@ -512,9 +529,9 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     }
   };
 
-  const handleSaveInformacoesGerais = () => {
+  const handleSaveInformacoesGerais = async () => {
     if (!parecerFinal || !selectedNivel) {
-      alert('Por favor, selecione o parecer final e o nível atribuído.');
+      showToast('Por favor, selecione o parecer final e o nível atribuído.', 'warning');
       return;
     }
 
@@ -524,14 +541,16 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
       idNivelAtribuido: selectedNivel,
     };
 
-    updateResultadoFinal(avaliacaoId, data)
-      .then(() => {
-        alert('Informações gerais atualizadas com sucesso!');
-      })
-      .catch(error => {
-        console.error('Erro ao atualizar informações gerais:', error);
-        alert('Erro ao atualizar informações gerais. Tente novamente.');
-      });
+    setSalvandoInformacoes(true);
+    try {
+      await updateResultadoFinal(avaliacaoId, data);
+      showToast('Informações gerais atualizadas com sucesso!', 'success');
+    } catch (error) {
+      console.error('Erro ao atualizar informações gerais:', error);
+      showToast('Erro ao atualizar informações gerais. Tente novamente.', 'error');
+    } finally {
+      setSalvandoInformacoes(false);
+    }
   };
 
   const handleSelectChange = (evento, resultadoId, projetoId) => {
@@ -560,6 +579,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     const file = event.target.files[0];
     if (!file) return;
 
+    setProcessandoEvidencia(`proj-${projectId}-${perguntaId}`);
     try {
       const formData = new FormData();
       formData.append('file', file);
@@ -579,15 +599,20 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
       }
     } catch (error) {
       console.error('Erro ao fazer upload do arquivo:', error);
+    } finally {
+      setProcessandoEvidencia(null);
     }
   };
 
   const handleDeleteEvidenciaProjeto = async (projectId, perguntaId, evidenciaId) => {
+    setProcessandoEvidencia(`proj-${projectId}-${perguntaId}`);
     try {
       await deleteEvidenciaProjeto(evidenciaId);
       await carregarEvidenciasProjeto();
     } catch (error) {
       console.error('Erro ao deletar evidência:', error);
+    } finally {
+      setProcessandoEvidencia(null);
     }
   };
 
@@ -595,6 +620,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
     const file = event.target.files[0];
     if (!file) return;
 
+    setProcessandoEvidencia(`org-${processId}-${perguntaId}`);
     try {
       const formData = new FormData();
       formData.append('file', file);
@@ -615,15 +641,20 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
       }
     } catch (error) {
       console.error('Erro ao fazer upload do arquivo:', error);
+    } finally {
+      setProcessandoEvidencia(null);
     }
   };
 
   const handleDeleteEvidenciaOrganizacional = async (processId, perguntaId, evidenciaId) => {
+    setProcessandoEvidencia(`org-${processId}-${perguntaId}`);
     try {
       await deleteEvidenciaOrganizacional(evidenciaId);
       await carregarEvidenciasOrganizacional();
     } catch (error) {
       console.error('Erro ao deletar evidência:', error);
+    } finally {
+      setProcessandoEvidencia(null);
     }
   };
 
@@ -656,10 +687,10 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
         await addCapacidadeProcessoProjeto(dataToInsert);
       }
 
-      alert('Respostas do projeto salvas com sucesso.');
+      showToast('Respostas do projeto salvas com sucesso.', 'success');
     } catch (error) {
       console.error('Erro ao salvar respostas do projeto:', error);
-      alert('Erro ao salvar respostas do projeto.');
+      showToast('Erro ao salvar respostas do projeto.', 'error');
     }
   };
 
@@ -694,19 +725,29 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
         await addCapacidadeProcessoOrganizacional(dataToInsert);
       }
 
-      alert('Respostas organizacionais salvas com sucesso.');
+      showToast('Respostas organizacionais salvas com sucesso.', 'success');
     } catch (error) {
       console.error('Erro ao salvar respostas organizacionais:', error);
-      alert('Erro ao salvar respostas organizacionais.');
+      showToast('Erro ao salvar respostas organizacionais.', 'error');
     }
   };
 
-  const handleSaveProjeto = () => {
-    salvarRespostasProjeto();
+  const handleSaveProjeto = async () => {
+    setSalvandoProjeto(true);
+    try {
+      await salvarRespostasProjeto();
+    } finally {
+      setSalvandoProjeto(false);
+    }
   };
 
-  const handleSaveOrganizacional = () => {
-    salvarRespostasOrganizacional();
+  const handleSaveOrganizacional = async () => {
+    setSalvandoOrganizacional(true);
+    try {
+      await salvarRespostasOrganizacional();
+    } finally {
+      setSalvandoOrganizacional(false);
+    }
   };
 
   const handleNotaChange = (resultadoId, nota) => {
@@ -718,20 +759,23 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
   };
 
   const salvarResumoCaracterizacao = async () => {
+    setSalvandoResumo(true);
     try {
       if (resumoSalvo) {
         await updateGrausImplementacaoEmpresa(arrayResumo);
-        alert('Resumo atualizado com sucesso!');
+        showToast('Resumo atualizado com sucesso!', 'success');
       } else {
         const response = await addGrauImplementacaoEmpresa(arrayResumo);
         if (response.message === 'Graus de implementação inseridos com sucesso!') {
           setResumoSalvo(true);
-          alert('Resumo salvo com sucesso!');
+          showToast('Resumo salvo com sucesso!', 'success');
         }
       }
     } catch (error) {
       console.error('Erro ao salvar resumo:', error);
-      alert('Erro ao salvar resumo.');
+      showToast('Erro ao salvar resumo.', 'error');
+    } finally {
+      setSalvandoResumo(false);
     }
   };
 
@@ -826,16 +870,16 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
             ) : null
           )}
         </div>
-        <button className="button-save" onClick={salvarNotas}>
+        <BotaoCarregando className="button-save" onClick={salvarNotas} loading={salvandoNotas} loadingText="Salvando...">
           SALVAR NOTAS
-        </button>
+        </BotaoCarregando>
       </>
     );
   };
 
   const renderProjetoContent = () => {
     if (!projetos || projetos.length === 0) {
-      return <p>Carregando projetos...</p>;
+      return <CarregandoEtapa texto="Carregando projetos..." />;
     }
 
     return (
@@ -878,22 +922,26 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
                                       '_blank'
                                     )
                                   }
+                                  disabled={processandoEvidencia === `proj-${projeto.ID}-${pergunta.ID}`}
                                 >
                                   Mostrar
                                 </button>
-                                <button className='button-excluir-documento-etapa-evidencia'
+                                <BotaoCarregando className='button-excluir-documento-etapa-evidencia'
                                   onClick={() =>
                                     handleDeleteEvidenciaProjeto(projeto.ID, pergunta.ID, evidencia.ID)
                                   }
+                                  loading={processandoEvidencia === `proj-${projeto.ID}-${pergunta.ID}`}
+                                  loadingText="Excluindo..."
                                 >
                                   Excluir
-                                </button>
+                                </BotaoCarregando>
                               </div>
                             ))
                           ) : (
                             <input
                               type="file"
                               onChange={e => handleFileChangeProjeto(projeto.ID, pergunta.ID, e)}
+                              disabled={processandoEvidencia === `proj-${projeto.ID}-${pergunta.ID}`}
                             />
                           )}
                         </td>
@@ -924,16 +972,16 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
             ) : null
           )}
         </div>
-        <button className="button-save" onClick={handleSaveProjeto}>
+        <BotaoCarregando className="button-save" onClick={handleSaveProjeto} loading={salvandoProjeto} loadingText="Salvando...">
           SALVAR
-        </button>
+        </BotaoCarregando>
       </>
     );
   };
 
   const renderOrganizacionalContent = () => {
     if (!processosOrganizacionais || processosOrganizacionais.length === 0) {
-      return <p>Carregando processos organizacionais...</p>;
+      return <CarregandoEtapa texto="Carregando processos organizacionais..." />;
     }
 
     return (
@@ -978,10 +1026,11 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
                                       '_blank'
                                     )
                                   }
+                                  disabled={processandoEvidencia === `org-${processo.ID}-${pergunta.ID}`}
                                 >
                                   Mostrar
                                 </button>
-                                <button className='button-excluir-documento-etapa-evidencia'
+                                <BotaoCarregando className='button-excluir-documento-etapa-evidencia'
                                   onClick={() =>
                                     handleDeleteEvidenciaOrganizacional(
                                       processo.ID,
@@ -989,9 +1038,11 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
                                       evidencia.ID
                                     )
                                   }
+                                  loading={processandoEvidencia === `org-${processo.ID}-${pergunta.ID}`}
+                                  loadingText="Excluindo..."
                                 >
                                   Excluir
-                                </button>
+                                </BotaoCarregando>
                               </div>
                             ))
                           ) : (
@@ -1000,6 +1051,7 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
                               onChange={e =>
                                 handleFileChangeOrganizacional(processo.ID, pergunta.ID, e)
                               }
+                              disabled={processandoEvidencia === `org-${processo.ID}-${pergunta.ID}`}
                             />
                           )}
                         </td>
@@ -1030,9 +1082,9 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
             ) : null
           )}
         </div>
-        <button className="button-save" onClick={handleSaveOrganizacional}>
+        <BotaoCarregando className="button-save" onClick={handleSaveOrganizacional} loading={salvandoOrganizacional} loadingText="Salvando...">
           SALVAR
-        </button>
+        </BotaoCarregando>
       </>
     );
   };
@@ -1175,16 +1227,16 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
             </tbody>
           </table>
         </div>
-        <button className="button-save" onClick={salvarResumoCaracterizacao}>
+        <BotaoCarregando className="button-save" onClick={salvarResumoCaracterizacao} loading={salvandoResumo} loadingText="Salvando...">
           {resumoSalvo ? 'ATUALIZAR' : 'SALVAR'}
-        </button>
+        </BotaoCarregando>
       </div>
     );
   };
 
   const renderInformacoesGeraisContent = () => {
     if (!avaliacao) {
-      return <p>Carregando dados...</p>;
+      return <CarregandoEtapa />;
     }
 
     return (
@@ -1277,9 +1329,9 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
             </tr>
           </tbody>
         </table>
-        <button className="button-save" onClick={handleSaveInformacoesGerais}>
+        <BotaoCarregando className="button-save" onClick={handleSaveInformacoesGerais} loading={salvandoInformacoes} loadingText="Salvando...">
           SALVAR
-        </button>
+        </BotaoCarregando>
       </div>
     );
   };
@@ -1331,6 +1383,14 @@ function EtapaRealizarAjusteAvaliacaoFinal({ avaliacaoId, idVersaoModelo, onBack
         return null;
     }
   };
+
+  if (carregando) {
+    return (
+      <div className='container-etapa'>
+        <CarregandoEtapa />
+      </div>
+    );
+  }
 
   return (
     <div className="container-etapa">

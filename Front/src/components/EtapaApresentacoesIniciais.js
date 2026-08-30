@@ -5,11 +5,17 @@ import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
 import '../components/styles/Button.css';
+import BotaoCarregando from './common/BotaoCarregando';
+import CarregandoEtapa from './common/CarregandoEtapa';
+import { useToast } from '../contexts/ToastContext';
 
 function EtapaApresentacoesIniciais({ onNext, avaliacaoId }) {
+  const { showToast } = useToast();
   const [apresentacoesRealizadas, setApresentacoesRealizadas] = useState(null);
   const [equipeTreinada, setEquipeTreinada] = useState(null);
   const [dadosSalvos, setDadosSalvos] = useState(false);
+  const [carregando, setCarregando] = useState(true);
+  const [salvando, setSalvando] = useState(false);
 
   // Buscar os dados de apresentação inicial e equipe treinada ao montar o componente
   useEffect(() => {
@@ -23,6 +29,8 @@ function EtapaApresentacoesIniciais({ onNext, avaliacaoId }) {
         }
       } catch (error) {
         console.error('Erro ao buscar os dados de apresentação e equipe:', error);
+      } finally {
+        setCarregando(false);
       }
     }
 
@@ -31,16 +39,19 @@ function EtapaApresentacoesIniciais({ onNext, avaliacaoId }) {
 
   // Função para salvar os dados
   const handleSave = async () => {
+    setSalvando(true);
     try {
       await salvarApresentacaoEquipe({
         idAvaliacao: avaliacaoId,
         apresentacaoInicial: apresentacoesRealizadas,
         equipeTreinada: equipeTreinada
       });
-      alert('Dados salvos com sucesso!');
+      showToast('Dados salvos com sucesso!', 'success');
       setDadosSalvos(true);  // Indica que os dados foram salvos
     } catch (error) {
       console.error('Erro ao salvar dados:', error);
+    } finally {
+      setSalvando(false);
     }
   };
 
@@ -49,7 +60,7 @@ function EtapaApresentacoesIniciais({ onNext, avaliacaoId }) {
     if (apresentacoesRealizadas !== null && equipeTreinada !== null && dadosSalvos) {
       onNext();  // Avançar para a próxima etapa
     } else {
-      alert('Por favor, salve os dados antes de avançar.');
+      showToast('Por favor, salve os dados antes de avançar.', 'warning');
     }
   };
 
@@ -65,6 +76,14 @@ function EtapaApresentacoesIniciais({ onNext, avaliacaoId }) {
 
   const isSaveButtonEnabled = apresentacoesRealizadas !== null && equipeTreinada !== null;
   const isNextButtonEnabled = dadosSalvos && apresentacoesRealizadas === true && equipeTreinada === true;
+
+  if (carregando) {
+    return (
+      <div className='container-etapa'>
+        <CarregandoEtapa />
+      </div>
+    );
+  }
 
   return (
     <div className='container-etapa'>
@@ -127,19 +146,21 @@ function EtapaApresentacoesIniciais({ onNext, avaliacaoId }) {
       </div>
 
       {/* Botão "Salvar" */}
-      <button
+      <BotaoCarregando
         className={`button-save ${isSaveButtonEnabled ? '' : 'button-disabled'}`}
         onClick={handleSave}
+        loading={salvando}
         disabled={!isSaveButtonEnabled}
+        loadingText="Salvando..."
       >
         SALVAR
-      </button>
+      </BotaoCarregando>
 
       {/* Botão "Próxima Etapa" */}
       <button
         className={`button-next ${isNextButtonEnabled ? '' : 'button-disabled'}`}
         onClick={handleNextStep}
-        disabled={!isNextButtonEnabled}
+        disabled={!isNextButtonEnabled || salvando}
       >
         PRÓXIMA ETAPA
       </button>

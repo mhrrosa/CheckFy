@@ -6,6 +6,8 @@ import '../components/styles/Form.css';
 import '../components/styles/Button.css';
 import '../components/styles/EtapaProjeto.css'
 import logo from '../img/logo_horizontal.png';
+import BotaoCarregando from './common/BotaoCarregando';
+import CarregandoEtapa from './common/CarregandoEtapa';
 
 function EtapaProjeto({ onNext, avaliacaoId }) {
   const [projetos, setProjetos] = useState([]);
@@ -13,6 +15,9 @@ function EtapaProjeto({ onNext, avaliacaoId }) {
   const [novoProjetoHabilitado, setNovoProjetoHabilitado] = useState(false);
   const [editandoProjeto, setEditandoProjeto] = useState(false);
   const [selectedProjetoId, setSelectedProjetoId] = useState(null);
+  const [carregando, setCarregando] = useState(true);
+  const [salvando, setSalvando] = useState(false);
+  const [atualizandoId, setAtualizandoId] = useState(null);
 
   useEffect(() => {
     if (avaliacaoId) {
@@ -26,10 +31,13 @@ function EtapaProjeto({ onNext, avaliacaoId }) {
       setProjetos(data);
     } catch (error) {
       console.error('Erro ao carregar projetos:', error);
+    } finally {
+      setCarregando(false);
     }
   };
 
   const salvarProjeto = async () => {
+    setSalvando(true);
     try {
       const projetoData = { avaliacaoId, nome: novoProjetoNome, habilitado: novoProjetoHabilitado };
       if (editandoProjeto) {
@@ -37,10 +45,12 @@ function EtapaProjeto({ onNext, avaliacaoId }) {
       } else {
         await createProjeto(projetoData);
       }
-      carregarProjetos();
+      await carregarProjetos();
       resetarFormulario();
     } catch (error) {
       console.error('Erro ao salvar projeto:', error);
+    } finally {
+      setSalvando(false);
     }
   };
 
@@ -52,14 +62,25 @@ function EtapaProjeto({ onNext, avaliacaoId }) {
   };
 
   const atualizarProjeto = async (projetoId, nome, habilitado) => {
+    setAtualizandoId(projetoId);
     try {
       const projetoData = { nome, habilitado };
       await updateProjeto(projetoId, projetoData);
       setProjetos(prevProjetos => prevProjetos.map(proj => (proj['ID'] === projetoId ? { ...proj, Nome_Projeto: nome, Projeto_Habilitado: habilitado } : proj)));
     } catch (error) {
       console.error('Erro ao atualizar projeto:', error);
+    } finally {
+      setAtualizandoId(null);
     }
   };
+
+  if (carregando) {
+    return (
+      <div className='container-etapa'>
+        <CarregandoEtapa />
+      </div>
+    );
+  }
 
   return (
     <div className='container-etapa'>
@@ -86,9 +107,9 @@ function EtapaProjeto({ onNext, avaliacaoId }) {
         </div>
       </div>
       <div className='logo-and-button'>
-        <button className="button-add-project" onClick={salvarProjeto}>
+        <BotaoCarregando className="button-add-project" onClick={salvarProjeto} loading={salvando} loadingText="Salvando...">
           {editandoProjeto ? 'ATUALIZAR' : 'ADICIONAR'}
-        </button>
+        </BotaoCarregando>
       </div>
       <p className="projetos-cadastrados-title">PROJETOS CADASTRADOS:</p>
       {projetos.length > 0 ? (
@@ -122,7 +143,7 @@ function EtapaProjeto({ onNext, avaliacaoId }) {
                   </label>
                 </td>
                 <td className='acao-td-projetos'>
-                  <button className='button-update-project' onClick={() => atualizarProjeto(projeto.ID, projeto.Nome_Projeto, projeto.Projeto_Habilitado)}>ATUALIZAR</button>
+                  <BotaoCarregando className='button-update-project' onClick={() => atualizarProjeto(projeto.ID, projeto.Nome_Projeto, projeto.Projeto_Habilitado)} loading={atualizandoId === projeto.ID} loadingText="Atualizando...">ATUALIZAR</BotaoCarregando>
                 </td>
               </tr>
             ))}
@@ -131,7 +152,7 @@ function EtapaProjeto({ onNext, avaliacaoId }) {
       ) : (
         <p className='nenhum-encontrado'>Nenhum projeto encontrado.</p>
       )}
-      <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
+      <button className='button-next' onClick={onNext} disabled={salvando || atualizandoId !== null}>PRÓXIMA ETAPA</button>
     </div>
   );
 }

@@ -7,6 +7,7 @@ import '../components/styles/Form.css';
 import '../components/styles/Button.css';
 import '../components/styles/Etapas.css';
 import '../components/styles/EtapaConsultarRelatorioAjuste.css';
+import CarregandoEtapa from './common/CarregandoEtapa';
 
 function EtapaConsultarRelatorioAjuste({ onNext }) {
   const location = useLocation();
@@ -14,18 +15,17 @@ function EtapaConsultarRelatorioAjuste({ onNext }) {
     descricao_relatorio_ajuste_inicial: '',
     caminho_arquivo_relatorio_ajuste_inicial: ''
   });
-  const [isLoading, setIsLoading] = useState(false); // Controle de carregamento
+  const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
     const fetchAvaliacao = async () => {
-      setIsLoading(true); // Ativa o estado de carregamento
       try {
         const data = await getAvaliacaoById(location.state.id);
         setAvaliacao(data);
       } catch (error) {
         console.error('Erro ao buscar avaliação:', error);
       } finally {
-        setIsLoading(false); // Desativa o estado de carregamento
+        setCarregando(false);
       }
     };
     fetchAvaliacao();
@@ -34,6 +34,14 @@ function EtapaConsultarRelatorioAjuste({ onNext }) {
   const handleNext = () => {
     onNext(); // Navega para a próxima etapa ao clicar em próximo
   };
+
+  if (carregando) {
+    return (
+      <div className='container-etapa'>
+        <CarregandoEtapa />
+      </div>
+    );
+  }
 
     return (
     <div className='container-etapa'>
@@ -60,7 +68,6 @@ function EtapaConsultarRelatorioAjuste({ onNext }) {
                   <button
                     className='button-mostrar-relatorio'
                     onClick={() => window.open(`http://127.0.0.1:5000/uploads/${avaliacao.caminho_arquivo_relatorio_ajuste_inicial}`, '_blank')}
-                    disabled={isLoading}
                   >
                     MOSTRAR
                   </button>
@@ -80,7 +87,6 @@ function EtapaConsultarRelatorioAjuste({ onNext }) {
         <button
           className='button-next'
           onClick={handleNext}
-          disabled={isLoading}
         >
           PRÓXIMA ETAPA
         </button>

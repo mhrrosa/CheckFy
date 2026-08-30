@@ -12,6 +12,8 @@ import '../components/styles/Button.css';
 import '../components/styles/Container.css';
 import '../components/styles/Body.css';
 import '../components/styles/Etapas.css';
+import BotaoCarregando from './common/BotaoCarregando';
+import CarregandoEtapa from './common/CarregandoEtapa';
 
 function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
   const [processos, setProcessos] = useState([]);
@@ -20,6 +22,8 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
   const [resumoSalvo, setResumoSalvo] = useState(false); // Estado para determinar se será "SALVAR" ou "ATUALIZAR"
   const [dropdownVisible, setDropdownVisible] = useState(null); // Controlar qual dropdown está visível
   const [activeTab, setActiveTab] = useState(null); // Estado para a aba ativa
+  const [carregando, setCarregando] = useState(true);
+  const [salvando, setSalvando] = useState(false);
 
   useEffect(() => {
     if (avaliacaoId && idVersaoModelo) {
@@ -47,14 +51,16 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
       if (resumo && resumo.length > 0) {
         // Se há resumo salvo, usamos essas notas diretamente
         setResumoSalvo(true);
-        montarArrayComResumo(resumo);
+        await montarArrayComResumo(resumo);
       } else {
         // Se não há resumo, buscamos os graus de implementação e calculamos as notas
         const graus = await getGrausImplementacao(avaliacaoId);
-        montarArrayComCalculo(graus);
+        await montarArrayComCalculo(graus);
       }
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
+    } finally {
+      setCarregando(false);
     }
   };
 
@@ -151,6 +157,7 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
   };
 
   const salvarResumoCaracterizacao = async () => {
+    setSalvando(true);
     try {
       if (resumoSalvo) {
         await updateGrausImplementacaoEmpresa(arrayResumo);
@@ -158,11 +165,13 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
         const response = await addGrauImplementacaoEmpresa(arrayResumo);
 
         if (response.message === 'Graus de implementação inseridos com sucesso!') {
-          setResumoSalvo(true); 
+          setResumoSalvo(true);
         }
       }
     } catch (error) {
       console.error('Erro ao salvar resumo:', error);
+    } finally {
+      setSalvando(false);
     }
   };
 
@@ -203,6 +212,14 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
   const desabilitarBotao = arrayResumo.some(item => 
     item.nota === 'Escolher L ou P' || item.nota === 'Escolher L, N ou P'
   );
+
+  if (carregando) {
+    return (
+      <div className="container-etapa">
+        <CarregandoEtapa />
+      </div>
+    );
+  }
 
   return (
     <div className="container-etapa">
@@ -299,10 +316,10 @@ function EtapaResumoCaracterizacao({ avaliacaoId, idVersaoModelo, onNext }) {
           </tbody>
         </table>
       </div>
-      <button className='button-save' onClick={salvarResumoCaracterizacao} disabled={desabilitarBotao}>
+      <BotaoCarregando className='button-save' onClick={salvarResumoCaracterizacao} loading={salvando} disabled={desabilitarBotao} loadingText="Salvando...">
         {resumoSalvo ? 'ATUALIZAR' : 'SALVAR'}
-      </button>
-      <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
+      </BotaoCarregando>
+      <button className='button-next' onClick={onNext} disabled={salvando}>PRÓXIMA ETAPA</button>
     </div>
   );
 }

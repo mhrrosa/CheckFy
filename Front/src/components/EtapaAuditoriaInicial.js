@@ -7,9 +7,13 @@ import '../components/styles/Form.css';
 import '../components/styles/Button.css';
 import '../components/styles/Etapas.css';
 import '../components/styles/EtapaAuditoriaAvaliacaoInicial.css';
+import BotaoCarregando from './common/BotaoCarregando';
+import CarregandoEtapa from './common/CarregandoEtapa';
+import { useToast } from '../contexts/ToastContext';
 
 function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
   const location = useLocation();
+  const { showToast } = useToast();
   const [avaliacao, setAvaliacao] = useState({
     nome: '',
     descricao: '',
@@ -21,20 +25,18 @@ function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
     relatorio_ajuste: '',
     caminho_arquivo_relatorio_ajuste_inicial: ''
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const [buttonText, setButtonText] = useState('APROVAR');
-  const [intervalId, setIntervalId] = useState(null);
+  const [carregando, setCarregando] = useState(true);
+  const [enviando, setEnviando] = useState(false);
 
   useEffect(() => {
     const fetchAvaliacao = async () => {
-      setIsLoading(true);
       try {
         const data = await getAvaliacaoById(location.state.id);
         setAvaliacao(data);
       } catch (error) {
         console.error('Erro ao buscar avaliação:', error);
       } finally {
-        setIsLoading(false);
+        setCarregando(false);
       }
     };
     fetchAvaliacao();
@@ -46,24 +48,29 @@ function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
 
   const handleDuploNext = async () => {
     const confirmacao = window.confirm('Um e-mail será enviado aos participantes informando o resultado da auditoria inicial. Deseja continuar?');
-  
-    if (confirmacao) {
-      setButtonText('ENVIANDO E-MAIL');
-      setIsLoading(true);
 
+    if (confirmacao) {
+      setEnviando(true);
       try {
         await enviarEmailResultadoAvaliacaoInicial(location.state.id);
-        alert('E-mail enviado com sucesso!');
+        showToast('E-mail enviado com sucesso!', 'success');
         onDuploNext();
       } catch (error) {
         console.error('Erro ao enviar o e-mail:', error);
-        alert('Houve um erro ao enviar o e-mail. Tente novamente.');
+        showToast('Houve um erro ao enviar o e-mail. Tente novamente.', 'error');
       } finally {
-        setIsLoading(false);
-        setButtonText('APROVAR');
+        setEnviando(false);
       }
     }
   };
+
+  if (carregando) {
+    return (
+      <div className='container-etapa'>
+        <CarregandoEtapa />
+      </div>
+    );
+  }
 
   return (
     <div className='container-etapa'>
@@ -96,7 +103,7 @@ function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
                 <td className='valor-etapas'>
                   <button className='button-mostrar-relatorio'
                     onClick={() => window.open(`http://127.0.0.1:5000/uploads/${avaliacao.caminho_arquivo_relatorio_ajuste_inicial}`, '_blank')}
-                    disabled={isLoading}
+                    disabled={enviando}
                   >
                     MOSTRAR
                   </button>
@@ -114,33 +121,18 @@ function EtapaAuditoriaInicial({ onNext, onDuploNext }) {
         marginTop: '20px'
       }}>
         <div className='div-botoes-aprovar-reprovar'>
-          <button
+          <BotaoCarregando
             onClick={handleDuploNext}
             className='button-aprovar-relatorio'
-            onMouseOver={(e) => !isLoading && (e.target.style.backgroundColor = '#45a049')}
-            onMouseOut={(e) => !isLoading && (e.target.style.backgroundColor = '#4CAF50')}
-            disabled={isLoading}
+            loading={enviando}
+            loadingText="Enviando e-mail..."
           >
-            {isLoading ? (
-              <div className="spinner" style={{
-                border: '3px solid #f3f3f3',
-                borderTop: '3px solid #3498db',
-                borderRadius: '50%',
-                width: '15px',
-                height: '15px',
-                animation: 'spin 1s linear infinite',
-                display: 'inline-block'
-              }}></div>
-            ) : (
-              buttonText
-            )}
-          </button>
+            APROVAR
+          </BotaoCarregando>
           <button
             onClick={handleNext}
             className='button-reprovar-relatorio'
-            onMouseOver={(e) => e.target.style.backgroundColor = '#d32f2f'}
-            onMouseOut={(e) => e.target.style.backgroundColor = '#f44336'}
-            disabled={isLoading}
+            disabled={enviando}
           >
             REPROVAR
           </button>

@@ -1,52 +1,81 @@
-.input-wrapper {
+.form-create-evaluation {
+    max-width: 600px;
+    min-width: 320px;
+}
+
+.form-create-evaluation .lista-input {
     display: flex;
     flex-direction: column;
-    align-items: start;
-    width: 100%;
-    margin-bottom: 10px;
+    gap: 4px;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 8px;
 }
 
-.label {
-    font-size: 1.1em;
-    color: black;
-    margin: 5px 0;
+.form-create-evaluation .input-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    margin-bottom: 14px;
 }
 
-.input-field {
+.form-create-evaluation .input-field,
+.form-create-evaluation .input-field-email {
     width: 100%;
-    padding: 10px;
-    margin: 5px 0;
+    padding: 10px 12px;
+    margin: 6px 0;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 8px;
     font-size: 1em;
     box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.input-group {
+.form-create-evaluation .input-field:focus,
+.form-create-evaluation .input-field-email:focus {
+    outline: none;
+    border-color: #00437e;
+    box-shadow: 0 0 0 3px rgba(0, 67, 126, 0.2);
+}
+
+.form-create-evaluation .input-field::placeholder,
+.form-create-evaluation .input-field-email::placeholder {
+    color: #999;
+}
+
+.form-create-evaluation .input-group {
     width: 100%;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-  }
+    gap: 8px;
+}
 
-.input-field-email {
+.form-create-evaluation .input-field-email {
     flex: 1;
-    padding: 10px;
-    margin: 5px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1em;
-    box-sizing: border-box;
+    margin: 6px 0;
 }
 
-.logo-and-button {
-    margin-top: 10px;
+.form-create-evaluation .button-add-email {
+    flex-shrink: 0;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    width: 100%;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
 }
 
-.logo {
-    width: 10em;
+.form-create-evaluation .button-remove {
+    margin-top: 6px;
+}
+
+.form-create-evaluation .logo-and-button {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.form-create-evaluation .logo {
+    width: 9em;
 }

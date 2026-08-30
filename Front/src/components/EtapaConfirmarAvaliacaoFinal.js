@@ -6,10 +6,13 @@ import '../components/styles/Button.css';
 import '../components/styles/Etapas.css';
 import '../components/styles/EtapaConfirmarAvaliacaoFinal.css';
 import { enviarEmailAuditorAvaliacaoFinal } from '../services/Api';
+import BotaoCarregando from './common/BotaoCarregando';
+import { useToast } from '../contexts/ToastContext';
 
 function EtapaConfirmarAvaliacaoFinal({ onNext, avaliacaoId }) {
   const [loading, setLoading] = useState(false);
   const [confirmado, setConfirmado] = useState(false);
+  const { showToast } = useToast();
 
   const handleConfirmarAvaliacao = async () => {
     const confirmacao = window.confirm(
@@ -22,10 +25,10 @@ function EtapaConfirmarAvaliacaoFinal({ onNext, avaliacaoId }) {
     try {
       await enviarEmailAuditorAvaliacaoFinal(avaliacaoId);
       setConfirmado(true);
-      alert('Auditoria da avaliação final solicitada com sucesso!');
+      showToast('Auditoria da avaliação final solicitada com sucesso!', 'success');
     } catch (error) {
       console.error('Erro ao solicitar a auditoria da avaliação final:', error);
-      alert('Erro ao solicitar a auditoria da avaliação final.');
+      showToast('Erro ao solicitar a auditoria da avaliação final.', 'error');
     } finally {
       setLoading(false);
     }
@@ -41,19 +44,21 @@ function EtapaConfirmarAvaliacaoFinal({ onNext, avaliacaoId }) {
           Tenha certeza de que todos os dados estão corretos antes de continuar.
         </p>
       </div>
-      <button
+      <BotaoCarregando
         className='button-solicitar-auditoria'
         onClick={handleConfirmarAvaliacao}
-        disabled={loading || confirmado}
+        loading={loading}
+        disabled={confirmado}
+        loadingText="Enviando email..."
         style={{
           backgroundColor: confirmado ? 'gray' : '',
           cursor: confirmado ? 'not-allowed' : 'pointer'
         }}
       >
-        {loading ? 'Enviando email...' : confirmado ? 'AUDITORIA SOLICITADA' : 'SOLICITAR AUDITORIA'}
-      </button>
+        {confirmado ? 'AUDITORIA SOLICITADA' : 'SOLICITAR AUDITORIA'}
+      </BotaoCarregando>
       <br />
-      <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
+      <button className='button-next' onClick={onNext} disabled={loading}>PRÓXIMA ETAPA</button>
     </div>
   );
 }

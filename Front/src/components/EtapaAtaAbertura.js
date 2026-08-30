@@ -7,10 +7,14 @@ import '../components/styles/Form.css';
 import '../components/styles/Button.css';
 import '../components/styles/Etapas.css';
 import '../components/styles/EtapaAtividadesPlanejamento.css';
+import BotaoCarregando from './common/BotaoCarregando';
+import { useToast } from '../contexts/ToastContext';
 
 function AtaReuniaoAbertura({onNext, avaliacaoId }) {
   const [ataReuniao, setAtaReuniao] = useState('');
+  const [salvando, setSalvando] = useState(false);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (avaliacaoId) {
@@ -31,16 +35,19 @@ function AtaReuniaoAbertura({onNext, avaliacaoId }) {
   };
   
   const salvarAtaReuniao = async () => {
+    setSalvando(true);
     try {
       const data = {
         ataReuniao: ataReuniao,
       };
 
       await inserir_ata_reuniao(avaliacaoId, data);
-      alert('Ata de reunião salva com sucesso!');
+      showToast('Ata de reunião salva com sucesso!', 'success');
     } catch (error) {
       console.error('Erro ao salvar a ata de reunião:', error);
-      alert('Erro ao salvar a ata de reunião. Tente novamente.');
+      showToast('Erro ao salvar a ata de reunião. Tente novamente.', 'error');
+    } finally {
+      setSalvando(false);
     }
   };
 
@@ -81,8 +88,8 @@ function AtaReuniaoAbertura({onNext, avaliacaoId }) {
         ></textarea>
       </div>
 
-      <button className='button-save' onClick={salvarAtaReuniao}>SALVAR</button>
-      <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
+      <BotaoCarregando className='button-save' onClick={salvarAtaReuniao} loading={salvando} loadingText="Salvando...">SALVAR</BotaoCarregando>
+      <button className='button-next' onClick={onNext} disabled={salvando}>PRÓXIMA ETAPA</button>
     </div>
   );
 }

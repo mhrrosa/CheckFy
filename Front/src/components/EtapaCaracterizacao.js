@@ -13,6 +13,7 @@ import '../components/styles/Form.css';
 import '../components/styles/Etapas.css';
 import '../components/styles/Button.css';
 import '../components/styles/EtapaCaracterizacao.css';
+import CarregandoEtapa from './common/CarregandoEtapa';
 
 Modal.setAppElement('#root');
 
@@ -26,6 +27,7 @@ function EtapaCaracterizacao({ onNext, avaliacaoId, idVersaoModelo }) {
   const [selectedProjetoId, setSelectedProjetoId] = useState(null);
   const [grausImplementacao, setGrausImplementacao] = useState({});
   const [activeTab, setActiveTab] = useState(null); // Estado para a aba ativa
+  const [carregando, setCarregando] = useState(true);
 
   const options = [
     "Totalmente implementado (T)",
@@ -49,13 +51,17 @@ function EtapaCaracterizacao({ onNext, avaliacaoId, idVersaoModelo }) {
   }, [activeTab]);
 
   const carregarDados = async () => {
-    await carregarProjetos();
-    await carregarProcessos();
-    await carregarGrausImplementacao();
-    if (activeTab) {
-      await carregarResultadosEsperados(activeTab);
-    } else if (processos.length > 0) {
-      setActiveTab(processos[0].ID);
+    try {
+      await carregarProjetos();
+      await carregarProcessos();
+      await carregarGrausImplementacao();
+      if (activeTab) {
+        await carregarResultadosEsperados(activeTab);
+      } else if (processos.length > 0) {
+        setActiveTab(processos[0].ID);
+      }
+    } finally {
+      setCarregando(false);
     }
   };
 
@@ -145,6 +151,14 @@ function EtapaCaracterizacao({ onNext, avaliacaoId, idVersaoModelo }) {
       console.error('Erro ao atualizar grau de implementação:', error);
     }
   };
+
+  if (carregando) {
+    return (
+      <div className="container-etapa">
+        <CarregandoEtapa />
+      </div>
+    );
+  }
 
   return (
     <div className="container-etapa">

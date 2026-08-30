@@ -7,11 +7,18 @@ import '../components/styles/Form.css';
 import '../components/styles/Button.css';
 import '../components/styles/Etapas.css';
 import '../components/styles/EtapaAtividadesPlanejamento.css';
+import BotaoCarregando from './common/BotaoCarregando';
+import CarregandoEtapa from './common/CarregandoEtapa';
+import { useToast } from '../contexts/ToastContext';
 
 function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
+  const { showToast } = useToast();
   const [avaliacaoAprovada, setAvaliacaoAprovada] = useState(false);
   const [planejamentoAtividades, setPlanejamentoAtividades] = useState('');
   const [planejamentoCronograma, setPlanejamentoCronograma] = useState('');
+  const [carregando, setCarregando] = useState(true);
+  const [salvando, setSalvando] = useState(false);
+  const [finalizando, setFinalizando] = useState(false);
   const navigate = useNavigate(); // Hook para navegação
 
   useEffect(() => {
@@ -23,7 +30,7 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
   const carregarAvaliacao = async () => {
     try {
       const data = await getAvaliacaoById(avaliacaoId);
-  
+
       if (data) {
         const isAprovacaoSoftex = data.aprovacao_softex === 1; // Converte 1 para true
         setAvaliacaoAprovada(isAprovacaoSoftex);
@@ -32,10 +39,13 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
       }
     } catch (error) {
       console.error('Erro ao carregar dados da avaliação:', error);
+    } finally {
+      setCarregando(false);
     }
   };
 
   const salvarPlanejamento = async () => {
+    setSalvando(true);
     try {
       const data = {
         aprovacaoSoftex: avaliacaoAprovada,
@@ -44,10 +54,12 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
       };
 
       await inserir_planejamento(avaliacaoId, data);
-      alert('Planejamento salvo com sucesso!');
+      showToast('Planejamento salvo com sucesso!', 'success');
     } catch (error) {
       console.error('Erro ao salvar o planejamento:', error);
-      alert('Erro ao salvar o planejamento. Tente novamente.');
+      showToast('Erro ao salvar o planejamento. Tente novamente.', 'error');
+    } finally {
+      setSalvando(false);
     }
   };
 
@@ -56,16 +68,27 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
   };
 
   const finalizar = async () => {
+    setFinalizando(true);
     try {
       // Atualiza o status para "Cancelada" (id_status = 5)
       await atualizarStatusAvaliacao(avaliacaoId, { id_status: 5 });
-      alert('Status atualizado para Cancelada');
+      showToast('Status atualizado para Cancelada', 'success');
       navigate('/home'); // Navega para a página inicial
     } catch (error) {
       console.error('Erro ao atualizar o status da avaliação:', error);
-      alert('Erro ao finalizar a avaliação. Tente novamente.');
+      showToast('Erro ao finalizar a avaliação. Tente novamente.', 'error');
+    } finally {
+      setFinalizando(false);
     }
   };
+
+  if (carregando) {
+    return (
+      <div className='container-etapa'>
+        <CarregandoEtapa />
+      </div>
+    );
+  }
 
   return (
     <div className='container-etapa'>
@@ -145,12 +168,12 @@ function EtapaAtividadesPlanejamento({ onNext, avaliacaoId }) {
       )}
 
       {/* Botão de Salvar sempre visível */}
-      <button className='button-save' onClick={salvarPlanejamento}>SALVAR</button>
+      <BotaoCarregando className='button-save' onClick={salvarPlanejamento} loading={salvando} disabled={finalizando} loadingText="Salvando...">SALVAR</BotaoCarregando>
 
       {avaliacaoAprovada ? (
-        <button className='button-next' onClick={onNext}>PRÓXIMA ETAPA</button>
+        <button className='button-next' onClick={onNext} disabled={salvando}>PRÓXIMA ETAPA</button>
       ) : (
-        <button className='button-next' onClick={finalizar}>FINALIZAR</button>
+        <BotaoCarregando className='button-next' onClick={finalizar} loading={finalizando} disabled={salvando} loadingText="Finalizando...">FINALIZAR</BotaoCarregando>
       )}
     </div>
   );

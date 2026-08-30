@@ -5,16 +5,19 @@ import '../components/styles/Body.css';
 import '../components/styles/Container.css';
 import '../components/styles/Form.css';
 import '../components/styles/Button.css';
+import BotaoCarregando from './common/BotaoCarregando';
+import CarregandoEtapa from './common/CarregandoEtapa';
+import { useToast } from '../contexts/ToastContext';
 
 function CadastroAuditor({ onNext, avaliacaoId }) {
+  const { showToast } = useToast();
   const [emailAuditor, setEmailAuditor] = useState(''); // Estado para controlar o valor do campo
   const [auditorExiste, setAuditorExiste] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);  // Controle de múltiplas submissões
+  const [carregando, setCarregando] = useState(true);
+  const [salvando, setSalvando] = useState(false);
 
   useEffect(() => {
     async function fetchEmailAuditor() {
-      setIsLoading(true);  // Ativa o estado de carregamento
       try {
         const response = await getEmailAuditor(avaliacaoId);
         if (response) {
@@ -26,7 +29,7 @@ function CadastroAuditor({ onNext, avaliacaoId }) {
       } catch (error) {
         console.error('Erro ao buscar o e-mail do auditor:', error);
       } finally {
-        setIsLoading(false);  // Desativa o estado de carregamento
+        setCarregando(false);
       }
     }
 
@@ -35,43 +38,46 @@ function CadastroAuditor({ onNext, avaliacaoId }) {
 
   const salvarDados = async () => {
     if (!emailAuditor) {
-      alert('Por favor, preencha o e-mail do auditor.');
+      showToast('Por favor, preencha o e-mail do auditor.', 'warning');
       return;
     }
 
-    if (isSaving) return;  // Impede múltiplas submissões enquanto está salvando
-
-    setIsSaving(true);  // Bloqueia múltiplas submissões
+    setSalvando(true);
     try {
-      setIsLoading(true);  // Ativa o estado de carregamento ao salvar os dados
-      
       if (auditorExiste) {
         // Atualiza o e-mail do auditor existente
         await updateEmailAuditor(avaliacaoId, { novo_email: emailAuditor });
-        alert('E-mail do auditor atualizado com sucesso!');
+        showToast('E-mail do auditor atualizado com sucesso!', 'success');
       } else {
         // Adiciona um novo auditor
         await addAuditor({ auditorEmails: [emailAuditor], idAvaliacao: avaliacaoId });
-        alert('Auditor inserido com sucesso!');
+        showToast('Auditor inserido com sucesso!', 'success');
         setAuditorExiste(true);  // Marca que o auditor foi cadastrado
       }
     } catch (error) {
       console.error('Erro ao salvar o auditor:', error);
-      alert('Erro ao salvar o auditor.');
+      showToast('Erro ao salvar o auditor.', 'error');
     } finally {
-      setIsSaving(false);  // Libera para novas submissões
-      setIsLoading(false);  // Desativa o estado de carregamento após salvar os dados
+      setSalvando(false);
     }
   };
 
   const proximaEtapa = async () => {
     if (!emailAuditor) {
-      alert('Por favor, preencha o e-mail do auditor antes de continuar.');
+      showToast('Por favor, preencha o e-mail do auditor antes de continuar.', 'warning');
       return;
     }
 
     onNext();  // Navega para a próxima etapa
   };
+
+  if (carregando) {
+    return (
+      <div className='container-etapa'>
+        <CarregandoEtapa />
+      </div>
+    );
+  }
 
   return (
     <div className='container-etapa'>
@@ -91,14 +97,14 @@ function CadastroAuditor({ onNext, avaliacaoId }) {
           value={emailAuditor}
           onChange={(e) => setEmailAuditor(e.target.value)}
           placeholder="Digite o e-mail do auditor"
-          disabled={isLoading}  // Desabilitar o campo de input enquanto carrega
+          disabled={salvando}
         />
       </div>
 
-      <button className='button-save' onClick={salvarDados} disabled={isLoading || isSaving}>
-        {isLoading ? 'SALVANDO...' : 'SALVAR'}
-      </button>
-      <button className='button-next' onClick={proximaEtapa} disabled={isLoading}>
+      <BotaoCarregando className='button-save' onClick={salvarDados} loading={salvando} loadingText="Salvando...">
+        SALVAR
+      </BotaoCarregando>
+      <button className='button-next' onClick={proximaEtapa} disabled={salvando}>
         PRÓXIMA ETAPA
       </button>
     </div>

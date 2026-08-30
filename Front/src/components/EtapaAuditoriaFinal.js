@@ -27,8 +27,12 @@ import '../components/styles/Etapas.css';
 import '../components/styles/EtapaEvidencia.css';
 import '../components/styles/EtapaAuditoriaFinal.css';
 import '../components/styles/EtapaResumoCaracterizacao.css';
+import BotaoCarregando from './common/BotaoCarregando';
+import CarregandoEtapa from './common/CarregandoEtapa';
+import { useToast } from '../contexts/ToastContext';
 
 function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext }) {
+  const { showToast } = useToast();
   const [processos, setProcessos] = useState([]);
   const [resultadosEsperados, setResultadosEsperados] = useState({});
   const [projetos, setProjetos] = useState([]);
@@ -53,6 +57,10 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
 
   const [evidenciasProjeto, setEvidenciasProjeto] = useState({});
   const [evidenciasOrganizacional, setEvidenciasOrganizacional] = useState({});
+
+  const [carregando, setCarregando] = useState(true);
+  const [salvando, setSalvando] = useState(false);
+  const [enviando, setEnviando] = useState(false);
 
   const parentTabs = ['Informações Gerais', 'Processos', 'Resumo da Caracterização da Avaliação', 'Projeto', 'Organizacional', 'Resultado Auditoria'];
 
@@ -124,20 +132,22 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
     }
   }, [processosOrganizacionais, perguntasOrganizacional]);
 
-  const handleNextStep = () => {
+  const handleNextStep = async () => {
     if (aprovacao === 'Aprovar') {
       // Exibir a mensagem de confirmação
       const confirmarEnvio = window.confirm('Ao continuar, um e-mail será enviado aos participantes. Deseja continuar?');
       if (confirmarEnvio) {
-        notificaParticipantesResultadoAvaliacaoFinal(avaliacaoId)
-          .then(() => {
-            alert('E-mail enviado com sucesso!');
-            onDuploNext(); // Avançar duas etapas
-          })
-          .catch((error) => {
-            console.error('Erro ao enviar notificação:', error);
-            alert('Erro ao enviar notificação.');
-          });
+        setEnviando(true);
+        try {
+          await notificaParticipantesResultadoAvaliacaoFinal(avaliacaoId);
+          showToast('E-mail enviado com sucesso!', 'success');
+          onDuploNext(); // Avançar duas etapas
+        } catch (error) {
+          console.error('Erro ao enviar notificação:', error);
+          showToast('Erro ao enviar notificação.', 'error');
+        } finally {
+          setEnviando(false);
+        }
       } else {
         return;
       }
@@ -186,6 +196,8 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
       }
     } catch (error) {
       console.error('Erro ao carregar dados da avaliação:', error);
+    } finally {
+      setCarregando(false);
     }
   };
 
@@ -512,7 +524,7 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
 
   const renderProjetoContent = () => {
     if (!projetos || projetos.length === 0) {
-      return <p>Carregando projetos...</p>;
+      return <CarregandoEtapa texto="Carregando projetos..." />;
     }
 
     return (
@@ -586,7 +598,7 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
   // Função para renderizar o conteúdo da aba "Organizacional"
   const renderOrganizacionalContent = () => {
     if (!processosOrganizacionais || processosOrganizacionais.length === 0) {
-      return <p>Carregando processos organizacionais...</p>;
+      return <CarregandoEtapa texto="Carregando processos organizacionais..." />;
     }
 
     return (
@@ -684,23 +696,24 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
           </>
         )}
 
-        <button className="button-save" onClick={salvarDecisao}>SALVAR</button>
-        <button className='button-next' onClick={handleNextStep}>PRÓXIMA ETAPA</button>
+        <BotaoCarregando className="button-save" onClick={salvarDecisao} loading={salvando} disabled={enviando} loadingText="Salvando...">SALVAR</BotaoCarregando>
+        <BotaoCarregando className='button-next' onClick={handleNextStep} loading={enviando} disabled={salvando} loadingText="Enviando...">PRÓXIMA ETAPA</BotaoCarregando>
       </div>
     );
   };
 
   const salvarDecisao = async () => {
     if (aprovacao === '') {
-      alert('Por favor, selecione uma opção.');
+      showToast('Por favor, selecione uma opção.', 'warning');
       return;
     }
 
     if (aprovacao === 'Reprovar' && justificativa.trim() === '') {
-      alert('Por favor, forneça uma justificativa para a reprovação.');
+      showToast('Por favor, forneça uma justificativa para a reprovação.', 'warning');
       return;
     }
 
+    setSalvando(true);
     try {
       const data = {
         descricao: aprovacao === 'Reprovar' ? justificativa : 'Aprovado',
@@ -709,15 +722,17 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
 
       if (relatorioExiste) {
         await atualizarRelatorioAuditoriaFinal(data);
-        alert('Decisão atualizada com sucesso!');
+        showToast('Decisão atualizada com sucesso!', 'success');
       } else {
         await inserirRelatorioAuditoriaFinal(data);
-        alert('Decisão salva com sucesso!');
+        showToast('Decisão salva com sucesso!', 'success');
         setRelatorioExiste(true);
       }
     } catch (error) {
       console.error('Erro ao salvar decisão:', error);
-      alert('Erro ao salvar decisão.');
+      showToast('Erro ao salvar decisão.', 'error');
+    } finally {
+      setSalvando(false);
     }
   };
 
@@ -791,7 +806,7 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
 
   const renderInformacoesGeraisContent = () => {
     if (!avaliacao) {
-      return <p>Carregando dados...</p>;
+      return <CarregandoEtapa />;
     }
 
     return (
@@ -863,6 +878,14 @@ function EtapaAuditoriaFinal({ avaliacaoId, idVersaoModelo, onNext, onDuploNext 
       </div>
     );
   };
+
+  if (carregando) {
+    return (
+      <div className='container-etapa'>
+        <CarregandoEtapa />
+      </div>
+    );
+  }
 
   return (
     <div className="container-etapa">

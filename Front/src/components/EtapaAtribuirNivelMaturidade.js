@@ -6,19 +6,23 @@ import '../components/styles/Container.css';
 import '../components/styles/Body.css';
 import '../components/styles/Etapas.css';
 import '../components/styles/EtapaAtribuirNivelMaturidade.css'; // Importa o CSS externo
+import BotaoCarregando from './common/BotaoCarregando';
+import CarregandoEtapa from './common/CarregandoEtapa';
+import { useToast } from '../contexts/ToastContext';
 
 function EtapaAtribuirNivelMaturidade({ onNext }) {
   const location = useLocation();
+  const { showToast } = useToast();
   const [avaliacao, setAvaliacao] = useState({});
   const [niveis, setNiveis] = useState([]);
   const [selectedNivel, setSelectedNivel] = useState('');
   const [satisfacao, setSatisfacao] = useState(''); // Estado para o seletor de satisfação
-  const [isLoading, setIsLoading] = useState(false);
+  const [carregando, setCarregando] = useState(true);
+  const [salvando, setSalvando] = useState(false);
   const [nivelDisabled, setNivelDisabled] = useState(false); // Controla se o seletor de nível está desabilitado
 
   useEffect(() => {
     const fetchAvaliacao = async () => {
-      setIsLoading(true);
       try {
         const data = await getAvaliacaoById(location.state.id);
         setAvaliacao(data);
@@ -41,7 +45,7 @@ function EtapaAtribuirNivelMaturidade({ onNext }) {
       } catch (error) {
         console.error('Erro ao buscar avaliação ou níveis:', error);
       } finally {
-        setIsLoading(false);
+        setCarregando(false);
       }
     };
     fetchAvaliacao();
@@ -69,18 +73,18 @@ function EtapaAtribuirNivelMaturidade({ onNext }) {
   const handleNext = async () => {
     // Verifica se os seletores foram preenchidos
     if (!satisfacao || !selectedNivel) {
-      alert('Por favor, selecione o resultado final e o nível final.');
+      showToast('Por favor, selecione o resultado final e o nível final.', 'warning');
       return;
     }
 
     const confirmacao = window.confirm('Um e-mail será enviado aos participantes informando o resultado da auditoria inicial. Deseja continuar?');
 
     if (confirmacao) {
-      setIsLoading(true);
+      setSalvando(true);
       try {
         // Envia o e-mail
         await enviarEmailResultadoAvaliacaoInicial(location.state.id);
-        alert('E-mail enviado com sucesso!');
+        showToast('E-mail enviado com sucesso!', 'success');
 
         // Após o sucesso do envio do e-mail, envia o resultado final e o nível selecionado
         const data = {
@@ -89,15 +93,23 @@ function EtapaAtribuirNivelMaturidade({ onNext }) {
           idNivelAtribuido: selectedNivel
         };
         await updateResultadoFinal(location.state.id, data);
-        alert('Resultado final atualizado com sucesso!');
+        showToast('Resultado final atualizado com sucesso!', 'success');
       } catch (error) {
         console.error('Erro ao processar a ação:', error);
-        alert('Houve um erro ao enviar o e-mail ou ao atualizar o resultado. Tente novamente.');
+        showToast('Houve um erro ao enviar o e-mail ou ao atualizar o resultado. Tente novamente.', 'error');
       } finally {
-        setIsLoading(false);
+        setSalvando(false);
       }
     }
   };
+
+  if (carregando) {
+    return (
+      <div className="container-etapa">
+        <CarregandoEtapa />
+      </div>
+    );
+  }
 
     return (
     <div className="container-etapa">
@@ -156,10 +168,10 @@ function EtapaAtribuirNivelMaturidade({ onNext }) {
           </tbody>
         </table>
       </div>
-      <button onClick={handleNext} className="button-save" disabled={isLoading}>
-        {isLoading ? 'Enviando...' : 'SALVAR'}
-      </button>
-      <button onClick={onNext} className="button-next" disabled={isLoading}>
+      <BotaoCarregando onClick={handleNext} className="button-save" loading={salvando} loadingText="Enviando...">
+        SALVAR
+      </BotaoCarregando>
+      <button onClick={onNext} className="button-next" disabled={salvando}>
         PRÓXIMA ETAPA
       </button>
     </div>

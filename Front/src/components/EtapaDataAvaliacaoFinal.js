@@ -6,16 +6,20 @@ import '../components/styles/Container.css';
 import '../components/styles/Form.css';
 import '../components/styles/EtapaDataAvaliacaoFinal.css';
 import '../components/styles/Button.css';
+import BotaoCarregando from './common/BotaoCarregando';
+import CarregandoEtapa from './common/CarregandoEtapa';
+import { useToast } from '../contexts/ToastContext';
 
 function CadastroDataAvaliacao({ onNext, avaliacaoId }) {
+  const { showToast } = useToast();
   const [dataAvaliacaoFinal, setDataAvaliacaoFinal] = useState(''); // Estado para controlar a data de avaliação
   const [dataExiste, setDataExiste] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);  // Controle de múltiplas submissões
+  const [carregando, setCarregando] = useState(true);
+  const [salvando, setSalvando] = useState(false);
+  const [enviando, setEnviando] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
-      setIsLoading(true);  // Ativa o estado de carregamento
       try {
         const response = await getData(avaliacaoId);
         if (response && response.dataAvaliacaoFinal) {
@@ -29,67 +33,73 @@ function CadastroDataAvaliacao({ onNext, avaliacaoId }) {
       } catch (error) {
         console.error('Erro ao buscar a data da avaliação final:', error);
       } finally {
-        setIsLoading(false);  // Desativa o estado de carregamento
+        setCarregando(false);
       }
     }
-  
+
     fetchData();
   }, [avaliacaoId]);
 
   const salvarDados = async () => {
     if (!dataAvaliacaoFinal) {
-      alert('Por favor, selecione a data da avaliação final.');
+      showToast('Por favor, selecione a data da avaliação final.', 'warning');
       return;
     }
 
-    if (isSaving) return;  // Impede múltiplas submissões enquanto está salvando
-
-    setIsSaving(true);  // Bloqueia múltiplas submissões
+    setSalvando(true);
     try {
-      setIsLoading(true);  // Ativa o estado de carregamento ao salvar os dados
-
       if (dataExiste) {
         // Atualiza a data da avaliação final existente
         await updateData(avaliacaoId, { dataAvaliacaoFinal });
-        alert('Data da avaliação final atualizada com sucesso!');
+        showToast('Data da avaliação final atualizada com sucesso!', 'success');
       } else {
         // Cadastra uma nova data de avaliação final
         await addData({ idAvaliacao: avaliacaoId, dataAvaliacaoFinal });
-        alert('Data da avaliação final cadastrada com sucesso!');
+        showToast('Data da avaliação final cadastrada com sucesso!', 'success');
         setDataExiste(true);  // Marca que a data foi cadastrada
       }
     } catch (error) {
       console.error('Erro ao salvar a data da avaliação final:', error);
-      alert('Erro ao salvar a data da avaliação final.');
+      showToast('Erro ao salvar a data da avaliação final.', 'error');
     } finally {
-      setIsSaving(false);  // Libera para novas submissões
-      setIsLoading(false);  // Desativa o estado de carregamento após salvar os dados
+      setSalvando(false);
     }
   };
 
   const proximaEtapa = async () => {
     if (!dataAvaliacaoFinal) {
-      alert('Por favor, selecione a data da avaliação final antes de continuar.');
+      showToast('Por favor, selecione a data da avaliação final antes de continuar.', 'warning');
       return;
     }
-  
+
     // Alerta com opções de confirmação
     const confirmacao = window.confirm('Um e-mail será enviado aos participantes informando a data da avaliação final. Deseja continuar?');
-  
+
     if (confirmacao) {
+      setEnviando(true);
       try {
         // Chama a função para enviar o e-mail
         await enviarEmailDataAvaliacao(avaliacaoId);
-        alert('E-mail enviado com sucesso!');
-        
+        showToast('E-mail enviado com sucesso!', 'success');
+
         // Navega para a próxima etapa após o envio do e-mail
         onNext();
       } catch (error) {
         console.error('Erro ao enviar o e-mail:', error);
-        alert('Houve um erro ao enviar o e-mail. Tente novamente.');
+        showToast('Houve um erro ao enviar o e-mail. Tente novamente.', 'error');
+      } finally {
+        setEnviando(false);
       }
     }
   };
+
+  if (carregando) {
+    return (
+      <div className='container-etapa'>
+        <CarregandoEtapa />
+      </div>
+    );
+  }
 
   return (
     <div className='container-etapa'>
@@ -113,20 +123,22 @@ function CadastroDataAvaliacao({ onNext, avaliacaoId }) {
             className="input-date"
             value={dataAvaliacaoFinal}
             onChange={(e) => setDataAvaliacaoFinal(e.target.value)}
-            disabled={isLoading}
+            disabled={salvando || enviando}
           />
       </div>
       <br></br>
-      <button className='button-save' onClick={salvarDados} disabled={isLoading || isSaving}>
-          {isLoading ? 'SALVANDO...' : 'SALVAR'}
-      </button>
-      <button 
-        className='button-next' 
-        onClick={proximaEtapa} 
-        disabled={isLoading || !dataAvaliacaoFinal}
+      <BotaoCarregando className='button-save' onClick={salvarDados} loading={salvando} disabled={enviando} loadingText="Salvando...">
+          SALVAR
+      </BotaoCarregando>
+      <BotaoCarregando
+        className='button-next'
+        onClick={proximaEtapa}
+        loading={enviando}
+        disabled={salvando || !dataAvaliacaoFinal}
+        loadingText="Enviando..."
       >
         PRÓXIMA ETAPA
-      </button>
+      </BotaoCarregando>
     </div>
   );
 }
