@@ -26,3 +26,6 @@
 *.pyc
 back/main.py
 back/main.py
+
+# Senha do banco desta maquina
+back/config_local.py

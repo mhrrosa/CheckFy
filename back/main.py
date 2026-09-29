@@ -30,10 +30,16 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 # Conexão com o banco de dados MySQL
+# A senha local fica em back/config_local.py (fora do git).
+try:
+    from config_local import DB_PASSWORD
+except ImportError:
+    DB_PASSWORD = "root"
+
 db_config = {
     "host": "127.0.0.1",
     "user": "root",
-    "password": "root",
+    "password": DB_PASSWORD,
     "database": "checkfy"
 }
 
